@@ -108,8 +108,6 @@ Here are some things still left to be implemented:
 Dependencies
 =
 
-Node.js dependencies:
-
 - <a href='http://nodejs.org/api/fs.html'>fs</a> (bundled with Node.js) - a default Node.js module which provides filesystem access
 - <a href='http://nodejs.org/api/http.html'>http</a> (bundled with Node.js) - a default Node.js module which provides HTTP web server support
 - <a href='http://expressjs.com/'>express</a> - a minimal and flexible node.js web application framework
@@ -119,4 +117,4 @@ Node.js dependencies:
 License
 =
 
-All original code in Teddy is licensed under the <a href='http://creativecommons.org/licenses/by/3.0/deed.en_US'>Creative Commons Attribution 3.0 Unported License</a>. Commercial and noncommercial use is permitted with attribution.
+All original code in Roosevelt is licensed under the <a href='http://creativecommons.org/licenses/by/3.0/deed.en_US'>Creative Commons Attribution 3.0 Unported License</a>. Commercial and noncommercial use is permitted with attribution.
