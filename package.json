@@ -1,0 +1,43 @@
+{
+  "name": "roosevelt",
+  "version": "0.1.0",
+  "description": "Roosevelt MVC web framework",
+  "main": "roosevelt.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kethinov/roosevelt.git"
+  },
+  "devDependencies": {
+    "fs": "*",
+    "http": "*",
+    "express": "*",
+    "teddy": "*",
+    "wrench": "*"
+  },
+  "keywords": [
+    "roosevelt.js",
+    "teddy.js",
+    "node.js",
+    "roosevelt",
+    "teddy",
+    "mvc"
+  ],
+  "bin": { 
+    "roosevelt": "./cli.js" 
+  },
+  "author": "Eric Newport <kethinov@gmail.com>",
+  "license": "Creative Commons Attribution 3.0 Unported License",
+  "readmeFilename": "README.md",
+  "_from": "roosevelt@*",
+  "gitHead": "",
+  "dependencies": {
+    "fs": "*",
+    "http": "*",
+    "express": "*",
+    "teddy": "*",
+    "wrench": "*"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
