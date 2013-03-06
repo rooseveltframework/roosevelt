@@ -9,13 +9,17 @@
 
 module.exports = function(params) {
 
-  // node modules
+  // define empty params object if no params are passed
+  params = params ? params : {};
+
+  // require dependencies
   var fs = require('fs'),           // utility library for filesystem access
       http = require('http'),       // node's http server
       express = require('express'), // express http server
       app = express(),              // initialize express
       teddy = require('teddy'),     // teddy templating engine
 
+      // configure express
       expressConfig = function() {
 
         // gets full path of mainModule
@@ -44,7 +48,7 @@ module.exports = function(params) {
         }
 
         // set port
-        app.set('port', params.port || process.env.NODE_PORT || 43711);
+        app.set('port', params.port || process.env.NODE_PORT || 80);
       
         // set templating engine
         app.set('views', viewsPath);
