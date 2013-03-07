@@ -32,7 +32,7 @@ npm install .
 Run the app:
 
 ```
-node .
+node app.js
 ```
 
 That's pretty much it.
