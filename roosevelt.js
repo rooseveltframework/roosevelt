@@ -48,7 +48,7 @@ module.exports = function(params) {
         }
 
         // set port
-        app.set('port', params.port || process.env.NODE_PORT || 80);
+        app.set('port', params.port || process.env.NODE_PORT || 43711);
       
         // set templating engine
         app.set('views', viewsPath);
