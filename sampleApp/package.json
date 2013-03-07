@@ -1,8 +1,6 @@
 {
-  "name": "my app name",
-  "version": "0.1.0",
-  "description": "description of my app",
-  "main": "app.js",
+  "name": "appname",
+  "version": "0.1.1",
   "devDependencies": {
     "roosevelt": "*"
   }

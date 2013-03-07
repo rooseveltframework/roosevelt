@@ -23,7 +23,7 @@ module.exports = function(params) {
       expressConfig = function() {
 
         // gets full path of mainModule
-        var appdir = process.mainModule.filename.replace(process.mainModule.filename.match(/[\w-]+\.js/gi)[0], ''),
+        var appdir = process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], ''),
 
             // where the views are located
             viewsPath = params.viewsPath ? appdir + params.viewsPath : appdir + 'mvc/views/',
