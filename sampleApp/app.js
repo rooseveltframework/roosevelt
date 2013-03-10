@@ -19,6 +19,7 @@ var app = require('roosevelt')({
    * imagesPath:      'statics/i/'
    * cssPath:         'statics/css/'
    * jsPath:          'statics/js/'
+   * statics:         { something: 'statics/something', something_else: 'statics/something_else' }
    * customConfigs:   function() { put custom Express config code here }
    */
 });

@@ -22,21 +22,30 @@ module.exports = function(params) {
       // configure express
       expressConfig = function() {
 
-        // gets full path of mainModule
-        var appdir = process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], ''),
-
-            // where the views are located
-            viewsPath = params.viewsPath ? appdir + params.viewsPath : appdir + 'mvc/views/',
-
-            // where the controllers are located
-            controllersPath = params.controllersPath ? appdir + params.controllersPath : appdir + 'mvc/controllers/',
-            
-            // utility vars
+        // declare variables
+        var appdir,           // directory the main module is located in
+            viewsPath,        // where the views are located
+            controllersPath,  // where the controllers are located
             controllerFiles,  // list of controllers files
             i,                // temp var for looping
+            staticFolder,     // temp var for statics iterating
             controllerName,   // temp var for controller iterating
             controllerMethod, // temp var for controller iterating
             controllers = []; // controller methods to be stored here
+
+        // gets full path of mainModule
+        appdir = process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], '');
+
+        // windows support
+    		if (!appdir) {
+    			appdir = process.mainModule.filename.replace(process.mainModule.filename.split('\\')[process.mainModule.filename.split('\\').length - 1], '');
+    		}
+
+        // where the views are located
+        viewsPath = params.viewsPath ? appdir + params.viewsPath : appdir + 'mvc/views/';
+
+        // where the controllers are located
+        controllersPath = params.controllersPath ? appdir + params.controllersPath : appdir + 'mvc/controllers/';
 
         // build list of controller files
         try {
@@ -61,9 +70,17 @@ module.exports = function(params) {
         app.use(express.bodyParser());
       
         // map statics
-        app.use('/i', express.static((params.imagesPath ? appdir + params.imagesPath : appdir + 'statics/i/')));
-        app.use('/css', express.static((params.cssPath ? appdir + params.cssPath : appdir + 'statics/css/')));
-        app.use('/js', express.static((params.jsPath ? appdir + params.jsPath : appdir + 'statics/js/')));
+        if (!params.statics) {
+          app.use('/i', express.static((params.imagesPath ? appdir + params.imagesPath : appdir + 'statics/i/')));
+          app.use('/css', express.static((params.cssPath ? appdir + params.cssPath : appdir + 'statics/css/')));
+          app.use('/js', express.static((params.jsPath ? appdir + params.jsPath : appdir + 'statics/js/')));
+        }
+        else {
+          for (i in params.statics) {
+            staticFolder = params.statics[i];
+            app.use('/' + i, express.static(appdir + staticFolder));
+          }
+        }
       
         // load all controllers
         for (i in controllerFiles) {

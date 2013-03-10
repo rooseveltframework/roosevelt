@@ -55,6 +55,7 @@ var app = require('roosevelt')({
    * imagesPath:      'statics/i/'
    * cssPath:         'statics/css/'
    * jsPath:          'statics/js/'
+   * statics:         { something: 'statics/something', something_else: 'statics/something_else' }
    * customConfigs:   function() { put custom Express config code here }
    */
 });
@@ -74,6 +75,7 @@ Here's what the params mean:
 - imagesPath: path on filesystem to where your image files are located (default is "statics/i")
 - cssPath: path on filesystem to where your CSS files are located (default is "statics/css")
 - jsPath: path on filesystem to where your JS files are located (default is "statics/js")
+- statics: list of paths on filesystem to where your statics are located (setting this param overrides and supersedes imagesPath, cssPath, and jsPath)
 - customConfigs: use this to define a custom function to be executed during the Express config stage if you need one
 
 How do I make new routes?
