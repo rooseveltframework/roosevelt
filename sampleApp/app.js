@@ -7,15 +7,17 @@
 /*! @source https://github.com/kethinov/roosevelt */
 /*jshint camelcase: true, curly: true, eqeqeq: false, forin: false, strict: false, trailing: true, evil: true, devel: true, node: true */
 
-var app = require('roosevelt')({
+GLOBAL.app = require('roosevelt');
+app({
   /**
    * params:
    * 
    * param name:      default value
    * name:            'Roosevelt Express'
    * port:            43711
-   * controllersPath: 'mvc/controllers/'
+   * modelsPath:      'mvc/models/'
    * viewsPath:       'mvc/views/'
+   * controllersPath: 'mvc/controllers/'
    * imagesPath:      'statics/i/'
    * cssPath:         'statics/css/'
    * jsPath:          'statics/js/'

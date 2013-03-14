@@ -43,15 +43,17 @@ What's in app.js?
 Just this:
 
 ```js
-var app = require('roosevelt')({
+GLOBAL.app = require('roosevelt');
+app({
   /**
    * params:
    * 
    * param name:      default value
    * name:            'Roosevelt Express'
    * port:            43711
-   * controllersPath: 'mvc/controllers/'
+   * modelsPath:      'mvc/models/'
    * viewsPath:       'mvc/views/'
+   * controllersPath: 'mvc/controllers/'
    * imagesPath:      'statics/i/'
    * cssPath:         'statics/css/'
    * jsPath:          'statics/js/'
@@ -68,15 +70,16 @@ Params
 
 Here's what the params mean:
 
-- name: the name of your app
-- port: the port your app will run on (default is 43711)
-- controllersPath: path on filesystem to where your controller files are located (default is "mvc/controllers")
-- viewsPath: path on filesystem to where your view files are located (default is "mvc/views")
-- imagesPath: path on filesystem to where your image files are located (default is "statics/i")
-- cssPath: path on filesystem to where your CSS files are located (default is "statics/css")
-- jsPath: path on filesystem to where your JS files are located (default is "statics/js")
-- statics: list of paths on filesystem to where your statics are located (setting this param overrides and supersedes imagesPath, cssPath, and jsPath)
-- customConfigs: use this to define a custom function to be executed during the Express config stage if you need one
+- `name`: the name of your app
+- `port`: the port your app will run on (default is 43711)
+- `modelsPath`: path on filesystem to where your model files are located (default is "mvc/models")
+- `viewsPath`: path on filesystem to where your view files are located (default is "mvc/views")
+- `controllersPath`: path on filesystem to where your controller files are located (default is "mvc/controllers")
+- `imagesPath`: path on filesystem to where your image files are located (default is "statics/i")
+- `cssPath`: path on filesystem to where your CSS files are located (default is "statics/css")
+- `jsPath`: path on filesystem to where your JS files are located (default is "statics/js")
+- `statics`: list of paths on filesystem to where your statics are located (setting this param overrides and supersedes imagesPath, cssPath, and jsPath)
+- `customConfigs`: use this to define a custom function to be executed during the Express config stage if you need one
 
 How do I make new routes?
 =
@@ -91,7 +94,7 @@ For example, suppose we make a new file in `mvc/controllers` called `hello.js`:
 
 ```js
 module.exports = function(req, res) {
-  res.render('hello.html', require('../models/helloModel'));
+  res.render('hello.html', app.loadModel('index'));
 };
 ```
 

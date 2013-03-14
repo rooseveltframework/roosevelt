@@ -7,7 +7,8 @@
 /*! @source https://github.com/kethinov/roosevelt */
 /*jshint camelcase: true, curly: true, eqeqeq: false, forin: false, strict: false, trailing: true, evil: true, devel: true, node: true */
 
-module.exports = function(params) {
+// constructor
+var roosevelt = function(params) {
 
   // define empty params object if no params are passed
   params = params ? params : {};
@@ -40,6 +41,10 @@ module.exports = function(params) {
     		if (!appdir) {
     			appdir = process.mainModule.filename.replace(process.mainModule.filename.split('\\')[process.mainModule.filename.split('\\').length - 1], '');
     		}
+
+        // where the models are located
+        modelsPath = params.modelsPath ? appdir + params.modelsPath : appdir + 'mvc/models/';
+        roosevelt.modelsPath = modelsPath;
 
         // where the views are located
         viewsPath = params.viewsPath ? appdir + params.viewsPath : appdir + 'mvc/views/';
@@ -113,3 +118,11 @@ module.exports = function(params) {
   app.configure(expressConfig);
   app.listen(app.get('port'), startServer);
 };
+
+// flushes require cache and loads a model
+roosevelt.loadModel = function(model) {
+  delete require.cache[require.resolve(roosevelt.modelsPath + model)];
+  return require(roosevelt.modelsPath + model);
+};
+
+module.exports = roosevelt;
