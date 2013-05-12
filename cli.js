@@ -30,7 +30,7 @@ if (cmd && arg) {
     }
   }
 }
-else if (arg && (cmd == '-v' || cmd == '--v' || cmd == '-version' || cmd == '--version')) {
+else if (cmd && (cmd == '-v' || cmd == '--v' || cmd == '-version' || cmd == '--version')) {
   console.log(package.version);
 }
 else {
