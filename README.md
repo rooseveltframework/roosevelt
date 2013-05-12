@@ -107,7 +107,8 @@ module.exports = app.loadModel('helloModel');
 // listens for a "helloReady" event to be emitted by the "mvc/helloModel.js" model
 app.on('helloReady', function(res, model) {
 
-  // when the model emits the event, it will pass along the res (response) object from Express and a fully composed data model
+  // when the model emits the event, it will pass along the res (response) object from Express
+  // along with the fully composed data model from "mvc/helloModel.js"
   res.render('hello.html', model);
 });
 ```
@@ -119,17 +120,18 @@ When the `helloModel.js` is done gathering the data the view will need, it is ex
 As such, your `helloModel.js` file should look something like this:
 
 ```js
-// the passed vars req (request) and res (response) objects comes from Express
+// the passed vars req (request) and res (response) objects come from Express
 var model = function(req, res) {
 
   // do whatever magic you need to do to define your data model here
   model.data = {some: 'data'};
   
   // now fire the event which will pass control back to the controller
-  // pass along res (response) from Express and your data model
+  // pass along res (response) from Express and your new fully composed data model
   app.emit('helloReady', res, model.data);
 };
 
+// this line is necessary to make the model loadable by a controller
 module.exports = model;
 ```
 
@@ -138,7 +140,7 @@ That's it. Just follow that pattern to do MVC in your app.
 LESS CSS support
 ===
 
-When a Roosevelt server is started, it will automatically compile any LESS (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder.
+When a Roosevelt server is started, it will automatically compile any <a href='http://lesscss.org/'>LESS</a> (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder.
 
 In the process it will overwrite any preexisting CSS files of the same name, so be careful.
 
@@ -155,10 +157,12 @@ Here are some things still left to be implemented:
 Dependencies
 ===
 
+- <a href='http://nodejs.org/api/events.html'>events</a> (bundled with Node.js) - a default Node.js module which provides an event emitter
 - <a href='http://nodejs.org/api/fs.html'>fs</a> (bundled with Node.js) - a default Node.js module which provides filesystem access
 - <a href='http://nodejs.org/api/http.html'>http</a> (bundled with Node.js) - a default Node.js module which provides HTTP web server support
 - <a href='http://expressjs.com/'>express</a> - a minimal and flexible node.js web application framework
 - <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
+- <a href='http://lesscss.org/'>LESS</a> - dynamic CSS language extensions
 - <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used by the CLI tool to help you create your sample app
 
 License
