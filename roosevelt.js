@@ -11,7 +11,7 @@
 var roosevelt = function(params) {
 
   // define empty params object if no params are passed
-  params = params ? params : {};
+  params = params || {};
 
   // require dependencies
   var fs = require('fs'),           // utility library for filesystem access
@@ -19,6 +19,8 @@ var roosevelt = function(params) {
       express = require('express'), // express http server
       app = express(),              // initialize express
       teddy = require('teddy'),     // teddy templating engine
+      less = require('less'),       // LESS CSS preprocessor
+      lessParser = new less.Parser,
 
       // configure express
       expressConfig = function() {
@@ -27,7 +29,11 @@ var roosevelt = function(params) {
         var appdir,           // directory the main module is located in
             viewsPath,        // where the views are located
             controllersPath,  // where the controllers are located
-            controllerFiles,  // list of controllers files
+            controllerFiles,  // list of controller files
+            cssPath,          // where the CSS files are located
+            lessPath,         // where the LESS files are located
+            lessFiles,        // list of LESS files
+            lessFile,         // temp var for LESS file iterating
             i,                // temp var for looping
             staticFolder,     // temp var for statics iterating
             controllerName,   // temp var for controller iterating
@@ -61,6 +67,19 @@ var roosevelt = function(params) {
           console.log(e);
         }
 
+        // where the LESS and CSS files are located
+        lessPath = params.lessPath ? appdir + params.lessPath : appdir + 'statics/less/';
+        cssPath = params.cssPath ? appdir + params.cssPath : appdir + 'statics/css/';
+
+        // build list of LESS files
+        try {
+          lessFiles = fs.readdirSync(lessPath);
+        }
+        catch (e) {
+          console.log("\nRoosevelt fatal error: could not load LESS files from " + lessPath + "\n");
+          console.log(e);
+        }
+
         // set port
         app.set('port', params.port || process.env.NODE_PORT || 43711);
       
@@ -77,7 +96,8 @@ var roosevelt = function(params) {
         // map statics
         if (!params.statics) {
           app.use('/i', express.static((params.imagesPath ? appdir + params.imagesPath : appdir + 'statics/i/')));
-          app.use('/css', express.static((params.cssPath ? appdir + params.cssPath : appdir + 'statics/css/')));
+          app.use('/css', express.static(cssPath));
+          app.use('/less', express.static(lessPath));
           app.use('/js', express.static((params.jsPath ? appdir + params.jsPath : appdir + 'statics/js/')));
         }
         else {
@@ -86,7 +106,7 @@ var roosevelt = function(params) {
             app.use('/' + i, express.static(appdir + staticFolder));
           }
         }
-      
+
         // load all controllers
         for (i in controllerFiles) {
           controllerName = controllerFiles[i];
@@ -97,27 +117,55 @@ var roosevelt = function(params) {
           // map routes
           controllers[controllerName] = require(controllersPath + controllerName);
           controllerMethod = controllers[controllerName];
-          app.use('/' + controllerName, controllerMethod);
-          app.use('/' + controllerName + '/*', controllerMethod);
+          app.all('/' + controllerName, controllerMethod);
+          app.all('/' + controllerName + '/*', controllerMethod);
         }
       
         // map index, 404 routes
-        app.use('/', controllers.index);
-        app.use('*', controllers._404);
+        app.all('/', controllers.index);
+        app.all('*', controllers._404);
         
+        // load all LESS files
+        for (i in lessFiles) {
+          lessFile = lessFiles[i];
+          lessParser.parse("/*<filename>"+lessFile+"</filename>*/\n" + fs.readFileSync(lessPath + lessFiles[i], 'utf8'), function(e, css) {
+            if (e) {
+              console.log("\nRoosevelt reported a LESS file parse error: " + e + "\n");
+            }
+            else {
+              var filename = css.rules[0].value.split('/*<filename>')[1].split('.less</filename>*/')[0],
+                  compressedCSS = css.toCSS({compress: true});
+
+              fs.writeFileSync(cssPath + filename + '.css', compressedCSS, 'utf8'); 
+            }
+          });
+        }
+      
         if (params.customConfigs && typeof params.customConfigs === 'function') {
           params.customConfigs();
         }
       },
       
       startServer = function() {
-        console.log((params.name ? params.name : 'Roosevelt Express') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
+        console.log((params.name || 'Roosevelt Express') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
       };
 
   // configure express and start server
   app.configure(expressConfig);
   app.listen(app.get('port'), startServer);
 };
+
+// expose event emitter
+roosevelt.events = require('events');
+roosevelt.emitter = new roosevelt.events.EventEmitter();
+roosevelt.addListener = roosevelt.emitter.addListener;
+roosevelt.on = roosevelt.emitter.on;
+roosevelt.once = roosevelt.emitter.once;
+roosevelt.removeListener = roosevelt.emitter.removeListener;
+roosevelt.removeAllListeners = roosevelt.emitter.removeAllListeners;
+roosevelt.setMaxListeners = roosevelt.emitter.setMaxListeners;
+roosevelt.listeners = roosevelt.emitter.listeners;
+roosevelt.emit = roosevelt.emitter.emit;
 
 // flushes require cache and loads a model
 roosevelt.loadModel = function(model) {

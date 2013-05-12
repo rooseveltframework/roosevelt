@@ -20,6 +20,7 @@ app({
    * controllersPath: 'mvc/controllers/'
    * imagesPath:      'statics/i/'
    * cssPath:         'statics/css/'
+   * lessPath:        'statics/less/'
    * jsPath:          'statics/js/'
    * statics:         { something: 'statics/something', something_else: 'statics/something_else' }
    * customConfigs:   function() { put custom Express config code here }

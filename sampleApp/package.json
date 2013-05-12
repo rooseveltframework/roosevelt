@@ -4,5 +4,8 @@
   "devDependencies": {
     "roosevelt": "*"
   },
-  "private": true
+  "private": true,
+  "scripts": {
+    "start": "nodemon -e js,json,css,less,html app.js"
+  }
 }

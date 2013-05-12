@@ -8,7 +8,8 @@
 /*! @source https://github.com/kethinov/roosevelt */
 /*jshint camelcase: true, curly: true, eqeqeq: false, forin: false, strict: false, trailing: true, evil: true, devel: true, node: true */
 
-var wrench = require('wrench'),
+var package = require('./package.json'),
+    wrench = require('wrench'),
     cmd = process.argv[2],
     arg = process.argv[3],
     showHelp = function() {
@@ -26,6 +27,9 @@ if (cmd && arg) {
     catch (e) {
       console.log(e);      
     }
+  }
+  else if (cmd == '-v' || cmd == '--v' || cmd == '-version' || cmd == '--version') {
+    console.log(package.version);      
   }
 }
 else {

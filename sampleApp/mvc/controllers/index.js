@@ -1,3 +1,5 @@
-module.exports = function(req, res) {
-  res.render('index.html', app.loadModel('index'));
-};
+module.exports = app.loadModel('index');
+
+app.on('indexReady', function(res, model) {
+  res.render('index.html', model);
+});
