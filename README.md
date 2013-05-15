@@ -3,7 +3,7 @@ roosevelt.js
 
 Roosevelt is a web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>teddy.js</a> for HTML templating.
 
-Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app based on the Node.js <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
+Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app based on <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
 
 Installation
 ===
@@ -115,7 +115,7 @@ app.on('helloReady', function(res, model) {
 
 The above controller file will make a new URL endpoint `/hello` on your app and load a model from the `mvc/models` directory called `helloModel.js`.
 
-When the `helloModel.js` is done gathering the data the view will need, it is expected that it will emit an event called `helloReady` which will be caught by your `hello.js` controller so that the `hello.html` view can be rendered with the fully composed model.
+When the `helloModel.js` model is done gathering the data the view will need, it is expected that it will emit an event called `helloReady` which will be caught by your `hello.js` controller so that the `hello.html` view can be rendered with the fully composed model.
 
 As such, your `helloModel.js` file should look something like this:
 
@@ -150,6 +150,7 @@ Missing features
 Here are some things still left to be implemented:
 
 - Support for templating engines other than teddy
+- Support for CSS preprocessors other than LESS
 - HTTPS support
 - Support for more custom HTTP status code error pages
 - Probably many other things
