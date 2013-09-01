@@ -1,6 +1,6 @@
 {
   "name": "roosevelt",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Roosevelt MVC web framework",
   "main": "roosevelt.js",
   "repository": {
@@ -8,12 +8,8 @@
     "url": "git://github.com/kethinov/roosevelt.git"
   },
   "devDependencies": {
-    "fs": "*",
-    "http": "*",
     "express": "*",
-    "events": "*",
     "teddy": "*",
-    "less": "*",
     "less-middleware": "*",
     "wrench": "*"
   },
@@ -34,12 +30,9 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "dependencies": {
-    "fs": "*",
-    "http": "*",
     "express": "*",
-    "events": "*",
     "teddy": "*",
-    "less": "*",
+    "less-middleware": "*",
     "wrench": "*"
   },
   "scripts": {
