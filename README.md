@@ -238,12 +238,8 @@ Here are some things still left to be implemented:
 Dependencies
 ===
 
-- <a href='http://nodejs.org/api/events.html'>events</a> (bundled with Node.js) - a default Node.js module which provides an event emitter
-- <a href='http://nodejs.org/api/fs.html'>fs</a> (bundled with Node.js) - a default Node.js module which provides filesystem access
-- <a href='http://nodejs.org/api/http.html'>http</a> (bundled with Node.js) - a default Node.js module which provides HTTP web server support
 - <a href='http://expressjs.com/'>express</a> - a minimal and flexible node.js web application framework
 - <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
-- <a href='http://lesscss.org/'>LESS</a> - dynamic CSS language extensions
 - <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
 - <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used by the CLI tool to help you create your sample app
 
