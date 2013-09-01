@@ -5,7 +5,7 @@
  */
 
 /*! @source https://github.com/kethinov/roosevelt */
-/*jshint camelcase: true, curly: true, eqeqeq: false, forin: false, strict: false, trailing: true, evil: true, devel: true, node: true */
+/*jshint camelcase: true, curly: true, indent: 2, eqeqeq: false, forin: false, strict: false, trailing: true, evil: true, devel: true, node: true */
 
 // constructor
 var roosevelt = function(params) {
@@ -15,12 +15,10 @@ var roosevelt = function(params) {
 
   // require dependencies
   var fs = require('fs'),           // utility library for filesystem access
-      http = require('http'),       // node's http server
+      path = require('path'),       // utilities for handling and transforming file paths
       express = require('express'), // express http server
       app = express(),              // initialize express
       teddy = require('teddy'),     // teddy templating engine
-      less = require('less'),       // LESS CSS preprocessor
-      lessParser = new less.Parser,
 
       // configure express
       expressConfig = function() {
@@ -32,8 +30,6 @@ var roosevelt = function(params) {
             controllerFiles,  // list of controller files
             cssPath,          // where the CSS files are located
             lessPath,         // where the LESS files are located
-            lessFiles,        // list of LESS files
-            lessFile,         // temp var for LESS file iterating
             i,                // temp var for looping
             staticFolder,     // temp var for statics iterating
             controllerName,   // temp var for controller iterating
@@ -41,16 +37,10 @@ var roosevelt = function(params) {
             controllers = []; // controller methods to be stored here
 
         // gets full path of mainModule
-        appdir = process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], '');
-
-        // windows support
-    		if (!appdir) {
-    			appdir = process.mainModule.filename.replace(process.mainModule.filename.split('\\')[process.mainModule.filename.split('\\').length - 1], '');
-    		}
+        appdir = path.normalize(process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], ''));
 
         // where the models are located
-        modelsPath = params.modelsPath ? appdir + params.modelsPath : appdir + 'mvc/models/';
-        roosevelt.modelsPath = modelsPath;
+        roosevelt.modelsPath = params.modelsPath ? appdir + params.modelsPath : appdir + 'mvc/models/';
 
         // where the views are located
         viewsPath = params.viewsPath ? appdir + params.viewsPath : appdir + 'mvc/views/';
@@ -71,38 +61,43 @@ var roosevelt = function(params) {
         lessPath = params.lessPath ? appdir + params.lessPath : appdir + 'statics/less/';
         cssPath = params.cssPath ? appdir + params.cssPath : appdir + 'statics/css/';
 
-        // build list of LESS files
-        try {
-          lessFiles = fs.readdirSync(lessPath);
-        }
-        catch (e) {
-          console.log("\nRoosevelt fatal error: could not load LESS files from " + lessPath + "\n");
-          console.log(e);
-        }
+        // activate LESS middleware
+        app.use(require('less-middleware')({
+
+          // pathing options
+          src: params.lessPath ? appdir + params.lessPath : appdir + 'statics/less/',
+          dest: params.lessPath ? appdir + params.cssPath : appdir + 'statics/css/',
+          prefix: !params.customStatics ? '/css' : '/',
+          root: lessPath,
+
+          // performance options
+          once: true,       // compiles less files only once per server start (restart server to recompile altered LESS files into new CSS files)
+          yuicompress: true // enables YUI Compressor
+        }));
 
         // set port
         app.set('port', params.port || process.env.NODE_PORT || 43711);
-      
+
         // set templating engine
         app.set('views', viewsPath);
         app.engine('html', teddy.__express);
-      
+
         // dumps http requests to the console
         app.use(express.logger());
-      
+
         // defines req.body by parsing http requests
         app.use(express.bodyParser());
-      
+
         // map statics
-        if (!params.statics) {
+        if (!params.customStatics) {
           app.use('/i', express.static((params.imagesPath ? appdir + params.imagesPath : appdir + 'statics/i/')));
           app.use('/css', express.static(cssPath));
           app.use('/less', express.static(lessPath));
           app.use('/js', express.static((params.jsPath ? appdir + params.jsPath : appdir + 'statics/js/')));
         }
         else {
-          for (i in params.statics) {
-            staticFolder = params.statics[i];
+          for (i in params.customStatics) {
+            staticFolder = params.customStatics[i];
             app.use('/' + i, express.static(appdir + staticFolder));
           }
         }
@@ -110,42 +105,26 @@ var roosevelt = function(params) {
         // load all controllers
         for (i in controllerFiles) {
           controllerName = controllerFiles[i];
-          
+
           // strip .js
           controllerName = controllerName.substring(0, controllerName.length - 3);
-        
+
           // map routes
           controllers[controllerName] = require(controllersPath + controllerName);
           controllerMethod = controllers[controllerName];
           app.all('/' + controllerName, controllerMethod);
           app.all('/' + controllerName + '/*', controllerMethod);
         }
-      
+
         // map index, 404 routes
         app.all('/', controllers.index);
         app.all('*', controllers._404);
-        
-        // load all LESS files
-        for (i in lessFiles) {
-          lessFile = lessFiles[i];
-          lessParser.parse("/*<filename>"+lessFile+"</filename>*/\n" + fs.readFileSync(lessPath + lessFiles[i], 'utf8'), function(e, css) {
-            if (e) {
-              console.log("\nRoosevelt reported a LESS file parse error: " + e + "\n");
-            }
-            else {
-              var filename = css.rules[0].value.split('/*<filename>')[1].split('.less</filename>*/')[0],
-                  compressedCSS = css.toCSS({compress: true});
 
-              fs.writeFileSync(cssPath + filename + '.css', compressedCSS, 'utf8'); 
-            }
-          });
-        }
-      
         if (params.customConfigs && typeof params.customConfigs === 'function') {
           params.customConfigs();
         }
       },
-      
+
       startServer = function() {
         console.log((params.name || 'Roosevelt Express') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
       };

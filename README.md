@@ -1,20 +1,32 @@
 roosevelt.js
 ===
 
-Roosevelt is a web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>teddy.js</a> for HTML templating.
+Roosevelt is a web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>teddy.js</a> for HTML templating and <a href='http://lesscss.org/'>LESS</a> for CSS preprocessing.
 
-Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app based on <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
+Built on <a href='http://expressjs.com/'>Express.js</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app based on <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
 
-Installation
+<img src='sampleApp/statics/i/teddy.jpg' alt=''/>
+
+Why use Roosevelt?
 ===
 
-Install command line tool globally (may require sudo):
+Roosevelt is easy to use and has a low learning curve, unlike many other popular Node.js-based web frameworks.
+
+Reasons for this include:
+
+- Minimal boilerplate to get started. All the magic of <a href='http://expressjs.com/'>Express.js</a> is preconfigured for you.
+- Default directory structure is simple, but easily configured.
+- Concise <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> architecture driven by <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
+- <a href='https://github.com/kethinov/teddy'>Teddy.js</a> HTML templates are much easier to read and maintain than popular alternatives.
+
+Make a Roosevelt app
+===
+
+Install the command line tool globally:
 
 ```
 npm install -g roosevelt
 ```
-Make an app
-===
 
 Use the command line tool to create a sample app:
 
@@ -22,7 +34,7 @@ Use the command line tool to create a sample app:
 roosevelt create myapp
 ```
 
-Change into your new app's directory and then install dependencies (may require sudo):
+Change into your new app's directory and then install dependencies:
 
 ```
 cd myapp
@@ -32,23 +44,34 @@ npm install .
 Run the app:
 
 ```
-node app.js
+npm start
 ```
-
-That's pretty much it.
-
-What's in app.js?
+Default directory structure
 ===
 
-Just this:
+- `app.js`: main app file
+- `mvc`: folder for models, views, and controllers
+  - `controllers`: folder for controller files
+  - `models`: folder for model files
+  - `views`: folder for view files
+- `statics`: folder for CSS, images, JS files, LESS files, and other statics
+  - `css`: folder for CSS files
+  - `i`: folder for image files
+  - `js`: folder for JS files
+  - `less`: folder for LESS files
+
+Minimal boilerplate
+===
+
+All that's in app.js is this:
 
 ```js
-GLOBAL.app = require('roosevelt');
-app({
+global.app = require('roosevelt'), app({
   /**
    * params:
-   * 
+   *
    * param name:      default value
+   *
    * name:            'Roosevelt Express'
    * port:            43711
    * modelsPath:      'mvc/models/'
@@ -58,7 +81,7 @@ app({
    * cssPath:         'statics/css/'
    * lessPath:        'statics/less/'
    * jsPath:          'statics/js/'
-   * statics:         { something: 'statics/something', something_else: 'statics/something_else' }
+   * customStatics:   { something: 'statics/something', something_else: 'statics/something_else' }
    * customConfigs:   function() { put custom Express config code here }
    */
 });
@@ -66,24 +89,81 @@ app({
 
 Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional.
 
-Note: app must be defined as a global variable so that your models and controllers can access its utility methods later.
-
-Parameters
+*Note: `app` must be defined as a global variable so that your models and controllers can access its utility methods later.*
+  
+Configure your app
 ===
 
-Here's what the parameters mean:
+Inside `app.js`, you can pass any of the following optional parameters to Roosevelt:
 
-- `name`: the name of your app
-- `port`: the port your app will run on (default is 43711)
-- `modelsPath`: path on filesystem to where your model files are located (default is "mvc/models")
-- `viewsPath`: path on filesystem to where your view files are located (default is "mvc/views")
-- `controllersPath`: path on filesystem to where your controller files are located (default is "mvc/controllers")
-- `imagesPath`: path on filesystem to where your image files are located (default is "statics/i")
-- `cssPath`: path on filesystem to where your CSS files are located (default is "statics/css")
-- `lessPath`: path on filesystem to where your LESS files are located (default is "statics/less")
-- `jsPath`: path on filesystem to where your JS files are located (default is "statics/js")
-- `statics`: list of paths on filesystem to where your statics are located (setting this param overrides and supersedes imagesPath, cssPath, lessPath, and jsPath)
-- `customConfigs`: use this to define a custom function to be executed during the Express config stage if you need one
+<table>
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Description</th>
+            <th>Default</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th><code>name</code></th>
+            <td>The name of your app.</td>
+            <td><code>Roosevelt Express</code></td>
+        </tr>
+        <tr>
+            <th><code>port</code></th>
+            <td>The port your app will run on.</td>
+            <td><code>43711</code></td>
+        </tr>
+        <tr>
+            <th><code>modelsPath</code></th>
+            <td>Path on filesystem to where your model files are located.</td>
+            <td><code>mvc/models</code></td>
+        </tr>
+        <tr>
+            <th><code>viewsPath</code></th>
+            <td>Path on filesystem to where your view files are located.</td>
+            <td><code>mvc/views</code></td>
+        </tr>
+        <tr>
+            <th><code>controllersPath</code></th>
+            <td>Path on filesystem to where your controller files are located.</td>
+            <td><code>mvc/controllers</code></td>
+        </tr>
+        <tr>
+            <th><code>imagesPath</code></th>
+            <td>Path on filesystem to where your image files are located.</td>
+            <td><code>statics/i</code></td>
+        </tr>
+        <tr>
+            <th><code>cssPath</code></th>
+            <td>Path on filesystem to where your CSS files are located.</td>
+            <td><code>statics/css</code></td>
+        </tr>
+        <tr>
+            <th><code>lessPath</code></th>
+            <td>Path on filesystem to where your LESS files are located.</td>
+            <td><code>statics/less</code></td>
+        </tr>
+        <tr>
+            <th><code>jsPath</code></th>
+            <td>Path on filesystem to where your JS files are located.</td>
+            <td><code>statics/js</code></td>
+        </tr>
+        <tr>
+            <th><code>customStatics</code></th>
+            <td>Custom-defined object containing a list of static paths to map, e.g. `{ something: 'statics/something', something_else: 'statics/something_else' }`. 
+            
+            Note: setting this param overrides and supersedes imagesPath, cssPath, lessPath, and jsPath.</td>
+            <td><code>undefined</code></td>
+        </tr>
+        <tr>
+            <th><code>customConfigs</code></th>
+            <td>Use this to define a custom function to be executed during the Express config stage if you need one, e.g. `function() { put custom Express config code here }`.</td>
+            <td><code>undefined</code></td>
+        </tr>
+    </tbody>
+</table>
 
 Making controllers and models
 ===
@@ -140,9 +220,11 @@ That's it. Just follow that pattern to do MVC in your app.
 LESS CSS support
 ===
 
-When a Roosevelt server is started, it will automatically compile any <a href='http://lesscss.org/'>LESS</a> (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder.
+Roosevelt will automatically compile any <a href='http://lesscss.org/'>LESS</a> (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder.
 
 In the process it will overwrite any preexisting CSS files of the same name, so be careful.
+
+The CSS minifier used by LESS is <a href='http://yui.github.io/yuicompressor/css.html'>YUI Compressor</a>.
 
 Missing features
 ===
@@ -164,6 +246,7 @@ Dependencies
 - <a href='http://expressjs.com/'>express</a> - a minimal and flexible node.js web application framework
 - <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
 - <a href='http://lesscss.org/'>LESS</a> - dynamic CSS language extensions
+- <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
 - <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used by the CLI tool to help you create your sample app
 
 License

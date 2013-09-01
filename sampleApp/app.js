@@ -7,12 +7,12 @@
 /*! @source https://github.com/kethinov/roosevelt */
 /*jshint camelcase: true, curly: true, eqeqeq: false, forin: false, strict: false, trailing: true, evil: true, devel: true, node: true */
 
-GLOBAL.app = require('roosevelt');
-app({
+global.app = require('roosevelt'), app({
   /**
    * params:
-   * 
+   *
    * param name:      default value
+   *
    * name:            'Roosevelt Express'
    * port:            43711
    * modelsPath:      'mvc/models/'
@@ -22,7 +22,7 @@ app({
    * cssPath:         'statics/css/'
    * lessPath:        'statics/less/'
    * jsPath:          'statics/js/'
-   * statics:         { something: 'statics/something', something_else: 'statics/something_else' }
+   * customStatics:   { something: 'statics/something', something_else: 'statics/something_else' }
    * customConfigs:   function() { put custom Express config code here }
    */
 });

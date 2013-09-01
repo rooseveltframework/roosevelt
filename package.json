@@ -1,6 +1,6 @@
 {
   "name": "roosevelt",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Roosevelt MVC web framework",
   "main": "roosevelt.js",
   "repository": {
@@ -14,6 +14,7 @@
     "events": "*",
     "teddy": "*",
     "less": "*",
+    "less-middleware": "*",
     "wrench": "*"
   },
   "keywords": [
@@ -24,8 +25,8 @@
     "teddy",
     "mvc"
   ],
-  "bin": { 
-    "roosevelt": "./cli.js" 
+  "bin": {
+    "roosevelt": "./cli.js"
   },
   "author": "Eric Newport <kethinov@gmail.com>",
   "license": "Creative Commons Attribution 3.0 Unported License",

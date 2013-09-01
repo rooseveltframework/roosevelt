@@ -6,6 +6,6 @@
   },
   "private": true,
   "scripts": {
-    "start": "nodemon -e js,json,css,less,html app.js"
+    "start": "nodemon -e js,json,less,html app.js"
   }
 }
