@@ -72,16 +72,17 @@ global.app = require('roosevelt'), app({
    *
    * param name:      default value
    *
-   * name:            'Roosevelt Express'
-   * port:            43711
-   * modelsPath:      'mvc/models/'
-   * viewsPath:       'mvc/views/'
-   * controllersPath: 'mvc/controllers/'
-   * imagesPath:      'statics/i/'
-   * cssPath:         'statics/css/'
-   * lessPath:        'statics/less/'
-   * jsPath:          'statics/js/'
-   * customStatics:   { something: 'statics/something', something_else: 'statics/something_else' }
+   * name:            'Roosevelt Express',
+   * port:            43711,
+   * modelsPath:      'mvc/models',
+   * viewsPath:       'mvc/views',
+   * controllersPath: 'mvc/controllers',
+   * staticsRoot:     'statics',
+   * imagesPath:      'statics/i',
+   * cssPath:         'statics/css',
+   * lessPath:        'statics/less',
+   * jsPath:          'statics/js',
+   * staticsPrefix:   '', // useful to place a version number in here
    * customConfigs:   function() { put custom Express config code here }
    */
 });
@@ -131,6 +132,11 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
             <td><code>mvc/controllers</code></td>
         </tr>
         <tr>
+            <th><code>staticsRoot</code></th>
+            <td>All files and folders specified in this path will be exposed as statics.</td>
+            <td><code>statics</code></td>
+        </tr>
+        <tr>
             <th><code>imagesPath</code></th>
             <td>Path on filesystem to where your image files are located.</td>
             <td><code>statics/i</code></td>
@@ -151,9 +157,8 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
             <td><code>statics/js</code></td>
         </tr>
         <tr>
-            <th><code>customStatics</code></th>
-            <td>Custom-defined object containing a list of static paths to map, e.g. <br/><code>{ something: 'statics/something',<br/>
-something_else: 'statics/something_else' }</code>.<br/><br/>Note: setting this param overrides and supersedes imagesPath, cssPath, lessPath, and jsPath.</td>
+            <th><code>staticsPrefix</code></th>
+            <td>String to prefix statics with in the URL (useful for versioning statics).</td>
             <td><code>undefined</code></td>
         </tr>
         <tr>
@@ -234,6 +239,7 @@ Here are some things still left to be implemented:
 - Support for CSS preprocessors other than LESS
 - HTTPS support
 - Support for more custom HTTP status code error pages
+- Support for a client-side JS minifier
 - Probably many other things
 
 Dependencies

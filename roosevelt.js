@@ -28,10 +28,12 @@ var roosevelt = function(params) {
             viewsPath,        // where the views are located
             controllersPath,  // where the controllers are located
             controllerFiles,  // list of controller files
+            staticsRoot,      // where the root folder for statics is located
+            imagesPath,       // where the image files are located
             cssPath,          // where the CSS files are located
             lessPath,         // where the LESS files are located
+            jsPath,           // where the JS files are located
             i,                // temp var for looping
-            staticFolder,     // temp var for statics iterating
             controllerName,   // temp var for controller iterating
             controllerMethod, // temp var for controller iterating
             controllers = []; // controller methods to be stored here
@@ -57,17 +59,24 @@ var roosevelt = function(params) {
           console.log(e);
         }
 
-        // where the LESS and CSS files are located
-        lessPath = params.lessPath ? appdir + params.lessPath : appdir + 'statics/less/';
-        cssPath = params.cssPath ? appdir + params.cssPath : appdir + 'statics/css/';
+        // set statics folder
+        staticsRoot = params.staticsRoot || 'statics';
+        staticsRoot += '/';
+        params.staticsPrefix = params.staticsPrefix || '';
+
+        // set custom paths
+        imagesPath  = params.imagesPath ? appdir + params.imagesPath : appdir + staticsRoot + 'i/';
+        cssPath = params.cssPath ? appdir + params.cssPath : appdir + staticsRoot + 'css/';
+        lessPath = params.lessPath ? appdir + params.lessPath : appdir + staticsRoot + 'less/';
+        jsPath  = params.jsPath ? appdir + params.jsPath : appdir + staticsRoot + 'js/';
 
         // activate LESS middleware
         app.use(require('less-middleware')({
 
           // pathing options
-          src: params.lessPath ? appdir + params.lessPath : appdir + 'statics/less/',
-          dest: params.lessPath ? appdir + params.cssPath : appdir + 'statics/css/',
-          prefix: !params.customStatics ? '/css' : '/',
+          src: lessPath,
+          dest: cssPath,
+          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath : '/' + params.cssPath,
           root: lessPath,
 
           // performance options
@@ -89,18 +98,11 @@ var roosevelt = function(params) {
         app.use(express.bodyParser());
 
         // map statics
-        if (!params.customStatics) {
-          app.use('/i', express.static((params.imagesPath ? appdir + params.imagesPath : appdir + 'statics/i/')));
-          app.use('/css', express.static(cssPath));
-          app.use('/less', express.static(lessPath));
-          app.use('/js', express.static((params.jsPath ? appdir + params.jsPath : appdir + 'statics/js/')));
-        }
-        else {
-          for (i in params.customStatics) {
-            staticFolder = params.customStatics[i];
-            app.use('/' + i, express.static(appdir + staticFolder));
-          }
-        }
+        app.use('/' + params.imagesPath, express.static(imagesPath));
+        app.use('/' + params.cssPath, express.static(cssPath));
+        app.use('/' + params.lessPath, express.static(lessPath));
+        app.use('/' + params.jsPath, express.static(jsPath));
+        app.use('/' + params.staticsPrefix, express.static(appdir + staticsRoot));
 
         // load all controllers
         for (i in controllerFiles) {
