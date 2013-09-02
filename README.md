@@ -152,7 +152,7 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
         </tr>
         <tr>
             <th><code>customStatics</code></th>
-            <td>Custom-defined object containing a list of static paths to map, e.g. <br/><code>{ something: 'statics/something',
+            <td>Custom-defined object containing a list of static paths to map, e.g. <br/><code>{ something: 'statics/something',<br/>
 something_else: 'statics/something_else' }</code>.<br/><br/>Note: setting this param overrides and supersedes imagesPath, cssPath, lessPath, and jsPath.</td>
             <td><code>undefined</code></td>
         </tr>
