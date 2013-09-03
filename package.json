@@ -1,6 +1,6 @@
 {
   "name": "roosevelt",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Roosevelt MVC web framework",
   "main": "roosevelt.js",
   "repository": {

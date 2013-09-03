@@ -76,7 +76,7 @@ var roosevelt = function(params) {
           // pathing options
           src: lessPath,
           dest: cssPath,
-          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath : '/' + params.cssPath,
+          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + (params.cssPath || 'css') : '/' + (params.cssPath || 'css'),
           root: lessPath,
 
           // performance options
