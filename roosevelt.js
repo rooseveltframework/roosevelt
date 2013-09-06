@@ -89,6 +89,7 @@ var roosevelt = function(params) {
 
         // set templating engine
         app.set('views', viewsPath);
+        app.set('view engine', 'html');
         app.engine('html', teddy.__express);
 
         // dumps http requests to the console
