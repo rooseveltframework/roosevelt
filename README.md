@@ -1,7 +1,7 @@
 roosevelt.js
 ===
 
-Roosevelt is a web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>teddy.js</a> for HTML templating and <a href='http://lesscss.org/'>LESS</a> for CSS preprocessing.
+Roosevelt is a new web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>teddy.js</a> for HTML templating and <a href='http://lesscss.org/'>LESS</a> for CSS preprocessing.
 
 Built on <a href='http://expressjs.com/'>Express.js</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app based on <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
 
@@ -193,7 +193,7 @@ app.on('helloReady', function(res, model) {
 
   // when the model emits the event, it will pass along the res (response) object from Express
   // along with the fully composed data model from "mvc/helloModel.js"
-  res.render('hello.html', model);
+  res.render('hello', model);
 });
 ```
 
@@ -230,17 +230,22 @@ In the process it will overwrite any preexisting CSS files of the same name, so 
 
 The CSS minifier used by LESS is <a href='http://yui.github.io/yuicompressor/css.html'>YUI Compressor</a>.
 
-Missing features
+Fair warning: Roosevelt is beta software
 ===
 
-Here are some things still left to be implemented:
+Not many apps have been written using Roosevelt yet, so it's entirely possible that there will be some significant bugs.
 
-- Support for templating engines other than teddy
-- Support for CSS preprocessors other than LESS
+Helped wanted!
+===
+
+Pull requests are welcome! Here are some things at the top of the to-do list at the moment:
+
 - HTTPS support
 - Support for more custom HTTP status code error pages
-- Support for a client-side JS minifier
-- Probably many other things
+- Support for templating engines other than teddy
+- Support for CSS preprocessors other than LESS
+- Support for a client-side JS minifier (e.g. Google's Closure compiler)
+- Probably many other things are needed too
 
 Dependencies
 ===

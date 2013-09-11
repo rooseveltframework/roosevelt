@@ -38,6 +38,11 @@ var roosevelt = function(params) {
             controllerMethod, // temp var for controller iterating
             controllers = []; // controller methods to be stored here
 
+        // expose submodules
+        roosevelt.express = express;
+        roosevelt.expressApp = app;
+        roosevelt.teddy = teddy;
+
         // gets full path of mainModule
         appdir = path.normalize(process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], ''));
 
@@ -115,13 +120,29 @@ var roosevelt = function(params) {
           // map routes
           controllers[controllerName] = require(controllersPath + controllerName);
           controllerMethod = controllers[controllerName];
-          app.all('/' + controllerName, controllerMethod);
-          app.all('/' + controllerName + '/*', controllerMethod);
+          if (controllerMethod.middleware) {
+            app.all('/' + controllerName, controllerMethod.middleware, controllerMethod);
+            app.all('/' + controllerName + '/*', controllerMethod.middleware, controllerMethod);
+          }
+          else {
+            app.all('/' + controllerName, controllerMethod);
+            app.all('/' + controllerName + '/*', controllerMethod);
+          }
         }
 
         // map index, 404 routes
-        app.all('/', controllers.index);
-        app.all('*', controllers._404);
+        if (controllers.index.middleware) {
+          app.all('/', controllers.index.middleware, controllers.index);
+        }
+        else {
+          app.all('/', controllers.index);
+        }
+        if (controllers._404.middleware) {
+          app.all('*', controllers._404.middleware, controllers._404);
+        }
+        else {
+          app.all('*', controllers._404);
+        }
 
         if (params.customConfigs && typeof params.customConfigs === 'function') {
           params.customConfigs();
