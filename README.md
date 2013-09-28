@@ -174,7 +174,7 @@ Defining routes (URL endpoints)
 
 A route is the term Express uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
 
-The Roosevelt framework will automatically assign a route corresponding to the name of each file in your controllers directory. As such, to make a new route, just make a new file in the controllers directory.
+The Roosevelt framework will automatically assign a route corresponding to the name of each file in your controllers directory. As such, to make a new route just make a new file in the controllers directory.
 
 How to make a new controller file
 ===
@@ -202,7 +202,7 @@ The first line `module.exports = app.loadModel('helloModel');` explained:
 
 The next line `app.on('helloReady', function(res, model) {` explained:
 
-- This line listens for an event called `helloReady`.
+- This line listens for an event called `helloReady` which will be called later when you create your model.
 - `app.on` is an <a href='http://nodejs.org/api/events.html#events_emitter_on_event_listener'>EventEmitter</a> method which accepts two arguments: `eventName` and `listener`.
 - `helloReady` is the `eventName` we will listen for.
 - `function(res, model) {` is the beginning of the `listener` function that will be executed when the `helloReady` event is fired.
@@ -225,13 +225,9 @@ Here's a sample `helloModel.js`:
 ```js
 var model = function(req, res) {
   model.data = {some: 'data'};
-  
-  // now fire the event which will pass control back to the controller
-  // pass along res (response) from Express and your new fully composed data model
   app.emit('helloReady', res, model.data);
 };
 
-// this line is necessary to make the model loadable by a controller
 module.exports = model;
 ```
 
@@ -245,13 +241,16 @@ The first line `var model = function(req, res) {` explained:
 
 The next line `model.data = {some: 'data'};` is just a sample model definition. In place of this in a real app you would probably have several lines of much more complex code defining `model.data` by pulling data out of a database or from wherever your app's data is stored. How you deal with your app's data is up to you, but the code for it generally speaking should live in your model files.
 
-The last line `app.emit('helloReady', res, model.data);` explained:
+The next line `app.emit('helloReady', res, model.data);` explained:
 
 - With the data model fully composed, this line emits the `helloReady event`, which the controller is listening for.
 - `app.emit` is an <a href='http://nodejs.org/api/events.html#events_emitter_emit_event_arg1_arg2'>EventEmitter</a> method which lets you emit arbitrary events at will.
 - `helloReady` is the name of the event to emit.
 - `res` is the <a href='http://expressjs.com/api.html#res'>response object</a> provided by Express.
 - `model.data` is the data model to pass to the controller. *Note: This must be an object, not a function.*
+
+The last line `module.exports = model;` makes the model loadable by a controller.
+
 
 How to make a new view
 ===
@@ -300,7 +299,7 @@ Here's a handy chart:
         </tr>
         <tr>
             <th><code>app.loadModel</code></th>
-            <td>Calling <code>app.loadModel('modelName')</code> will loads a specified model from your models folder.</td>
+            <td>Calling <code>app.loadModel('modelName')</code> will load a specified model from your models folder.</td>
         </tr>
         <tr>
         	<th colspan='2'>Paths exposed</th>
@@ -381,7 +380,7 @@ Here's a handy chart:
         </tr>
         <tr>
             <th><code>app.emit</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_emit_event_arg1_arg2'>listeners</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
+            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_emit_event_arg1_arg2'>emit</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
         </tr>
     </tbody>
 </table>
@@ -394,7 +393,7 @@ Not many apps have been written using Roosevelt yet, so it's entirely possible t
 
 You should not use Roosevelt in production yet unless you're willing to devote some time to fixing any bugs you might find.
 
-Helped wanted!
+Help wanted!
 ===
 
 Pull requests are welcome! Here are some things at the top of the to-do list at the moment:
