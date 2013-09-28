@@ -218,7 +218,7 @@ The last line `res.render('hello', model);` explained:
 How to make a new model file
 ===
 
-Now that we've defined our `hello.js` controller above, we need to make the `helloModel` model file it refrences.
+Now that we've defined our `hello.js` controller above, we need to make the `helloModel` model file it references.
 
 Here's a sample `helloModel.js`:
 
