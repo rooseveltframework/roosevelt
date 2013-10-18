@@ -1,17 +1,29 @@
 {
   "name": "roosevelt",
-  "version": "0.3.2",
   "description": "Roosevelt MVC web framework",
+  "author": "Eric Newport <kethinov@gmail.com>",
+  "version": "0.3.3",
+  "homepage": "https://github.com/kethinov/roosevelt",
+  "license": "Creative Commons Attribution 3.0 Unported License",
   "main": "roosevelt.js",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/kethinov/roosevelt.git"
-  },
-  "devDependencies": {
+  "readmeFilename": "README.md",
+  "dependencies": {
     "express": "*",
     "teddy": "*",
     "less-middleware": "*",
     "wrench": "*"
+  },
+  "jshintConfig": {
+    "camelcase": true,
+    "curly": true,
+    "devel": true,
+    "evil": true,
+    "indent": 2,
+    "node": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/kethinov/roosevelt.git"
   },
   "keywords": [
     "roosevelt.js",
@@ -24,18 +36,10 @@
   "bin": {
     "roosevelt": "./cli.js"
   },
-  "author": "Eric Newport <kethinov@gmail.com>",
-  "license": "Creative Commons Attribution 3.0 Unported License",
-  "readmeFilename": "README.md",
+  "preferGlobal": true,
   "_from": "roosevelt@*",
   "gitHead": "",
-  "dependencies": {
-    "express": "*",
-    "teddy": "*",
-    "less-middleware": "*",
-    "wrench": "*"
-  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jshint roosevelt.js cli.js sampleApp/app.js sampleApp/mvc/controllers/_404.js sampleApp/mvc/controllers/index.js sampleApp/mvc/models/_404.js sampleApp/mvc/models/index.js"
   }
 }

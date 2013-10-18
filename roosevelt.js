@@ -1,13 +1,4 @@
-/**
- * @fileoverview  Roosevelt MVC web framework
- * @author        Eric Newport (kethinov)
- * @license       Creative Commons Attribution 3.0 Unported License http://creativecommons.org/licenses/by/3.0/deed.en_US
- */
-
-/*! @source https://github.com/kethinov/roosevelt */
-/*jshint camelcase: true, caseindent: true, curly: true, devel: true, evil: true, indent: 2, node: true */
-
-// constructor
+// @namespace
 var roosevelt = function(params) {
 
   // define empty params object if no params are passed

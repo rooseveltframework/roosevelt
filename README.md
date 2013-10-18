@@ -66,7 +66,8 @@ Minimal boilerplate
 All that's in app.js is this:
 
 ```js
-global.app = require('roosevelt'), app({
+global.app = require('roosevelt');
+app({
   /**
    * params:
    *
@@ -176,7 +177,7 @@ A route is the term Express uses for URL endpoints, such as `http://yoursite/blo
 
 The Roosevelt framework will automatically assign a route corresponding to the name of each file in your controllers directory. As such, to make a new route just make a new file in the controllers directory.
 
-How to make a new controller file
+Making controller files
 ===
 
 Suppose we make a controller file called `hello.js`. Because the controller's file name is `hello.js`, Roosevelt will make a new URL endpoint `http://yoursite/hello` on your app.
@@ -215,7 +216,7 @@ The last line `res.render('hello', model);` explained:
 - `res.render` is the <a href='http://expressjs.com/api.html#app.render'>template rendering method provided by Express</a>. If no file extension is provided to the template name, Roosevelt will assume the extension is `.html`.
 - `hello` is the name of the template file (sans file extension) to render.
 
-How to make a new model file
+Making model files
 ===
 
 Now that we've defined our `hello.js` controller above, we need to make the `helloModel` model file it references.
@@ -252,12 +253,12 @@ The next line `app.emit('helloReady', res, model.data);` explained:
 The last line `module.exports = model;` makes the model loadable by a controller.
 
 
-How to make a new view
+Making view files
 ===
 
 Views are <a href='https://github.com/kethinov/teddy'>Teddy</a> templates. See the Teddy documentation for information about how to author Teddy templates.
 
-How to use LESS with Roosevelt
+Using LESS with Roosevelt
 ===
 
 Using <a href='http://lesscss.org/'>LESS</a> with Roosevelt is optional.

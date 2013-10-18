@@ -1,13 +1,4 @@
 #! /usr/bin/env node
-/**
- * @fileoverview  Roosevelt MVC web framework CLI tool
- * @author        Eric Newport (kethinov)
- * @license       Creative Commons Attribution 3.0 Unported License http://creativecommons.org/licenses/by/3.0/deed.en_US
- */
-
-/*! @source https://github.com/kethinov/roosevelt */
-/*jshint camelcase: true, caseindent: true, curly: true, devel: true, evil: true, indent: 2, node: true */
-
 var package = require('./package.json'),
     wrench = require('wrench'),
     cmd = process.argv[2],
