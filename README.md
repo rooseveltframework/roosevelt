@@ -110,7 +110,7 @@ Configure your app
 
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
 
-Inside `app.js`, you can pass any of the below optional parameters to Roosevelt. Each (except the events) can also be defined in `package.json` under `"rooseveltConfig"`.
+Inside `app.js`, you can pass any of the below optional parameters to Roosevelt. Each can also be defined in `package.json` under `"rooseveltConfig"`.
 
 <table>
     <thead>
@@ -182,6 +182,11 @@ Inside `app.js`, you can pass any of the below optional parameters to Roosevelt.
             <td><code>30000</code> (30 seconds)</td>
         </tr>
     </tbody>
+</table>
+
+Roosevelt also provides a series of events you can attach code to by passing a function to the desired event as a parameter.
+
+<table>
 	<thead>
         <tr>
             <th>Event</th>
@@ -371,7 +376,7 @@ Pull requests are welcome! Here are some things at the top of the to-do list at 
 Dependencies
 ===
 
-- <a href='http://expressjs.com/'>express</a> - a minimal and flexible node.js web application framework
+- <a href='http://expressjs.com/'>express</a> - a minimal and flexible Node.js web application framework
 - <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
 - <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
 - <a href='https://github.com/felixge/node-formidable'>formidable</a> - a Node.js module for parsing form data, especially file uploads
