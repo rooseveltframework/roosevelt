@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "Creative Commons Attribution 4.0 International License",
   "main": "roosevelt.js",
@@ -41,6 +41,6 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "jshint roosevelt.js cli.js sampleApp/app.js sampleApp/mvc/controllers/_404.js sampleApp/mvc/controllers/index.js sampleApp/mvc/models/_404.js sampleApp/mvc/models/index.js"
+    "test": "jshint roosevelt.js cli.js sampleApp/app.js sampleApp/mvc/controllers/404.js sampleApp/mvc/controllers/homepage.js sampleApp/mvc/controllers/robots.txt.js sampleApp/mvc/models/homepage.js"
   }
 }

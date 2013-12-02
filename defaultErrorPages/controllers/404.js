@@ -1,11 +1,7 @@
 module.exports = function(app) {
   app.all('*', function(req, res) {
     res.status(404);
-    res.render('404', {
-      content: {
-        appTitle: 'roosevelt sample app',
-        pageTitle: 'roosevelt sample app - 404 not found'
-      },
+    res.render(__dirname + '/../views/404', {
       host: req.host,
       url: req.url,
       appName: app.get('appName'),

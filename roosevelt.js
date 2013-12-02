@@ -43,7 +43,10 @@ module.exports = function(params) {
         package.rooseveltConfig = package.rooseveltConfig || {};
         app.set('package', package);
 
-        // define staticsRoot first because other params depend on it
+        // set app name from package.json
+        app.set('appName', package.name || 'Roosevelt Express');
+
+        // define staticsRoot before other params because other params depend on it
         params.staticsRoot = params.staticsRoot || package.rooseveltConfig.staticsRoot || 'statics/';
         app.set('staticsRoot', path.normalize(params.staticsRoot));
 
@@ -54,7 +57,9 @@ module.exports = function(params) {
           viewsPath: params.viewsPath || package.rooseveltConfig.viewsPath || 'mvc/views/',
           controllersPath: params.controllersPath || package.rooseveltConfig.controllersPath || 'mvc/controllers/',
           notFoundPage: params.notFoundPage || package.rooseveltConfig.notFoundPage || '404.js',
-          staticsRoot: params.staticsRoot, // defaults hierarchy defined above because below params depend on this one being predefined
+          internalServerErrorPage: params.internalServerErrorPage || package.rooseveltConfig.internalServerErrorPage || '500.js',
+          serviceUnavailablePage: params.serviceUnavailablePage || package.rooseveltConfig.serviceUnavailablePage || '503.js',
+          staticsRoot: params.staticsRoot, // default hierarchy defined above because below params depend on this one being predefined
           cssPath: params.cssPath || package.rooseveltConfig.cssPath || params.staticsRoot + 'css/',
           lessPath: params.lessPath || package.rooseveltConfig.lessPath || params.staticsRoot + 'less/',
           prefixStaticsWithVersion: params.prefixStaticsWithVersion || package.rooseveltConfig.prefixStaticsWithVersion || false,
@@ -87,9 +92,24 @@ module.exports = function(params) {
         app.set('cssPath', path.normalize(appDir + params.cssPath));
         app.set('lessPath', path.normalize(appDir + params.lessPath));
 
-        // some final param post processing
-        params.notFoundPage = app.get('controllersPath') + params.notFoundPage;
+        // determine statics prefix if any
         params.staticsPrefix = params.prefixStaticsWithVersion ? package.version || '' : '';
+
+        // ensure 404 page exists
+        params.notFoundPage = app.get('controllersPath') + params.notFoundPage;
+        if (!fs.existsSync(params.notFoundPage)) {
+          params.notFoundPage = appDir + 'node_modules/roosevelt/defaultErrorPages/controllers/404.js';
+        }
+
+        // ensure 500 page exists
+        if (!fs.existsSync(params.internalServerErrorPage)) {
+          params.internalServerErrorPage = appDir + 'node_modules/roosevelt/defaultErrorPages/controllers/500.js';
+        }
+
+        // ensure 503 page exists
+        if (!fs.existsSync(params.serviceUnavailablePage)) {
+          params.serviceUnavailablePage = appDir + 'node_modules/roosevelt/defaultErrorPages/controllers/503.js';
+        }
 
         app.set('params', params);
 
@@ -125,7 +145,7 @@ module.exports = function(params) {
           // pathing options
           src: app.get('lessPath'),
           dest: app.get('cssPath'),
-          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath : '/' + params.cssPath,
+          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath.replace(app.get('staticsRoot'), '') : '/' + params.cssPath.replace(app.get('staticsRoot'), ''),
           root: '/',
 
           // performance options
@@ -146,8 +166,7 @@ module.exports = function(params) {
             next();
           }
           else {
-            res.setHeader('Connection', 'close');
-            res.send(503, 'Server is in the process of shutting down.');
+            require(params.serviceUnavailablePage)(app, req, res);
           }
         });
 
@@ -158,6 +177,15 @@ module.exports = function(params) {
         app.use(express.json());
         app.use(express.urlencoded());
 
+        // enables PUT and DELETE requests via <input type='hidden' name='_method' value='put'/> and suchlike
+        app.use(express.methodOverride());
+
+        // 500 internal server error page
+        app.use(function(err, req, res, next){
+          console.error(err.stack);
+          require(params.internalServerErrorPage)(app, err, req, res);
+        });
+
         // set templating engine
         app.set('views', app.get('viewsPath'));
         app.set('view engine', 'html');
@@ -165,7 +193,7 @@ module.exports = function(params) {
 
         // list all view files to determine number of extensions
         var viewFiles = walkSync(app.get('viewsPath')),
-            extensions = [];
+            extensions = {};
 
         // make list of extensions
         viewFiles.forEach(function(file) {
@@ -174,8 +202,8 @@ module.exports = function(params) {
         });
 
         // use teddy as renderer for all view file types
-        extensions.forEach(function(i) {
-          app.engine(i, app.get('teddy').__express);
+        Object.keys(extensions).forEach(function(extension) {
+          app.engine(extension, app.get('teddy').__express);
         });
       },
 
@@ -252,6 +280,7 @@ module.exports = function(params) {
 
         // map statics
         app.use('/' + params.staticsPrefix, express.static(appDir + app.get('staticsRoot')));
+        app.use(app.router);
 
         // build list of controller files
         var controllerFiles;
@@ -303,7 +332,7 @@ module.exports = function(params) {
 
       // callback for when server has started
       startServer = function() {
-        console.log((package.name || 'Roosevelt Express') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
+        console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
       },
 
       config = app.configure(expressConfig),

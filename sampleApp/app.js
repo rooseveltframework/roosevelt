@@ -1,4 +1,4 @@
-require('../roosevelt')({
+require('roosevelt')({
 /*
   param name:               default value
 

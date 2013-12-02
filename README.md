@@ -147,6 +147,16 @@ Inside `app.js`, you can pass any of the below optional parameters to Roosevelt.
             <td><code>404.js</code></td>
         </tr>
         <tr>
+            <th><code>internalServerErrorPage</code></th>
+            <td>Relative path on filesystem to where your "500 Internal Server Error" controller is located. If you do not supply one, Roosevelt will use its default 500 controller instead.</td>
+            <td><code>500.js</code></td>
+        </tr>
+        <tr>
+            <th><code>serviceUnavailablePage</code></th>
+            <td>Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead.</td>
+            <td><code>503.js</code></td>
+        </tr>
+        <tr>
             <th><code>staticsRoot</code></th>
             <td>Path on filesystem to where your static assets are located. All files and folders specified in this path will be exposed as statics.</td>
             <td><code>statics</code></td>
@@ -313,6 +323,10 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
         <tr>
             <th><code>formidable</code></th>
             <td>The <a href='https://github.com/felixge/node-formidable'>formidable</a>  Node.js module.</td>
+        </tr>
+        <tr>
+            <th><code>appName</code></th>
+            <td>The name of your app derived from <code>package.json</code>. Uses "Roosevelt Express" if no name is supplied.</td>
         </tr>
         <tr>
             <th><code>appDir</code></th>
