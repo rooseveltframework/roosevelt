@@ -5,7 +5,7 @@ Roosevelt is a new web framework for <a href='http://nodejs.org/'>Node.js</a> wh
 
 Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app.
 
-<img src='sampleApp/statics/i/teddy.jpg' alt=''/>
+<img src='sampleApp/statics/images/teddy.jpg' alt=''/>
 
 Why use Roosevelt?
 ===
