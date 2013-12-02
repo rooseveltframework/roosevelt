@@ -168,7 +168,7 @@ Inside `app.js`, you can pass any of the below optional parameters to Roosevelt.
         </tr>
         <tr>
             <th><code>versionNumberLessVar</code></th>
-            <td>When this option is activated, Roosevelt will write a file named <code>version.less</code> to your <code>less</code> directory containing a variable with your desired name populated with your app's version number derived from <code>package.json</code>.<br/><br/>This option is disabled by default. Activate it by supplying a desired variable name to the parameter.<br/><br/>This feature is useful in conjunction with <code>prefixStaticsWithVersion</code>, as it allows you to construct URLs in your LESS files such as <code>url('/@{staticsVersion}/images/someImage.png')</code>, allowing you to version all of your statics at once simply by changing your app's version number in <code>package.json</code>.</td>
+            <td>When this option is activated, Roosevelt will write a file named <code>version.less</code> to your <code>less</code> directory containing a variable with your desired name populated with your app's version number derived from <code>package.json</code>.<br/><br/>This option is disabled by default. Activate it by supplying a desired variable name to the parameter.<br/><br/>This feature is useful in conjunction with <code>prefixStaticsWithVersion</code>, as it allows you to construct URLs in your LESS files such as <code>url('/@{staticsVersion}/images/i.png')</code>, allowing you to version all of your statics at once simply by changing your app's version number in <code>package.json</code>.</td>
             <td><code>undefined</code></td>
         </tr>
         <tr>
