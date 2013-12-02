@@ -1,9 +1,9 @@
-roosevelt.js
+roosevelt.js [![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt)
 ===
 
 Roosevelt is a new web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>Teddy</a> for HTML templating and <a href='http://lesscss.org/'>LESS</a> for CSS preprocessing.
 
-Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app based on <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
+Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app.
 
 <img src='sampleApp/statics/i/teddy.jpg' alt=''/>
 
@@ -16,7 +16,7 @@ Reasons for this include:
 
 - Minimal boilerplate to get started. All the magic of <a href='http://expressjs.com/'>Express</a> is preconfigured for you.
 - Default directory structure is simple, but easily configured.
-- Concise <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> architecture driven by <a href='http://nodejs.org/api/events.html'>EventEmitter</a>.
+- Concise <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> architecture.
 - <a href='https://github.com/kethinov/teddy'>Teddy</a> HTML templates are much easier to read and maintain than popular alternatives.
 
 Make a Roosevelt app
@@ -56,7 +56,7 @@ Default directory structure
   - `views`: folder for view files
 - `statics`: folder for CSS, images, JS files, LESS files, and other statics
   - `css`: folder for CSS files
-  - `i`: folder for image files
+  - `images`: folder for image files
   - `js`: folder for JS files
   - `less`: folder for LESS files
 
@@ -66,37 +66,51 @@ Minimal boilerplate
 All that's in app.js is this:
 
 ```js
-global.app = require('roosevelt');
-app({
-  /**
-   * params:
-   *
-   * param name:      default value
-   *
-   * name:            'Roosevelt Express',
-   * port:            43711,
-   * modelsPath:      'mvc/models',
-   * viewsPath:       'mvc/views',
-   * controllersPath: 'mvc/controllers',
-   * staticsRoot:     'statics',
-   * imagesPath:      'statics/i',
-   * cssPath:         'statics/css',
-   * lessPath:        'statics/less',
-   * jsPath:          'statics/js',
-   * staticsPrefix:   '', // useful to place a version number in here
-   * customConfigs:   function() { put custom Express config code here }
-   */
+require('roosevelt')({
+  /*
+    param name:               default value
+
+    name:                     'Roosevelt Express',
+    port:                     43711,
+    modelsPath:               'mvc/models',
+    viewsPath:                'mvc/views',
+    controllersPath:          'mvc/controllers',
+    notFoundPage:             '404.js',
+    staticsRoot:              'statics',
+    cssPath:                  'statics/css',
+    lessPath:                 'statics/less',
+    prefixStaticsWithVersion: false, // changes static urls like /css/file.css to /{versionNumber}/css/file.css
+    versionNumberLessVar:     '', // populate statics/less/version.less with a LESS variable of this name
+    formidableSettings:       {}, // settings to pass to formidable: https://github.com/felixge/node-formidable#api
+
+    events:                   sample function
+
+    onServerStart:            function(app) {
+                                // code which executes when the server starts
+                              },
+    onReqStart:               function(req, res, next) {
+                                // code which executes at the beginning of each request
+                                // must call next() when your code finishes
+                              },
+    onReqBeforeRoute:         function(req, res, next) {
+                                // code which executes just before the controller is executed
+                                // must call next() when your code finishes
+                              },
+    onReqAfterRoute:          function(req, res) {
+                                // code which executes after the request finishes
+                              }
+  */
 });
 ```
 
 Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional.
-
-*Note: `app` must be defined as a global variable so that your models and controllers can access its utility methods later.*
   
 Configure your app
 ===
 
-Inside `app.js`, you can pass any of the following optional parameters to Roosevelt:
+Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
+
+Inside `app.js`, you can pass any of the below optional parameters to Roosevelt. Each (except the events) can also be defined in `package.json` under `"rooseveltConfig"`.
 
 <table>
     <thead>
@@ -108,14 +122,9 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
     </thead>
     <tbody>
         <tr>
-            <th><code>name</code></th>
-            <td>The name of your app.</td>
-            <td><code>Roosevelt Express</code></td>
-        </tr>
-        <tr>
             <th><code>port</code></th>
             <td>The port your app will run on.</td>
-            <td><code>43711</code></td>
+            <td>Either <code>process.env.NODE_PORT</code> or if that's undefined, then <code>43711</code></td>
         </tr>
         <tr>
             <th><code>modelsPath</code></th>
@@ -133,14 +142,14 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
             <td><code>mvc/controllers</code></td>
         </tr>
         <tr>
-            <th><code>staticsRoot</code></th>
-            <td>All files and folders specified in this path will be exposed as statics.</td>
-            <td><code>statics</code></td>
+            <th><code>notFoundPage</code></th>
+            <td>Relative path on filesystem to where your "404 Not Found" controller is located. If you do not supply one, Roosevelt will use its default 404 controller instead.</td>
+            <td><code>404.js</code></td>
         </tr>
         <tr>
-            <th><code>imagesPath</code></th>
-            <td>Path on filesystem to where your image files are located.</td>
-            <td><code>statics/i</code></td>
+            <th><code>staticsRoot</code></th>
+            <td>Path on filesystem to where your static assets are located. All files and folders specified in this path will be exposed as statics.</td>
+            <td><code>statics</code></td>
         </tr>
         <tr>
             <th><code>cssPath</code></th>
@@ -153,19 +162,74 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
             <td><code>statics/less</code></td>
         </tr>
         <tr>
-            <th><code>jsPath</code></th>
-            <td>Path on filesystem to where your JS files are located.</td>
-            <td><code>statics/js</code></td>
+            <th><code>prefixStaticsWithVersion</code></th>
+            <td>If set to true, Roosevelt will prepend your app's version number from <code>package.json</code> to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.</td>
+            <td><code>false</code></td>
         </tr>
         <tr>
-            <th><code>staticsPrefix</code></th>
-            <td>String to prefix statics with in the URL (useful for versioning statics).</td>
+            <th><code>versionNumberLessVar</code></th>
+            <td>When this option is activated, Roosevelt will write a file named <code>version.less</code> to your <code>less</code> directory containing a variable with your desired name populated with your app's version number derived from <code>package.json</code>.<br/><br/>This option is disabled by default. Activate it by supplying a desired variable name to the parameter.<br/><br/>This feature is useful in conjunction with <code>prefixStaticsWithVersion</code>, as it allows you to construct URLs in your LESS files such as <code>url('/@{staticsVersion}/images/someImage.png')</code>, allowing you to version all of your statics at once simply by changing your app's version number in <code>package.json</code>.</td>
             <td><code>undefined</code></td>
         </tr>
         <tr>
-            <th><code>customConfigs</code></th>
-            <td>Use this to define a custom function to be executed during the Express config stage if you need one, e.g. <br/><code>function() { put custom Express config code here }</code>.</td>
+            <th><code>formidableSettings</code></th>
+            <td>Settings to pass along to <a href='https://github.com/felixge/node-formidable'>formidable</a> using <a href='https://github.com/felixge/node-formidable#api'>formidable's API</a>.</td>
             <td><code>undefined</code></td>
+        </tr>
+        <tr>
+            <th><code>shutdownTimeout</code></th>
+            <td>Maximum amount of time given to Roosevelt to gracefully shut itself down when sent the kill signal.</td>
+            <td><code>30000</code> (30 seconds)</td>
+        </tr>
+    </tbody>
+	<thead>
+        <tr>
+            <th>Event</th>
+            <th>Description</th>
+            <th>Arguments passed</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th><code>onServerStart</code></th>
+            <td>Fired when the server starts.</td>
+            <td>
+            	<ul>
+            		<li><code>app</code>: the <a href='http://expressjs.com/api.html#express'>Express app</a> created by Roosevelt.</li>
+            	</ul>
+            </td>
+        </tr>
+        <tr>
+            <th><code>onReqStart</code></th>
+            <td>Fired at the beginning of each new request.</td>
+            <td>
+            	<ul>
+            		<li><code>req</code>: the <a href='http://expressjs.com/api.html#req.params'>request object</a> created by Express.</li>
+            		<li><code>res</code>: the <a href='http://expressjs.com/api.html#res.status'>response object</a>  created by Express.</li>
+            		<li><code>next</code>: callback to continue with the request. Must be called to continue the request.</li>
+            	</ul>
+            </td>
+        </tr>
+        <tr>
+            <th><code>onReqBeforeRoute</code></th>
+            <td>Fired just before executing the controller.</td>
+            <td>
+            	<ul>
+            		<li><code>req</code>: the <a href='http://expressjs.com/api.html#req.params'>request object</a> created by Express.</li>
+            		<li><code>res</code>: the <a href='http://expressjs.com/api.html#res.status'>response object</a>  created by Express.</li>
+            		<li><code>next</code>: callback to continue with the request. Must be called to continue the request.</li>
+            	</ul>
+            </td>
+        </tr>
+        <tr>
+            <th><code>onReqAfterRoute</code></th>
+            <td>Fired after the request ends.</td>
+            <td>
+            	<ul>
+            		<li><code>req</code>: the <a href='http://expressjs.com/api.html#req.params'>request object</a> created by Express.</li>
+            		<li><code>res</code>: the <a href='http://expressjs.com/api.html#res.status'>response object</a> created by Express.</li>
+            	</ul>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -173,85 +237,37 @@ Inside `app.js`, you can pass any of the following optional parameters to Roosev
 Defining routes (URL endpoints)
 ===
 
-A route is the term Express uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
-
-The Roosevelt framework will automatically assign a route corresponding to the name of each file in your controllers directory. As such, to make a new route just make a new file in the controllers directory.
+A route is the term <a href='http://expressjs.com'>Express</a> uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`. To make a new route, just make a new file in the controllers directory.
 
 Making controller files
 ===
 
-Suppose we make a controller file called `hello.js`. Because the controller's file name is `hello.js`, Roosevelt will make a new URL endpoint `http://yoursite/hello` on your app.
-
-Here's some sample code for your controller:
+Controller files are just <a href='http://expressjs.com/api.html#app.VERB'>standard Express routes</a>. For example: 
 
 ```js
-module.exports = app.loadModel('helloModel');
+module.exports = function(app) { // app is the Express app created by Roosevelt
 
-app.on('helloReady', function(res, model) {
-  res.render('hello', model);
-});
-```
-
-Here's a line-by-line explanation of how it works:
-
-The first line `module.exports = app.loadModel('helloModel');` explained:
-
-- This line loads the `helloModel` data model.
-- `app.loadModel` is Roosevelt's method for loading a model from your models directory.
-- `helloModel` is the name of the model file we're loading in this example code.
-- Assigning `app.loadModel('helloModel')` to `module.exports` allows Roosevelt to load and execute the code in your model file each time someone visits `http://yoursite/hello`.
-
-The next line `app.on('helloReady', function(res, model) {` explained:
-
-- This line listens for an event called `helloReady` which will be called later when you create your model.
-- `app.on` is an <a href='http://nodejs.org/api/events.html#events_emitter_on_event_listener'>EventEmitter</a> method which accepts two arguments: `eventName` and `listener`.
-- `helloReady` is the `eventName` we will listen for.
-- `function(res, model) {` is the beginning of the `listener` function that will be executed when the `helloReady` event is fired.
-- `res` is the <a href='http://expressjs.com/api.html#res'>response object</a> provided by Express.
-- `model` is the data model provided by `helloModel`.
-
-The last line `res.render('hello', model);` explained:
-
-- This line renders a template called `hello.html` when the `helloReady` event is fired.
-- `res.render` is the <a href='http://expressjs.com/api.html#app.render'>template rendering method provided by Express</a>. If no file extension is provided to the template name, Roosevelt will assume the extension is `.html`.
-- `hello` is the name of the template file (sans file extension) to render.
+  // standard Express route
+  app.get('/about', function(req, res) {
+  
+    // use Roosevelt to load a data model
+    var model = app.get('model')('about');
+    
+    // render a Teddy template and pass it the model
+    res.render('about', model);
+  });
+};```
 
 Making model files
 ===
 
-Now that we've defined our `hello.js` controller above, we need to make the `helloModel` model file it references.
+Since the above example requires a model file named `about`, you will need to make that too. To do that, place a file named `about.js` in `mvc/models`.
 
-Here's a sample `helloModel.js`:
+Here's a simple example `about.js` data model:
 
 ```js
-var model = function(req, res) {
-  model.data = {some: 'data'};
-  app.emit('helloReady', res, model.data);
-};
-
-module.exports = model;
+module.exports = {some: 'data'};
 ```
-
-Here's a line-by-line explanation of how it works:
-
-The first line `var model = function(req, res) {` explained:
-
-- This line defines your model as a standard <a href='http://expressjs.com/api.html#app.VERB'>Express route callback</a>.
-- `req` is a standard Express <a href='http://expressjs.com/api.html#req.params'>Express request object</a>.
-- `res` is a standard Express <a href='http://expressjs.com/api.html#res.status'>Express response object</a>.
-
-The next line `model.data = {some: 'data'};` is just a sample model definition. In place of this in a real app you would probably have several lines of much more complex code defining `model.data` by pulling data out of a database or from wherever your app's data is stored. How you deal with your app's data is up to you, but the code for it generally speaking should live in your model files.
-
-The next line `app.emit('helloReady', res, model.data);` explained:
-
-- With the data model fully composed, this line emits the `helloReady event`, which the controller is listening for.
-- `app.emit` is an <a href='http://nodejs.org/api/events.html#events_emitter_emit_event_arg1_arg2'>EventEmitter</a> method which lets you emit arbitrary events at will.
-- `helloReady` is the name of the event to emit.
-- `res` is the <a href='http://expressjs.com/api.html#res'>response object</a> provided by Express.
-- `model.data` is the data model to pass to the controller. *Note: This must be an object, not a function.*
-
-The last line `module.exports = model;` makes the model loadable by a controller.
-
 
 Making view files
 ===
@@ -267,121 +283,66 @@ Roosevelt will automatically compile any (`.less`) files in your LESS folder dow
 
 The CSS minifier used by LESS is <a href='http://yui.github.io/yuicompressor/css.html'>YUI Compressor</a>.
 
-Objects exposed by Roosevelt
+Express variables exposed by Roosevelt
 ===
 
-After you `require('roosevelt')`, assign it to something like `global.app`, and then call `app()`, you might want to know what objects `app()` exposes.
-
-Here's a handy chart:
+Roosevelt supplies several variables to Express that you may find handy. Access them using `app.get('variableName')`.
 
 <table>
     <thead>
         <tr>
-            <th>Object</th>
+            <th>Express variable</th>
             <th>Description</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <th><code>app</code></th>
-            <td>Your Roosevelt app. At a basic level, a Roosevelt app is just an <a href='http://expressjs.com/api.html#express'>Express app</a> with some settings changed and with the new member objects and methods outlined below.</td>
+            <th><code>express</code></th>
+            <td>The <a href='http://expressjs.com'>express</a> Node.js module.</td>
         </tr>
         <tr>
-            <th><code>app.params</code></th>
-            <td>The list of parameters you passed to Roosevelt.</td>
+            <th><code>teddy</code></th>
+            <td>The <a href='https://github.com/kethinov/teddy'>teddy</a> Node.js module.</td>
         </tr>
         <tr>
-            <th><code>app.express</code></th>
-            <td>The <a href='http://expressjs.com/api.html#express'>Express object</a> created by Roosevelt.</td>
+            <th><code>formidable</code></th>
+            <td>The <a href='https://github.com/felixge/node-formidable'>formidable</a>  Node.js module.</td>
         </tr>
         <tr>
-            <th><code>app.teddy</code></th>
-            <td>The <a href='https://github.com/kethinov/teddy'>Teddy object</a> created by Roosevelt.</td>
+            <th><code>appDir</code></th>
+            <td>The directory the main module is in.</td>
         </tr>
         <tr>
-            <th><code>app.loadModel</code></th>
-            <td>Calling <code>app.loadModel('modelName')</code> will load a specified model from your models folder.</td>
+            <th><code>package</code></th>
+            <td>The contents of <code>package.json</code></td>
         </tr>
         <tr>
-        	<th colspan='2'>Paths exposed</th>
-        <tr>
-            <th><code>app.appdir</code></th>
-            <td>Full path on the filesystem that the main module is located in.</td>
+            <th><code>staticsRoot</code></th>
+            <td>Full path on the file system to where your app's statics folder is located.</td>
         </tr>
         <tr>
-            <th><code>app.modelsPath</code></th>
-            <td>Full path on the filesystem that the models directory is located in.</td>
+            <th><code>modelsPath</code></th>
+            <td>Full path on the file system to where your app's models folder is located.</td>
         </tr>
         <tr>
-            <th><code>app.viewsPath</code></th>
-            <td>Full path on the filesystem that the views directory is located in.</td>
+            <th><code>viewsPath</code></th>
+            <td>Full path on the file system to where your app's views folder is located.</td>
         </tr>
         <tr>
-            <th><code>app.controllersPath</code></th>
-            <td>Full path on the filesystem that the controllers directory is located in.</td>
+            <th><code>controllersPath</code></th>
+            <td>Full path on the file system to where your app's controllers folder is located.</td>
         </tr>
         <tr>
-            <th><code>app.staticsRoot</code></th>
-            <td>Full path on the filesystem that the statics root directory is located in.</td>
+            <th><code>params</code></th>
+            <td>The params you sent to Roosevelt.</td>
         </tr>
         <tr>
-            <th><code>app.imagesPath</code></th>
-            <td>Full path on the filesystem that the images directory is located in.</td>
+            <th><code>port</code></th>
+            <td>Port Roosevelt is running on.</td>
         </tr>
         <tr>
-            <th><code>app.cssPath</code></th>
-            <td>Full path on the filesystem that the CSS file directory is located in.</td>
-        </tr>
-        <tr>
-            <th><code>app.lessPath</code></th>
-            <td>Full path on the filesystem that the LESS file directory is located in.</td>
-        </tr>
-        <tr>
-            <th><code>app.jsPath</code></th>
-            <td>Full path on the filesystem that the client-side JS file directory is located in.</td>
-        </tr>
-        <tr>
-        	<th colspan='2'>Event objects and methods</th>
-        <tr>
-        <tr>
-            <th><code>app.events</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html'>Events</a> object created by Roosevelt.</td>
-        </tr>
-        <tr>
-            <th><code>app.emitter</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object created by Roosevelt.</td>
-        </tr>
-        <tr>
-            <th><code>app.addListener</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_addlistener_event_listener'>addListener</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.on</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_on_event_listener'>on</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.once</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_once_event_listener'>once</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.removeListener</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_removelistener_event_listener'>removeListener</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.removeAllListeners</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_removealllisteners_event'>removeAllListeners</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.setMaxListeners</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_setmaxlisteners_n'>setMaxListeners</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.listeners</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_listeners_event'>listeners</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
-        </tr>
-        <tr>
-            <th><code>app.emit</code></th>
-            <td>The <a href='http://nodejs.org/api/events.html#events_emitter_emit_event_arg1_arg2'>emit</a> method bound to Roosevelt's <a href='http://nodejs.org/api/events.html#events_class_events_eventemitter'>EventEmitter</a> object.</td>
+            <th><code>model</code></th>
+            <td>Method to return a model. Calling <code>app.get('model')('modelName')</code> will return a specified model from your models folder.</td>
         </tr>
     </tbody>
 </table>
@@ -412,9 +373,10 @@ Dependencies
 - <a href='http://expressjs.com/'>express</a> - a minimal and flexible node.js web application framework
 - <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
 - <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
+- <a href='https://github.com/felixge/node-formidable'>formidable</a> - a Node.js module for parsing form data, especially file uploads
 - <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used by the CLI tool to help you create your sample app
 
 License
 ===
 
-All original code in Roosevelt is licensed under the <a href='http://creativecommons.org/licenses/by/3.0/deed.en_US'>Creative Commons Attribution 3.0 Unported License</a>. Commercial and noncommercial use is permitted with attribution.
+All original code in Roosevelt is licensed under the <a href='http://creativecommons.org/licenses/by/4.0/'>Creative Commons Attribution 4.0 International License</a>. Commercial and noncommercial use is permitted with attribution.

@@ -1,67 +1,132 @@
-// @namespace
-var roosevelt = function(params) {
+var fs = require('fs'),                           // utility library for filesystem access
+    path = require('path'),                       // utilities for handling and transforming file paths
+    express = require('express'),                 // express http server
+    teddy = require('teddy'),                     // teddy templating engine
+    lessMiddleware = require('less-middleware'),  // for LESS CSS preprocessing
+    formidable = require('formidable'),           // for multipart forms
+    appDir = path.normalize(process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], '')),
+    package = require(appDir + 'package.json');   // storing contents of package.json for later use
 
-  // define empty params object if no params are passed
+module.exports = function(params) {
   params = params || {};
-  params.staticsPrefix = params.staticsPrefix || '';
 
-  // require dependencies
-  var fs = require('fs'),           // utility library for filesystem access
-      path = require('path'),       // utilities for handling and transforming file paths
-      express = require('express'), // express http server
-      app = express(),              // initialize express
+  var app = express(), // initialize express
 
       // configure express
       expressConfig = function() {
-        setRooseveltPathing();
+        runCustomCode();
+        setMemberVars();
         activateLessMiddleware();
         setExpressConfigs();
-        mapStatics();
         mapRoutes();
+      },
 
-        // run custom express configs if supplied
-        if (params.customConfigs && typeof params.customConfigs === 'function') {
-          params.customConfigs();
+      // run custom express configs if supplied
+      runCustomCode = function() {
+        if (params.onServerStart && typeof params.onServerStart === 'function') {
+          params.onServerStart(app);
         }
       },
 
-      setRooseveltPathing = function() {
+      // defines app.get values that roosevelt exposes through express
+      setMemberVars = function() {
 
         // expose submodules
-        roosevelt.params = params;
-        roosevelt.express = express;
-        roosevelt.teddy = require('teddy');
+        app.set('express', express);
+        app.set('teddy', teddy);
+        app.set('formidable', formidable);
 
-        // directory the main module is in
-        roosevelt.appdir = path.normalize(process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], ''));
-        // where the models are located
-        roosevelt.modelsPath = params.modelsPath ? roosevelt.appdir + params.modelsPath : roosevelt.appdir + 'mvc/models/';
+        // expose directory the main module is in
+        app.set('appDir', appDir);
 
-        // where the views are located
-        roosevelt.viewsPath = params.viewsPath ? roosevelt.appdir + params.viewsPath : roosevelt.appdir + 'mvc/views/';
+        // expose package.json
+        package.rooseveltConfig = package.rooseveltConfig || {};
+        app.set('package', package);
 
-        // where the controllers are located
-        roosevelt.controllersPath = params.controllersPath ? roosevelt.appdir + params.controllersPath : roosevelt.appdir + 'mvc/controllers/';
+        // define staticsRoot first because other params depend on it
+        params.staticsRoot = params.staticsRoot || package.rooseveltConfig.staticsRoot || 'statics/';
+        app.set('staticsRoot', path.normalize(params.staticsRoot));
 
-        // set statics folder
-        roosevelt.staticsRoot = params.staticsRoot || 'statics';
-        roosevelt.staticsRoot += '/';
+        // source remaining params from params argument, then package.json, then defaults
+        params = {
+          port: params.port || package.rooseveltConfig.port || process.env.NODE_PORT || 43711,
+          modelsPath: params.modelsPath || package.rooseveltConfig.modelsPath || 'mvc/models/',
+          viewsPath: params.viewsPath || package.rooseveltConfig.viewsPath || 'mvc/views/',
+          controllersPath: params.controllersPath || package.rooseveltConfig.controllersPath || 'mvc/controllers/',
+          notFoundPage: params.notFoundPage || package.rooseveltConfig.notFoundPage || '404.js',
+          staticsRoot: params.staticsRoot, // defaults hierarchy defined above because below params depend on this one being predefined
+          cssPath: params.cssPath || package.rooseveltConfig.cssPath || params.staticsRoot + 'css/',
+          lessPath: params.lessPath || package.rooseveltConfig.lessPath || params.staticsRoot + 'less/',
+          prefixStaticsWithVersion: params.prefixStaticsWithVersion || package.rooseveltConfig.prefixStaticsWithVersion || false,
+          versionNumberLessVar: params.versionNumberLessVar || package.rooseveltConfig.versionNumberLessVar || undefined,
+          formidableSettings: params.formidableSettings || package.formidableSettings || {},
+          shutdownTimeout: params.shutdownTimeout || package.shutdownTimeout || 30000,
+          onServerStart: params.onServerStart || undefined,
+          onReqStart: params.onReqStart || undefined,
+          onReqBeforeRoute: params.onReqBeforeRoute || undefined,
+          onReqAfterRoute: params.onReqAfterRoute || undefined
+        };
 
-        // set custom paths
-        roosevelt.imagesPath = params.imagesPath ? roosevelt.appdir + params.imagesPath : roosevelt.appdir + roosevelt.staticsRoot + 'i/';
-        roosevelt.cssPath = params.cssPath ? roosevelt.appdir + params.cssPath : roosevelt.appdir + roosevelt.staticsRoot + 'css/';
-        roosevelt.lessPath = params.lessPath ? roosevelt.appdir + params.lessPath : roosevelt.appdir + roosevelt.staticsRoot + 'less/';
-        roosevelt.jsPath = params.jsPath ? roosevelt.appdir + params.jsPath : roosevelt.appdir + roosevelt.staticsRoot + 'js/';
+        // ensure formidableSettings is an object
+        if (typeof params.formidableSettings !== 'object') {
+          params.formidableSettings = {};
+        }
+
+        // add trailing slashes where necessary
+        ['modelsPath', 'viewsPath', 'controllersPath'].forEach(function(i) {
+          var path = params[i], finalChar = path.charAt(path.length - 1);
+          params[i] = finalChar != '/' && finalChar != '\\' ? path : path + '/';
+        });
+
+        // map mvc paths
+        app.set('modelsPath', path.normalize(appDir + params.modelsPath));
+        app.set('viewsPath', path.normalize(appDir + params.viewsPath));
+        app.set('controllersPath', path.normalize(appDir + params.controllersPath));
+
+        // map statics paths
+        app.set('cssPath', path.normalize(appDir + params.cssPath));
+        app.set('lessPath', path.normalize(appDir + params.lessPath));
+
+        // some final param post processing
+        params.notFoundPage = app.get('controllersPath') + params.notFoundPage;
+        params.staticsPrefix = params.prefixStaticsWithVersion ? package.version || '' : '';
+
+        app.set('params', params);
+
+        // bind user-defined middleware which fires at the beginning of a request if supplied
+        if (params.onReqStart && typeof params.onReqStart === 'function') {
+          app.use(params.onReqStart);
+        }
       },
 
+      // activate LESS CSS preprocessing
       activateLessMiddleware = function() {
-        app.use(require('less-middleware')({
+
+        // write app version to version.less to force statics versioning
+        if (params.versionNumberLessVar) {
+          var versionFile = app.get('lessPath') + 'version.less',
+              versionCode = '/* do not edit; generated automatically by Roosevelt */ @' + params.versionNumberLessVar + ': \'' + package.version + '\';';
+
+          if (fs.readFileSync(versionFile, 'utf8') != versionCode) {
+            fs.writeFile(versionFile, versionCode, function(err) {
+              if (err) {
+                console.error((package.name || 'Roosevelt') + ' failed to write version.less file!');
+                console.error(err);
+              }
+              else {
+                console.log((package.name || 'Roosevelt') + ' writing new version.less to reflect new version: ' + package.version);
+              }
+            });
+          }
+        }
+
+        app.use(lessMiddleware({
 
           // pathing options
-          src: roosevelt.lessPath,
-          dest: roosevelt.cssPath,
-          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + (params.cssPath || 'css') : '/' + (params.cssPath || 'css'),
-          root: roosevelt.lessPath,
+          src: app.get('lessPath'),
+          dest: app.get('cssPath'),
+          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath : '/' + params.cssPath,
+          root: '/',
 
           // performance options
           once: true,       // compiles less files only once per server start (restart server to recompile altered LESS files into new CSS files)
@@ -69,10 +134,22 @@ var roosevelt = function(params) {
         }));
       },
 
+      // configure specific express options
       setExpressConfigs = function() {
 
         // set port
-        app.set('port', params.port || process.env.NODE_PORT || 43711);
+        app.set('port', params.port);
+
+        // close connections gracefully if server is being shut down
+        app.use(function(req, res, next) {
+          if (!app.get('roosevelt:shuttingDown')) {
+            next();
+          }
+          else {
+            res.setHeader('Connection', 'close');
+            res.send(503, 'Server is in the process of shutting down.');
+          }
+        });
 
         // dumps http requests to the console
         app.use(express.logger());
@@ -80,17 +157,15 @@ var roosevelt = function(params) {
         // defines req.body by parsing http requests
         app.use(express.json());
         app.use(express.urlencoded());
-        app.use(express.multipart({defer: true}));
 
         // set templating engine
-        app.set('views', roosevelt.viewsPath);
+        app.set('views', app.get('viewsPath'));
         app.set('view engine', 'html');
-        app.engine('html', roosevelt.teddy.__express);
+        app.engine('html', app.get('teddy').__express);
 
         // list all view files to determine number of extensions
-        var viewFiles = walkSync(roosevelt.viewsPath),
-            extensions = [],
-            i;
+        var viewFiles = walkSync(app.get('viewsPath')),
+            extensions = [];
 
         // make list of extensions
         viewFiles.forEach(function(file) {
@@ -99,97 +174,128 @@ var roosevelt = function(params) {
         });
 
         // use teddy as renderer for all view file types
-        for (i in extensions) {
-          app.engine(i, roosevelt.teddy.__express);
-        }
-      },
-
-      mapStatics = function() {
-        app.use('/' + params.imagesPath, express.static(roosevelt.imagesPath));
-        app.use('/' + params.cssPath, express.static(roosevelt.cssPath));
-        app.use('/' + params.lessPath, express.static(roosevelt.lessPath));
-        app.use('/' + params.jsPath, express.static(roosevelt.jsPath));
-        app.use('/' + params.staticsPrefix, express.static(roosevelt.appdir + roosevelt.staticsRoot));
+        extensions.forEach(function(i) {
+          app.engine(i, app.get('teddy').__express);
+        });
       },
 
       mapRoutes = function() {
-        var controllerFiles,
-            controllers = [],
-            controllerMethod,
 
-            // removes temp files uploaded to the server from multipart forms after the page is served
-            afterRender = function(req, res, next) {
-              req.on('end', function() {
-                var form = req.form;
-                if (form) {
-                  form.on('close', function() {
-                    form.openedFiles.forEach(function(file) {
-                      fs.unlink(file.path, function(err) {
-                        if (err) {
-                          console.log(err);
-                        }
-                      });
-                    });
-                  });
-                }
-              });
+        // bind user-defined middleware which fires just before executing the controller if supplied
+        if (params.onReqBeforeRoute && typeof params.onReqBeforeRoute === 'function') {
+          app.use(params.onReqBeforeRoute);
+        }
+
+        // middleware to handle forms with formidable
+        app.use(function(req, res, next) {
+          var form = new formidable.IncomingForm(params.formidableSettings), contentType = req.headers['content-type'];
+
+          if (typeof contentType === 'string' && contentType.indexOf('multipart/form-data') > -1) {
+            form.parse(req, function(err, fields, files) {
+              if (err) {
+                console.error((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url);
+                console.error(err);
+              }
+              req.body = fields; // pass along form fields
+              req.files = files; // pass along files
+
+              // remove tmp files after request finishes
+              var cleanup = function(files, events) {
+
+                // prevent event from firing more than once
+                events.forEach(function(event) {
+                  res.removeListener(event, cleanup);
+                });
+
+                // remove tmp file(s)
+                Object.keys(files).forEach(function(file) {
+                  file = files[file];
+                  if (typeof file.path === 'string') {
+                    fs.unlink(file.path);
+                  }
+                });
+              };
+              res.once('finish', cleanup.bind(null, files, ['close', 'error']));
+              res.once('close', cleanup.bind(null, files, ['finish', 'error']));
+              res.once('error', cleanup.bind(null, files, ['finish', 'close']));
               next();
+            });
+          }
+          else {
+            next();
+          }
+        });
+
+        // bind user-defined middleware which fires after request ends if supplied
+        if (params.onReqAfterRoute && typeof params.onReqAfterRoute === 'function') {
+          app.use(function(req, res, next) {
+            var afterEnd = function(events) {
+
+              // prevent event from firing more than once
+              events.forEach(function(event) {
+                res.removeListener(event, afterEnd);
+              });
+
+              params.onReqAfterRoute(req, res);
             };
+            res.once('finish', afterEnd.bind(null, ['close', 'error']));
+            res.once('close', afterEnd.bind(null, ['finish', 'error']));
+            res.once('error', afterEnd.bind(null, ['finish', 'close']));
+            next();
+          });
+        }
+
+        // method for roosevelt users to conveniently load models from their controllers
+        app.set('model', function(model) {
+          return require(app.get('modelsPath') + model);
+        });
+
+        // map statics
+        app.use('/' + params.staticsPrefix, express.static(appDir + app.get('staticsRoot')));
 
         // build list of controller files
+        var controllerFiles;
         try {
-          controllerFiles = fs.readdirSync(roosevelt.controllersPath);
+          controllerFiles = walkSync(app.get('controllersPath'));
         }
         catch (e) {
-          console.log("\nRoosevelt fatal error: could not load controller files from " + roosevelt.controllersPath + "\n");
-          console.log(e);
+          console.error((package.name || 'Roosevelt') + ' fatal error: could not load controller files from ' + app.get('controllersPath'));
+          console.error(e);
         }
 
         // load all controllers
         controllerFiles.forEach(function(controllerName) {
-
-          // strip .js
-          controllerName = controllerName.substring(0, controllerName.length - 3);
-
-          // map routes
-          controllers[controllerName] = require(roosevelt.controllersPath + controllerName);
-          controllerMethod = controllers[controllerName];
-          if (controllerMethod.middleware) {
-            app.all('/' + controllerName, afterRender, controllerMethod.middleware, controllerMethod);
-            app.all('/' + controllerName + '/*', afterRender, controllerMethod.middleware, controllerMethod);
-          }
-          else {
-            app.all('/' + controllerName, afterRender, controllerMethod);
-            app.all('/' + controllerName + '/*', afterRender, controllerMethod);
+          if (controllerName.indexOf(params.notFoundPage) < 0) {
+            try {
+              require(controllerName)(app);
+            }
+            catch (e) {
+              console.error((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.');
+              console.error(e);
+            }
           }
         });
 
-        // map index and 404 routes
-        if (controllers.index.middleware) {
-          app.all('/', afterRender, controllers.index.middleware, controllers.index);
+        // load 404 controller last so that it doesn't supersede the others
+        try {
+          require(params.notFoundPage)(app);
         }
-        else {
-          app.all('/', afterRender, controllers.index);
-        }
-        if (controllers._404.middleware) {
-          app.all('*', afterRender, controllers._404.middleware, controllers._404);
-        }
-        else {
-          app.all('*', afterRender, controllers._404);
+        catch (e) {
+          console.error((package.name || 'Roosevelt') + ' failed to load 404 controller file: ' + params.notFoundPage + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.');
+          console.error(e);
         }
       },
 
       // utility method for listing all files in a directory recursively in a synchronous fashion
       walkSync = function(dir, filelist) {
-        var fs = fs || require('fs'),
-            files = fs.readdirSync(dir);
+        var files = fs.readdirSync(dir);
         filelist = filelist || [];
         files.forEach(function(file) {
           if (fs.statSync(dir + file).isDirectory()) {
             filelist = walkSync(dir + file + '/', filelist);
           }
           else {
-            filelist.push(file);
+            filelist.push(dir + file);
           }
         });
         return filelist;
@@ -197,31 +303,25 @@ var roosevelt = function(params) {
 
       // callback for when server has started
       startServer = function() {
-        console.log((params.name || 'Roosevelt Express') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
+        console.log((package.name || 'Roosevelt Express') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
+      },
+
+      config = app.configure(expressConfig),
+      server = app.listen(app.get('port'), startServer),
+      gracefulShutdown = function() {
+        app.set('roosevelt:shuttingDown', true);
+        console.log("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.');
+        server.close(function() {
+          console.log((package.name || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.');
+          process.exit();
+        });
+        setTimeout(function() {
+          console.error((package.name || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.');
+          process.exit(1);
+        }, app.get('params').shutdownTimeout);
       };
 
-  // configure express and start server
-  app.configure(expressConfig);
-  app.listen(app.get('port'), startServer);
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
   return app;
 };
-
-// expose event emitter and create top-level shorthands for common methods
-roosevelt.events = require('events');
-roosevelt.emitter = new roosevelt.events.EventEmitter();
-roosevelt.addListener = roosevelt.emitter.addListener;
-roosevelt.on = roosevelt.emitter.on;
-roosevelt.once = roosevelt.emitter.once;
-roosevelt.removeListener = roosevelt.emitter.removeListener;
-roosevelt.removeAllListeners = roosevelt.emitter.removeAllListeners;
-roosevelt.setMaxListeners = roosevelt.emitter.setMaxListeners;
-roosevelt.listeners = roosevelt.emitter.listeners;
-roosevelt.emit = roosevelt.emitter.emit;
-
-// flushes require cache and runs a fresh execution of the model file
-roosevelt.loadModel = function(model) {
-  delete require.cache[require.resolve(roosevelt.modelsPath + model)];
-  return require(roosevelt.modelsPath + model);
-};
-
-module.exports = roosevelt;
