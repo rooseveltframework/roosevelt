@@ -162,7 +162,7 @@ module.exports = function(params) {
 
         // close connections gracefully if server is being shut down
         app.use(function(req, res, next) {
-          if (!app.get('roosevelt:shuttingDown')) {
+          if (app.get('roosevelt:state') != 'disconnecting') {
             next();
           }
           else {
@@ -338,7 +338,7 @@ module.exports = function(params) {
       config = app.configure(expressConfig),
       server = app.listen(app.get('port'), startServer),
       gracefulShutdown = function() {
-        app.set('roosevelt:shuttingDown', true);
+        app.set('roosevelt:state', 'disconnecting');
         console.log("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.');
         server.close(function() {
           console.log((package.name || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.');
