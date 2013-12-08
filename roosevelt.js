@@ -4,6 +4,8 @@ var fs = require('fs'),                           // utility library for filesys
     teddy = require('teddy'),                     // teddy templating engine
     lessMiddleware = require('less-middleware'),  // for LESS CSS preprocessing
     formidable = require('formidable'),           // for multipart forms
+    os = require('os'),                           // operating system info
+    cluster = require('cluster'),                 // multicore support
     appDir = path.normalize(process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], '')),
     package = require(appDir + 'package.json');   // storing contents of package.json for later use
 
@@ -130,11 +132,11 @@ module.exports = function(params) {
           if (fs.readFileSync(versionFile, 'utf8') != versionCode) {
             fs.writeFile(versionFile, versionCode, function(err) {
               if (err) {
-                console.error((package.name || 'Roosevelt') + ' failed to write version.less file!');
+                console.error((package.name || 'Roosevelt') + ' failed to write version.less file!' + threadSuffix);
                 console.error(err);
               }
               else {
-                console.log((package.name || 'Roosevelt') + ' writing new version.less to reflect new version: ' + package.version);
+                console.log((package.name || 'Roosevelt') + ' writing new version.less to reflect new version: ' + package.version + threadSuffix);
               }
             });
           }
@@ -221,21 +223,14 @@ module.exports = function(params) {
           if (typeof contentType === 'string' && contentType.indexOf('multipart/form-data') > -1) {
             form.parse(req, function(err, fields, files) {
               if (err) {
-                console.error((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url);
+                console.error((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix);
                 console.error(err);
               }
               req.body = fields; // pass along form fields
               req.files = files; // pass along files
 
               // remove tmp files after request finishes
-              var cleanup = function(files, events) {
-
-                // prevent event from firing more than once
-                events.forEach(function(event) {
-                  res.removeListener(event, cleanup);
-                });
-
-                // remove tmp file(s)
+              var cleanup = function() {
                 Object.keys(files).forEach(function(file) {
                   file = files[file];
                   if (typeof file.path === 'string') {
@@ -243,9 +238,9 @@ module.exports = function(params) {
                   }
                 });
               };
-              res.once('finish', cleanup.bind(null, files, ['close', 'error']));
-              res.once('close', cleanup.bind(null, files, ['finish', 'error']));
-              res.once('error', cleanup.bind(null, files, ['finish', 'close']));
+              res.once('finish', cleanup);
+              res.once('close', cleanup);
+              res.once('error', cleanup);
               next();
             });
           }
@@ -257,18 +252,12 @@ module.exports = function(params) {
         // bind user-defined middleware which fires after request ends if supplied
         if (params.onReqAfterRoute && typeof params.onReqAfterRoute === 'function') {
           app.use(function(req, res, next) {
-            var afterEnd = function(events) {
-
-              // prevent event from firing more than once
-              events.forEach(function(event) {
-                res.removeListener(event, afterEnd);
-              });
-
+            var afterEnd = function() {
               params.onReqAfterRoute(req, res);
             };
-            res.once('finish', afterEnd.bind(null, ['close', 'error']));
-            res.once('close', afterEnd.bind(null, ['finish', 'error']));
-            res.once('error', afterEnd.bind(null, ['finish', 'close']));
+            res.once('finish', afterEnd);
+            res.once('close', afterEnd);
+            res.once('error', afterEnd);
             next();
           });
         }
@@ -288,7 +277,7 @@ module.exports = function(params) {
           controllerFiles = walkSync(app.get('controllersPath'));
         }
         catch (e) {
-          console.error((package.name || 'Roosevelt') + ' fatal error: could not load controller files from ' + app.get('controllersPath'));
+          console.error((package.name || 'Roosevelt') + ' fatal error: could not load controller files from ' + app.get('controllersPath') + threadSuffix);
           console.error(e);
         }
 
@@ -299,7 +288,7 @@ module.exports = function(params) {
               require(controllerName)(app);
             }
             catch (e) {
-              console.error((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.');
+              console.error((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix);
               console.error(e);
             }
           }
@@ -310,7 +299,7 @@ module.exports = function(params) {
           require(params.notFoundPage)(app);
         }
         catch (e) {
-          console.error((package.name || 'Roosevelt') + ' failed to load 404 controller file: ' + params.notFoundPage + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.');
+          console.error((package.name || 'Roosevelt') + ' failed to load 404 controller file: ' + params.notFoundPage + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix);
           console.error(e);
         }
       },
@@ -332,25 +321,60 @@ module.exports = function(params) {
 
       // callback for when server has started
       startServer = function() {
-        console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)');
+        console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix);
       },
 
       config = app.configure(expressConfig),
-      server = app.listen(app.get('port'), startServer),
       gracefulShutdown = function() {
         app.set('roosevelt:state', 'disconnecting');
-        console.log("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.');
+        console.log("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.' + threadSuffix);
         server.close(function() {
-          console.log((package.name || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.');
+          console.log((package.name || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.' + threadSuffix);
           process.exit();
         });
         setTimeout(function() {
-          console.error((package.name || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.');
+          console.error((package.name || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.' + threadSuffix);
           process.exit(1);
         }, app.get('params').shutdownTimeout);
-      };
+      },
+      numCPUs = 1,
+      threadSuffix = cluster.worker ? ' (thread ' + cluster.worker.id + ')' : '',
+      server,
+      i;
 
-  process.on('SIGTERM', gracefulShutdown);
-  process.on('SIGINT', gracefulShutdown);
+  process.argv.some(function(val, index, array) {
+    var arg = array[index + 1], max = os.cpus().length;
+    if (val === '-cores') {
+      if (arg === 'max') {
+        numCPUs = max
+      }
+      else {
+        arg = parseInt(arg);
+        if (arg <= max && arg > 0) {
+          numCPUs = arg;
+        }
+        else {
+          console.error((package.name || 'Roosevelt') + ' warning: invalid value "'+array[index + 1]+'" supplied to -cores param.' + threadSuffix);
+          numCPUs = 1;
+        }
+      }
+      return;
+    }
+  });
+
+  if (cluster.isMaster && numCPUs > 1) {
+    for (i = 0; i < numCPUs; i++) {
+      cluster.fork();
+    }
+    cluster.on('exit', function(worker, code, signal) {
+      console.log((package.name || 'Roosevelt') + ' thread ' + worker.process.pid + ' died');
+    });
+  }
+  else {
+    server = app.listen(app.get('port'), startServer);
+    process.on('SIGTERM', gracefulShutdown);
+    process.on('SIGINT', gracefulShutdown);
+  };
+
   return app;
 };

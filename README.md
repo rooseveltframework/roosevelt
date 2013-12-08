@@ -18,6 +18,7 @@ Reasons for this include:
 - Default directory structure is simple, but easily configured.
 - Concise <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> architecture.
 - <a href='https://github.com/kethinov/teddy'>Teddy</a> HTML templates are much easier to read and maintain than popular alternatives.
+- Built-in support for load balancing using the Node.js <a href='http://nodejs.org/api/cluster.html'>cluster</a> module.
 
 Make a Roosevelt app
 ===
@@ -41,11 +42,37 @@ cd myapp
 npm install
 ```
 
-Run the app:
+Run your app:
+
+```
+node app.js
+```
+
+Other ways to run Roosevelt apps
+---
+
+Run your app on two CPUs:
+
+```
+node app.js -cores 2
+```
+
+Run your app on all your CPUs:
+
+```
+node app.js -cores max
+```
+
+While developing your app, a better way to run the app is to use the developer mode.
+
+When your app is running in developer mode, it will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
+
+To run your app in developer mode, first `npm install -g nodemon` (may require sudo), and then simply execute this command:
 
 ```
 npm start
 ```
+
 Default directory structure
 ===
 
