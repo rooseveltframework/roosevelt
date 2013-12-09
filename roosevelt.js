@@ -6,7 +6,7 @@ var fs = require('fs'),                           // utility library for filesys
     formidable = require('formidable'),           // for multipart forms
     os = require('os'),                           // operating system info
     cluster = require('cluster'),                 // multicore support
-    appDir = path.normalize(process.mainModule.filename.replace(process.mainModule.filename.split('/')[process.mainModule.filename.split('/').length - 1], '')),
+    appDir = path.normalize(module.parent.filename.replace(module.parent.filename.split('/')[module.parent.filename.split('/').length - 1], '')),
     package = require(appDir + 'package.json');   // storing contents of package.json for later use
 
 module.exports = function(params) {
