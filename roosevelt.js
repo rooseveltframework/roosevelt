@@ -234,7 +234,12 @@ module.exports = function(params) {
                 Object.keys(files).forEach(function(file) {
                   file = files[file];
                   if (typeof file.path === 'string') {
-                    fs.unlink(file.path);
+                    fs.unlink(file.path, function(err) {
+                      if (err) {
+                        console.error((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + file.path + threadSuffix);
+                        console.error(err);
+                      }
+                    });
                   }
                 });
               };

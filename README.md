@@ -18,9 +18,8 @@ Reasons for this include:
 - Default directory structure is simple, but easily configured.
 - Concise <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> architecture.
 - <a href='https://github.com/kethinov/teddy'>Teddy</a> HTML templates are much easier to read and maintain than popular alternatives.
-- Built-in support for load balancing using the Node.js <a href='http://nodejs.org/api/cluster.html'>cluster</a> module.
 
-Make a Roosevelt app
+Create and run a Roosevelt app
 ===
 
 Install the command line tool globally (may require sudo):
@@ -51,6 +50,12 @@ node app.js
 Other ways to run Roosevelt apps
 ---
 
+Run your app in production mode:
+
+```
+export NODE_ENV=production && node app.js
+```
+
 Run your app on two CPUs:
 
 ```
@@ -63,11 +68,11 @@ Run your app on all your CPUs:
 node app.js -cores max
 ```
 
-While developing your app, a better way to run the app is to use the developer mode.
+While developing your app, a more convenient way to run the app is to use the `npm start` script.
 
-When your app is running in developer mode, it will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
+The `npm start` script will run your app through <a href='https://github.com/remy/nodemon'>nodemon</a> and will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
 
-To run your app in developer mode, first `npm install -g nodemon` (may require sudo), and then simply execute this command:
+Make sure you install nodemon first via `npm install -g nodemon` (may require sudo) and then simply execute this command:
 
 ```
 npm start
@@ -81,6 +86,8 @@ Default directory structure
   - `controllers`: folder for controller files
   - `models`: folder for model files
   - `views`: folder for view files
+- `node_modules`: a standard Node.js folder where all modules your app depends on (such as Roosevelt) are installed to
+- `package.json`: a standard Node.js file for configuring your app
 - `statics`: folder for CSS, images, JS files, LESS files, and other statics
   - `css`: folder for CSS files
   - `images`: folder for image files
@@ -93,41 +100,7 @@ Minimal boilerplate
 All that's in app.js is this:
 
 ```js
-require('roosevelt')({
-/*
-  param name:               default value
-
-  name:                     'Roosevelt Express',
-  port:                     43711,
-  modelsPath:               'mvc/models',
-  viewsPath:                'mvc/views',
-  controllersPath:          'mvc/controllers',
-  notFoundPage:             '404.js',
-  staticsRoot:              'statics',
-  cssPath:                  'statics/css',
-  lessPath:                 'statics/less',
-  prefixStaticsWithVersion: false, // changes static urls like /css/file.css to /{versionNumber}/css/file.css
-  versionNumberLessVar:     '', // populate statics/less/version.less with a LESS variable of this name
-  formidableSettings:       {}, // settings to pass to formidable: https://github.com/felixge/node-formidable#api
-
-  events:                   sample function
-
-  onServerStart:            function(app) {
-                              // code which executes when the server starts
-                            },
-  onReqStart:               function(req, res, next) {
-                              // code which executes at the beginning of each request
-                              // must call next() when your code finishes
-                            },
-  onReqBeforeRoute:         function(req, res, next) {
-                              // code which executes just before the controller is executed
-                              // must call next() when your code finishes
-                            },
-  onReqAfterRoute:          function(req, res) {
-                              // code which executes after the request finishes
-                            }
-*/
-});
+require('roosevelt')();
 ```
 
 Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional.
@@ -137,12 +110,25 @@ Configure your app
 
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
 
-Inside `app.js`, you can pass any of the below optional parameters to Roosevelt. Each can also be defined in `package.json` under `"rooseveltConfig"`.
+Inside `app.js`, you can pass any of the below optional parameters to Roosevelt via its constructor like so:
+
+```js
+require('roosevelt')({
+  paramName: 'paramValue',
+  param2:    'value2',
+  etc:       'etc'
+});
+```
+
+Each param can also be defined in `package.json` under `"rooseveltConfig"`.
+
+Parameter list
+---
 
 <table>
     <thead>
         <tr>
-            <th>Option</th>
+            <th>Param</th>
             <th>Description</th>
             <th>Default</th>
         </tr>
@@ -221,7 +207,21 @@ Inside `app.js`, you can pass any of the below optional parameters to Roosevelt.
     </tbody>
 </table>
 
-Roosevelt also provides a series of events you can attach code to by passing a function to the desired event as a parameter.
+Events
+---
+
+Roosevelt also provides a series of events you can attach code to by passing a function to the desired event as a parameter to Roosevelt's constructor like so:
+
+Inside `app.js`, you can pass any of the below optional parameters to Roosevelt via its constructor like so:
+
+```js
+require('roosevelt')({
+  onServerStart: functiom(app) { /* do something */ }
+});
+```
+
+Event list
+---
 
 <table>
 	<thead>
@@ -276,15 +276,12 @@ Roosevelt also provides a series of events you can attach code to by passing a f
     </tbody>
 </table>
 
-Defining routes (URL endpoints)
-===
-
-A route is the term <a href='http://expressjs.com'>Express</a> uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`. To make a new route, just make a new file in the controllers directory.
-
 Making controller files
 ===
 
-Controller files are just <a href='http://expressjs.com/api.html#app.VERB'>standard Express routes</a>. For example: 
+Controller files are just <a href='http://expressjs.com/api.html#app.VERB'>standard Express routes</a>. A route is the term <a href='http://expressjs.com'>Express</a> uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
+
+To make a new controller, just make a new file in the controllers directory. For example: 
 
 ```js
 module.exports = function(app) { // app is the Express app created by Roosevelt
@@ -345,11 +342,11 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
         </tr>
         <tr>
             <th><code>teddy</code></th>
-            <td>The <a href='https://github.com/kethinov/teddy'>teddy</a> Node.js module.</td>
+            <td>The <a href='https://github.com/kethinov/teddy'>teddy</a> Node.js module. Used for templating.</td>
         </tr>
         <tr>
             <th><code>formidable</code></th>
-            <td>The <a href='https://github.com/felixge/node-formidable'>formidable</a>  Node.js module.</td>
+            <td>The <a href='https://github.com/felixge/node-formidable'>formidable</a>  Node.js module. Used for handling multipart forms.</td>
         </tr>
         <tr>
             <th><code>appName</code></th>
