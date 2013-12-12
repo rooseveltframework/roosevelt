@@ -81,18 +81,18 @@ npm start
 Default directory structure
 ===
 
-- `app.js`: main app file
-- `mvc`: folder for models, views, and controllers
-  - `controllers`: folder for controller files
-  - `models`: folder for model files
-  - `views`: folder for view files
-- `node_modules`: a standard Node.js folder where all modules your app depends on (such as Roosevelt) are installed to
-- `package.json`: a standard Node.js file for configuring your app
-- `statics`: folder for CSS, images, JS files, LESS files, and other statics
-  - `css`: folder for CSS files
-  - `images`: folder for image files
-  - `js`: folder for JS files
-  - `less`: folder for LESS files
+- `app.js`: main app file.
+- `mvc`: folder for models, views, and controllers.
+  - `controllers`: folder for controller files.
+  - `models`: folder for model files.
+  - `views`: folder for view files.
+- `node_modules`: a standard Node.js folder where all modules your app depends on (such as Roosevelt) are installed to.
+- `package.json`: a standard Node.js file for configuring your app.
+- `statics`: folder for CSS, images, JS files, LESS files, and other statics.
+  - `css`: folder for CSS files.
+  - `images`: folder for image files.
+  - `js`: folder for JS files.
+  - `less`: folder for LESS files.
 
 Minimal boilerplate
 ===
@@ -211,8 +211,6 @@ Events
 ---
 
 Roosevelt also provides a series of events you can attach code to by passing a function to the desired event as a parameter to Roosevelt's constructor like so:
-
-Inside `app.js`, you can pass any of the below optional parameters to Roosevelt via its constructor like so:
 
 ```js
 require('roosevelt')({
