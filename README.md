@@ -208,8 +208,8 @@ Parameter list
         <tr>
             <th><code>publicStatics</code></th>
             <td>Static folders to make public. Only these subfolders of your <code>staticsRoot</code> will be accessible to end users.</td>
-            <td><code>['css',
- 'images',
+            <td><code>['css',<br/>
+ 'images',<br/>
  'js']</code></td>
         </tr>
         <tr>
