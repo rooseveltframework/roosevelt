@@ -1,6 +1,8 @@
 #! /usr/bin/env node
 var package = require('./package.json'),
     wrench = require('wrench'),
+    updateNotifier = require('update-notifier'),
+    notifier = updateNotifier(),
     cmd = process.argv[2],
     arg = process.argv[3],
     showHelp = function() {
@@ -10,6 +12,10 @@ var package = require('./package.json'),
       console.log("roosevelt create .                     create sample roosevelt app in current working directory");
       console.log("roosevelt create /path/to/somewhere    create sample roosevelt app in /path/to/somewhere");
     };
+
+if (notifier.update) {
+  notifier.notify();
+}
 
 if (cmd && arg) {
   if (cmd == 'create') {

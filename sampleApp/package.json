@@ -1,5 +1,5 @@
 {
-  "name": "sampleapp",
+  "name": "sample-app",
   "description": "",
   "author": "",
   "version": "0.1.0",
@@ -12,7 +12,7 @@
   },
   "engineStrict": true,
   "dependencies": {
-    "roosevelt": ">=0.4.8"
+    "roosevelt": ">=0.4.9"
   },
   "devDependencies ": {
     "jshint": "*",

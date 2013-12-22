@@ -4,27 +4,32 @@ var fs = require('fs'),                           // utility library for filesys
     teddy = require('teddy'),                     // teddy templating engine
     lessMiddleware = require('less-middleware'),  // for LESS CSS preprocessing
     formidable = require('formidable'),           // for multipart forms
+    toobusy = require('toobusy'),                 // monitors the process and serves 503 responses when it's too busy
+    wrench = require('wrench'),                   // recursive file operations
     os = require('os'),                           // operating system info
     cluster = require('cluster'),                 // multicore support
+    numCPUs = 1,                                  // default number of CPUs to use
+
+    // location of the main module
     appDir = path.normalize(module.parent.filename.replace(module.parent.filename.split('/')[module.parent.filename.split('/').length - 1], '')),
-    package = require(appDir + 'package.json');   // storing contents of package.json for later use
+
+    // storing contents of package.json for later use
+    package = require(appDir + 'package.json'),
+
+    // string appended to the end of roosevelt system messages in multithreading mode
+    threadSuffix = cluster.worker ? ' (thread ' + cluster.worker.id + ')' : '',
+
+    // other utility vars for later use
+    server,
+    i;
 
 module.exports = function(params) {
   params = params || {};
 
   var app = express(), // initialize express
 
-      // configure express
-      expressConfig = function() {
-        runCustomCode();
-        setMemberVars();
-        activateLessMiddleware();
-        setExpressConfigs();
-        mapRoutes();
-      },
-
       // run custom express configs if supplied
-      runCustomCode = function() {
+      onServerStart = function() {
         if (params.onServerStart && typeof params.onServerStart === 'function') {
           params.onServerStart(app);
         }
@@ -64,9 +69,15 @@ module.exports = function(params) {
           staticsRoot: params.staticsRoot, // default hierarchy defined above because below params depend on this one being predefined
           cssPath: params.cssPath || package.rooseveltConfig.cssPath || params.staticsRoot + 'css/',
           lessPath: params.lessPath || package.rooseveltConfig.lessPath || params.staticsRoot + 'less/',
+          publicFolder: params.publicFolder || package.rooseveltConfig.publicFolder || 'public/',
           prefixStaticsWithVersion: params.prefixStaticsWithVersion || package.rooseveltConfig.prefixStaticsWithVersion || false,
           versionNumberLessVar: params.versionNumberLessVar || package.rooseveltConfig.versionNumberLessVar || undefined,
+          publicStatics: params.publicStatics || package.rooseveltConfig.publicStatics || ['css', 'images', 'js'],
+          alwaysHostStatics: params.alwaysHostStatics || package.rooseveltConfig.alwaysHostStatics || false,
+          disableLogger: params.disableLogger || package.rooseveltConfig.disableLogger || false,
+          disableMultipart: params.disableMultipart || package.rooseveltConfig.disableMultipart || false,
           formidableSettings: params.formidableSettings || package.formidableSettings || {},
+          maxLagPerRequest: params.maxLagPerRequest || package.maxLagPerRequest || 1000,
           shutdownTimeout: params.shutdownTimeout || package.shutdownTimeout || 30000,
           onServerStart: params.onServerStart || undefined,
           onReqStart: params.onReqStart || undefined,
@@ -74,15 +85,19 @@ module.exports = function(params) {
           onReqAfterRoute: params.onReqAfterRoute || undefined
         };
 
+        // define maximum number of miliseconds to wait for a given request to finish
+        toobusy.maxLag(params.maxLagPerRequest);
+
         // ensure formidableSettings is an object
         if (typeof params.formidableSettings !== 'object') {
           params.formidableSettings = {};
         }
 
         // add trailing slashes where necessary
-        ['modelsPath', 'viewsPath', 'controllersPath'].forEach(function(i) {
-          var path = params[i], finalChar = path.charAt(path.length - 1);
-          params[i] = finalChar != '/' && finalChar != '\\' ? path : path + '/';
+        ['modelsPath', 'viewsPath', 'controllersPath', 'staticsRoot', 'publicFolder', 'cssPath', 'lessPath'].forEach(function(i) {
+          var path = params[i],
+              finalChar = path.charAt(path.length - 1);
+          params[i] = finalChar !== '/' && finalChar !== '\\' ? path : path + '/';
         });
 
         // map mvc paths
@@ -124,12 +139,17 @@ module.exports = function(params) {
       // activate LESS CSS preprocessing
       activateLessMiddleware = function() {
 
+        // make css directory if not present
+        if (!fs.existsSync(app.get('cssPath'))) {
+          fs.mkdirSync(app.get('cssPath'));
+        }
+
         // write app version to version.less to force statics versioning
         if (params.versionNumberLessVar) {
           var versionFile = app.get('lessPath') + 'version.less',
               versionCode = '/* do not edit; generated automatically by Roosevelt */ @' + params.versionNumberLessVar + ': \'' + package.version + '\';';
 
-          if (fs.readFileSync(versionFile, 'utf8') != versionCode) {
+          if (fs.readFileSync(versionFile, 'utf8') !== versionCode) {
             fs.writeFile(versionFile, versionCode, function(err) {
               if (err) {
                 console.error((package.name || 'Roosevelt') + ' failed to write version.less file!' + threadSuffix);
@@ -147,11 +167,12 @@ module.exports = function(params) {
           // pathing options
           src: app.get('lessPath'),
           dest: app.get('cssPath'),
-          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath.replace(app.get('staticsRoot'), '') : '/' + params.cssPath.replace(app.get('staticsRoot'), ''),
+          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath.replace(app.get('staticsRoot'), '').replace(new RegExp('//', 'g'), '/') : '/' + params.cssPath.replace(app.get('staticsRoot'), '').replace(new RegExp('//', 'g'), '/'),
           root: '/',
 
           // performance options
           once: true,       // compiles less files only once per server start (restart server to recompile altered LESS files into new CSS files)
+          compress: true,   // minifies CSS
           yuicompress: true // enables YUI Compressor
         }));
       },
@@ -164,7 +185,7 @@ module.exports = function(params) {
 
         // close connections gracefully if server is being shut down
         app.use(function(req, res, next) {
-          if (app.get('roosevelt:state') != 'disconnecting') {
+          if (app.get('roosevelt:state') !== 'disconnecting') {
             next();
           }
           else {
@@ -173,7 +194,9 @@ module.exports = function(params) {
         });
 
         // dumps http requests to the console
-        app.use(express.logger());
+        if (!params.disableLogger) {
+          app.use(express.logger());
+        }
 
         // defines req.body by parsing http requests
         app.use(express.json());
@@ -194,7 +217,7 @@ module.exports = function(params) {
         app.engine('html', app.get('teddy').__express);
 
         // list all view files to determine number of extensions
-        var viewFiles = walkSync(app.get('viewsPath')),
+        var viewFiles = wrench.readdirSyncRecursive(app.get('controllersPath')),
             extensions = {};
 
         // make list of extensions
@@ -210,49 +233,64 @@ module.exports = function(params) {
       },
 
       mapRoutes = function() {
+        var controllerFiles,
+            publicDir;
+
+        // serve 503 page if the process is too busy
+        app.use(function(req, res, next) {
+          if (toobusy()) {
+            require(params.serviceUnavailablePage)(app, req, res);
+          }
+          else {
+            next();
+          }
+        });
 
         // bind user-defined middleware which fires just before executing the controller if supplied
         if (params.onReqBeforeRoute && typeof params.onReqBeforeRoute === 'function') {
           app.use(params.onReqBeforeRoute);
         }
 
-        // middleware to handle forms with formidable
-        app.use(function(req, res, next) {
-          var form = new formidable.IncomingForm(params.formidableSettings), contentType = req.headers['content-type'];
+        if (!params.disableMultipart) {
+          // middleware to handle forms with formidable
+          app.use(function(req, res, next) {
+            var form = new formidable.IncomingForm(params.formidableSettings),
+                contentType = req.headers['content-type'];
 
-          if (typeof contentType === 'string' && contentType.indexOf('multipart/form-data') > -1) {
-            form.parse(req, function(err, fields, files) {
-              if (err) {
-                console.error((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix);
-                console.error(err);
-              }
-              req.body = fields; // pass along form fields
-              req.files = files; // pass along files
+            if (typeof contentType === 'string' && contentType.indexOf('multipart/form-data') > -1) {
+              form.parse(req, function(err, fields, files) {
+                if (err) {
+                  console.error((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix);
+                  console.error(err);
+                }
+                req.body = fields; // pass along form fields
+                req.files = files; // pass along files
 
-              // remove tmp files after request finishes
-              var cleanup = function() {
-                Object.keys(files).forEach(function(file) {
-                  file = files[file];
-                  if (typeof file.path === 'string') {
-                    fs.unlink(file.path, function(err) {
-                      if (err) {
-                        console.error((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + file.path + threadSuffix);
-                        console.error(err);
-                      }
-                    });
-                  }
-                });
-              };
-              res.once('finish', cleanup);
-              res.once('close', cleanup);
-              res.once('error', cleanup);
+                // remove tmp files after request finishes
+                var cleanup = function() {
+                  Object.keys(files).forEach(function(file) {
+                    file = files[file];
+                    if (typeof file.path === 'string') {
+                      fs.unlink(file.path, function(err) {
+                        if (err) {
+                          console.error((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + file.path + threadSuffix);
+                          console.error(err);
+                        }
+                      });
+                    }
+                  });
+                };
+                res.once('finish', cleanup);
+                res.once('close', cleanup);
+                res.once('error', cleanup);
+                next();
+              });
+            }
+            else {
               next();
-            });
-          }
-          else {
-            next();
-          }
-        });
+            }
+          });
+        }
 
         // bind user-defined middleware which fires after request ends if supplied
         if (params.onReqAfterRoute && typeof params.onReqAfterRoute === 'function') {
@@ -272,14 +310,35 @@ module.exports = function(params) {
           return require(app.get('modelsPath') + model);
         });
 
-        // map statics
-        app.use('/' + params.staticsPrefix, express.static(appDir + app.get('staticsRoot')));
-        app.use(app.router);
+        // make versioned statics directory
+        publicDir = params.publicFolder;
+        if (!fs.existsSync(publicDir)) {
+          fs.mkdirSync(publicDir);
+        }
+        if (params.staticsPrefix) {
+          publicDir += params.staticsPrefix + '/';
+          if (!fs.existsSync(publicDir)) {
+            fs.mkdirSync(publicDir);
+          }
+        }
+
+        // make symlinks to public statics
+        params.publicStatics.forEach(function(static) {
+          var target = appDir + publicDir + static;
+          if (!fs.existsSync(target)) {
+            fs.symlinkSync(appDir + params.staticsRoot + static, target, 'dir');
+          }
+        });
+
+        // map statics for developer mode
+        if (params.alwaysHostStatics || app.get('env') === 'development') {
+          app.use('/' + params.staticsPrefix, express.static(appDir + app.get('staticsRoot')));
+        }
 
         // build list of controller files
-        var controllerFiles;
+        app.use(app.router);
         try {
-          controllerFiles = walkSync(app.get('controllersPath'));
+          controllerFiles = wrench.readdirSyncRecursive(app.get('controllersPath'));
         }
         catch (e) {
           console.error((package.name || 'Roosevelt') + ' fatal error: could not load controller files from ' + app.get('controllersPath') + threadSuffix);
@@ -288,9 +347,9 @@ module.exports = function(params) {
 
         // load all controllers
         controllerFiles.forEach(function(controllerName) {
-          if (controllerName.indexOf(params.notFoundPage) < 0) {
+          if (controllerName.indexOf(params.notFoundPage.split('/').pop()) < 0) {
             try {
-              require(controllerName)(app);
+              require(app.get('controllersPath') + controllerName)(app);
             }
             catch (e) {
               console.error((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix);
@@ -309,27 +368,6 @@ module.exports = function(params) {
         }
       },
 
-      // utility method for listing all files in a directory recursively in a synchronous fashion
-      walkSync = function(dir, filelist) {
-        var files = fs.readdirSync(dir);
-        filelist = filelist || [];
-        files.forEach(function(file) {
-          if (fs.statSync(dir + file).isDirectory()) {
-            filelist = walkSync(dir + file + '/', filelist);
-          }
-          else {
-            filelist.push(dir + file);
-          }
-        });
-        return filelist;
-      },
-
-      // callback for when server has started
-      startServer = function() {
-        console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix);
-      },
-
-      config = app.configure(expressConfig),
       gracefulShutdown = function() {
         app.set('roosevelt:state', 'disconnecting');
         console.log("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.' + threadSuffix);
@@ -341,17 +379,23 @@ module.exports = function(params) {
           console.error((package.name || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.' + threadSuffix);
           process.exit(1);
         }, app.get('params').shutdownTimeout);
-      },
-      numCPUs = 1,
-      threadSuffix = cluster.worker ? ' (thread ' + cluster.worker.id + ')' : '',
-      server,
-      i;
+      };
 
+  app.configure(function() {
+    onServerStart();
+    setMemberVars();
+    activateLessMiddleware();
+    setExpressConfigs();
+    mapRoutes();
+  });
+
+  // determine number of CPUs to use
   process.argv.some(function(val, index, array) {
-    var arg = array[index + 1], max = os.cpus().length;
+    var arg = array[index + 1],
+        max = os.cpus().length;
     if (val === '-cores') {
       if (arg === 'max') {
-        numCPUs = max
+        numCPUs = max;
       }
       else {
         arg = parseInt(arg);
@@ -367,6 +411,7 @@ module.exports = function(params) {
     }
   });
 
+  // start server
   if (cluster.isMaster && numCPUs > 1) {
     for (i = 0; i < numCPUs; i++) {
       cluster.fork();
@@ -376,7 +421,9 @@ module.exports = function(params) {
     });
   }
   else {
-    server = app.listen(app.get('port'), startServer);
+    server = app.listen(app.get('port'), function() {
+      console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix);
+    });
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
   };

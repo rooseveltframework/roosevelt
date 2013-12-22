@@ -7,6 +7,26 @@ Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to a
 
 <img src='sampleApp/statics/images/teddy.jpg' alt=''/>
 
+Table of contents
+===
+
+- [Why use Roosevelt](#why-use-roosevelt)
+- [Create and run a Roosevelt app](#create-and-run-a-roosevelt-app)
+  - [Other ways to run Roosevelt apps](#other-ways-to-run-roosevelt-apps)
+- [Default directory structure](#default-directory-structure)
+- [Configure your app](#configure-your-app)
+  - [Parameter list](#parameter-list)
+  - [Events](#events)
+  - [Event list](#event-list)
+- [Making controller files](#making-controller-files)
+- [Making model files](#making-model-files)
+- [Making view files](#making-view-files)
+- [Using LESS with Roosevelt](#using-less-with-roosevelt)
+- [Express variables exposed by Roosevelt](#express-variables-exposed-by-roosevelt)
+- [Warning: Roosevelt is beta software!](#warning-roosevelt-is-beta-software)
+- [Dependencies](#dependencies)
+- [License](#license)
+
 Why use Roosevelt?
 ===
 
@@ -88,26 +108,22 @@ Default directory structure
   - `views`: folder for view files.
 - `node_modules`: a standard Node.js folder where all modules your app depends on (such as Roosevelt) are installed to.
 - `package.json`: a standard Node.js file for configuring your app.
-- `statics`: folder for CSS, images, JS files, LESS files, and other statics.
+- `public`: all contents within this folder will be exposed as statics.
+- `statics`: folder for CSS, images, JS files, LESS files, and other statics. Some of the contents of this folder are symlinked to from public, which you can configure (see below).
   - `css`: folder for CSS files.
   - `images`: folder for image files.
   - `js`: folder for JS files.
   - `less`: folder for LESS files.
 
-Minimal boilerplate
+Configure your app
 ===
 
-All that's in app.js is this:
+Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
 
 ```js
 require('roosevelt')();
 ```
-
-Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional.
   
-Configure your app
-===
-
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
 
 Inside `app.js`, you can pass any of the below optional parameters to Roosevelt via its constructor like so:
@@ -171,7 +187,7 @@ Parameter list
         </tr>
         <tr>
             <th><code>staticsRoot</code></th>
-            <td>Path on filesystem to where your static assets are located. All files and folders specified in this path will be exposed as statics.</td>
+            <td>Path on filesystem to where your static assets are located.</td>
             <td><code>statics</code></td>
         </tr>
         <tr>
@@ -185,6 +201,16 @@ Parameter list
             <td><code>statics/less</code></td>
         </tr>
         <tr>
+            <th><code>publicFolder</code></th>
+            <td>All files and folders specified in this path will be exposed as statics.</td>
+            <td><code>public</code></td>
+        </tr>
+        <tr>
+            <th><code>publicStatics</code></th>
+            <td>Static folders to make public. Only these subfolders of your <code>staticsRoot</code> will be accessible to end users.</td>
+            <td><code>['css', 'images', 'js']</code></td>
+        </tr>
+        <tr>
             <th><code>prefixStaticsWithVersion</code></th>
             <td>If set to true, Roosevelt will prepend your app's version number from <code>package.json</code> to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.</td>
             <td><code>false</code></td>
@@ -195,13 +221,33 @@ Parameter list
             <td><code>undefined</code></td>
         </tr>
         <tr>
+            <th><code>alwaysHostStatics</code></th>
+            <td>By default in production mode Roosevelt will not expose the statics folder. It's recommended instead that you host the statics yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt expose your statics even in production mode, then set this setting to true.</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <th><code>disableLogger</code></th>
+            <td>When this option is set to true, Roosevelt will not log HTTP requests to the console.</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
+            <th><code>disableMultipart</code></th>
+            <td>When this option is set to true, Roosevelt will not parse <code>enctype['multipart/form-data']</code> forms.</td>
+            <td><code>false</code></td>
+        </tr>
+        <tr>
             <th><code>formidableSettings</code></th>
             <td>Settings to pass along to <a href='https://github.com/felixge/node-formidable'>formidable</a> using <a href='https://github.com/felixge/node-formidable#api'>formidable's API</a>.</td>
             <td><code>undefined</code></td>
         </tr>
         <tr>
+            <th><code>maxLagPerRequest</code></th>
+            <td>Maximum amount of time in miliseconds a given request is allowed to take to render before being interrupted with a 503 error.</td>
+            <td><code>1000</code> (1 second)</td>
+        </tr>
+        <tr>
             <th><code>shutdownTimeout</code></th>
-            <td>Maximum amount of time given to Roosevelt to gracefully shut itself down when sent the kill signal.</td>
+            <td>Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.</td>
             <td><code>30000</code> (30 seconds)</td>
         </tr>
     </tbody>
@@ -397,18 +443,6 @@ Not many apps have been written using Roosevelt yet, so it's entirely possible t
 
 You should not use Roosevelt in production yet unless you're willing to devote some time to fixing any bugs you might find.
 
-Help wanted!
-===
-
-Pull requests are welcome! Here are some things at the top of the to-do list at the moment:
-
-- HTTPS support
-- Support for more custom HTTP status code error pages
-- Support for templating engines other than teddy
-- Support for CSS preprocessors other than LESS
-- Support for a client-side JS minifier (e.g. Google's Closure compiler)
-- Probably many other things are needed too
-
 Dependencies
 ===
 
@@ -417,6 +451,8 @@ Dependencies
 - <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
 - <a href='https://github.com/felixge/node-formidable'>formidable</a> - a Node.js module for parsing form data, especially file uploads
 - <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used by the CLI tool to help you create your sample app
+- <a href='https://github.com/lloyd/node-toobusy'>toobusy</a> - monitors the process and serves 503 responses when it's too busy
+- <a href='https://github.com/yeoman/update-notifier'>update-notifier</a> - used to tell you when there's a new version of Roosevelt
 
 License
 ===
