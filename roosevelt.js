@@ -349,7 +349,9 @@ module.exports = function(params) {
         controllerFiles.forEach(function(controllerName) {
           if (controllerName.indexOf(params.notFoundPage.split('/').pop()) < 0) {
             try {
-              require(app.get('controllersPath') + controllerName)(app);
+              if (fs.statSync(app.get('controllersPath') + controllerName).isFile()) {
+                require(app.get('controllersPath') + controllerName)(app);
+              }
             }
             catch (e) {
               console.error((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix);
