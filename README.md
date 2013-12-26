@@ -42,7 +42,7 @@ Reasons for this include:
 Create and run a Roosevelt app
 ===
 
-Install the command line tool globally (may require sudo):
+Install the command line tool globally (may require admin or root privileges):
 
 ```
 npm install -g roosevelt
@@ -92,7 +92,7 @@ While developing your app, a more convenient way to run the app is to use the `n
 
 The `npm start` script will run your app through <a href='https://github.com/remy/nodemon'>nodemon</a> and will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
 
-Make sure you install nodemon first via `npm install -g nodemon` (may require sudo) and then simply execute this command:
+Make sure you install nodemon first via `npm install -g nodemon` (may require admin or root privileges) and then simply execute this command:
 
 ```
 npm start
@@ -157,17 +157,17 @@ Parameter list
         </tr>
         <tr>
             <th><code>modelsPath</code></th>
-            <td>Path on filesystem to where your model files are located.</td>
+            <td>Relative path on filesystem to where your model files are located.</td>
             <td><code>mvc/models</code></td>
         </tr>
         <tr>
             <th><code>viewsPath</code></th>
-            <td>Path on filesystem to where your view files are located.</td>
+            <td>Relative path on filesystem to where your view files are located.</td>
             <td><code>mvc/views</code></td>
         </tr>
         <tr>
             <th><code>controllersPath</code></th>
-            <td>Path on filesystem to where your controller files are located.</td>
+            <td>Relative path on filesystem to where your controller files are located.</td>
             <td><code>mvc/controllers</code></td>
         </tr>
         <tr>
@@ -187,17 +187,17 @@ Parameter list
         </tr>
         <tr>
             <th><code>staticsRoot</code></th>
-            <td>Path on filesystem to where your static assets are located.</td>
+            <td>Relative path on filesystem to where your static assets are located.</td>
             <td><code>statics</code></td>
         </tr>
         <tr>
             <th><code>cssPath</code></th>
-            <td>Path on filesystem to where your CSS files are located.</td>
+            <td>Relative path on filesystem to where your CSS files are located.</td>
             <td><code>statics/css</code></td>
         </tr>
         <tr>
             <th><code>lessPath</code></th>
-            <td>Path on filesystem to where your LESS files are located.</td>
+            <td>Relative path on filesystem to where your LESS files are located.</td>
             <td><code>statics/less</code></td>
         </tr>
         <tr>
@@ -233,6 +233,11 @@ Parameter list
             <td><code>false</code></td>
         </tr>
         <tr>
+            <th><code>localhostOnly</code></th>
+            <td>Listen only to requests coming from localhost.</td>
+            <td><code>true</code></td>
+        </tr>
+        <tr>
             <th><code>disableMultipart</code></th>
             <td>When this option is set to true, Roosevelt will not parse <code>enctype['multipart/form-data']</code> forms.</td>
             <td><code>false</code></td>
@@ -244,8 +249,8 @@ Parameter list
         </tr>
         <tr>
             <th><code>maxLagPerRequest</code></th>
-            <td>Maximum amount of time in miliseconds a given request is allowed to take to render before being interrupted with a 503 error.</td>
-            <td><code>1000</code> (1 second)</td>
+            <td>Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See <a href='https://github.com/lloyd/node-toobusy'>node-toobusy</a>)</td>
+            <td><code>70</code></td>
         </tr>
         <tr>
             <th><code>shutdownTimeout</code></th>
@@ -411,6 +416,10 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
             <td>Full path on the file system to where your app's statics folder is located.</td>
         </tr>
         <tr>
+            <th><code>publicFolder</code></th>
+            <td>Full path on the file system to where your app's public folder is located.</td>
+        </tr>
+        <tr>
             <th><code>modelsPath</code></th>
             <td>Full path on the file system to where your app's models folder is located.</td>
         </tr>
@@ -452,7 +461,7 @@ Dependencies
 - <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
 - <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
 - <a href='https://github.com/felixge/node-formidable'>formidable</a> - a Node.js module for parsing form data, especially file uploads
-- <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used by the CLI tool to help you create your sample app
+- <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used for recursive file operations and used by the CLI tool to help you create your sample app
 - <a href='https://github.com/lloyd/node-toobusy'>toobusy</a> - monitors the process and serves 503 responses when it's too busy
 - <a href='https://github.com/yeoman/update-notifier'>update-notifier</a> - used to tell you when there's a new version of Roosevelt
 

@@ -75,9 +75,10 @@ module.exports = function(params) {
           publicStatics: params.publicStatics || package.rooseveltConfig.publicStatics || ['css', 'images', 'js'],
           alwaysHostStatics: params.alwaysHostStatics || package.rooseveltConfig.alwaysHostStatics || false,
           disableLogger: params.disableLogger || package.rooseveltConfig.disableLogger || false,
+          localhostOnly: params.localhostOnly || package.rooseveltConfig.localhostOnly || true,
           disableMultipart: params.disableMultipart || package.rooseveltConfig.disableMultipart || false,
           formidableSettings: params.formidableSettings || package.formidableSettings || {},
-          maxLagPerRequest: params.maxLagPerRequest || package.maxLagPerRequest || 1000,
+          maxLagPerRequest: params.maxLagPerRequest || package.maxLagPerRequest || 70,
           shutdownTimeout: params.shutdownTimeout || package.shutdownTimeout || 30000,
           onServerStart: params.onServerStart || undefined,
           onReqStart: params.onReqStart || undefined,
@@ -108,6 +109,7 @@ module.exports = function(params) {
         // map statics paths
         app.set('cssPath', path.normalize(appDir + params.cssPath));
         app.set('lessPath', path.normalize(appDir + params.lessPath));
+        app.set('publicFolder', path.normalize(appDir + params.publicFolder));
 
         // determine statics prefix if any
         params.staticsPrefix = params.prefixStaticsWithVersion ? package.version || '' : '';
@@ -217,7 +219,7 @@ module.exports = function(params) {
         app.engine('html', app.get('teddy').__express);
 
         // list all view files to determine number of extensions
-        var viewFiles = wrench.readdirSyncRecursive(app.get('controllersPath')),
+        var viewFiles = wrench.readdirSyncRecursive(app.get('viewsPath')),
             extensions = {};
 
         // make list of extensions
@@ -423,7 +425,7 @@ module.exports = function(params) {
     });
   }
   else {
-    server = app.listen(app.get('port'), function() {
+    server = app.listen(app.get('port'), (params.localhostOnly ? 'localhost' : null), function() {
       console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix);
     });
     process.on('SIGTERM', gracefulShutdown);
