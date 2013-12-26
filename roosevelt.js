@@ -327,7 +327,7 @@ module.exports = function(params) {
         // make symlinks to public statics
         params.publicStatics.forEach(function(static) {
           var target = (appDir + publicDir + static).replace(new RegExp('//', 'g'), '/');
-          if (!fs.lstatSync(target)) {
+          if (!fs.existsSync(target) || (fs.existsSync(target) && !fs.lstatSync(target))) {
             fs.symlinkSync((appDir + params.staticsRoot + static).replace(new RegExp('//', 'g'), '/'), target, 'dir');
           }
         });
