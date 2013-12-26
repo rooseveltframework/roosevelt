@@ -312,11 +312,15 @@ module.exports = function(params) {
           return require(app.get('modelsPath') + model);
         });
 
-        // make versioned statics directory
+        // get public folder up and running
         publicDir = params.publicFolder;
+
+        // make public folder itself if it doesn't exist
         if (!fs.existsSync(publicDir)) {
           fs.mkdirSync(publicDir);
         }
+
+        // make statics prefix folder if the setting is enabled
         if (params.staticsPrefix) {
           publicDir += params.staticsPrefix + '/';
           if (!fs.existsSync(publicDir)) {
@@ -326,9 +330,17 @@ module.exports = function(params) {
 
         // make symlinks to public statics
         params.publicStatics.forEach(function(static) {
-          var target = (appDir + publicDir + static).replace(new RegExp('//', 'g'), '/');
-          if (!fs.existsSync(target) || (fs.existsSync(target) && !fs.lstatSync(target))) {
-            fs.symlinkSync((appDir + params.staticsRoot + static).replace(new RegExp('//', 'g'), '/'), target, 'dir');
+          var linkTarget = (appDir + publicDir + static).replace(new RegExp('//', 'g'), '/'),
+              staticTarget = (appDir + params.staticsRoot + static).replace(new RegExp('//', 'g'), '/');
+
+          // make static target folder if it hasn't yet been created
+          if (!fs.existsSync(staticTarget)) {
+            fs.mkdirSync(staticTarget);
+          }
+
+          // make symlink if it doesn't yet exist
+          if (!fs.existsSync(linkTarget) || !fs.lstatSync(linkTarget) || !fs.lstatSync(linkTarget).isSymbolicLink()) {
+            fs.symlinkSync(staticTarget, linkTarget, 'dir');
           }
         });
 
