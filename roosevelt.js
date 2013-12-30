@@ -419,7 +419,7 @@ module.exports = function(params) {
           numCPUs = arg;
         }
         else {
-          console.error((package.name || 'Roosevelt') + ' warning: invalid value "'+array[index + 1]+'" supplied to -cores param.' + threadSuffix);
+          console.error((package.name || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.' + threadSuffix);
           numCPUs = 1;
         }
       }
@@ -437,7 +437,7 @@ module.exports = function(params) {
     });
   }
   else {
-    server = app.listen(app.get('port'), (params.localhostOnly ? 'localhost' : null), function() {
+    server = app.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), function() {
       console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix);
     });
     process.on('SIGTERM', gracefulShutdown);
