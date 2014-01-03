@@ -14,6 +14,7 @@ Table of contents
 - [Create and run a Roosevelt app](#create-and-run-a-roosevelt-app)
   - [Other ways to run Roosevelt apps](#other-ways-to-run-roosevelt-apps)
 - [Default directory structure](#default-directory-structure)
+  - [Default .gitignore](#default-.gitignore)
 - [Configure your app](#configure-your-app)
   - [Parameter list](#parameter-list)
   - [Events](#events)
@@ -114,6 +115,18 @@ Default directory structure
   - `images`: folder for image files.
   - `js`: folder for JS files.
   - `less`: folder for LESS files.
+- `.gitignore`: a standard file which contains a list of files and folders to ignore if your project is in a  git repo.
+
+Default .gitignore
+---
+
+The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to liking before using a fresh Roosevelt app in your git repo.
+
+Some notable things ignored by default and why:
+
+- `public`: It's recommended that you don't create files in this folder manually, but instead use the `publicStatics` feature detailed below to expose folders in your `statics` directory via auto-generated symlinks.
+- `statics/css`: By default Roosevelt will compile LESS files from the LESS directory down to minified CSS and place them in the CSS directory. As such, it's not recommended to place files in the CSS directory manually. However, if you want to write your CSS files without any CSS preprocessing, then you can remove `statics/css` from `.gitignore` and place files in this folder manually.
+- `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some Node.js modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally <a href='https://npmjs.org/doc/faq.html'>not recommended</a> to commit the `node_modules` folder to git.
 
 Configure your app
 ===

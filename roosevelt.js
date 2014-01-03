@@ -185,6 +185,9 @@ module.exports = function(params) {
         // set port
         app.set('port', params.port);
 
+        // sending "X-Powered-By: Express" in every response header is not necessary...
+        app.disable('x-powered-by');
+
         // close connections gracefully if server is being shut down
         app.use(function(req, res, next) {
           if (app.get('roosevelt:state') !== 'disconnecting') {
