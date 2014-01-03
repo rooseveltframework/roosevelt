@@ -14,7 +14,7 @@ Table of contents
 - [Create and run a Roosevelt app](#create-and-run-a-roosevelt-app)
   - [Other ways to run Roosevelt apps](#other-ways-to-run-roosevelt-apps)
 - [Default directory structure](#default-directory-structure)
-  - [Default .gitignore](#default-.gitignore)
+  - [Default .gitignore](#default-gitignore)
 - [Configure your app](#configure-your-app)
   - [Parameter list](#parameter-list)
   - [Events](#events)
