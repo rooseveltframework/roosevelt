@@ -1,11 +1,11 @@
 roosevelt.js [![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt) [![Dependency Status](https://gemnasium.com/kethinov/roosevelt.png)](https://gemnasium.com/kethinov/roosevelt) [![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/kethinov/)
 ===
 
-Roosevelt is a new web framework for <a href='http://nodejs.org/'>Node.js</a> which uses <a href='https://github.com/kethinov/teddy'>Teddy</a> for HTML templating and <a href='http://lesscss.org/'>LESS</a> for CSS preprocessing.
+Roosevelt is a new web framework for [Node.js](http://nodejs.org) which uses [Teddy](https://github.com/kethinov/teddy) for HTML templating and [LESS](http://lesscss.org) for CSS preprocessing.
 
-Built on <a href='http://expressjs.com/'>Express</a>, Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> structure for your app.
+Built on [Express](http://expressjs.com), Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
-<img src='sampleApp/statics/images/teddy.jpg' alt=''/>
+![Teddy Roosevelt's facial hair is a curly brace.](https://raw.github.com/kethinov/roosevelt/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
 Table of contents
 ===
@@ -31,14 +31,14 @@ Table of contents
 Why use Roosevelt?
 ===
 
-Roosevelt is easy to use and has a low learning curve, unlike many other popular Node.js-based web frameworks.
+Roosevelt is easy to use and has a low learning curve, unlike many other popular [Node.js](http://nodejs.org)-based web frameworks.
 
 Reasons for this include:
 
-- Minimal boilerplate to get started. All the magic of <a href='http://expressjs.com/'>Express</a> is preconfigured for you.
+- Minimal boilerplate to get started. All the magic of [Express](http://expressjs.com) is preconfigured for you.
 - Default directory structure is simple, but easily configured.
-- Concise <a href='http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller'>MVC</a> architecture.
-- <a href='https://github.com/kethinov/teddy'>Teddy</a> HTML templates are much easier to read and maintain than popular alternatives.
+- Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
+- [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 
 Create and run a Roosevelt app
 ===
@@ -91,7 +91,7 @@ node app.js -cores max
 
 While developing your app, a more convenient way to run the app is to use the `npm start` script.
 
-The `npm start` script will run your app through <a href='https://github.com/remy/nodemon'>nodemon</a> and will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
+The `npm start` script will run your app through [nodemon](https://github.com/remy/nodemon) and will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
 
 Make sure you install nodemon first via `npm install -g nodemon` (may require admin or root privileges) and then simply execute this command:
 
@@ -154,124 +154,30 @@ Each param can also be defined in `package.json` under `"rooseveltConfig"`.
 Parameter list
 ---
 
-<table>
-    <thead>
-        <tr>
-            <th>Param</th>
-            <th>Description</th>
-            <th>Default</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th><code>port</code></th>
-            <td>The port your app will run on.</td>
-            <td>Either <code>process.env.NODE_PORT</code> or if that's undefined, then <code>43711</code></td>
-        </tr>
-        <tr>
-            <th><code>modelsPath</code></th>
-            <td>Relative path on filesystem to where your model files are located.</td>
-            <td><code>mvc/models</code></td>
-        </tr>
-        <tr>
-            <th><code>viewsPath</code></th>
-            <td>Relative path on filesystem to where your view files are located.</td>
-            <td><code>mvc/views</code></td>
-        </tr>
-        <tr>
-            <th><code>controllersPath</code></th>
-            <td>Relative path on filesystem to where your controller files are located.</td>
-            <td><code>mvc/controllers</code></td>
-        </tr>
-        <tr>
-            <th><code>notFoundPage</code></th>
-            <td>Relative path on filesystem to where your "404 Not Found" controller is located. If you do not supply one, Roosevelt will use its default 404 controller instead.</td>
-            <td><code>404.js</code></td>
-        </tr>
-        <tr>
-            <th><code>internalServerErrorPage</code></th>
-            <td>Relative path on filesystem to where your "500 Internal Server Error" controller is located. If you do not supply one, Roosevelt will use its default 500 controller instead.</td>
-            <td><code>500.js</code></td>
-        </tr>
-        <tr>
-            <th><code>serviceUnavailablePage</code></th>
-            <td>Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead.</td>
-            <td><code>503.js</code></td>
-        </tr>
-        <tr>
-            <th><code>staticsRoot</code></th>
-            <td>Relative path on filesystem to where your static assets are located.</td>
-            <td><code>statics</code></td>
-        </tr>
-        <tr>
-            <th><code>cssPath</code></th>
-            <td>Relative path on filesystem to where your CSS files are located.</td>
-            <td><code>statics/css</code></td>
-        </tr>
-        <tr>
-            <th><code>lessPath</code></th>
-            <td>Relative path on filesystem to where your LESS files are located.</td>
-            <td><code>statics/less</code></td>
-        </tr>
-        <tr>
-            <th><code>publicFolder</code></th>
-            <td>All files and folders specified in this path will be exposed as statics.</td>
-            <td><code>public</code></td>
-        </tr>
-        <tr>
-            <th><code>publicStatics</code></th>
-            <td>Static folders to make public. Only these subfolders of your <code>staticsRoot</code> will be accessible to end users.</td>
-            <td><code>['css',<br/>
- 'images',<br/>
- 'js']</code></td>
-        </tr>
-        <tr>
-            <th><code>prefixStaticsWithVersion</code></th>
-            <td>If set to true, Roosevelt will prepend your app's version number from <code>package.json</code> to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.</td>
-            <td><code>false</code></td>
-        </tr>
-        <tr>
-            <th><code>versionNumberLessVar</code></th>
-            <td>When this option is activated, Roosevelt will write a file named <code>version.less</code> to your <code>less</code> directory containing a variable with your desired name populated with your app's version number derived from <code>package.json</code>.<br/><br/>This option is disabled by default. Activate it by supplying a desired variable name to the parameter.<br/><br/>This feature is useful in conjunction with <code>prefixStaticsWithVersion</code>, as it allows you to construct URLs in your LESS files such as <code>url('/@{staticsVersion}/images/i.png')</code>, allowing you to version all of your statics at once simply by changing your app's version number in <code>package.json</code>.</td>
-            <td><code>undefined</code></td>
-        </tr>
-        <tr>
-            <th><code>alwaysHostStatics</code></th>
-            <td>By default in production mode Roosevelt will not expose the statics folder. It's recommended instead that you host the statics yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt expose your statics even in production mode, then set this setting to true.</td>
-            <td><code>false</code></td>
-        </tr>
-        <tr>
-            <th><code>disableLogger</code></th>
-            <td>When this option is set to true, Roosevelt will not log HTTP requests to the console.</td>
-            <td><code>false</code></td>
-        </tr>
-        <tr>
-            <th><code>localhostOnly</code></th>
-            <td>Listen only to requests coming from localhost.</td>
-            <td><code>true</code></td>
-        </tr>
-        <tr>
-            <th><code>disableMultipart</code></th>
-            <td>When this option is set to true, Roosevelt will not parse <code>enctype['multipart/form-data']</code> forms.</td>
-            <td><code>false</code></td>
-        </tr>
-        <tr>
-            <th><code>formidableSettings</code></th>
-            <td>Settings to pass along to <a href='https://github.com/felixge/node-formidable'>formidable</a> using <a href='https://github.com/felixge/node-formidable#api'>formidable's API</a>.</td>
-            <td><code>undefined</code></td>
-        </tr>
-        <tr>
-            <th><code>maxLagPerRequest</code></th>
-            <td>Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See <a href='https://github.com/lloyd/node-toobusy'>node-toobusy</a>)</td>
-            <td><code>70</code></td>
-        </tr>
-        <tr>
-            <th><code>shutdownTimeout</code></th>
-            <td>Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.</td>
-            <td><code>30000</code> (30 seconds)</td>
-        </tr>
-    </tbody>
-</table>
+Param | Description | Default
+--- | --- | ---
+`port` | The port your app will run on. | Either `process.env.NODE_PORT` or if that's undefined, then `43711`
+`modelsPath` | Relative path on filesystem to where your model files are located. | `mvc/models`
+`viewsPath` | Relative path on filesystem to where your view files are located. | `mvc/views`
+`controllersPath` | Relative path on filesystem to where your controller files are located. | `mvc/controllers`
+`notFoundPage` | Relative path on filesystem to where your "404 Not Found" controller is located. If you do not supply one, Roosevelt will use its default 404 controller instead. | `404.js`
+`internalServerErrorPage` | Relative path on filesystem to where your "500 Internal Server Error" controller is located. If you do not supply one, Roosevelt will use its default 500 controller instead. | `500.js`
+`serviceUnavailablePage` | Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead. | `503.js`
+`staticsRoot` | Relative path on filesystem to where your static assets are located. | `statics`
+`cssPath` | Relative path on filesystem to where your CSS files are located. | `statics/css`
+`lessPath` | Relative path on filesystem to where your LESS files are located. | `statics/less`
+`lessCompileWhitelist` | List of files for LESS to compile down to CSS. If none are provided, all LESS files will be compiled down to CSS. | `undefined`
+`publicFolder` | All files and folders specified in this path will be exposed as statics. | `public`
+`publicStatics` | Static folders to make public. Only these subfolders of your `staticsRoot` will be accessible to end users. | `['css','images','js']`
+`prefixStaticsWithVersion` | If set to true, Roosevelt will prepend your app's version number from `package.json` to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version. | `false`
+`versionNumberLessVar` | When this option is activated, Roosevelt will write a file named `version.less` to your `less` directory containing a LESS variable populated with your app's version number derived from `package.json`. This is useful in conjunction with `prefixStaticsWithVersion`, as it allows you to construct URLs in your LESS files such as `url('/@{staticsVersion}/images/i.png')`, allowing you to version all of your statics at once simply by changing your app's version number in `package.json`. Disabled by default. Activate by supplying a desired variable name as the param.  | `undefined`
+`alwaysHostStatics` | By default in production mode Roosevelt will not expose the statics folder. It's recommended instead that you host the statics yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt expose your statics even in production mode, then set this setting to true. | `false`
+`disableLogger` | When this option is set to true, Roosevelt will not log HTTP requests to the console. | `false`
+`localhostOnly` | Listen only to requests coming from localhost. | `true`
+`disableMultipart` | When this option is set to true, Roosevelt will not parse `enctype['multipart/form-data']` forms. | `false`
+`formidableSettings` | Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api). | `undefined`
+`maxLagPerRequest` | Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy)</a>) | `70`
+`shutdownTimeout` | Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal. | `30000` (30 seconds)
 
 Events
 ---
@@ -287,58 +193,19 @@ require('roosevelt')({
 Event list
 ---
 
-<table>
-	<thead>
-        <tr>
-            <th>Event</th>
-            <th>Description</th>
-            <th>Arguments passed</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th><code>onServerStart</code></th>
-            <td>Fired when the server starts.</td>
-            <td>
-            	<ul>
-            		<li><code>app</code>: the <a href='http://expressjs.com/api.html#express'>Express app</a> created by Roosevelt.</li>
-            	</ul>
-            </td>
-        </tr>
-        <tr>
-            <th><code>onReqStart</code></th>
-            <td>Fired at the beginning of each new request.</td>
-            <td>
-            	<ul>
-            		<li><code>req</code>: the <a href='http://expressjs.com/api.html#req.params'>request object</a> created by Express.</li>
-            		<li><code>res</code>: the <a href='http://expressjs.com/api.html#res.status'>response object</a>  created by Express.</li>
-            		<li><code>next</code>: callback to continue with the request. Must be called to continue the request.</li>
-            	</ul>
-            </td>
-        </tr>
-        <tr>
-            <th><code>onReqBeforeRoute</code></th>
-            <td>Fired just before executing the controller.</td>
-            <td>
-            	<ul>
-            		<li><code>req</code>: the <a href='http://expressjs.com/api.html#req.params'>request object</a> created by Express.</li>
-            		<li><code>res</code>: the <a href='http://expressjs.com/api.html#res.status'>response object</a>  created by Express.</li>
-            		<li><code>next</code>: callback to continue with the request. Must be called to continue the request.</li>
-            	</ul>
-            </td>
-        </tr>
-        <tr>
-            <th><code>onReqAfterRoute</code></th>
-            <td>Fired after the request ends.</td>
-            <td>
-            	<ul>
-            		<li><code>req</code>: the <a href='http://expressjs.com/api.html#req.params'>request object</a> created by Express.</li>
-            		<li><code>res</code>: the <a href='http://expressjs.com/api.html#res.status'>response object</a> created by Express.</li>
-            	</ul>
-            </td>
-        </tr>
-    </tbody>
-</table>
+- `onServerStart(app)`: Fired when the server starts.
+  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+- `onReqStart(req, res, next)`: Fired at the beginning of each new request.
+  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
+  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+  - `next`: Callback to continue with the request. Must be called to continue the request.
+- `onReqBeforeRoute(req, res, next)`: Fired just before executing the controller.
+  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
+  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+  - `next`: Callback to continue with the request. Must be called to continue the request.
+- `onReqAfterRoute(req, res)`: Fired after the request ends.
+  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
+  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
 
 Making controller files
 ===
@@ -376,12 +243,12 @@ module.exports = {some: 'data'};
 Making view files
 ===
 
-Views are <a href='https://github.com/kethinov/teddy'>Teddy</a> templates. See the Teddy documentation for information about how to author Teddy templates.
+Views are [Teddy](https://github.com/kethinov/teddy) templates. See the Teddy documentation for information about how to author Teddy templates.
 
 Using LESS with Roosevelt
 ===
 
-Using <a href='http://lesscss.org/'>LESS</a> with Roosevelt is optional.
+Using [LESS](http://lesscss.org) with Roosevelt is optional.
 
 Roosevelt will automatically compile any (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder. *Note: This will overwrite any preexisting CSS files of the same name, so be careful.*
 
@@ -392,73 +259,23 @@ Express variables exposed by Roosevelt
 
 Roosevelt supplies several variables to Express that you may find handy. Access them using `app.get('variableName')`.
 
-<table>
-    <thead>
-        <tr>
-            <th>Express variable</th>
-            <th>Description</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <th><code>express</code></th>
-            <td>The <a href='http://expressjs.com'>express</a> Node.js module.</td>
-        </tr>
-        <tr>
-            <th><code>teddy</code></th>
-            <td>The <a href='https://github.com/kethinov/teddy'>teddy</a> Node.js module. Used for templating.</td>
-        </tr>
-        <tr>
-            <th><code>formidable</code></th>
-            <td>The <a href='https://github.com/felixge/node-formidable'>formidable</a>  Node.js module. Used for handling multipart forms.</td>
-        </tr>
-        <tr>
-            <th><code>appName</code></th>
-            <td>The name of your app derived from <code>package.json</code>. Uses "Roosevelt Express" if no name is supplied.</td>
-        </tr>
-        <tr>
-            <th><code>appDir</code></th>
-            <td>The directory the main module is in.</td>
-        </tr>
-        <tr>
-            <th><code>package</code></th>
-            <td>The contents of <code>package.json</code></td>
-        </tr>
-        <tr>
-            <th><code>staticsRoot</code></th>
-            <td>Full path on the file system to where your app's statics folder is located.</td>
-        </tr>
-        <tr>
-            <th><code>publicFolder</code></th>
-            <td>Full path on the file system to where your app's public folder is located.</td>
-        </tr>
-        <tr>
-            <th><code>modelsPath</code></th>
-            <td>Full path on the file system to where your app's models folder is located.</td>
-        </tr>
-        <tr>
-            <th><code>viewsPath</code></th>
-            <td>Full path on the file system to where your app's views folder is located.</td>
-        </tr>
-        <tr>
-            <th><code>controllersPath</code></th>
-            <td>Full path on the file system to where your app's controllers folder is located.</td>
-        </tr>
-        <tr>
-            <th><code>params</code></th>
-            <td>The params you sent to Roosevelt.</td>
-        </tr>
-        <tr>
-            <th><code>port</code></th>
-            <td>Port Roosevelt is running on.</td>
-        </tr>
-        <tr>
-            <th><code>model</code></th>
-            <td>Method to return a model. Calling <code>app.get('model')('modelName')</code> will return a specified model from your models folder.</td>
-        </tr>
-    </tbody>
-</table>
 
+Express variable | Description
+--- | ---
+`express` | The [express](http://expressjs.com) Node.js module.
+`teddy` | The [teddy](https://github.com/kethinov/teddy) Node.js module. Used for templating.
+`formidable` | The [formidable](https://github.com/felixge/node-formidable)  Node.js module. Used for handling multipart forms.
+`appName` | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied.
+`appDir` | The directory the main module is in.
+`package` | The contents of `package.json`.
+`staticsRoot` | Full path on the file system to where your app's statics folder is located.
+`publicFolder` | Full path on the file system to where your app's public folder is located.
+`modelsPath` | Full path on the file system to where your app's models folder is located.
+`viewsPath` | Full path on the file system to where your app's views folder is located.
+`controllersPath` | Full path on the file system to where your app's controllers folder is located.
+`params` | The params you sent to Roosevelt.
+`port` | Port Roosevelt is running on.
+`model` | Method to return a model. Calling `app.get('model')('modelName')` will return a specified model from your models folder.
 
 Warning: Roosevelt is beta software!
 ===
@@ -470,15 +287,15 @@ You should not use Roosevelt in production yet unless you're willing to devote s
 Dependencies
 ===
 
-- <a href='http://expressjs.com/'>express</a> - a minimal and flexible Node.js web application framework
-- <a href='https://github.com/kethinov/teddy'>teddy</a> - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
-- <a href='https://github.com/emberfeather/less.js-middleware'>less-middleware</a> - Connect middleware for LESS compiling
-- <a href='https://github.com/felixge/node-formidable'>formidable</a> - a Node.js module for parsing form data, especially file uploads
-- <a href='https://github.com/ryanmcgrath/wrench-js'>wrench</a> - used for recursive file operations and used by the CLI tool to help you create your sample app
-- <a href='https://github.com/lloyd/node-toobusy'>toobusy</a> - monitors the process and serves 503 responses when it's too busy
-- <a href='https://github.com/yeoman/update-notifier'>update-notifier</a> - used to tell you when there's a new version of Roosevelt
+- [express](http://expressjs.com) - a minimal and flexible Node.js web application framework
+- [teddy](https://github.com/kethinov/teddy) - an easy-to-read, HTML-based, mostly logic-less DOM templating engine
+- [less](https://github.com/less/less.js) - LESS CSS preprocessor
+- [formidable](https://github.com/felixge/node-formidable) - a Node.js module for parsing form data, especially file uploads
+- [wrench](https://github.com/ryanmcgrath/wrench-js) - used for recursive file operations and used by the CLI tool to help you create your sample app
+- [toobusy](https://github.com/lloyd/node-toobusy) - monitors the process and serves 503 responses when it's too busy
+- [update-notifier](https://github.com/yeoman/update-notifier) - used to tell you when there's a new version of Roosevelt
 
 License
 ===
 
-All original code in Roosevelt is licensed under the <a href='http://creativecommons.org/licenses/by/4.0/'>Creative Commons Attribution 4.0 International License</a>. Commercial and noncommercial use is permitted with attribution.
+All original code in Roosevelt is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/). Commercial and noncommercial use is permitted with attribution.

@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.4.17",
+  "version": "0.4.18",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "Creative Commons Attribution 4.0 International License",
   "main": "roosevelt.js",
@@ -13,10 +13,11 @@
   "engineStrict": true,
   "dependencies": {
     "express": "~3.4.6",
-    "teddy": "~0.2.31",
-    "less-middleware": "~0.1.13",
+    "teddy": "~0.2.32",
+    "less": "~1.6.0",
     "formidable": "~1.0.14",
     "wrench": "~1.5.4",
+    "colors": "~0.6.2",
     "toobusy": "~0.2.4",
     "update-notifier": "~0.1.7"
   },

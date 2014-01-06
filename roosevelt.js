@@ -2,10 +2,11 @@ var fs = require('fs'),                           // utility library for filesys
     path = require('path'),                       // utilities for handling and transforming file paths
     express = require('express'),                 // express http server
     teddy = require('teddy'),                     // teddy templating engine
-    lessMiddleware = require('less-middleware'),  // for LESS CSS preprocessing
+    less = require('less'),                       // for LESS CSS preprocessing
     formidable = require('formidable'),           // for multipart forms
     toobusy = require('toobusy'),                 // monitors the process and serves 503 responses when it's too busy
     wrench = require('wrench'),                   // recursive file operations
+    colors = require('colors'),                   // for coloring the command line tool
     os = require('os'),                           // operating system info
     cluster = require('cluster'),                 // multicore support
     numCPUs = 1,                                  // default number of CPUs to use
@@ -69,6 +70,7 @@ module.exports = function(params) {
           staticsRoot: params.staticsRoot, // default hierarchy defined above because below params depend on this one being predefined
           cssPath: params.cssPath || package.rooseveltConfig.cssPath || params.staticsRoot + 'css/',
           lessPath: params.lessPath || package.rooseveltConfig.lessPath || params.staticsRoot + 'less/',
+          lessCompileWhitelist: params.lessCompileWhitelist || package.rooseveltConfig.lessCompileWhitelist || [],
           publicFolder: params.publicFolder || package.rooseveltConfig.publicFolder || 'public/',
           prefixStaticsWithVersion: params.prefixStaticsWithVersion || package.rooseveltConfig.prefixStaticsWithVersion || false,
           versionNumberLessVar: params.versionNumberLessVar || package.rooseveltConfig.versionNumberLessVar || undefined,
@@ -98,7 +100,7 @@ module.exports = function(params) {
         ['modelsPath', 'viewsPath', 'controllersPath', 'staticsRoot', 'publicFolder', 'cssPath', 'lessPath'].forEach(function(i) {
           var path = params[i],
               finalChar = path.charAt(path.length - 1);
-          params[i] = finalChar !== '/' && finalChar !== '\\' ? path : path + '/';
+          params[i] = (finalChar !== '/' && finalChar !== '\\') ? path + '/' : path;
         });
 
         // map mvc paths
@@ -139,44 +141,48 @@ module.exports = function(params) {
       },
 
       // activate LESS CSS preprocessing
-      activateLessMiddleware = function() {
+      preprocessCSS = function() {
+
+        var versionFile = app.get('lessPath') + 'version.less',
+            versionCode = '/* do not edit; generated automatically by Roosevelt */ @' + params.versionNumberLessVar + ': \'' + package.version + '\';',
+            lessFiles = params.lessCompileWhitelist.length ? params.lessCompileWhitelist : wrench.readdirSyncRecursive(app.get('lessPath')),
+            parser = new less.Parser({
+              paths: app.get('lessPath')
+            });
 
         // make css directory if not present
         if (!fs.existsSync(app.get('cssPath'))) {
           fs.mkdirSync(app.get('cssPath'));
+          console.log(((package.name || 'Roosevelt') + ' making new directory ' + app.get('cssPath') + threadSuffix).yellow);
         }
 
         // write app version to version.less to force statics versioning
         if (params.versionNumberLessVar) {
-          var versionFile = app.get('lessPath') + 'version.less',
-              versionCode = '/* do not edit; generated automatically by Roosevelt */ @' + params.versionNumberLessVar + ': \'' + package.version + '\';';
-
           if (fs.readFileSync(versionFile, 'utf8') !== versionCode) {
             fs.writeFile(versionFile, versionCode, function(err) {
               if (err) {
-                console.error((package.name || 'Roosevelt') + ' failed to write version.less file!' + threadSuffix);
+                console.error(((package.name || 'Roosevelt') + ' failed to write version.less file!' + threadSuffix).red);
                 console.error(err);
               }
               else {
-                console.log((package.name || 'Roosevelt') + ' writing new version.less to reflect new version: ' + package.version + threadSuffix);
+                console.log(((package.name || 'Roosevelt') + ' writing new version.less to reflect new version: ' + package.version + threadSuffix).green);
               }
             });
           }
         }
 
-        app.use(lessMiddleware({
-
-          // pathing options
-          src: app.get('lessPath'),
-          dest: app.get('cssPath'),
-          prefix: params.staticsPrefix ? '/' + params.staticsPrefix + '/' + params.cssPath.replace(app.get('staticsRoot'), '').replace(new RegExp('//', 'g'), '/') : '/' + params.cssPath.replace(app.get('staticsRoot'), '').replace(new RegExp('//', 'g'), '/'),
-          root: '/',
-
-          // performance options
-          once: true,       // compiles less files only once per server start (restart server to recompile altered LESS files into new CSS files)
-          compress: true,   // minifies CSS
-          yuicompress: true // enables YUI Compressor
-        }));
+        lessFiles.forEach(function(file) {
+          (function(file) {
+            parser.parse(fs.readFileSync(app.get('lessPath') + file, 'utf8'), function(e, tree) {
+              var newFile = app.get('cssPath') + file.replace('.less', '.css');
+              console.log(((package.name || 'Roosevelt') + ' writing new CSS file ' + newFile + threadSuffix).green);
+              fs.writeFileSync(newFile, tree.toCSS({
+                compress: true,
+                yuicompress: true
+              }));
+            });
+          })(file);
+        });
       },
 
       // configure specific express options
@@ -265,7 +271,7 @@ module.exports = function(params) {
             if (typeof contentType === 'string' && contentType.indexOf('multipart/form-data') > -1) {
               form.parse(req, function(err, fields, files) {
                 if (err) {
-                  console.error((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix);
+                  console.error(((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix).red);
                   console.error(err);
                 }
                 req.body = fields; // pass along form fields
@@ -278,7 +284,7 @@ module.exports = function(params) {
                     if (typeof file.path === 'string') {
                       fs.unlink(file.path, function(err) {
                         if (err) {
-                          console.error((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + file.path + threadSuffix);
+                          console.error(((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + file.path + threadSuffix).red);
                           console.error(err);
                         }
                       });
@@ -321,6 +327,7 @@ module.exports = function(params) {
         // make public folder itself if it doesn't exist
         if (!fs.existsSync(publicDir)) {
           fs.mkdirSync(publicDir);
+          console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir + threadSuffix).yellow);
         }
 
         // make statics prefix folder if the setting is enabled
@@ -328,22 +335,25 @@ module.exports = function(params) {
           publicDir += params.staticsPrefix + '/';
           if (!fs.existsSync(publicDir)) {
             fs.mkdirSync(publicDir);
+            console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir + threadSuffix).yellow);
           }
         }
 
         // make symlinks to public statics
         params.publicStatics.forEach(function(static) {
-          var linkTarget = (appDir + publicDir + static).replace(new RegExp('//', 'g'), '/'),
-              staticTarget = (appDir + params.staticsRoot + static).replace(new RegExp('//', 'g'), '/');
+          var linkTarget = (appDir + publicDir + static),
+              staticTarget = (appDir + params.staticsRoot + static);
 
           // make static target folder if it hasn't yet been created
           if (!fs.existsSync(staticTarget)) {
             fs.mkdirSync(staticTarget);
+            console.log(((package.name || 'Roosevelt') + ' making new directory ' + staticTarget + threadSuffix).yellow);
           }
 
           // make symlink if it doesn't yet exist
           if (!fs.existsSync(linkTarget) || !fs.lstatSync(linkTarget) || !fs.lstatSync(linkTarget).isSymbolicLink()) {
             fs.symlinkSync(staticTarget, linkTarget, 'dir');
+            console.log(((package.name || 'Roosevelt') + ' making new symlink ').cyan + (linkTarget).yellow + (' pointing to ').cyan + (staticTarget).yellow + (threadSuffix).cyan);
           }
         });
 
@@ -358,7 +368,7 @@ module.exports = function(params) {
           controllerFiles = wrench.readdirSyncRecursive(app.get('controllersPath'));
         }
         catch (e) {
-          console.error((package.name || 'Roosevelt') + ' fatal error: could not load controller files from ' + app.get('controllersPath') + threadSuffix);
+          console.error(((package.name || 'Roosevelt') + ' fatal error: could not load controller files from ' + app.get('controllersPath') + threadSuffix).red);
           console.error(e);
         }
 
@@ -371,7 +381,7 @@ module.exports = function(params) {
               }
             }
             catch (e) {
-              console.error((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix);
+              console.error(((package.name || 'Roosevelt') + ' failed to load controller file: ' + controllerName + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix).red);
               console.error(e);
             }
           }
@@ -382,20 +392,20 @@ module.exports = function(params) {
           require(params.notFoundPage)(app);
         }
         catch (e) {
-          console.error((package.name || 'Roosevelt') + ' failed to load 404 controller file: ' + params.notFoundPage + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix);
+          console.error(((package.name || 'Roosevelt') + ' failed to load 404 controller file: ' + params.notFoundPage + '. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.' + threadSuffix).red);
           console.error(e);
         }
       },
 
       gracefulShutdown = function() {
         app.set('roosevelt:state', 'disconnecting');
-        console.log("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.' + threadSuffix);
+        console.log(("\n" + (package.name || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.' + threadSuffix).magenta);
         server.close(function() {
-          console.log((package.name || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.' + threadSuffix);
+          console.log(((package.name || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.' + threadSuffix).magenta);
           process.exit();
         });
         setTimeout(function() {
-          console.error((package.name || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.' + threadSuffix);
+          console.error(((package.name || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.' + threadSuffix).red);
           process.exit(1);
         }, app.get('params').shutdownTimeout);
       };
@@ -403,7 +413,7 @@ module.exports = function(params) {
   app.configure(function() {
     onServerStart();
     setMemberVars();
-    activateLessMiddleware();
+    preprocessCSS();
     setExpressConfigs();
     mapRoutes();
   });
@@ -422,7 +432,7 @@ module.exports = function(params) {
           numCPUs = arg;
         }
         else {
-          console.error((package.name || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.' + threadSuffix);
+          console.error(((package.name || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.' + threadSuffix).red);
           numCPUs = 1;
         }
       }
@@ -436,12 +446,12 @@ module.exports = function(params) {
       cluster.fork();
     }
     cluster.on('exit', function(worker, code, signal) {
-      console.log((package.name || 'Roosevelt') + ' thread ' + worker.process.pid + ' died');
+      console.log(((package.name || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
     });
   }
   else {
     server = app.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), function() {
-      console.log(package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix);
+      console.log((package.name + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)' + threadSuffix).bold);
     });
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
