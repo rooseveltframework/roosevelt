@@ -153,7 +153,7 @@ module.exports = function(params) {
         // make css directory if not present
         if (!fs.existsSync(app.get('cssPath'))) {
           fs.mkdirSync(app.get('cssPath'));
-          console.log(((package.name || 'Roosevelt') + ' making new directory ' + app.get('cssPath') + threadSuffix).yellow);
+          console.log(((package.name || 'Roosevelt') + ' making new directory ' + app.get('cssPath').replace(app.get('appDir'), '') + threadSuffix).yellow);
         }
 
         // write app version to version.less to force statics versioning
@@ -327,7 +327,7 @@ module.exports = function(params) {
         // make public folder itself if it doesn't exist
         if (!fs.existsSync(publicDir)) {
           fs.mkdirSync(publicDir);
-          console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir + threadSuffix).yellow);
+          console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir.replace(app.get('appDir'), '') + threadSuffix).yellow);
         }
 
         // make statics prefix folder if the setting is enabled
@@ -335,7 +335,7 @@ module.exports = function(params) {
           publicDir += params.staticsPrefix + '/';
           if (!fs.existsSync(publicDir)) {
             fs.mkdirSync(publicDir);
-            console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir + threadSuffix).yellow);
+            console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir.replace(app.get('appDir'), '') + threadSuffix).yellow);
           }
         }
 
@@ -347,13 +347,13 @@ module.exports = function(params) {
           // make static target folder if it hasn't yet been created
           if (!fs.existsSync(staticTarget)) {
             fs.mkdirSync(staticTarget);
-            console.log(((package.name || 'Roosevelt') + ' making new directory ' + staticTarget + threadSuffix).yellow);
+            console.log(((package.name || 'Roosevelt') + ' making new directory ' + staticTarget.replace(app.get('appDir'), '') + threadSuffix).yellow);
           }
 
           // make symlink if it doesn't yet exist
           if (!fs.existsSync(linkTarget) || !fs.lstatSync(linkTarget) || !fs.lstatSync(linkTarget).isSymbolicLink()) {
             fs.symlinkSync(staticTarget, linkTarget, 'dir');
-            console.log(((package.name || 'Roosevelt') + ' making new symlink ').cyan + (linkTarget).yellow + (' pointing to ').cyan + (staticTarget).yellow + (threadSuffix).cyan);
+            console.log(((package.name || 'Roosevelt') + ' making new symlink ').cyan + (linkTarget.replace(app.get('appDir'), '')).yellow + (' pointing to ').cyan + (staticTarget.replace(app.get('appDir'), '')).yellow + (threadSuffix).cyan);
           }
         });
 
