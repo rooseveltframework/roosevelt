@@ -374,7 +374,8 @@ module.exports = function(params) {
 
         // load all controllers
         controllerFiles.forEach(function(controllerName) {
-          if (controllerName.indexOf(params.notFoundPage.split('/').pop()) < 0) {
+          var notFoundPage = os.platform() !== 'win32' ? controllerName.indexOf(params.notFoundPage.split('/').pop()) : controllerName.indexOf(params.notFoundPage.split('\\').pop());
+          if (notFoundPage < 0) {
             try {
               if (fs.statSync(app.get('controllersPath') + controllerName).isFile()) {
                 require(app.get('controllersPath') + controllerName)(app);
