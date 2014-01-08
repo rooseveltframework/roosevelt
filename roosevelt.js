@@ -12,7 +12,7 @@ var fs = require('fs'),                           // utility library for filesys
     numCPUs = 1,                                  // default number of CPUs to use
 
     // location of the main module
-    appDir = path.normalize(module.parent.filename.replace(module.parent.filename.split('/')[module.parent.filename.split('/').length - 1], '')),
+    appDir = os.platform() !== 'win32' ? module.parent.filename.replace(module.parent.filename.split('/')[module.parent.filename.split('/').length - 1], '') : module.parent.filename.replace(module.parent.filename.split('\\')[module.parent.filename.split('\\').length - 1], ''),
 
     // storing contents of package.json for later use
     package = require(appDir + 'package.json'),
@@ -322,7 +322,7 @@ module.exports = function(params) {
         });
 
         // get public folder up and running
-        publicDir = params.publicFolder;
+        publicDir = path.normalize(params.publicFolder);
 
         // make public folder itself if it doesn't exist
         if (!fs.existsSync(publicDir)) {
@@ -332,7 +332,7 @@ module.exports = function(params) {
 
         // make statics prefix folder if the setting is enabled
         if (params.staticsPrefix) {
-          publicDir += params.staticsPrefix + '/';
+          publicDir += path.normalize(params.staticsPrefix + '/');
           if (!fs.existsSync(publicDir)) {
             fs.mkdirSync(publicDir);
             console.log(((package.name || 'Roosevelt') + ' making new directory ' + publicDir.replace(app.get('appDir'), '') + threadSuffix).yellow);
