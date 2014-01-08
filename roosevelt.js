@@ -352,7 +352,7 @@ module.exports = function(params) {
 
           // make symlink if it doesn't yet exist
           if (!fs.existsSync(linkTarget) || !fs.lstatSync(linkTarget) || !fs.lstatSync(linkTarget).isSymbolicLink()) {
-            fs.symlinkSync(staticTarget, linkTarget, 'dir');
+            fs.symlinkSync(staticTarget, linkTarget, 'junction');
             console.log(((package.name || 'Roosevelt') + ' making new symlink ').cyan + (linkTarget.replace(app.get('appDir'), '')).yellow + (' pointing to ').cyan + (staticTarget.replace(app.get('appDir'), '')).yellow + (threadSuffix).cyan);
           }
         });
