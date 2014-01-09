@@ -64,7 +64,7 @@ Platform specific prerequisites
 
 - You may need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common Node.js modules.
 
-Once you have a sane Node.js developmemt environment, you proceed with the standard install procedure below.
+Once you have a sane Node.js developmemt environment, you can proceed with the standard install procedure below.
 
 Install Roosevelt and create an app
 ---
