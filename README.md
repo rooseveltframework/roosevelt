@@ -12,6 +12,8 @@ Table of contents
 
 - [Why use Roosevelt](#why-use-roosevelt)
 - [Create and run a Roosevelt app](#create-and-run-a-roosevelt-app)
+  - [Platform specific prerequisites](#platform-specific-prerequisites)
+  - [Install Roosevelt and create an app](#install-Roosevelt-and-create-an-app)
   - [Other ways to run Roosevelt apps](#other-ways-to-run-roosevelt-apps)
 - [Default directory structure](#default-directory-structure)
   - [Default .gitignore](#default-gitignore)
@@ -43,7 +45,31 @@ Reasons for this include:
 Create and run a Roosevelt app
 ===
 
-Install the command line tool globally (may require admin or root privileges):
+First you will need to install [Node.js](http://nodejs.org). However, some platforms require additional steps to get started developing your app.
+
+Platform specific prerequisites
+---
+
+**Windows:**
+
+- Install python 2.7.6 (not 3.x, that doesn't work). [Download that here](http://www.python.org/download/releases/2.7.6).
+- Add python to your PATH. [Instructions for that are here](http://stackoverflow.com/questions/6318156/adding-python-path-on-windows-7).
+- Install Visual Studio (payware) or Visual Studio Express for Windows Desktop (registerware): [Download that here](http://www.visualstudio.com/downloads/download-visual-studio-vs).
+
+**Mac:**
+
+- Install [Xcode](https://developer.apple.com/xcode).
+
+**Ubuntu:**
+
+- You may need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common Node.js modules.
+
+Once you have a sane Node.js developmemt environment, you proceed with the standard install procedure below.
+
+Install Roosevelt and create an app
+---
+
+First install the command line tool globally (may require admin or root privileges):
 
 ```
 npm install -g roosevelt
