@@ -201,7 +201,7 @@ Param | Description | Default
 `disableLogger` | When this option is set to true, Roosevelt will not log HTTP requests to the console. | `false`
 `localhostOnly` | Listen only to requests coming from localhost. | `true`
 `disableMultipart` | When this option is set to true, Roosevelt will not parse `enctype['multipart/form-data']` forms. | `false`
-`formidableSettings` | Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api). | `undefined`
+`formidableSettings` | Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api). Formidable is used for multipart form processing. | `undefined`
 `maxLagPerRequest` | Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy)</a>) | `70`
 `shutdownTimeout` | Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal. | `30000` (30 seconds)
 
@@ -276,7 +276,7 @@ Using LESS with Roosevelt
 
 Using [LESS](http://lesscss.org) with Roosevelt is optional.
 
-Roosevelt will automatically compile any (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder. *Note: This will overwrite any preexisting CSS files of the same name, so be careful.*
+Roosevelt will automatically compile any LESS (`.less`) files in your LESS folder down to minified CSS (`.css`) files of the same name in your CSS folder. *Note: This will overwrite any preexisting CSS files of the same name, so be careful.*
 
 The CSS minifier used by LESS is <a href='http://yui.github.io/yuicompressor/css.html'>YUI Compressor</a>.
 
