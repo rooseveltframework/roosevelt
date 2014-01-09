@@ -13,7 +13,7 @@ Table of contents
 - [Why use Roosevelt](#why-use-roosevelt)
 - [Create and run a Roosevelt app](#create-and-run-a-roosevelt-app)
   - [Platform specific prerequisites](#platform-specific-prerequisites)
-  - [Install Roosevelt and create an app](#install-Roosevelt-and-create-an-app)
+  - [Install Roosevelt and create an app](#install-roosevelt-and-create-an-app)
   - [Other ways to run Roosevelt apps](#other-ways-to-run-roosevelt-apps)
 - [Default directory structure](#default-directory-structure)
   - [Default .gitignore](#default-gitignore)
