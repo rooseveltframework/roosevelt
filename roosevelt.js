@@ -273,6 +273,8 @@ module.exports = function(params) {
                 if (err) {
                   console.error(((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix).red);
                   console.error(err);
+                  next(err);
+                  return;
                 }
                 req.body = fields; // pass along form fields
                 req.files = files; // pass along files
@@ -293,7 +295,6 @@ module.exports = function(params) {
                 };
                 res.once('finish', cleanup);
                 res.once('close', cleanup);
-                res.once('error', cleanup);
                 next();
               });
             }
