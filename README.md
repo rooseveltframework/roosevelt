@@ -182,7 +182,7 @@ Parameter list
 
 Param | Description | Default
 --- | --- | ---
-`port` | The port your app will run on. | Either `process.env.NODE_PORT` or if that's undefined, then `43711`
+`port` | The port your app will run on. | Either the `NODE_PORT` environment variable or if that's undefined, then `43711`
 `modelsPath` | Relative path on filesystem to where your model files are located. | `mvc/models`
 `viewsPath` | Relative path on filesystem to where your view files are located. | `mvc/views`
 `controllersPath` | Relative path on filesystem to where your controller files are located. | `mvc/controllers`
