@@ -265,10 +265,10 @@ module.exports = function(params) {
         if (!params.disableMultipart) {
           // middleware to handle forms with formidable
           app.use(function(req, res, next) {
-            var form = new formidable.IncomingForm(params.formidableSettings),
-                contentType = req.headers['content-type'];
+            var form, contentType = req.headers['content-type'];
 
             if (typeof contentType === 'string' && contentType.indexOf('multipart/form-data') > -1) {
+              form = new formidable.IncomingForm(params.formidableSettings);
               form.parse(req, function(err, fields, files) {
                 if (err) {
                   console.error(((package.name || 'Roosevelt') + ' failed to parse multipart form at ' + req.url + threadSuffix).red);
