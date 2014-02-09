@@ -282,13 +282,17 @@ module.exports = function(params) {
                 // remove tmp files after request finishes
                 var cleanup = function() {
                   Object.keys(files).forEach(function(file) {
-                    file = files[file];
-                    if (typeof file.path === 'string') {
-                      fs.unlink(file.path, function(err) {
-                        if (err) {
-                          console.error(((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + file.path + threadSuffix).red);
-                          console.error(err);
-                        }
+                    var filePath = files[file].path;
+                    if (typeof filePath === 'string') {
+                      fs.exists(filePath, function(exists) {
+                        fs.unlink(filePath, function(err) {
+                          if (err) {
+                            if (err.errno !== 34 && err.code !== 'ENOENT') { // ignore file not found error
+                              console.error(((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + filePath + threadSuffix).red);
+                              console.error(err);
+                            }
+                          }
+                        });
                       });
                     }
                   });
