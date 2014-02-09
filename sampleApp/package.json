@@ -12,7 +12,7 @@
   },
   "engineStrict": true,
   "dependencies": {
-    "roosevelt": ">=0.4.27"
+    "roosevelt": ">=0.4.28"
   },
   "devDependencies": {
     "jshint": "*",
