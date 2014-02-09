@@ -287,7 +287,7 @@ module.exports = function(params) {
                       fs.exists(filePath, function(exists) {
                         fs.unlink(filePath, function(err) {
                           if (err) {
-                            if (err.errno !== 34 && err.code !== 'ENOENT') {
+                            if (err.errno === 34 && err.code === 'ENOENT') {
                               return; // ignore file not found error
                             }
                             else {
