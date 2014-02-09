@@ -287,7 +287,10 @@ module.exports = function(params) {
                       fs.exists(filePath, function(exists) {
                         fs.unlink(filePath, function(err) {
                           if (err) {
-                            if (err.errno !== 34 && err.code !== 'ENOENT') { // ignore file not found error
+                            if (err.errno !== 34 && err.code !== 'ENOENT') {
+                              return; // ignore file not found error
+                            }
+                            else {
                               console.error(((package.name || 'Roosevelt') + ' failed to remove tmp file: ' + filePath + threadSuffix).red);
                               console.error(err);
                             }
