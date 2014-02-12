@@ -134,6 +134,9 @@ module.exports = function(params) {
 
         app.set('params', params);
 
+        // enable gzip compression
+        app.use(express.compress();
+
         // bind user-defined middleware which fires at the beginning of a request if supplied
         if (params.onReqStart && typeof params.onReqStart === 'function') {
           app.use(params.onReqStart);
@@ -191,8 +194,9 @@ module.exports = function(params) {
         // set port
         app.set('port', params.port);
 
-        // sending "X-Powered-By: Express" in every response header is not necessary...
+        // remove unnecessary response headers
         app.disable('x-powered-by');
+        app.disable('etag');
 
         // close connections gracefully if server is being shut down
         app.use(function(req, res, next) {
