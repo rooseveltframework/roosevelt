@@ -469,7 +469,7 @@ module.exports = function(params) {
     });
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
-  };
+  }
 
   return app;
 };
