@@ -12,12 +12,13 @@
   },
   "engineStrict": true,
   "dependencies": {
-    "roosevelt": ">=0.4.32"
+    "roosevelt": ">=0.4.33"
   },
   "devDependencies": {
     "jshint": "*",
     "nodemon": "*"
   },
+  "rooseveltConfig": {},
   "jshintConfig": {},
   "private": true,
   "repository": {},

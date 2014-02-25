@@ -446,7 +446,7 @@ module.exports = function(params) {
           numCPUs = arg;
         }
         else {
-          console.error(((pkg.name || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.' + threadSuffix).red);
+          console.warn(((pkg.name || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.' + threadSuffix).red);
           numCPUs = 1;
         }
       }

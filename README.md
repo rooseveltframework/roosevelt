@@ -212,7 +212,7 @@ Roosevelt also provides a series of events you can attach code to by passing a f
 
 ```js
 require('roosevelt')({
-  onServerStart: functiom(app) { /* do something */ }
+  onServerStart: function(app) { /* do something */ }
 });
 ```
 
