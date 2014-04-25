@@ -230,7 +230,7 @@ MVC parameters
   - Default: `mvc/views`
 - `viewEngine`: What templating engine to use, formatted as `'fileExtension: nodeModule'`. Supply an array of engines to use in that format in order to make use of multiple templating engines. Each engine you use must also be marked as a dependency in your app's package.json. Whichever engine you supply first with this parameter will be considered the default. Set to `none` to use no templating engine.
   - Default: `html: teddy`
-  - Also by default the Node module [teddy](https://github.com/kethinov/teddy) is marked as a dependency in package.json.
+  - Also by default the module [teddy](https://github.com/kethinov/teddy) is marked as a dependency in package.json.
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: `mvc/controllers`
 
