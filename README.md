@@ -253,7 +253,7 @@ Statics parameters
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
   - Default: `{nodeModule: 'roosevelt-less', params: {compress: true}}`.
-  - Also by default the Node module [roosevelt-less](https://github.com/kethinov/roosevelt-less) is marked as a dependency in package.json.
+  - Also by default the module [roosevelt-less](https://github.com/kethinov/roosevelt-less) is marked as a dependency in package.json.
 - `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files.
   - Default: `undefined`
 - `cssCompiledOutput`: Where to place compiled CSS files. This folder will be made public by default.
