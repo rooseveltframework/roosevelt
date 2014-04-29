@@ -262,7 +262,7 @@ Statics parameters
   - Default: `js`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
   - Default: `{nodeModule: 'roosevelt-closure', params: {compilation_level: 'ADVANCED_OPTIMIZATIONS'}}`.
-  - Also by default the Node module [roosevelt-closure](https://github.com/kethinov/roosevelt-closure) is marked as a dependency in package.json.
+  - Also by default the module [roosevelt-closure](https://github.com/kethinov/roosevelt-closure) is marked as a dependency in package.json.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files.
   - Default: `undefined`
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
