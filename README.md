@@ -361,7 +361,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 
 Express variable | Description
 --- | ---
-`express` | The [express](http://expressjs.com) Node.js module.
+`express` | The [express](http://expressjs.com) module.
 *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. 
 `formidable` | The [formidable](https://github.com/felixge/node-formidable)  Node.js module. Used for handling multipart forms.
 `appName` | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied.
