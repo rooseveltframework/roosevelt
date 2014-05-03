@@ -1,9 +1,11 @@
+var path = require('path');
+
 module.exports = function(app, req, res) {
   res.setHeader('Connection', 'close');
   res.status(503);
-  res.render(__dirname + '/../views/503', {
+  res.render(path.normalize(__dirname + '/../views/503'), {
     url: req.url,
-    appName: app.get('appName'),
+    mainDomain: req.headers['x-forwarded-host'] || req.headers.host,
     appVersion: app.get('package').version
   });
 };

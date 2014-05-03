@@ -1,15 +1,11 @@
 module.exports = function(app) {
-  app.all('*', function(req, res) {
+  app.route('*').all(function(req, res) {
+    var model = require('global')(req, res);
+    model.content.pageTitle = '{content.appTitle} - 404 not found';
+    model.host = req.host;
+    model.url = req.url;
+    model.appVersion = app.get('package').version;
     res.status(404);
-    res.render('404', {
-      content: {
-        appTitle: 'roosevelt sample app',
-        pageTitle: 'roosevelt sample app - 404 not found'
-      },
-      host: req.host,
-      url: req.url,
-      appName: app.get('appName'),
-      appVersion: app.get('package').version
-    });
+    res.render('404', model);
   });
 };

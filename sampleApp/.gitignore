@@ -11,10 +11,11 @@ pids
 logs
 results
 
-npm-debug.log
 Thumbs.db
 .DS_Store
 
+npm-debug.log
 node_modules
+
 public
-statics/css
+.build

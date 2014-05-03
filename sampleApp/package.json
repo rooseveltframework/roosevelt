@@ -6,23 +6,35 @@
   "homepage": "",
   "license": "",
   "main": "app.js",
-  "readmeFilename": "README.md",
+  "readmeFilename": "",
   "engines": {
     "node": ">=0.10.0"
   },
   "engineStrict": true,
   "dependencies": {
-    "roosevelt": ">=0.4.33"
+    "roosevelt": "~0.5.0",
+    "teddy": "~0.2.37",
+    "roosevelt-less": "~0.1.4",
+    "roosevelt-closure": "~0.1.0"
   },
   "devDependencies": {
     "jshint": "*",
     "nodemon": "*"
   },
   "rooseveltConfig": {},
-  "jshintConfig": {},
+  "jshintConfig": {
+    "camelcase": true,
+    "curly": true,
+    "devel": true,
+    "indent": 2,
+    "node": true
+  },
   "private": true,
-  "repository": {},
+  "repository": {
+    "private-repo": "git+ssh://somewhere:port/folder/on/server"
+  },
   "scripts": {
-    "start": "nodemon -e js,json,less,html app.js"
+    "start": "nodemon -e js,json,less,html app.js",
+    "test": "jshint app.js"
   }
 }
