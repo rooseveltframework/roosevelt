@@ -1,20 +1,18 @@
 @echo off
 
-cd "`dirname "$0"`"
 cd ../
 
-where npm
-if %ERRORLEVEL% neq 0 (
-  echo "You must install Node.js and npm to run this program: http://nodejs.org"
+node --version >nul 2>&1 || (
+  echo You must install Node.js and npm to run this program: http://nodejs.org
+  pause >nul
   goto :eof
 )
 
-where nodemon
-if %ERRORLEVEL% neq 0 (
+where nodemon >nul 2>&1 || (
   npm install -g nodemon
-  goto :eof
+  if not exist node_modules npm install
+  npm start
 )
 
-IF exist myDirName ( npm install )
-
+if not exist node_modules npm install
 npm start
