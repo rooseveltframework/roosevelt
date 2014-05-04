@@ -68,6 +68,8 @@ Platform specific prerequisites
 
 - You may need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common Node.js modules.
 
+If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the site of your app by several tens of megabytes.
+
 Once you have a sane Node.js developmemt environment, you can proceed with the standard install procedure below.
 
 Install Roosevelt and create an app
