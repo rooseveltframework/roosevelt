@@ -11,8 +11,13 @@ var fs = require('fs'),
       console.log("Roosevelt MVC web framework\n");
       console.log("Version " + package.version + "\n");
       console.log("USAGE:");
-      console.log("roosevelt create appName                       create sample roosevelt app called appName in your current working directory");
-      console.log("roosevelt create /path/to/somewhere/appName    create sample roosevelt app in /path/to/somewhere called appName");
+      console.log("\n");
+      console.log("create an app in this directory:");
+      console.log("roosevelt create appName");
+      console.log("\n");
+      console.log("create an app somewhere else:");
+      console.log("roosevelt create /path/to/appName");
+      console.log("\n");
     };
 
 if (notifier.update) {
