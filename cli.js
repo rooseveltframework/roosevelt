@@ -8,16 +8,16 @@ var fs = require('fs'),
     cmd = process.argv[2],
     arg = process.argv[3],
     showHelp = function() {
+      console.log("");
       console.log("Roosevelt MVC web framework\n");
       console.log("Version " + package.version + "\n");
       console.log("USAGE:");
-      console.log("\n");
+      console.log("");
       console.log("create an app in this directory:");
       console.log("roosevelt create appName");
-      console.log("\n");
+      console.log("");
       console.log("create an app somewhere else:");
       console.log("roosevelt create /path/to/appName");
-      console.log("\n");
     };
 
 if (notifier.update) {
