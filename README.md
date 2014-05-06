@@ -161,7 +161,7 @@ Default directory structure
   - `views`: folder for view files.
 - `node_modules`: a standard Node.js folder where all modules your app depends on (such as Roosevelt) are installed to. This folder is created by the `npm install` command.
   - `models`: symlink to `mvc/models` so you can `require('models/yourModel')` anywhere in your code without specifying a relative path. Roosevelt will create this symlink for you.
-- `package.json`: a standard Node.js file for configuring your app.
+- `package.json`: a standard file for configuring your app.
 - `public`: all contents within this folder will be exposed as static files.
 - `statics`: folder for CSS, images, JS files, and other statics. Some of the contents of this folder are symlinked to from public, which you can configure (see below).
   - `css`: folder for CSS files.
