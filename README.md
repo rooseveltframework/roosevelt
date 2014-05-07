@@ -178,7 +178,7 @@ Some notable things ignored by default and why:
 
 - `public`: It's recommended that you don't create files in this folder manually, but instead use the `symlinksToStatics` feature detailed below to expose folders in your `statics` directory via auto-generated symlinks.
 - `.build`: By default Roosevelt will compile LESS and JS files down to minified versions in `statics/.build` when the server starts. As such, it's not recommended to place files in the build directory manually.
-- `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some Node.js modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally <a href='https://npmjs.org/doc/faq.html'>not recommended</a> to commit the `node_modules` folder to git.
+- `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally <a href='https://npmjs.org/doc/faq.html'>not recommended</a> to commit the `node_modules` folder to git.
 
 Configure your app with parameters
 ===
