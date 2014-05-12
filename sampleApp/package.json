@@ -12,8 +12,8 @@
   },
   "engineStrict": true,
   "dependencies": {
-    "roosevelt": "~0.5.0",
-    "teddy": "~0.2.37",
+    "roosevelt": "~0.5.10",
+    "teddy": "~0.2.40",
     "roosevelt-less": "~0.1.4",
     "roosevelt-closure": "~0.1.0"
   },
