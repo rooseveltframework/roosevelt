@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "Creative Commons Attribution 4.0 International License",
   "main": "roosevelt.js",
@@ -12,10 +12,10 @@
   },
   "engineStrict": true,
   "dependencies": {
-    "express": "~4.1.1",
+    "express": "~4.2.0",
     "compression": "~1.0.1",
     "morgan": "~1.0.0",
-    "body-parser": "~1.0.2",
+    "body-parser": "~1.2.0",
     "method-override": "~1.0.0",
     "formidable": "~1.0.14",
     "wrench": "~1.5.8",
@@ -55,6 +55,6 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "jshint roosevelt.js cli.js sampleApp/app.js sampleApp/mvc/controllers/404.js sampleApp/mvc/controllers/homepage.js sampleApp/mvc/controllers/robots.txt.js sampleApp/mvc/models/homepage.js"
+    "test": "jshint roosevelt.js cli.js sampleApp/app.js sampleApp/mvc/controllers/404.js sampleApp/mvc/controllers/homepage.js sampleApp/mvc/controllers/robots.txt.js sampleApp/mvc/models/global.js"
   }
 }
