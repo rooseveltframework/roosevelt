@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.5.12",
+  "version": "0.5.13",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "Creative Commons Attribution 4.0 International License",
   "main": "roosevelt.js",
@@ -21,11 +21,9 @@
     "wrench": "~1.5.8",
     "colors": "~0.6.2",
     "toobusy": "~0.2.4",
-    "parent-require": "~1.0.0",
-    "update-notifier": "~0.1.7"
+    "parent-require": "~1.0.0"
   },
   "jshintConfig": {
-    "camelcase": true,
     "curly": true,
     "devel": true,
     "evil": true,
@@ -55,6 +53,6 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "jshint roosevelt.js cli.js sampleApp/app.js sampleApp/mvc/controllers/404.js sampleApp/mvc/controllers/homepage.js sampleApp/mvc/controllers/robots.txt.js sampleApp/mvc/models/global.js"
+    "test": "jshint roosevelt.js defaultErrorPages/controllers/5xx.js defaultErrorPages/controllers/404.js defaultErrorPages/controllers/503.js lib/enableMultipart.js lib/getAppDir.js lib/jsCompiler.js lib/mapRoutes.js lib/preprocessCss.js lib/setExpressConfigs.js lib/sourceParams.js"
   }
 }

@@ -1,11 +1,13 @@
-roosevelt.js [![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt) [![Dependency Status](https://gemnasium.com/kethinov/roosevelt.png)](https://gemnasium.com/kethinov/roosevelt) [![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/kethinov/)
+Roosevelt MVC web framework
 ===
+
+[![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt) [![Dependency Status](https://gemnasium.com/kethinov/roosevelt.png)](https://gemnasium.com/kethinov/roosevelt) [![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/kethinov/)
 
 Roosevelt is a new web framework for [Node.js](http://nodejs.org) which uses [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification by default, but is designed to be configurable so you can supply your own templating system, CSS preprocessor, or JS minifier if you like.
 
 Built on [Express](http://expressjs.com), Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
-![Teddy Roosevelt's facial hair is a curly brace.](https://raw.github.com/kethinov/roosevelt/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
+![Teddy Roosevelt's facial hair is a curly brace.](https://raw.github.com/kethinov/mkroosevelt/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
 Table of contents
 ===
@@ -78,13 +80,13 @@ Install Roosevelt and create an app
 First install the command line tool globally (may require admin or root privileges):
 
 ```
-npm install -g roosevelt
+npm install -g mkroosevelt
 ```
 
 Use the command line tool to create a sample app:
 
 ```
-roosevelt create myapp
+mkroosevelt create myapp
 ```
 
 Inside your new `myapp` folder you'll find a `bin` directory with the following files:
@@ -390,11 +392,7 @@ To run the unit tests on your code changes, run this command:
 npm test
 ```
 
-If you want to hack on the CLI tool or the sample app, you can run the CLI tool manually without a local npm install like this:
-
-```
-"/absolute/path/to/roosevelt/cli.js" create testapp
-```
+If you want to hack on the CLI tool, see [mkroosevelt](https://github.com/kethinov/mkroosevelt).
 
 License
 ===
