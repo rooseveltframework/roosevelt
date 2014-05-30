@@ -3,7 +3,7 @@ Roosevelt MVC web framework
 
 [![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt) [![Dependency Status](https://gemnasium.com/kethinov/roosevelt.png)](https://gemnasium.com/kethinov/roosevelt) [![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/kethinov/)
 
-Roosevelt is a new web framework for [Node.js](http://nodejs.org) which uses [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification by default, but is designed to be configurable so you can supply your own templating system, CSS preprocessor, or JS minifier if you like.
+Roosevelt is a new web framework for [Node.js](http://nodejs.org) which uses [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification by default, but is designed to be configurable so you can supply alternative templating systems, CSS preprocessors, or JS minifiers if you like.
 
 Built on [Express](http://expressjs.com), Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
@@ -13,6 +13,7 @@ Table of contents
 ===
 
 - [Why use Roosevelt](https://github.com/kethinov/roosevelt#why-use-roosevelt)
+  - [Why is it called Roosevelt?](https://github.com/kethinov/roosevelt#why-is-it-called-roosevelt)
 - [Create and run a Roosevelt app](https://github.com/kethinov/roosevelt#create-and-run-a-roosevelt-app)
   - [Platform specific prerequisites](https://github.com/kethinov/roosevelt#platform-specific-prerequisites)
   - [Install Roosevelt and create an app](https://github.com/kethinov/roosevelt#install-roosevelt-and-create-an-app)
@@ -33,6 +34,7 @@ Table of contents
 - [Express variables exposed by Roosevelt](https://github.com/kethinov/roosevelt#express-variables-exposed-by-roosevelt)
 - [Warning: Roosevelt is beta software!](https://github.com/kethinov/roosevelt#warning-roosevelt-is-beta-software)
 - [Contributing to Roosevelt](https://github.com/kethinov/roosevelt#contributing-to-roosevelt)
+  - [Help wanted!](https://github.com/kethinov/roosevelt#help-wanted)
 - [License](https://github.com/kethinov/roosevelt#license)
 
 Why use Roosevelt?
@@ -47,6 +49,13 @@ Reasons for this include:
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
+
+Why is it called Roosevelt?
+---
+
+Because Teddy Roosevelt's facial hair looks like a curly brace!
+
+Also because the default templating system is [Teddy](https://github.com/kethinov/teddy) and perhaps most importantly because Roosevelt was [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time_p5.html), so what better person to name a web framework after?
 
 Create and run a Roosevelt app
 ===
@@ -393,6 +402,11 @@ npm test
 ```
 
 If you want to hack on the CLI tool, see [mkroosevelt](https://github.com/kethinov/mkroosevelt).
+
+Help wanted!
+---
+
+There is plenty of opportunity to help improve Roosevelt if you're interested in lending a hand. If you'd like to help, take a look at the [open issues](https://github.com/kethinov/roosevelt/issues?state=open) and submit a pull request!
 
 License
 ===
