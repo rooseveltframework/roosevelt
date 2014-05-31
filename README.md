@@ -79,7 +79,7 @@ Platform specific prerequisites
 
 - You may need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common Node.js modules.
 
-If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the site of your app by several tens of megabytes.
+If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the size of your app by several tens of megabytes.
 
 Once you have a sane Node.js developmemt environment, you can proceed with the standard install procedure below.
 
@@ -106,7 +106,7 @@ unix.sh
 windows.bat
 ```
 
-Double click the one relevant to whichever operating system you're running. That will install all the dependencies and start your new app!
+Open the one relevant to whichever operating system you're running. That will install all the dependencies and start your new app!
 
 If you want to do that manually instead using the console, then change into your new app's directory and then install dependencies:
 
@@ -157,9 +157,9 @@ Default directory structure
 
 - `app.js`: main app file. Feel free to rename this, but make sure to update package.json's reference to it.
 - `bin`: folder with operating system-specfic executables for your app.
-  - `mac.command`: double click this in Mac OS X to start your app graphically.
-  - `unix.sh`: double cick this in UNIX-like environments like Ubuntu or other Linux distros to start your app graphically.
-  - `windows.bat`: double click this in Windows to start your app graphically.
+  - `mac.command`: open this in Mac OS X to start your app graphically.
+  - `unix.sh`: open this in UNIX-like environments like Ubuntu or other Linux distros to start your app graphically.
+  - `windows.bat`: open this in Windows to start your app graphically.
 - `mvc`: folder for models, views, and controllers.
   - `controllers`: folder for controller files.
   - `models`: folder for model files.
@@ -177,7 +177,7 @@ Default directory structure
 Default .gitignore
 ---
 
-The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to liking before using a fresh Roosevelt app in your git repo.
+The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to your liking before using a fresh Roosevelt app in your git repo.
 
 Some notable things ignored by default and why:
 
@@ -235,7 +235,7 @@ MVC parameters
   - Default: `mvc/views`
 - `viewEngine`: What templating engine to use, formatted as `'fileExtension: nodeModule'`. Supply an array of engines to use in that format in order to make use of multiple templating engines. Each engine you use must also be marked as a dependency in your app's package.json. Whichever engine you supply first with this parameter will be considered the default. Set to `none` to use no templating engine.
   - Default: `html: teddy`
-  - Also by default the Node module `teddy` is marked as a dependency in package.json.
+  - Also by default the Node module [teddy](https://github.com/kethinov/teddy) is marked as a dependency in package.json.
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: `mvc/controllers`
 
@@ -254,20 +254,20 @@ Statics parameters
 
 - `staticsRoot`: Relative path on filesystem to where your static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets.
   - Default: `statics`
-- `cssPath`: Relative path on filesystem to where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
+- `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
   - Default: `{nodeModule: 'roosevelt-less', params: {compress: true}}`.
-  - Also by default the Node module `roosevelt-less` is marked as a dependency in package.json.
+  - Also by default the Node module [roosevelt-less](https://github.com/kethinov/roosevelt-less) is marked as a dependency in package.json.
 - `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files.
   - Default: `undefined`
 - `cssCompiledOutput`: Where to place compiled CSS files. This folder will be made public by default.
   - Default: `.build/css`
-- `jsPath`: Relative path on filesystem to where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored elsewhere when the app is started.
+- `jsPath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored elsewhere when the app is started.
   - Default: `js`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
   - Default: `{nodeModule: 'roosevelt-closure', params: {compilation_level: 'ADVANCED_OPTIMIZATIONS'}}`.
-  - Also by default the Node module `roosevelt-closure` is marked as a dependency in package.json.
+  - Also by default the Node module [roosevelt-closure](https://github.com/kethinov/roosevelt-closure) is marked as a dependency in package.json.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files.
   - Default: `undefined`
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
@@ -276,7 +276,7 @@ Statics parameters
 Public folder parameters
 ---
 
-- `publicFolder`: All files and folders specified in this path will be exposed as statics.
+- `publicFolder`: All files and folders specified in this path will be exposed as static files.
   -  Default: `public`
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `'linkName: linkTarget'` or simply `'linkName'` if the link target has the same name as the desired link name.
   - Default: `['css: .build/css', 'images', 'js: .build/js']` (whitespace optional)
@@ -356,6 +356,8 @@ Making view files
 
 Views are [Teddy](https://github.com/kethinov/teddy) templates. See the Teddy documentation for information about how to author Teddy templates.
 
+You can also use different templating engines by tweaking Roosevelt's parameters (see above parameter documentation).
+
 Express variables exposed by Roosevelt
 ===
 
@@ -365,7 +367,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 Express variable | Description
 --- | ---
 `express` | The [express](http://expressjs.com) Node.js module.
-*viewEngine* | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default app.get('teddy') will return the `teddy` module. 
+*viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. 
 `formidable` | The [formidable](https://github.com/felixge/node-formidable)  Node.js module. Used for handling multipart forms.
 `appName` | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied.
 `appVersion` | The version number of your app derived from `package.json`.
