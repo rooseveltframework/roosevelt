@@ -72,7 +72,7 @@ Platform specific prerequisites
 **Ubuntu:**
 
 - Install build-essential: `sudo apt-get install build-essential` 
-- You may also need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common Node.js modules.
+- You may also need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common JS modules.
 
 If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the size of your app by several tens of megabytes.
 
