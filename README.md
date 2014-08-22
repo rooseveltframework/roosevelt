@@ -3,9 +3,11 @@ Roosevelt MVC web framework
 
 [![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt) [![Dependency Status](https://gemnasium.com/kethinov/roosevelt.png)](https://gemnasium.com/kethinov/roosevelt) [![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/kethinov/)
 
-Roosevelt is a new web framework for [Node.js](http://nodejs.org) which uses [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification by default, but is designed to be configurable so you can supply alternative templating systems, CSS preprocessors, or JS minifiers if you like.
+Roosevelt is a [Node.js](http://nodejs.org)-driven web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical Express app and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
-Built on [Express](http://expressjs.com), Roosevelt is designed to abstract all the crusty boilerplate necessary to build a typical Express app, sets sane defaults with mechanisms for override, and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
+Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time_p5.html) whose facial hair just so happens to look like a curly brace, Roosevelt's main goal is to be the easiest Node.js-based web framework to learn and use by setting sane defaults while also providing easy ways for power-users to override the defaults and tap into the full potential of Express.
+
+By default Roosevelt integrates [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://raw.github.com/kethinov/mkroosevelt/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
@@ -13,7 +15,6 @@ Table of contents
 ===
 
 - [Why use Roosevelt](https://github.com/kethinov/roosevelt#why-use-roosevelt)
-  - [Why is it called Roosevelt?](https://github.com/kethinov/roosevelt#why-is-it-called-roosevelt)
 - [Create and run a Roosevelt app](https://github.com/kethinov/roosevelt#create-and-run-a-roosevelt-app)
   - [Platform specific prerequisites](https://github.com/kethinov/roosevelt#platform-specific-prerequisites)
   - [Install Roosevelt and create an app](https://github.com/kethinov/roosevelt#install-roosevelt-and-create-an-app)
@@ -49,13 +50,6 @@ Reasons for this include:
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
-
-Why is it called Roosevelt?
----
-
-Because Teddy Roosevelt's facial hair looks like a curly brace!
-
-Also because the default templating system is [Teddy](https://github.com/kethinov/teddy) and perhaps most importantly because Roosevelt was [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time_p5.html), so what better person to name a web framework after?
 
 Create and run a Roosevelt app
 ===
