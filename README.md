@@ -54,7 +54,7 @@ Reasons for this include:
 Create and run a Roosevelt app
 ===
 
-First you will need to install [Node.js](http://nodejs.org). Then you might need to install some other stuff depending on what operating system you're running.
+First you will need to install [Node.js](http://nodejs.org) or [io.js](https://iojs.org). Then you might need to install some other stuff depending on what operating system you're running.
 
 Platform specific prerequisites
 ---
