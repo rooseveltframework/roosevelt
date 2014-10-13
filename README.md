@@ -41,7 +41,7 @@ Table of contents
 Why use Roosevelt?
 ===
 
-Roosevelt is easy to use and has a low learning curve, unlike many other popular [Node.js](http://nodejs.org)-based web frameworks.
+Roosevelt is easy to use and has a low learning curve, unlike many other popular JS-based web frameworks.
 
 Reasons for this include:
 
