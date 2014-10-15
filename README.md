@@ -61,7 +61,7 @@ Platform specific prerequisites
 
 **Windows:**
 
-- Install python 2.7.6 (not 3.x, that doesn't work). [Download that here](http://www.python.org/download/releases/2.7.6).
+- Install python 2.7.6 (not 3.x, [that doesn't work](https://code.google.com/p/gyp/issues/detail?id=36)). [Download that here](http://www.python.org/download/releases/2.7.6).
 - Add python to your PATH. [Instructions for that are here](http://stackoverflow.com/questions/6318156/adding-python-path-on-windows-7).
 - Install Visual Studio (payware) or Visual Studio Express for Windows Desktop (registerware): [Download that here](http://www.visualstudio.com/downloads/download-visual-studio-vs).
 
