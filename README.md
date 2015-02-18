@@ -214,7 +214,7 @@ App behavior parameters
   - Default: `false`
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. To disable multipart forms entirely, set this option to false.
   - Default: `{'multiples': true}`
-- `maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy)</a>)
+- ~~`maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy)</a>)~~ *([Temporarily disabled](https://github.com/lloyd/node-toobusy/issues/45))*
   - Default: `2000` (2 seconds)
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: `30000` (30 seconds)
