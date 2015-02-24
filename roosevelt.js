@@ -1,13 +1,15 @@
 'use strict';
-var express = require('express'),
+var http = require('http'),
+    express = require('express'),
     compression = require('compression'),
     colors = require('colors'),
     cluster = require('cluster'),
     os = require('os');
 
 module.exports = function(params) {
-  params = params || {};  // ensure params are an object
-  var app = express();    // initialize express
+  params = params || {};              // ensure params are an object
+  var app = express(),                // initialize express
+      httpServer = http.Server(app);  // create http server out of the express app
 
   // fire user-defined onServerInit event
   if (params.onServerInit && typeof params.onServerInit === 'function') {
@@ -80,27 +82,33 @@ module.exports = function(params) {
           process.exit(1);
         }, app.get('params').shutdownTimeout);
       };
-
-  if (cluster.isMaster && numCPUs > 1) {
-    for (i = 0; i < numCPUs; i++) {
-      cluster.fork();
-    }
-    cluster.on('exit', function(worker, code, signal) {
-      console.log(((app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
-    });
-  }
-  else {
-    server = app.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), function() {
-      console.log((app.get('appName') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)').bold);
-
-      // fire user-defined onServerStart event
-      if (params.onServerStart && typeof params.onServerStart === 'function') {
-        params.onServerStart(app);
+  
+  function startServer() {
+    if (cluster.isMaster && numCPUs > 1) {
+      for (i = 0; i < numCPUs; i++) {
+        cluster.fork();
       }
-    });
-    process.on('SIGTERM', gracefulShutdown);
-    process.on('SIGINT', gracefulShutdown);
+      cluster.on('exit', function(worker, code, signal) {
+        console.log(((app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
+      });
+    }
+    else {
+      server = httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), function() {
+        console.log((app.get('appName') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)').bold);
+
+        // fire user-defined onServerStart event
+        if (params.onServerStart && typeof params.onServerStart === 'function') {
+          params.onServerStart(app);
+        }
+      });
+      process.on('SIGTERM', gracefulShutdown);
+      process.on('SIGINT', gracefulShutdown);
+    }
   }
 
-  return app;
+  return {
+    http: httpServer,
+    expressApp: app,
+    startServer: startServer
+  };
 };

@@ -186,9 +186,9 @@ Configure your app with parameters
 Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
 
 ```js
-require('roosevelt')();
+require('roosevelt')().startServer();
 ```
-  
+
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
 
 Inside `app.js`, you can pass any of the below optional parameters to Roosevelt via its constructor like so:
@@ -198,7 +198,7 @@ require('roosevelt')({
   paramName: 'paramValue',
   param2:    'value2',
   etc:       'etc'
-});
+}).startServer();
 ```
 
 Each param can also be defined in `package.json` under `"rooseveltConfig"`.
@@ -379,6 +379,14 @@ Express variable | Description
 `controllersPath` | Full path on the file system to where your app's controllers folder is located.
 `params` | The params you sent to Roosevelt.
 `port` | Port Roosevelt is running on.
+
+Additionally the Roosevelt constructor returns the following object:
+
+Roosevelt object | Description
+--- | ---
+`expressApp` | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+`http` | The [http](http://nodejs.org/api/http.html) module used to start the web server.
+`startServer` | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config.
 
 Warning: Roosevelt is beta software!
 ===
