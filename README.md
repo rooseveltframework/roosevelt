@@ -212,6 +212,8 @@ App behavior parameters
   - Default: `true`
 - `disableLogger`: When this option is set to true, Roosevelt will not log HTTP requests to the console.
   - Default: `false`
+- `noMinify`: Disables the minification step in (supporting) CSS and JS compilers. Useful during dev mode. Can also be passed as the command line argument `-no-minify`.
+  - Default: `false`
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. To disable multipart forms entirely, set this option to false.
   - Default: `{'multiples': true}`
 - ~~`maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy)</a>)~~ *([Temporarily disabled](https://github.com/lloyd/node-toobusy/issues/45))*
