@@ -414,8 +414,3 @@ Help wanted!
 ---
 
 There is plenty of opportunity to help improve Roosevelt if you're interested in lending a hand. If you'd like to help, take a look at the [open issues](https://github.com/kethinov/roosevelt/issues?state=open) and submit a pull request!
-
-License
-===
-
-All original code in Roosevelt is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/). Commercial and noncommercial use is permitted with attribution.
