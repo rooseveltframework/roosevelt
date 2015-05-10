@@ -11,13 +11,10 @@ module.exports = function(params) {
   var app = express(),                // initialize express
       httpServer = http.Server(app);  // create http server out of the express app
 
-  // fire user-defined onServerInit event
-  if (params.onServerInit && typeof params.onServerInit === 'function') {
-    params.onServerInit(app);
-  }
-
   // expose initial vars
   app.set('express', express);
+  app.set('expressApp', app);
+  app.set('httpServer', httpServer);
   app.set('params', params);
 
   // source user supplied params
@@ -42,6 +39,11 @@ module.exports = function(params) {
 
   // map routes
   app = require('./lib/mapRoutes')(app);
+
+  // fire user-defined onServerInit event
+  if (params.onServerInit && typeof params.onServerInit === 'function') {
+    params.onServerInit(app);
+  }
 
   // determine number of CPUs to use
   var numCPUs = 1;
