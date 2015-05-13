@@ -23,6 +23,9 @@ module.exports = function(params) {
   // enable gzip compression
   app.use(compression());
 
+  // enable cookie parsing
+  app.use(require('cookie-parser')());
+
   // bind user-defined middleware which fires at the beginning of each request if supplied
   if (params.onReqStart && typeof params.onReqStart === 'function') {
     app.use(params.onReqStart);
