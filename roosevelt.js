@@ -1,7 +1,6 @@
 'use strict';
 var http = require('http'),
     express = require('express'),
-    compression = require('compression'),
     colors = require('colors'),
     cluster = require('cluster'),
     os = require('os');
@@ -21,7 +20,7 @@ module.exports = function(params) {
   app = require('./lib/sourceParams')(app);
 
   // enable gzip compression
-  app.use(compression());
+  app.use(require('compression')());
 
   // enable cookie parsing
   app.use(require('cookie-parser')());
