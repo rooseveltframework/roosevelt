@@ -392,6 +392,18 @@ Roosevelt object | Description
 `http` | The [http](http://nodejs.org/api/http.html) module used to start the web server.
 `startServer` | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config.
 
+Express middleware and other configurations automatically provided by Roosevelt
+===
+
+In addition to exposing a number of variables to Express and providing the MVC interface outlined above, Roosevelt also:
+
+- Includes the [compression](https://github.com/expressjs/compression) middleware.
+- Includes the [cookie-parser](https://github.com/expressjs/cookie-parser) middleware.
+- Disables `x-powered-by` and `etag`.
+- Logs HTTP requests to the console  using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
+- Includes the [body-parser](https://github.com/expressjs/body-parser) middleware with `bodyParser.json` and `bodyParser.urlencoded({extended: true}`
+- Includes the [method-override](https://github.com/expressjs/method-override) middleware.
+
 Warning: Roosevelt is beta software!
 ===
 
