@@ -12,8 +12,6 @@ module.exports = function(params) {
 
   // expose initial vars
   app.set('express', express);
-  app.set('expressApp', app);
-  app.set('httpServer', httpServer);
   app.set('params', params);
 
   // source user supplied params
@@ -111,7 +109,7 @@ module.exports = function(params) {
   }
 
   return {
-    http: httpServer,
+    httpServer: httpServer,
     expressApp: app,
     startServer: startServer
   };
