@@ -365,8 +365,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 Express variable | Description
 --- | ---
 `express` | The [express](http://expressjs.com) module.
-`expressApp` | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-`httpServer` | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt.
 *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. 
 `formidable` | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms.
 `appName` | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied.
@@ -390,7 +388,7 @@ Additionally the Roosevelt constructor returns the following object:
 Roosevelt object | Description
 --- | ---
 `expressApp` | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-`http` | The [http](http://nodejs.org/api/http.html) module used to start the web server.
+`httpServer` | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt.
 `startServer` | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config.
 
 Express middleware and other configurations automatically provided by Roosevelt
