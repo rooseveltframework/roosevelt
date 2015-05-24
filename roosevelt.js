@@ -13,7 +13,8 @@ module.exports = function(params) {
   // expose initial vars
   app.set('express', express);
   app.set('params', params);
-
+  app.httpServer = httpServer;
+  
   // source user supplied params
   app = require('./lib/sourceParams')(app);
 
@@ -37,13 +38,13 @@ module.exports = function(params) {
   // configure express
   app = require('./lib/setExpressConfigs')(app);
 
-  // map routes
-  app = require('./lib/mapRoutes')(app);
-
   // fire user-defined onServerInit event
   if (params.onServerInit && typeof params.onServerInit === 'function') {
     params.onServerInit(app);
   }
+
+  // map routes
+  app = require('./lib/mapRoutes')(app);
 
   // determine number of CPUs to use
   var numCPUs = 1;
