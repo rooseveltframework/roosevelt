@@ -388,7 +388,7 @@ Additionally the Roosevelt constructor returns the following object:
 Roosevelt object | Description
 --- | ---
 `expressApp` | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-`httpServer` | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt.
+`httpServer` | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`.
 `startServer` | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config.
 
 Express middleware and other configurations automatically provided by Roosevelt
