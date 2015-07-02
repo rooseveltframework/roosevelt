@@ -6,6 +6,19 @@ var http = require('http'),
     os = require('os');
 
 module.exports = function(params) {
+  
+  // check for command line overrides for NODE_ENV
+  process.argv.forEach(function (val, index, array) {
+    switch (val) {
+      case '-dev':
+        process.env.NODE_ENV = 'development';
+        break;
+      case '-prod':
+        process.env.NODE_ENV = 'production';
+        break;
+    }
+  });
+  
   params = params || {};              // ensure params are an object
   var app = express(),                // initialize express
       httpServer = http.Server(app);  // create http server out of the express app
