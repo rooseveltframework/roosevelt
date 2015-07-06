@@ -33,6 +33,7 @@ Table of contents
 - [Making model files](https://github.com/kethinov/roosevelt#making-model-files)
 - [Making view files](https://github.com/kethinov/roosevelt#making-view-files)
 - [Express variables exposed by Roosevelt](https://github.com/kethinov/roosevelt#express-variables-exposed-by-roosevelt)
+- [Express middleware and other configurations automatically provided by Roosevelt](https://github.com/kethinov/roosevelt#express-middleware-and-other-configurations-automatically-provided-by-roosevelt)
 - [Warning: Roosevelt is beta software!](https://github.com/kethinov/roosevelt#warning-roosevelt-is-beta-software)
 - [Contributing to Roosevelt](https://github.com/kethinov/roosevelt#contributing-to-roosevelt)
   - [Help wanted!](https://github.com/kethinov/roosevelt#help-wanted)
