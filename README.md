@@ -402,7 +402,7 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Includes the [cookie-parser](https://github.com/expressjs/cookie-parser) middleware.
 - Disables `x-powered-by` and `etag`.
 - Logs HTTP requests to the console  using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
-- Includes the [body-parser](https://github.com/expressjs/body-parser) middleware with `bodyParser.json` and `bodyParser.urlencoded({extended: true}`
+- Includes the [body-parser](https://github.com/expressjs/body-parser) middleware with `bodyParser.json` and `bodyParser.urlencoded({extended: true}`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
 
 Warning: Roosevelt is beta software!
