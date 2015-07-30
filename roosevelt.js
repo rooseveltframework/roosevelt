@@ -6,6 +6,7 @@ var http = require('http'),
     os = require('os');
 
 module.exports = function(params) {
+  params = params || {};              // ensure params are an object
   
   // check for command line overrides for NODE_ENV
   process.argv.forEach(function (val, index, array) {
@@ -15,11 +16,11 @@ module.exports = function(params) {
         break;
       case '-prod':
         process.env.NODE_ENV = 'production';
+        params.alwaysHostPublic = true; // only with -prod flag, not when NODE_ENV is naturally set to production
         break;
     }
   });
   
-  params = params || {};              // ensure params are an object
   var app = express(),                // initialize express
       httpServer = http.Server(app);  // create http server out of the express app
 
