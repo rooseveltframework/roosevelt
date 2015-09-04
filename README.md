@@ -91,7 +91,7 @@ npm install -g mkroosevelt
 Use the command line tool to create a sample app:
 
 ```
-mkroosevelt create myapp
+mkroosevelt myapp
 ```
 
 Inside your new `myapp` folder you'll find a `bin` directory with the following files:
