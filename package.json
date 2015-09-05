@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.6.16",
+  "version": "0.6.17",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "Creative Commons Attribution 4.0 International License",
   "main": "roosevelt.js",
@@ -21,7 +21,8 @@
     "method-override": "^2.0.0",
     "morgan": "^1.0.0",
     "parent-require": "^1.0.0",
-    "wrench": "^1.0.0"
+    "wrench": "^1.0.0",
+    "serve-favicon": "^2.3.0"
   },
   "jshintConfig": {
     "curly": true,
