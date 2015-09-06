@@ -38,6 +38,9 @@ module.exports = function(params) {
   // enable cookie parsing
   app.use(require('cookie-parser')());
 
+  // enable favicon support
+  app.use(require('serve-favicon')(__dirname + params.staticsRoot + params.favicon));
+
   // bind user-defined middleware which fires at the beginning of each request if supplied
   if (params.onReqStart && typeof params.onReqStart === 'function') {
     app.use(params.onReqStart);
