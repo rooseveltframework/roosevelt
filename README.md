@@ -72,7 +72,7 @@ Platform specific prerequisites
 
 **Ubuntu:**
 
-- Install build-essential: `sudo apt-get install build-essential` 
+- Install build-essential: `sudo apt-get install build-essential`
 - You may also need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common JS modules.
 
 If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the size of your app by several tens of megabytes.
@@ -160,8 +160,10 @@ Default directory structure
   - `controllers`: folder for controller files.
   - `models`: folder for model files.
   - `views`: folder for view files.
+- `lib`: Optional folder for your application's utility libraries.
 - `node_modules`: a standard folder where all modules your app depends on (such as Roosevelt) are installed to. This folder is created by the `npm install` command.
   - `models`: symlink to `mvc/models` so you can `require('models/yourModel')` anywhere in your code without specifying a relative path. Roosevelt will create this symlink for you.
+  - `lib`: symlink to `lib` so you can `require('lib/yourLib')` anywhere in your code without using a relative path. If you've implemented a lib directory, Roosevelt will create this symlink.
 - `package.json`: a standard file for configuring your app.
 - `public`: all contents within this folder will be exposed as static files.
 - `statics`: folder for CSS, images, JS files, and other statics. Some of the contents of this folder are symlinked to from public, which you can configure (see below).
@@ -237,6 +239,12 @@ MVC parameters
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: `mvc/controllers`
 
+Utility Library parameters
+---
+
+- `libPath`: Relative path on filesystem to where your optional utility library files are located.
+- `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your lib directory. Set to `false` to disable making this symlink.
+
 Error page parameters
 ---
 
@@ -271,7 +279,7 @@ Statics parameters
   - Example: `library-name/example.js:lib/example.min.js` (customizes both file path and file name of minified file)
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
   - Default: `.build/js`
-    
+
 Public folder parameters
 ---
 
@@ -324,17 +332,17 @@ Making controller files
 
 Controller files are just <a href='http://expressjs.com/api.html#app.VERB'>standard Express routes</a>. A route is the term <a href='http://expressjs.com'>Express</a> uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
 
-To make a new controller, just make a new file in the controllers directory. For example: 
+To make a new controller, just make a new file in the controllers directory. For example:
 
 ```js
 module.exports = function(app) { // app is the Express app created by Roosevelt
 
   // standard Express route
   app.route('/about').get(function(req, res) {
-  
+
     // load a data model
     var model = require('models/dataModel');
-    
+
     // render a Teddy template and pass it the model
     res.render('about', model);
   });
@@ -368,7 +376,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 Express variable | Description
 --- | ---
 `express` | The [express](http://expressjs.com) module.
-*viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. 
+*viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module.
 `formidable` | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms.
 `appName` | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied.
 `appVersion` | The version number of your app derived from `package.json`.
