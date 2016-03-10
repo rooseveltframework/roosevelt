@@ -242,8 +242,8 @@ MVC parameters
 Utility Library parameters
 ---
 
-- `libPath`: Relative path on filesystem to where your optional utility library files are located.
-- `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your lib directory. Set to `false` to disable making this symlink.
+- `libPath`: Relative path on filesystem to where your optional utility library files are located. Defaults to `lib` if not set.
+- `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your lib directory. Set to `false` to disable making this symlink. Defaults to `lib` if not set.
 
 Error page parameters
 ---
