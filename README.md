@@ -160,10 +160,10 @@ Default directory structure
   - `controllers`: folder for controller files.
   - `models`: folder for model files.
   - `views`: folder for view files.
-- `lib`: Optional folder for your application's utility libraries.
+- `lib`: Optional folder for any modules, utility libraries, or other dependencies your app may require which aren't in npm, symlinked to node_modules.
 - `node_modules`: a standard folder where all modules your app depends on (such as Roosevelt) are installed to. This folder is created by the `npm install` command.
   - `models`: symlink to `mvc/models` so you can `require('models/yourModel')` anywhere in your code without specifying a relative path. Roosevelt will create this symlink for you.
-  - `lib`: symlink to `lib` so you can `require('lib/yourLib')` anywhere in your code without using a relative path. If you've implemented a lib directory, Roosevelt will create this symlink.
+  - `lib`: symlink to `lib` so you can `require('lib/yourLib')` anywhere in your code without using a relative path. If the `lib` folder is present, Roosevelt will create this symlink.
 - `package.json`: a standard file for configuring your app.
 - `public`: all contents within this folder will be exposed as static files.
 - `statics`: folder for CSS, images, JS files, and other statics. Some of the contents of this folder are symlinked to from public, which you can configure (see below).
@@ -239,11 +239,11 @@ MVC parameters
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: `mvc/controllers`
 
-Utility Library parameters
+Utility library parameters
 ---
 
 - `libPath`: Relative path on filesystem to where your optional utility library files are located. Defaults to `lib` if not set.
-- `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your lib directory. Set to `false` to disable making this symlink. Defaults to `lib` if not set.
+- `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your `lib` directory. Set to `false` to disable making this symlink. Defaults to `lib` if not set.
 
 Error page parameters
 ---
