@@ -33,7 +33,8 @@
   },
   "devDependencies ": {
     "jshint": "*",
-    "nodemon": "*"
+    "nodemon": "*",
+    "html-validator": "~1.0.0"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,6 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "jshint roosevelt.js defaultErrorPages/controllers/5xx.js defaultErrorPages/controllers/404.js defaultErrorPages/controllers/503.js lib/enableMultipart.js lib/getAppDir.js lib/jsCompiler.js lib/mapRoutes.js lib/preprocessCss.js lib/setExpressConfigs.js lib/sourceParams.js"
+    "test": "jshint roosevelt.js defaultErrorPages/controllers/5xx.js defaultErrorPages/controllers/404.js defaultErrorPages/controllers/503.js lib/enableMultipart.js lib/htmlValidation.js lib/getAppDir.js lib/jsCompiler.js lib/mapRoutes.js lib/preprocessCss.js lib/setExpressConfigs.js lib/sourceParams.js"
   }
 }

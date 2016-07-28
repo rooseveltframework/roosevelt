@@ -52,6 +52,9 @@ module.exports = function(params) {
   // activate js compiler
   require('./lib/jsCompiler')(app);
 
+  // activate HTML validation
+  require('./lib/htmlValidation')(app, process);
+
   // configure express
   app = require('./lib/setExpressConfigs')(app);
 
