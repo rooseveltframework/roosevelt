@@ -49,6 +49,9 @@ module.exports = function(params) {
   // activate css preprocessor
   require('./lib/preprocessCss')(app);
 
+  // activate browserify
+  require('./lib/browserifyBundling')(app, process);
+
   // activate js compiler
   require('./lib/jsCompiler')(app);
 
