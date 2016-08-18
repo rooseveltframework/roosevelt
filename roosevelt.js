@@ -1,9 +1,11 @@
 'use strict';
 var http = require('http'),
+    https = require('https'),
     express = require('express'),
     colors = require('colors'),
     cluster = require('cluster'),
-    os = require('os');
+    os = require('os'),
+    fs = require('fs');
 
 module.exports = function(params) {
   params = params || {};              // ensure params are an object
@@ -22,15 +24,37 @@ module.exports = function(params) {
   });
   
   var app = express(),                // initialize express
-      httpServer = http.Server(app);  // create http server out of the express app
+      httpServer,  // create http server out of the express app
+      httpsServer;
 
   // expose initial vars
   app.set('express', express);
   app.set('params', params);
-  app.httpServer = httpServer;
   
   // source user supplied params
   app = require('./lib/sourceParams')(app);
+  
+  // let's try setting up the servers with user-supplied params
+  if (!app.get('params').httpsOnly)
+      httpServer = http.Server(app);
+  if (app.get('params').https) {
+      var httpsOptions = {
+          requestCert: true,
+          passphrase: app.get('params').passphrase
+      };
+      
+      if (app.get('params').pfx)
+          httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx);
+      else {
+          httpsOptions.key = fs.readFileSync(app.get('params').keyPath.key);
+          httpsOptions.cert = fs.readFileSync(app.get('params').keyPath.cert);
+      }
+      
+      httpsServer = https.Server(httpsOptions, app);
+  }
+  
+  app.httpServer = httpServer;
+  app.httpsServer = httpsServer;
 
   // enable gzip compression
   app.use(require('compression')());
@@ -88,14 +112,20 @@ module.exports = function(params) {
   });
 
   // start server
-  var server,
+  var servers = [],
       i,
+      exitLog = function() {
+        console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
+        process.exit();
+      },
       gracefulShutdown = function() {
         app.set('roosevelt:state', 'disconnecting');
         console.log(("\n" + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
-        server.close(function() {
-          console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
-          process.exit();
+        servers[0].close(function() {
+          if (servers.length > 1)
+            servers[1].close(exitLog);
+          else
+            exitLog();
         });
         setTimeout(function() {
           console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
@@ -104,6 +134,20 @@ module.exports = function(params) {
       };
   
   function startServer() {
+    var lock = {},
+        startupCallback = function(proto, port) {
+          return function() {
+            console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
+            if (Object.isFrozen(lock))
+              return;
+            Object.freeze(lock);
+            // fire user-defined onServerStart event
+            if (params.onServerStart && typeof params.onServerStart === 'function') {
+              params.onServerStart(app);
+            }
+          };
+        };
+    
     if (cluster.isMaster && numCPUs > 1) {
       for (i = 0; i < numCPUs; i++) {
         cluster.fork();
@@ -113,14 +157,18 @@ module.exports = function(params) {
       });
     }
     else {
-      server = httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), function() {
-        console.log((app.get('appName') + ' server listening on port ' + app.get('port') + ' (' + app.get('env') + ' mode)').bold);
-
-        // fire user-defined onServerStart event
-        if (params.onServerStart && typeof params.onServerStart === 'function') {
-          params.onServerStart(app);
-        }
-      });
+      if (!app.get('params').httpsOnly) {
+        servers.push(
+                httpServer.listen(app.get('port'),
+                (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null),
+                startupCallback(' HTTP', app.get('port'))));
+      }
+      if (app.get('params').https) {
+        servers.push(
+                httpsServer.listen(app.get('params').httpsPort,
+                (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null),
+                startupCallback(' HTTPS', app.get('params').httpsPort)));
+      }
       process.on('SIGTERM', gracefulShutdown);
       process.on('SIGINT', gracefulShutdown);
     }
@@ -128,6 +176,7 @@ module.exports = function(params) {
 
   return {
     httpServer: httpServer,
+    httpsServer: httpsServer,
     expressApp: app,
     startServer: startServer
   };
