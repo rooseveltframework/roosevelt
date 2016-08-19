@@ -36,21 +36,36 @@ module.exports = function(params) {
   
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly)
-      httpServer = http.Server(app);
+    httpServer = http.Server(app);
+  
   if (app.get('params').https) {
-      var httpsOptions = {
-          requestCert: true,
-          passphrase: app.get('params').passphrase
-      };
-      
+    var httpsOptions = {},
+        ca = app.get('params').ca,
+        passphrase = app.get('params').passphrase;
+
+    if (app.get('params').keyPath) {
+      httpsOptions.requestCert = true;
       if (app.get('params').pfx)
-          httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx);
+        httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx);
       else {
-          httpsOptions.key = fs.readFileSync(app.get('params').keyPath.key);
-          httpsOptions.cert = fs.readFileSync(app.get('params').keyPath.cert);
+        httpsOptions.key = fs.readFileSync(app.get('params').keyPath.key);
+        httpsOptions.cert = fs.readFileSync(app.get('params').keyPath.cert);
       }
-      
-      httpsServer = https.Server(httpsOptions, app);
+      if (passphrase)
+        httpsOptions.passphrase = passphrase;
+      if (ca) {
+        // String or array
+        if (typeof ca === String)
+          httpsOptions.ca = fs.readFileSync(ca);
+        else {
+          httpsOptions.ca = [];
+          ca.forEach(function(str, ind, arr) {
+            httpsOptions.ca.push(fs.readFileSync(str)); 
+          });
+        }
+      }
+    }
+    httpsServer = https.Server(httpsOptions, app);
   }
   
   app.httpServer = httpServer;
@@ -138,12 +153,11 @@ module.exports = function(params) {
         startupCallback = function(proto, port) {
           return function() {
             console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
-            if (Object.isFrozen(lock))
-              return;
-            Object.freeze(lock);
-            // fire user-defined onServerStart event
-            if (params.onServerStart && typeof params.onServerStart === 'function') {
-              params.onServerStart(app);
+            if (!Object.isFrozen(lock)) {
+              Object.freeze(lock);
+              // fire user-defined onServerStart event
+              if (params.onServerStart && typeof params.onServerStart === 'function')
+                params.onServerStart(app);
             }
           };
         };
