@@ -35,8 +35,9 @@ module.exports = function(params) {
   app = require('./lib/sourceParams')(app);
   
   // let's try setting up the servers with user-supplied params
-  if (!app.get('params').httpsOnly)
+  if (!app.get('params').httpsOnly) {
     httpServer = http.Server(app);
+  }
   
   if (app.get('params').https) {
     var httpsOptions = {
@@ -47,18 +48,21 @@ module.exports = function(params) {
         passphrase = app.get('params').passphrase;
 
     if (app.get('params').keyPath) {
-      if (app.get('params').pfx)
+      if (app.get('params').pfx) {
         httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx);
+      }
       else {
         httpsOptions.key = fs.readFileSync(app.get('params').keyPath.key);
         httpsOptions.cert = fs.readFileSync(app.get('params').keyPath.cert);
       }
-      if (passphrase)
+      if (passphrase) {
         httpsOptions.passphrase = passphrase;
+      }
       if (ca) {
         // String or array
-        if (typeof ca === String)
+        if (typeof ca === String) {
           httpsOptions.ca = fs.readFileSync(ca);
+        }
         else if (typeof ca === Array) {
           httpsOptions.ca = [];
           ca.forEach(function(str, ind, arr) {
@@ -136,6 +140,7 @@ module.exports = function(params) {
           console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
           process.exit();
         };
+        
         app.set('roosevelt:state', 'disconnecting');
         console.log(("\n" + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
         servers[0].close(function() {
@@ -155,6 +160,7 @@ module.exports = function(params) {
         startupCallback = function(proto, port) {
           return function() {
             console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
+            
             if (!Object.isFrozen(lock)) {
               Object.freeze(lock);
               // fire user-defined onServerStart event
