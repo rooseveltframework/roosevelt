@@ -180,16 +180,10 @@ module.exports = function(params) {
     }
     else {
       if (!app.get('params').httpsOnly) {
-        servers.push(
-                httpServer.listen(app.get('port'),
-                (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null),
-                startupCallback(' HTTP', app.get('port'))));
+        servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))));
       }
       if (app.get('params').https) {
-        servers.push(
-                httpsServer.listen(app.get('params').httpsPort,
-                (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null),
-                startupCallback(' HTTPS', app.get('params').httpsPort)));
+        servers.push(httpsServer.listen(app.get('params').httpsPort, (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').httpsPort)));
       }
       process.on('SIGTERM', gracefulShutdown);
       process.on('SIGINT', gracefulShutdown);
