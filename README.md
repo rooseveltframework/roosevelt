@@ -235,12 +235,12 @@ HTTPS parameters
   - Default: `43733`
 - `pfx`: Specify whether or not your app will use pfx or standard certification.
   - Default: `false`
-- `keyPath`: If you elect to use a specific key and certificate, `keyPath` stores their file paths.
+- `keyPath`: Stores the file paths of specific key/certificate to be used by the server.
   - Object values: `pfx`, `key`, `cert` -- use one of {`pfx`} or {`key`, `cert`}
   - Default: `null`
-- `passphrase`: If the certificate you're going to use is password-encrypted, you may elect to supply the HTTPS server with that password.
+- `passphrase`: Supply the HTTPS server with the password for the certificate being used, if necessary.
   - Default: `null`
-- `ca`: You can provide a certificate authority to match client certificates against, as a file path or array of file paths.
+- `ca`: Certificate authority to match client certificates against, as a file path or array of file paths.
   - Default: `null`
 - `requestCert`: Request a certificate from a client and attempt to verify it.
   - Default: `false`
