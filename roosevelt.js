@@ -164,8 +164,9 @@ module.exports = function(params) {
             if (!Object.isFrozen(lock)) {
               Object.freeze(lock);
               // fire user-defined onServerStart event
-              if (params.onServerStart && typeof params.onServerStart === 'function')
+              if (params.onServerStart && typeof params.onServerStart === 'function') {
                 params.onServerStart(app);
+              }
             }
           };
         };
