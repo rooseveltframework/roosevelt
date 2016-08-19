@@ -23,8 +23,8 @@ module.exports = function(params) {
     }
   });
   
-  var app = express(),                // initialize express
-      httpServer,  // create http server out of the express app
+  var app = express(), // initialize express
+      httpServer,
       httpsServer;
 
   // expose initial vars
@@ -44,7 +44,6 @@ module.exports = function(params) {
         passphrase = app.get('params').passphrase;
 
     if (app.get('params').keyPath) {
-      httpsOptions.requestCert = true;
       if (app.get('params').pfx)
         httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx);
       else {
@@ -54,6 +53,8 @@ module.exports = function(params) {
       if (passphrase)
         httpsOptions.passphrase = passphrase;
       if (ca) {
+        httpsOptions.requestCert = true;
+        httpsOptions.rejectUnauthorized = true;
         // String or array
         if (typeof ca === String)
           httpsOptions.ca = fs.readFileSync(ca);
@@ -129,11 +130,11 @@ module.exports = function(params) {
   // start server
   var servers = [],
       i,
-      exitLog = function() {
-        console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
-        process.exit();
-      },
       gracefulShutdown = function() {
+        var exitLog = function() {
+          console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
+          process.exit();
+        };
         app.set('roosevelt:state', 'disconnecting');
         console.log(("\n" + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
         servers[0].close(function() {
