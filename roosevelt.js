@@ -39,7 +39,10 @@ module.exports = function(params) {
     httpServer = http.Server(app);
   
   if (app.get('params').https) {
-    var httpsOptions = {},
+    var httpsOptions = {
+          requestCert: app.get('params').requestCert,
+          rejectUnauthorized: app.get('params').rejectUnauthorized
+        },
         ca = app.get('params').ca,
         passphrase = app.get('params').passphrase;
 
@@ -53,8 +56,6 @@ module.exports = function(params) {
       if (passphrase)
         httpsOptions.passphrase = passphrase;
       if (ca) {
-        httpsOptions.requestCert = true;
-        httpsOptions.rejectUnauthorized = true;
         // String or array
         if (typeof ca === String)
           httpsOptions.ca = fs.readFileSync(ca);
