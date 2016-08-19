@@ -65,8 +65,8 @@ module.exports = function(params) {
         }
         else if (typeof ca === Array) {
           httpsOptions.ca = [];
-          ca.forEach(function(str, ind, arr) {
-            httpsOptions.ca.push(fs.readFileSync(str)); 
+          ca.forEach(function(val, index, array) {
+            httpsOptions.ca.push(fs.readFileSync(val)); 
           });
         }
       }
