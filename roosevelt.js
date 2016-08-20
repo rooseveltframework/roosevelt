@@ -1,3 +1,5 @@
+require('colors');
+
 var http = require('http'),
     https = require('https'),
     express = require('express'),
