@@ -60,10 +60,10 @@ module.exports = function(params) {
       }
       if (ca) {
         // String or array
-        if (typeof ca === String) {
+        if (typeof ca === "string") {
           httpsOptions.ca = fs.readFileSync(ca);
         }
-        else if (typeof ca === Array) {
+        else if (ca instanceof Array) {
           httpsOptions.ca = [];
           ca.forEach(function(val, index, array) {
             httpsOptions.ca.push(fs.readFileSync(val)); 
