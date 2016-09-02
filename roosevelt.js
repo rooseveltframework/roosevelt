@@ -7,7 +7,7 @@ var http = require('http'),
 
 module.exports = function(params) {
   params = params || {}; // ensure params are an object
-  
+
   // check for command line overrides for NODE_ENV
   process.argv.forEach(function (val, index, array) {
     switch (val) {
@@ -20,7 +20,7 @@ module.exports = function(params) {
         break;
     }
   });
-  
+
   var app = express(), // initialize express
       httpServer,
       httpsServer,
@@ -34,15 +34,15 @@ module.exports = function(params) {
   // expose initial vars
   app.set('express', express);
   app.set('params', params);
-  
+
   // source user supplied params
   app = require('./lib/sourceParams')(app);
-  
+
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
     httpServer = http.Server(app);
   }
-  
+
   if (app.get('params').https) {
     httpsOptions = {
       requestCert: app.get('params').requestCert,
@@ -64,20 +64,20 @@ module.exports = function(params) {
       }
       if (ca) {
         // String or array
-        if (typeof ca === "string") {
+        if (typeof ca === 'string') {
           httpsOptions.ca = fs.readFileSync(ca);
         }
         else if (ca instanceof Array) {
           httpsOptions.ca = [];
           ca.forEach(function(val, index, array) {
-            httpsOptions.ca.push(fs.readFileSync(val)); 
+            httpsOptions.ca.push(fs.readFileSync(val));
           });
         }
       }
     }
     httpsServer = https.Server(httpsOptions, app);
   }
-  
+
   app.httpServer = httpServer;
   app.httpsServer = httpsServer;
 
@@ -143,25 +143,27 @@ module.exports = function(params) {
     }
 
     app.set('roosevelt:state', 'disconnecting');
-    console.log(("\n" + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
+    console.log(('\n' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
     servers[0].close(function() {
-      if (servers.length > 1)
+      if (servers.length > 1) {
         servers[1].close(exitLog);
-      else
+      }
+      else {
         exitLog();
+      }
     });
     setTimeout(function() {
       console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
       process.exit(1);
     }, app.get('params').shutdownTimeout);
   }
-  
+
   function startServer() {
     var lock = {},
         startupCallback = function(proto, port) {
           return function() {
             console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
-            
+
             if (!Object.isFrozen(lock)) {
               Object.freeze(lock);
               // fire user-defined onServerStart event
@@ -171,7 +173,7 @@ module.exports = function(params) {
             }
           };
         };
-    
+
     if (cluster.isMaster && numCPUs > 1) {
       for (i = 0; i < numCPUs; i++) {
         cluster.fork();
