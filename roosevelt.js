@@ -1,14 +1,12 @@
-'use strict';
 var http = require('http'),
     https = require('https'),
     express = require('express'),
-    colors = require('colors'),
     cluster = require('cluster'),
     os = require('os'),
     fs = require('fs');
 
 module.exports = function(params) {
-  params = params || {};              // ensure params are an object
+  params = params || {}; // ensure params are an object
   
   // check for command line overrides for NODE_ENV
   process.argv.forEach(function (val, index, array) {
@@ -25,7 +23,13 @@ module.exports = function(params) {
   
   var app = express(), // initialize express
       httpServer,
-      httpsServer;
+      httpsServer,
+      httpsOptions,
+      ca,
+      passphrase,
+      numCPUs = 1,
+      servers = [],
+      i;
 
   // expose initial vars
   app.set('express', express);
@@ -40,12 +44,12 @@ module.exports = function(params) {
   }
   
   if (app.get('params').https) {
-    var httpsOptions = {
-          requestCert: app.get('params').requestCert,
-          rejectUnauthorized: app.get('params').rejectUnauthorized
-        },
-        ca = app.get('params').ca,
-        passphrase = app.get('params').passphrase;
+    httpsOptions = {
+      requestCert: app.get('params').requestCert,
+      rejectUnauthorized: app.get('params').rejectUnauthorized
+    };
+    ca = app.get('params').ca;
+    passphrase = app.get('params').passphrase;
 
     if (app.get('params').keyPath) {
       if (app.get('params').pfx) {
@@ -109,7 +113,6 @@ module.exports = function(params) {
   app = require('./lib/mapRoutes')(app);
 
   // determine number of CPUs to use
-  var numCPUs = 1;
   process.argv.some(function(val, index, array) {
     var arg = array[index + 1],
         max = os.cpus().length;
@@ -133,27 +136,25 @@ module.exports = function(params) {
   });
 
   // start server
-  var servers = [],
-      i,
-      gracefulShutdown = function() {
-        var exitLog = function() {
-          console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
-          process.exit();
-        };
-        
-        app.set('roosevelt:state', 'disconnecting');
-        console.log(("\n" + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
-        servers[0].close(function() {
-          if (servers.length > 1)
-            servers[1].close(exitLog);
-          else
-            exitLog();
-        });
-        setTimeout(function() {
-          console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
-          process.exit(1);
-        }, app.get('params').shutdownTimeout);
-      };
+  function gracefulShutdown() {
+    function exitLog() {
+      console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
+      process.exit();
+    }
+
+    app.set('roosevelt:state', 'disconnecting');
+    console.log(("\n" + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
+    servers[0].close(function() {
+      if (servers.length > 1)
+        servers[1].close(exitLog);
+      else
+        exitLog();
+    });
+    setTimeout(function() {
+      console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
+      process.exit(1);
+    }, app.get('params').shutdownTimeout);
+  }
   
   function startServer() {
     var lock = {},
