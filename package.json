@@ -24,16 +24,8 @@
     "wrench": "^1.0.0",
     "serve-favicon": "^2.3.0"
   },
-  "jshintConfig": {
-    "curly": true,
-    "devel": true,
-    "evil": true,
-    "indent": 2,
-    "node": true
-  },
-  "devDependencies ": {
-    "jshint": "*",
-    "nodemon": "*"
+  "devDependencies": {
+    "eslint": "^3.5.0"
   },
   "repository": {
     "type": "git",
@@ -47,10 +39,41 @@
     "teddy",
     "mvc"
   ],
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "mocha": true
+    },
+    "rules": {
+      "eqeqeq": 2,
+      "curly": 2,
+      "semi": 2,
+      "strict": [2, "never"],
+      "quotes": [2, "single"],
+      "no-trailing-spaces": ["error", { "skipBlankLines": false }],
+      "camelcase": [2, {"properties": "always"}],
+      "comma-spacing": [2, {"before": false, "after": true}],
+      "indent": [2, 2, {"VariableDeclarator": 2, "SwitchCase": 1}],
+      "eol-last": 0,
+      "handle-callback-err": 0,
+      "no-use-before-define": [2, "nofunc"],
+      "no-unused-vars": [2, {"vars": "all", "args": "none"}],
+      "no-console": 0,
+      "no-mixed-requires": 0,
+      "one-var": [2, "always"],
+      "dot-notation": 0,
+      "no-path-concat": 0,
+      "no-alert": 0,
+      "brace-style": [2, "stroustrup"],
+      "keyword-spacing": ["error", { "before": true, "after": true }],
+      "space-before-blocks": ["error"]
+    }
+  },
   "preferGlobal": true,
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "jshint roosevelt.js defaultErrorPages/controllers/5xx.js defaultErrorPages/controllers/404.js defaultErrorPages/controllers/503.js lib/enableMultipart.js lib/getAppDir.js lib/jsCompiler.js lib/mapRoutes.js lib/preprocessCss.js lib/setExpressConfigs.js lib/sourceParams.js"
+    "eslint": "./node_modules/.bin/eslint ."
   }
 }
