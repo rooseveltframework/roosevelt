@@ -1,0 +1,4 @@
+public
+.build/
+out/
+jsdoc/
