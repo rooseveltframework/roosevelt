@@ -224,6 +224,29 @@ App behavior parameters
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: `30000` (30 seconds)
 
+HTTPS parameters
+---
+
+- `https`: Run an HTTPS server using Roosevelt.
+  - Default: `false`
+- `httpsOnly`: If running an HTTPS server, determines whether or not the default HTTP server will be disabled
+  - Default: `false`
+- `httpsPort`: The port your app will run an HTTPS server on, if enabled.
+  - Default: `43733`
+- `pfx`: Specify whether or not your app will use pfx or standard certification.
+  - Default: `false`
+- `keyPath`: Stores the file paths of specific key/certificate to be used by the server.
+  - Object values: `pfx`, `key`, `cert` -- use one of {`pfx`} or {`key`, `cert`}
+  - Default: `null`
+- `passphrase`: Supply the HTTPS server with the password for the certificate being used, if necessary.
+  - Default: `null`
+- `ca`: Certificate authority to match client certificates against, as a file path or array of file paths.
+  - Default: `null`
+- `requestCert`: Request a certificate from a client and attempt to verify it.
+  - Default: `false`
+- `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
+  - Default: `false`
+
 MVC parameters
 ---
 
