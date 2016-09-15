@@ -13,6 +13,7 @@
   "engineStrict": true,
   "dependencies": {
     "body-parser": "^1.0.0",
+    "browserify": "~13.1.0",
     "colors": "^1.0.0",
     "compression": "^1.0.0",
     "cookie-parser": "^1.3.0",
@@ -51,6 +52,6 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "jshint roosevelt.js defaultErrorPages/controllers/5xx.js defaultErrorPages/controllers/404.js defaultErrorPages/controllers/503.js lib/enableMultipart.js lib/getAppDir.js lib/jsCompiler.js lib/mapRoutes.js lib/preprocessCss.js lib/setExpressConfigs.js lib/sourceParams.js"
+    "test": "jshint roosevelt.js defaultErrorPages/controllers/5xx.js defaultErrorPages/controllers/404.js defaultErrorPages/controllers/503.js lib/enableMultipart.js lib/getAppDir.js lib/jsCompiler.js lib/mapRoutes.js lib/preprocessCss.js lib/setExpressConfigs.js lib/sourceParams.js lib/browserifyBundling.js"
   }
 }
