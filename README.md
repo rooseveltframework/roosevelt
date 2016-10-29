@@ -223,7 +223,7 @@ App behavior parameters
   - Default: `2000` (2 seconds)
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: `30000` (30 seconds)
-
+  
 HTTPS parameters
 ---
 
@@ -246,6 +246,10 @@ HTTPS parameters
   - Default: `false`
 - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
   - Default: `false`
+- `bodyParserOptions`: Controls the options for [body-parser](https://www.npmjs.com/package/body-parser) using a object. 
+  - Default: `{}` 
+- `bodyParserJsonOptions`: Controls the options for the json function of the [body-parser](https://www.npmjs.com/package/body-parser) using a object.
+  - Default: `{}`
 
 MVC parameters
 ---
