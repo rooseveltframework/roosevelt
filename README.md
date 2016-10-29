@@ -246,8 +246,10 @@ HTTPS parameters
   - Default: `false`
 - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
   - Default: `false`
-- `limit`: Controls the maximum request body size with the [body-parser](https://www.npmjs.com/package/body-parser). If this is a number, then the value specifies the number of bytes; if it is a string, the value is passed to the [bytes](https://www.npmjs.com/package/bytes) library for parsing. 
-  - Default: `100kb` 
+- `bodyParserOptions`: Controls the options for [body-parser](https://www.npmjs.com/package/body-parser) using a object. 
+  - Default: `{}` 
+- `bodyParserJsonOptions`: Controls the options for the json function of the [body-parser](https://www.npmjs.com/package/body-parser) using a object.
+  - Default: `{}`
 
 MVC parameters
 ---
