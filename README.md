@@ -247,7 +247,7 @@ HTTPS parameters
 - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
   - Default: `false`
 - `bodyParserOptions`: Controls the options for [body-parser](https://www.npmjs.com/package/body-parser) using a object. 
-  - Default: `{}` 
+  - Default: `{extended: true}` 
 - `bodyParserJsonOptions`: Controls the options for the json function of the [body-parser](https://www.npmjs.com/package/body-parser) using a object.
   - Default: `{}`
 
