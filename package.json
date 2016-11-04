@@ -2,13 +2,13 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.6.26",
+  "version": "0.6.27",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
   "readmeFilename": "README.md",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.0.0"
   },
   "engineStrict": true,
   "dependencies": {
@@ -21,7 +21,7 @@
     "method-override": "^2.0.0",
     "morgan": "^1.0.0",
     "parent-require": "^1.0.0",
-    "wrench": "^1.0.0",
+    "fs-extra": "^1.0.0",
     "serve-favicon": "^2.3.0"
   },
   "devDependencies": {
