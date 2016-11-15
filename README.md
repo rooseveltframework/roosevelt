@@ -1,3 +1,4 @@
+
 Roosevelt MVC web framework
 ===
 
@@ -10,6 +11,7 @@ Named for [the most badass President of all-time](http://www.cracked.com/article
 By default Roosevelt integrates [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://raw.github.com/kethinov/mkroosevelt/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
+
 
 Table of contents
 ===
@@ -39,6 +41,7 @@ Table of contents
   - [Help wanted!](https://github.com/kethinov/roosevelt#help-wanted)
 - [License](https://github.com/kethinov/roosevelt#license)
 
+
 Why use Roosevelt?
 ===
 
@@ -52,10 +55,12 @@ Reasons for this include:
 - [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
 
+
 Create and run a Roosevelt app
 ===
 
 First you will need to install [Node.js](http://nodejs.org) or [io.js](https://iojs.org). Then you might need to install some other stuff depending on what operating system you're running.
+
 
 Platform specific prerequisites
 ---
@@ -78,6 +83,7 @@ Platform specific prerequisites
 If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the size of your app by several tens of megabytes.
 
 Once you have a sane developmemt environment, you can proceed with the standard install procedure below.
+
 
 Install Roosevelt and create an app
 ---
@@ -117,6 +123,7 @@ Then run your app:
 node app.js
 ```
 
+
 Other ways to run Roosevelt apps
 ---
 
@@ -148,6 +155,7 @@ Make sure you install nodemon first via `npm install -g nodemon` (may require ad
 npm start
 ```
 
+
 Default directory structure
 ===
 
@@ -172,6 +180,7 @@ Default directory structure
   - `js`: folder for JS files.
 - `.gitignore`: a standard file which contains a list of files and folders to ignore if your project is in a  git repo.
 
+
 Default .gitignore
 ---
 
@@ -182,6 +191,7 @@ Some notable things ignored by default and why:
 - `public`: It's recommended that you don't create files in this folder manually, but instead use the `symlinksToStatics` feature detailed below to expose folders in your `statics` directory via auto-generated symlinks.
 - `.build`: By default Roosevelt will compile LESS and JS files down to minified versions in `statics/.build` when the server starts. As such, it's not recommended to place files in the build directory manually.
 - `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally <a href='https://npmjs.org/doc/faq.html'>not recommended</a> to commit the `node_modules` folder to git.
+
 
 Configure your app with parameters
 ===
@@ -206,6 +216,7 @@ require('roosevelt')({
 
 Each param can also be defined in `package.json` under `"rooseveltConfig"`.
 
+
 App behavior parameters
 ---
 
@@ -217,13 +228,14 @@ App behavior parameters
   - Default: `false`
 - `noMinify`: Disables the minification step in (supporting) CSS and JS compilers. Useful during dev mode. Can also be passed as the command line argument `-no-minify`.
   - Default: `false`
-- `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. To disable multipart forms entirely, set this option to false.
+- `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
   - Default: `{'multiples': true}`
-- ~~`maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy)</a>)~~ *([Temporarily disabled](https://github.com/lloyd/node-toobusy/issues/45))*
+- ~~`maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy))~~ *([Temporarily disabled](https://github.com/lloyd/node-toobusy/issues/45))*
   - Default: `2000` (2 seconds)
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: `30000` (30 seconds)
-  
+
+
 HTTPS parameters
 ---
 
@@ -251,6 +263,7 @@ HTTPS parameters
 - `bodyParserJsonOptions`: Controls the options for the json function of the [body-parser](https://www.npmjs.com/package/body-parser) using a object.
   - Default: `{}`
 
+
 MVC parameters
 ---
 
@@ -266,11 +279,13 @@ MVC parameters
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: `mvc/controllers`
 
+
 Utility library parameters
 ---
 
 - `libPath`: Relative path on filesystem to where your optional utility library files are located. Defaults to `lib` if not set.
 - `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your `lib` directory. Set to `false` to disable making this symlink. Defaults to `lib` if not set.
+
 
 Error page parameters
 ---
@@ -281,6 +296,7 @@ Error page parameters
   - Default: `5xx.jx`
 - `error503`: Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead.
   - Default: `503.js`
+
 
 Statics parameters
 ---
@@ -307,6 +323,7 @@ Statics parameters
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
   - Default: `.build/js`
 
+
 Public folder parameters
 ---
 
@@ -324,6 +341,7 @@ Public folder parameters
 - `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
   - Default: `false`
 
+
 Events
 ---
 
@@ -334,6 +352,7 @@ require('roosevelt')({
   onServerStart: function(app) { /* do something */ }
 });
 ```
+
 
 Event list
 ---
@@ -353,6 +372,7 @@ Event list
 - `onReqAfterRoute(req, res)`: Fired after the request ends.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+
 
 Making controller files
 ===
@@ -376,6 +396,7 @@ module.exports = function(app) { // app is the Express app created by Roosevelt
 };
 ```
 
+
 Making model files
 ===
 
@@ -387,6 +408,7 @@ Here's a simple example `dataModel.js` data model:
 module.exports = {some: 'data'};
 ```
 
+
 Making view files
 ===
 
@@ -394,40 +416,42 @@ Views are [Teddy](https://github.com/kethinov/teddy) templates. See the Teddy do
 
 You can also use different templating engines by tweaking Roosevelt's parameters (see above parameter documentation).
 
+
 Express variables exposed by Roosevelt
 ===
 
 Roosevelt supplies several variables to Express that you may find handy. Access them using `app.get('variableName')`.
 
 
-Express variable | Description
---- | ---
-`express` | The [express](http://expressjs.com) module.
-*viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module.
-`formidable` | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms.
-`appName` | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied.
-`appVersion` | The version number of your app derived from `package.json`.
-`appDir` | The directory the main module is in.
-`package` | The contents of `package.json`.
-`staticsRoot` | Full path on the file system to where your app's statics folder is located.
-`publicFolder` | Full path on the file system to where your app's public folder is located.
-`cssPath` | Full path on the file system to where your app's CSS source files are located.
-`jsPath` | Full path on the file system to where your app's JS source files are located.
-`cssCompiledOutput` | Full path on the file system to where your app's minified CSS files are located.
-`jsCompiledOutput` | Full path on the file system to where your app's minified JS files are located.
-`modelsPath` | Full path on the file system to where your app's models folder is located.
-`viewsPath` | Full path on the file system to where your app's views folder is located.
-`controllersPath` | Full path on the file system to where your app's controllers folder is located.
-`params` | The params you sent to Roosevelt.
-`port` | Port Roosevelt is running on.
+| Express variable                     | Description                              |
+| ------------------------------------ | ---------------------------------------- |
+| `express`                            | The [express](http://expressjs.com) module. |
+| *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
+| `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
+| `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
+| `appVersion`                         | The version number of your app derived from `package.json`. |
+| `appDir`                             | The directory the main module is in.     |
+| `package`                            | The contents of `package.json`.          |
+| `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
+| `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
+| `cssPath`                            | Full path on the file system to where your app's CSS source files are located. |
+| `jsPath`                             | Full path on the file system to where your app's JS source files are located. |
+| `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
+| `jsCompiledOutput`                   | Full path on the file system to where your app's minified JS files are located. |
+| `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
+| `viewsPath`                          | Full path on the file system to where your app's views folder is located. |
+| `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
+| `params`                             | The params you sent to Roosevelt.        |
+| `port`                               | Port Roosevelt is running on.            |
 
 Additionally the Roosevelt constructor returns the following object:
 
-Roosevelt object | Description
---- | ---
-`expressApp` | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-`httpServer` | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`.
-`startServer` | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config.
+| Roosevelt object | Description                              |
+| ---------------- | ---------------------------------------- |
+| `expressApp`     | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
+| `httpServer`     | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
+| `startServer`    | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config. |
+
 
 Express middleware and other configurations automatically provided by Roosevelt
 ===
@@ -441,12 +465,14 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Includes the [body-parser](https://github.com/expressjs/body-parser) middleware with `bodyParser.json` and `bodyParser.urlencoded({extended: true})`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
 
+
 Warning: Roosevelt is beta software!
 ===
 
 Not many apps have been written using Roosevelt yet, so it's entirely possible that there will be some significant bugs.
 
 You should not use Roosevelt in production yet unless you're willing to devote some time to fixing any bugs you might find.
+
 
 Contributing to Roosevelt
 ===
@@ -460,6 +486,7 @@ npm test
 ```
 
 If you want to hack on the CLI tool, see [mkroosevelt](https://github.com/kethinov/mkroosevelt).
+
 
 Help wanted!
 ---
