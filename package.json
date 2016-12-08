@@ -74,6 +74,6 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "eslint": "./node_modules/.bin/eslint ."
+    "test": "./node_modules/.bin/eslint ."
   }
 }
