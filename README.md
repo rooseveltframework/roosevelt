@@ -220,7 +220,7 @@ Each param can also be defined in `package.json` under `"rooseveltConfig"`.
 App behavior parameters
 ---
 
-- `port`: The port your app will run on. Can also be defined using `NODE_PORT` environment variable.
+- `port`: The port your app will run on. Can also be defined using `HTTP_PORT` or `NODE_PORT` environment variable.
   - Default: `43711`
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: `true`
@@ -243,7 +243,7 @@ HTTPS parameters
   - Default: `false`
 - `httpsOnly`: If running an HTTPS server, determines whether or not the default HTTP server will be disabled
   - Default: `false`
-- `httpsPort`: The port your app will run an HTTPS server on, if enabled.
+- `httpsPort`: The port your app will run a HTTPS server on, if enabled. Can also be defined using `HTTPS_PORT` environment variable.
   - Default: `43733`
 - `pfx`: Specify whether or not your app will use pfx or standard certification.
   - Default: `false`
