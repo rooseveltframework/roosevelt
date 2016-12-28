@@ -114,6 +114,7 @@ module.exports = function(params) {
   // map routes
   app = require('./lib/mapRoutes')(app);
 
+  // custom error page
   app = require('./lib/500ErrorPage.js')(app);
 
   // determine number of CPUs to use
