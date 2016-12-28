@@ -114,6 +114,8 @@ module.exports = function(params) {
   // map routes
   app = require('./lib/mapRoutes')(app);
 
+  app = require('./lib/500ErrorPage.js')(app);
+
   // determine number of CPUs to use
   process.argv.some(function(val, index, array) {
     var arg = array[index + 1],
