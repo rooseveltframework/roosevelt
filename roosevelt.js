@@ -100,6 +100,9 @@ module.exports = function(params) {
   // activate css preprocessor
   require('./lib/preprocessCss')(app);
 
+  // activate HTML minifier
+  require('./lib/htmlMinify')(app);
+
   // activate js compiler
   require('./lib/jsCompiler')(app);
 
