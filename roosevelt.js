@@ -90,7 +90,9 @@ module.exports = function(params) {
   app.use(require('cookie-parser')());
 
   // enable favicon support
-  app.use(require('serve-favicon')(app.get('params').staticsRoot + app.get('params').favicon));
+  if (app.get('params').favicon !== 'none') {
+    app.use(require('serve-favicon')(app.get('params').staticsRoot + app.get('params').favicon));
+  }
 
   // bind user-defined middleware which fires at the beginning of each request if supplied
   if (params.onReqStart && typeof params.onReqStart === 'function') {

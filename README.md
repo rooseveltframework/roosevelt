@@ -330,7 +330,8 @@ Public folder parameters
 - `publicFolder`: All files and folders specified in this path will be exposed as static files.
   -  Default: `public`
 - `favicon`: Location of your [favicon](https://en.wikipedia.org/wiki/Favicon) file.
-  -  Default: `images/favicon.ico`
+  - Default: `images/favicon.ico`
+  - Disable favicon support by supplying `none` to this parameter.
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `'linkName: linkTarget'` or simply `'linkName'` if the link target has the same name as the desired link name.
   - Default: `['css: .build/css', 'images', 'js: .build/js']` (whitespace optional)
 - `versionedStatics`: If set to true, Roosevelt will prepend your app's version number from package.json to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.
