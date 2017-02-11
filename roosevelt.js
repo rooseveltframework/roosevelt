@@ -139,7 +139,7 @@ module.exports = function(params) {
               numCPUs = arg;
             }
             else {
-              console.warn(((app.get('appName') || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.').red);
+              console.warn(('⚠️  ' + (app.get('appName') || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.').red);
               numCPUs = 1;
             }
           }
@@ -150,12 +150,12 @@ module.exports = function(params) {
       // start server
       function gracefulShutdown() {
         function exitLog() {
-          console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
+          console.log(('✔️  ' + (app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
           process.exit();
         }
 
         app.set('roosevelt:state', 'disconnecting');
-        console.log(('\n' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
+        console.log(('\n' + '💬  ' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
         servers[0].close(function() {
           if (servers.length > 1) {
             servers[1].close(exitLog);
@@ -165,7 +165,7 @@ module.exports = function(params) {
           }
         });
         setTimeout(function() {
-          console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
+          console.error(('💥  ' + (app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
           process.exit(1);
         }, app.get('params').shutdownTimeout);
       }
@@ -173,7 +173,7 @@ module.exports = function(params) {
       var lock = {},
           startupCallback = function(proto, port) {
             return function() {
-              console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
+              console.log('🎧  ' + (app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
 
               if (!Object.isFrozen(lock)) {
                 Object.freeze(lock);
@@ -190,7 +190,7 @@ module.exports = function(params) {
           cluster.fork();
         }
         cluster.on('exit', function(worker, code, signal) {
-          console.log(((app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
+          console.log(('📁  ' + (app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
         });
       }
       else {
