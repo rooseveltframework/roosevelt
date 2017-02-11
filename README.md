@@ -234,6 +234,10 @@ App behavior parameters
   - Default: `2000` (2 seconds)
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: `30000` (30 seconds)
+- `bodyParserUrlencodedParams`: Supply parameters to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
+  - Default: `{extended: true}`
+- `bodyParserJsonParams`: Supply parameters to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
+  - Default: `{}`
 
 
 HTTPS parameters
@@ -258,10 +262,6 @@ HTTPS parameters
   - Default: `false`
 - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
   - Default: `false`
-- `bodyParserOptions`: Controls the options for [body-parser](https://www.npmjs.com/package/body-parser) using a object. 
-  - Default: `{extended: true}` 
-- `bodyParserJsonOptions`: Controls the options for the json function of the [body-parser](https://www.npmjs.com/package/body-parser) using a object.
-  - Default: `{}`
 
 
 MVC parameters
@@ -330,7 +330,8 @@ Public folder parameters
 - `publicFolder`: All files and folders specified in this path will be exposed as static files.
   -  Default: `public`
 - `favicon`: Location of your [favicon](https://en.wikipedia.org/wiki/Favicon) file.
-  -  Default: `images/favicon.ico`
+  - Default: `images/favicon.ico`
+  - Disable favicon support by supplying `none` to this parameter.
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `'linkName: linkTarget'` or simply `'linkName'` if the link target has the same name as the desired link name.
   - Default: `['css: .build/css', 'images', 'js: .build/js']` (whitespace optional)
 - `versionedStatics`: If set to true, Roosevelt will prepend your app's version number from package.json to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.
@@ -360,7 +361,7 @@ Event list
 - `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerStart(app)`: Fired when the server starts.
-  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.  
+  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onReqStart(req, res, next)`: Fired at the beginning of each new request.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
