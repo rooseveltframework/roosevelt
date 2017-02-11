@@ -40,6 +40,8 @@ module.exports = function(params) {
   // source user supplied params
   app = require('./lib/sourceParams')(app);
 
+  console.log(('💭  ' + 'Starting ' + app.get('appName') + ' in ' + app.get('env') + ' mode...').bold);
+
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
     httpServer = http.Server(app);
@@ -157,7 +159,7 @@ module.exports = function(params) {
         }
 
         app.set('roosevelt:state', 'disconnecting');
-        console.log(('\n' + '💬  ' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
+        console.log(('\n' + '💭  ' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
         servers[0].close(function() {
           if (servers.length > 1) {
             servers[1].close(exitLog);
@@ -192,7 +194,7 @@ module.exports = function(params) {
           cluster.fork();
         }
         cluster.on('exit', function(worker, code, signal) {
-          console.log(('📁  ' + (app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
+          console.log(('⚰️  ' + (app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
         });
       }
       else {
