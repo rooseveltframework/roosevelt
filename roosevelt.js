@@ -97,12 +97,6 @@ module.exports = function(params) {
     app.use(params.onReqStart);
   }
 
-  // activate css preprocessor
-  require('./lib/preprocessCss')(app);
-
-  // activate js compiler
-  require('./lib/jsCompiler')(app);
-
   // configure express
   app = require('./lib/setExpressConfigs')(app);
 
@@ -111,91 +105,104 @@ module.exports = function(params) {
     params.onServerInit(app);
   }
 
-  // map routes
-  app = require('./lib/mapRoutes')(app);
-
-  // custom error page
-  app = require('./lib/500ErrorPage.js')(app);
-
-  // determine number of CPUs to use
-  process.argv.some(function(val, index, array) {
-    var arg = array[index + 1],
-        max = os.cpus().length;
-
-    if (val === '-cores') {
-      if (arg === 'max') {
-        numCPUs = max;
-      }
-      else {
-        arg = parseInt(arg);
-        if (arg <= max && arg > 0) {
-          numCPUs = arg;
-        }
-        else {
-          console.warn(((app.get('appName') || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.').red);
-          numCPUs = 1;
-        }
-      }
-      return;
-    }
-  });
-
-  // start server
-  function gracefulShutdown() {
-    function exitLog() {
-      console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
-      process.exit();
-    }
-
-    app.set('roosevelt:state', 'disconnecting');
-    console.log(('\n' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
-    servers[0].close(function() {
-      if (servers.length > 1) {
-        servers[1].close(exitLog);
-      }
-      else {
-        exitLog();
-      }
-    });
-    setTimeout(function() {
-      console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
-      process.exit(1);
-    }, app.get('params').shutdownTimeout);
-  }
-
   function startServer() {
-    var lock = {},
-        startupCallback = function(proto, port) {
-          return function() {
-            console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
 
-            if (!Object.isFrozen(lock)) {
-              Object.freeze(lock);
-              // fire user-defined onServerStart event
-              if (params.onServerStart && typeof params.onServerStart === 'function') {
-                params.onServerStart(app);
-              }
-            }
-          };
-        };
+    preprocessCss();
 
-    if (cluster.isMaster && numCPUs > 1) {
-      for (i = 0; i < numCPUs; i++) {
-        cluster.fork();
-      }
-      cluster.on('exit', function(worker, code, signal) {
-        console.log(((app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
-      });
+    function preprocessCss() {
+      require('./lib/preprocessCss')(app, compileJs);
     }
-    else {
-      if (!app.get('params').httpsOnly) {
-        servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))));
+
+    function compileJs() {
+      require('./lib/jsCompiler')(app, startHttpServer);
+    }
+
+    function startHttpServer() {
+      // map routes
+      app = require('./lib/mapRoutes')(app);
+
+      // custom error page
+      app = require('./lib/500ErrorPage.js')(app);
+
+      // determine number of CPUs to use
+      process.argv.some(function(val, index, array) {
+        var arg = array[index + 1],
+            max = os.cpus().length;
+
+        if (val === '-cores') {
+          if (arg === 'max') {
+            numCPUs = max;
+          }
+          else {
+            arg = parseInt(arg);
+            if (arg <= max && arg > 0) {
+              numCPUs = arg;
+            }
+            else {
+              console.warn(((app.get('appName') || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.').red);
+              numCPUs = 1;
+            }
+          }
+          return;
+        }
+      });
+
+      // start server
+      function gracefulShutdown() {
+        function exitLog() {
+          console.log(((app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
+          process.exit();
+        }
+
+        app.set('roosevelt:state', 'disconnecting');
+        console.log(('\n' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
+        servers[0].close(function() {
+          if (servers.length > 1) {
+            servers[1].close(exitLog);
+          }
+          else {
+            exitLog();
+          }
+        });
+        setTimeout(function() {
+          console.error(((app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
+          process.exit(1);
+        }, app.get('params').shutdownTimeout);
       }
-      if (app.get('params').https) {
-        servers.push(httpsServer.listen(app.get('params').httpsPort, (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').httpsPort)));
+
+      var lock = {},
+          startupCallback = function(proto, port) {
+            return function() {
+              console.log((app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
+
+              if (!Object.isFrozen(lock)) {
+                Object.freeze(lock);
+                // fire user-defined onServerStart event
+                if (params.onServerStart && typeof params.onServerStart === 'function') {
+                  params.onServerStart(app);
+                }
+              }
+            };
+          };
+
+      if (cluster.isMaster && numCPUs > 1) {
+        for (i = 0; i < numCPUs; i++) {
+          cluster.fork();
+        }
+        cluster.on('exit', function(worker, code, signal) {
+          console.log(((app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
+        });
       }
-      process.on('SIGTERM', gracefulShutdown);
-      process.on('SIGINT', gracefulShutdown);
+      else {
+        if (!app.get('params').httpsOnly) {
+          servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))));
+        }
+        if (app.get('params').https) {
+          servers.push(httpsServer.listen(app.get('params').httpsPort, (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').httpsPort)));
+        }
+        process.on('SIGTERM', gracefulShutdown);
+        process.on('SIGINT', gracefulShutdown);
+      }
     }
   };
 
