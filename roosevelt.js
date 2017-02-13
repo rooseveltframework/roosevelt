@@ -111,6 +111,8 @@ module.exports = function(params) {
 
   function startServer() {
 
+    require('./lib/htmlMinify')(app);
+
     preprocessCss();
 
     function preprocessCss() {
