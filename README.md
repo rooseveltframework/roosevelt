@@ -226,7 +226,7 @@ App behavior parameters
   - Default: `true`
 - `disableLogger`: When this option is set to true, Roosevelt will not log HTTP requests to the console.
   - Default: `false`
-- `noMinify`: Disables the minification step in (supporting) CSS and JS compilers. Useful during dev mode. Can also be passed as the command line argument `-no-minify`.
+- `noMinify`: Disables HTML minification as well as the minification step in (supporting) CSS and JS compilers. Automatically enabled during dev mode. Can also be passed as the command line argument `-no-minify`.
   - Default: `false`
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
   - Default: `{'multiples': true}`
@@ -303,6 +303,8 @@ Statics parameters
 
 - `staticsRoot`: Relative path on filesystem to where your static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets.
   - Default: `statics`
+- `htmlMinify`: Configuration for [html-minifier](https://github.com/kangax/html-minifier). Set `override` to `false` to disable minification entirely. Set `exception_url` to disable for [specific routes](https://github.com/melonmanchan/express-minify-html#usage). Use `htmlMinifier` to pass [supported parameters](https://github.com/kangax/html-minifier#options-quick-reference) to html-minifier.
+  - Default: "htmlMinify": {'override': true, 'exception_url': false, 'htmlMinifier': {'html5': true}}
 - `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
