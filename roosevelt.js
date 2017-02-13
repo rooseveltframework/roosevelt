@@ -101,6 +101,15 @@ module.exports = function(params) {
     app.use(params.onReqStart);
   }
 
+  // activate css preprocessor
+  require('./lib/preprocessCss')(app);
+
+  // activate HTML minifier
+  require('./lib/htmlMinify')(app);
+
+  // activate js compiler
+  require('./lib/jsCompiler')(app);
+
   // configure express
   app = require('./lib/setExpressConfigs')(app);
 
