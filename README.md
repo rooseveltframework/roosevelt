@@ -303,6 +303,8 @@ Statics parameters
 
 - `staticsRoot`: Relative path on filesystem to where your static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets.
   - Default: `statics`
+- `htmlValidator`: Configuration for [html-validator](https://github.com/zrrrzzt/html-validator). Set `validator` to change used [validator](https://github.com/zrrrzzt/html-validator#usage).
+  - Default:  {validator: 'http://html5.validator.nu', format: 'text'}
 - `htmlMinify`: Configuration for [html-minifier](https://github.com/kangax/html-minifier). Set `override` to `false` to disable minification entirely. Set `exception_url` to disable for [specific routes](https://github.com/melonmanchan/express-minify-html#usage). Use `htmlMinifier` to pass [supported parameters](https://github.com/kangax/html-minifier#options-quick-reference) to html-minifier.
   - Default: "htmlMinify": {'override': true, 'exception_url': false, 'htmlMinifier': {'html5': true}}
 - `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
