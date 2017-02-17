@@ -111,6 +111,9 @@ module.exports = function(params) {
 
   function startServer() {
 
+    // initialize HTML validator
+    require('./lib/htmlValidator')(app);
+
     require('./lib/htmlMinify')(app);
 
     preprocessCss();

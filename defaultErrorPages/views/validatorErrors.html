@@ -5,17 +5,17 @@
     <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge'><![endif]--> {! fix for IE9 rendering in quirks mode !}
     <meta name='viewport' content='width=device-width,initial-scale=1'>
     <meta name='format-detection' content='telephone=no'>
-    <title>404 Not Found</title>
+    <title>{pageTitle}</title>
   </head>
   <body>
     <main>
-      <header role='banner'>
-        <h1>Not Found</h1>
-      </header>
-      <p>The requested URL {url} was not found on this server.</p>
-      <footer role='contentinfo'>
-        <address>{mainDomain} {appVersion}</address>
-      </footer>
+      <article>
+        <style>h1 {color: #000;} body {color: #f00; margin-left: 15px;}</style>
+        <h1>{pageHeader}</h1>
+        <if htmlErrors>
+          <pre>{htmlErrors}</pre>
+        </if>
+      </article>
     </main>
   </body>
 </html>

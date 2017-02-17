@@ -228,6 +228,10 @@ App behavior parameters
   - Default: `false`
 - `noMinify`: Disables HTML minification as well as the minification step in (supporting) CSS and JS compilers. Automatically enabled during dev mode. Can also be passed as the command line argument `-no-minify`.
   - Default: `false`
+- `enableValidator`: Enables or disables the built-in HTML validator in dev mode.
+  - Default: `false`
+- `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true).
+  - Default:  {validator: 'http://html5.validator.nu', format: 'text'}
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
   - Default: `{'multiples': true}`
 - ~~`maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy))~~ *([Temporarily disabled](https://github.com/lloyd/node-toobusy/issues/45))*
