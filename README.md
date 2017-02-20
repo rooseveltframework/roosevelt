@@ -321,7 +321,7 @@ Statics parameters
 - `jsPath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored elsewhere when the app is started.
   - Default: `js`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
-  - Default: `{nodeModule: 'roosevelt-closure', params: {compilation_level: 'ADVANCED_OPTIMIZATIONS'}}`.
+  - Default: `{nodeModule: 'roosevelt-closure', params: {compilationLevel: 'ADVANCED'}}`.
   - Also by default the module [roosevelt-closure](https://github.com/kethinov/roosevelt-closure) is marked as a dependency in package.json.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `undefined`
