@@ -119,7 +119,11 @@ module.exports = function(params) {
     preprocessCss();
 
     function preprocessCss() {
-      require('./lib/preprocessCss')(app, compileJs);
+      require('./lib/preprocessCss')(app, bundleJs);
+    }
+
+    function bundleJs() {
+      require('./lib/jsBundler')(app, compileJs);
     }
 
     function compileJs() {
