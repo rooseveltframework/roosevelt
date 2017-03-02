@@ -10,10 +10,12 @@
   <body>
     <main>
       <article>
-        <style>h1 {color: #000;} body {color: #f00; margin-left: 15px;}</style>
+        <style>h1 {color: #000;} body {margin-left: 15px;} .validatorErrors {color: #f00;}</style>
         <h1>{pageHeader}</h1>
         <if htmlErrors>
-          <pre>{htmlErrors}</pre>
+          <pre class='validatorErrors'>{htmlErrors}</pre>
+          <h2>Markup used:</h2>
+          <pre>{markup}</pre>
         </if>
       </article>
     </main>
