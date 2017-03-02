@@ -331,6 +331,8 @@ Statics parameters
   - Default: `js`
 - `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
   - Default: `.bundled`
+- `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
+  - Default: `true`
 - `browserifyBundles`: Declare [browserify](http://browserify.org) bundles: one or more files in your `jsPath` for browserify to bundle via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts). Use of browserify is optional. If no bundles are defined here, the browserify step will be skipped.
   - Default: `[]`
   - Example declaring one bundle: `[{outputFile: "bundle.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}]`
