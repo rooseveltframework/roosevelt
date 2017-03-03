@@ -42,6 +42,7 @@ Table of contents
 - [License](https://github.com/kethinov/roosevelt#license)
 
 
+
 Why use Roosevelt?
 ===
 
@@ -54,6 +55,7 @@ Reasons for this include:
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
+
 
 
 Create and run a Roosevelt app
@@ -181,6 +183,7 @@ Default directory structure
 - `.gitignore`: a standard file which contains a list of files and folders to ignore if your project is in a  git repo.
 
 
+
 Default .gitignore
 ---
 
@@ -191,6 +194,7 @@ Some notable things ignored by default and why:
 - `public`: It's recommended that you don't create files in this folder manually, but instead use the `symlinksToStatics` feature detailed below to expose folders in your `statics` directory via auto-generated symlinks.
 - `.build`: By default Roosevelt will compile LESS and JS files down to minified versions in `statics/.build` when the server starts. As such, it's not recommended to place files in the build directory manually.
 - `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally <a href='https://npmjs.org/doc/faq.html'>not recommended</a> to commit the `node_modules` folder to git.
+
 
 
 Configure your app with parameters
@@ -244,6 +248,7 @@ App behavior parameters
   - Default: `{}`
 
 
+
 HTTPS parameters
 ---
 
@@ -268,6 +273,7 @@ HTTPS parameters
   - Default: `false`
 
 
+
 MVC parameters
 ---
 
@@ -284,11 +290,13 @@ MVC parameters
   - Default: `mvc/controllers`
 
 
+
 Utility library parameters
 ---
 
 - `libPath`: Relative path on filesystem to where your optional utility library files are located. Defaults to `lib` if not set.
 - `libPathNodeModulesSymlink`: Name of the symlink to make in `node_modules` pointing to your `lib` directory. Set to `false` to disable making this symlink. Defaults to `lib` if not set.
+
 
 
 Error page parameters
@@ -300,6 +308,7 @@ Error page parameters
   - Default: `5xx.jx`
 - `error503`: Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead.
   - Default: `503.js`
+
 
 
 Statics parameters
@@ -320,14 +329,24 @@ Statics parameters
   - Default: `.build/css`
 - `jsPath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored elsewhere when the app is started.
   - Default: `js`
+- `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
+  - Default: `.bundled`
+- `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
+  - Default: `true`
+- `browserifyBundles`: Declare [browserify](http://browserify.org) bundles: one or more files in your `jsPath` for browserify to bundle via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts). Use of browserify is optional. If no bundles are defined here, the browserify step will be skipped.
+  - Default: `[]`
+  - Example declaring one bundle: `[{outputFile: "bundle.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}]`
+  - Example declaring multiple bundles: `[{outputFile: "bundle1.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}, {outputFile: "bundle2.js", files: ["somethingElse.js", "anotherThing.js", "etc.js"]}, etc...]`
+  - Note: `params` is optional. If it is not set, these default params will be sent: `{paths: yourJsPath}`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
-  - Default: `{nodeModule: 'roosevelt-closure', params: {compilationLevel: 'ADVANCED'}}`.
+  - Default: `{nodeModule: "roosevelt-closure", params: {compilationLevel: 'ADVANCED'}}`.
   - Also by default the module [roosevelt-closure](https://github.com/kethinov/roosevelt-closure) is marked as a dependency in package.json.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `undefined`
   - Example: `library-name/example.js:lib/example.min.js` (customizes both file path and file name of minified file)
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
   - Default: `.build/js`
+
 
 
 Public folder parameters
@@ -347,6 +366,7 @@ Public folder parameters
   - Example usage: `{fileName: 'version.less', varName: 'appVersion'}`.
 - `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
   - Default: `false`
+
 
 
 Events
@@ -379,6 +399,7 @@ Event list
 - `onReqAfterRoute(req, res)`: Fired after the request ends.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+
 
 
 Making controller files
@@ -471,6 +492,7 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Logs HTTP requests to the console  using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
 - Includes the [body-parser](https://github.com/expressjs/body-parser) middleware with `bodyParser.json` and `bodyParser.urlencoded({extended: true})`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
+
 
 
 Warning: Roosevelt is beta software!
