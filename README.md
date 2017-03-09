@@ -236,6 +236,9 @@ App behavior parameters
   - Default: `false`
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown.
   - Default:  `{validator: 'http://html5.validator.nu', format: 'text', suppressWarnings: true}`
+  - Can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`.
+- `validatorExceptions`: Use this to customize the name of the request header or model value that is used to disable the HTML validator.
+  - Default: `{'requestHeader': 'Partial', 'modelValue': '_disableValidator'}`
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
   - Default: `{'multiples': true}`
 - ~~`maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/lloyd/node-toobusy))~~ *([Temporarily disabled](https://github.com/lloyd/node-toobusy/issues/45))*
