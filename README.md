@@ -339,6 +339,7 @@ Statics parameters
 - `browserifyBundles`: Declare [browserify](http://browserify.org) bundles: one or more files in your `jsPath` for browserify to bundle via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts). Use of browserify is optional. If no bundles are defined here, the browserify step will be skipped.
   - Default: `[]`
   - Example declaring one bundle: `[{outputFile: "bundle.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}]`
+  - Example declaring one bundle which includes an optional seperate bundle used only in dev mode: `[{outputFile: "bundle.js", files: ["landingPage.js", "main.js", "etc.js"], devOnlyBundle: ["landingPage.js", "main.js", "etc.js", "dev.js"] params: {someOpt: "someValue"}}]`
   - Example declaring multiple bundles: `[{outputFile: "bundle1.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}, {outputFile: "bundle2.js", files: ["somethingElse.js", "anotherThing.js", "etc.js"]}, etc...]`
   - Note: `params` is optional. If it is not set, these default params will be sent: `{paths: yourJsPath}`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
