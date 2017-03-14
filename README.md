@@ -340,8 +340,8 @@ Statics parameters
   - Default: `[]`
   - Example declaring one bundle: `[{outputFile: "bundle.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}]`
   - Example declaring one bundle only used in dev mode `[{outputFile: "bundle.js", env: "dev", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}]`
-    - Omitting `env` will result in bundling in both modes.
   - Example declaring multiple bundles: `[{outputFile: "bundle1.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}, {outputFile: "bundle2.js", files: ["somethingElse.js", "anotherThing.js", "etc.js"]}, etc...]`
+  - Note: Omitting `env` will result in bundling in both modes.
   - Note: `params` is optional. If it is not set, these default params will be sent: `{paths: yourJsPath}`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
   - Default: `{nodeModule: "roosevelt-closure", params: {compilationLevel: 'ADVANCED'}}`.
