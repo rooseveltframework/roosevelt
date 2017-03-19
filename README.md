@@ -368,7 +368,7 @@ Public folder parameters
   - Default: `false`
 - `versionedCssFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable exposing your app's version number from package.json. Enable this option by supplying an object with the member variables `fileName` and `varName`.
   - Default: `undefined`.
-  - Example usage: `{fileName: 'version.less', varName: 'appVersion'}`.
+  - Example usage: `{fileName: '_version.less', varName: 'appVersion'}`.
 - `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
   - Default: `false`
 
