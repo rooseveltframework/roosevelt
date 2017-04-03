@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.7.10",
+  "version": "0.7.11",
   "homepage": "https://github.com/kethinov/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
