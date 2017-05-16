@@ -29,7 +29,8 @@
     "toobusy-js": "^0.5.1"
   },
   "devDependencies": {
-    "eslint": "^3.5.0"
+    "eslint": "^3.5.0",
+    "vnu-jar": "17.3.0"
   },
   "repository": {
     "type": "git",

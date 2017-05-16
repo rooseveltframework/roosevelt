@@ -235,7 +235,7 @@ App behavior parameters
 - `enableValidator`: Enables or disables the built-in HTML validator in dev mode.
   - Default: `false`
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown.
-  - Default:  `{validator: 'http://html5.validator.nu', format: 'text', suppressWarnings: false}`
+  - Default:  `{port: '8888', format: 'text', suppressWarnings: false}`
   - Can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`.
 - `validatorExceptions`: Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - Default: `{'requestHeader': 'Partial', 'modelValue': '_disableValidator'}`
