@@ -4,11 +4,13 @@ Roosevelt MVC web framework
 
 [![Build Status](https://travis-ci.org/kethinov/roosevelt.svg?branch=master)](https://travis-ci.org/kethinov/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
-Roosevelt is a web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical Express app and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
+Roosevelt is a web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical web application using Express and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
-Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time_p5.html) whose facial hair just so happens to look like a curly brace, Roosevelt's main goal is to be the easiest JS-based web framework to learn and use by setting sane defaults while also providing easy ways to override the defaults and tap into the full potential of Express.
+Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time.html) whose facial hair just so happens to look like a curly brace, Roosevelt's main goal is to be the easiest JS-based web framework to learn and use by setting sane defaults while also providing easy ways to override the defaults and tap into the full potential of Express.
 
 By default Roosevelt integrates [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
+
+Roosevelt will also automatically validate your HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;'>
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/kethinov/generator-roosevelt/blob/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
@@ -39,9 +41,6 @@ Table of contents
 - [Warning: Roosevelt is beta software!](https://github.com/kethinov/roosevelt#warning-roosevelt-is-beta-software)
 - [Contributing to Roosevelt](https://github.com/kethinov/roosevelt#contributing-to-roosevelt)
   - [Help wanted!](https://github.com/kethinov/roosevelt#help-wanted)
-- [License](https://github.com/kethinov/roosevelt#license)
-
-
 
 Why use Roosevelt?
 ===
@@ -67,6 +66,8 @@ First you will need to install [Node.js](http://nodejs.org) and the [Java JRE](h
 
 Platform specific prerequisites
 ---
+
+Some dependencies require Python or a C++ compiler. The procedure for getting these on your system varies by operating system:
 
 **Windows:**
 
@@ -505,7 +506,7 @@ To run the unit tests on your code changes, run this command:
 npm test
 ```
 
-If you want to hack on the CLI tool, see [mkroosevelt](https://github.com/kethinov/mkroosevelt).
+If you want to hack on the CLI tool, see [generator-roosevelt](https://github.com/kethinov/generator-roosevelt).
 
 
 Help wanted!
