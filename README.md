@@ -10,7 +10,7 @@ Named for [the most badass President of all-time](http://www.cracked.com/article
 
 By default Roosevelt integrates [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
 
-![Teddy Roosevelt's facial hair is a curly brace.](https://raw.github.com/kethinov/mkroosevelt/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
+![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/kethinov/generator-roosevelt/blob/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
 
 Table of contents
@@ -89,41 +89,39 @@ Once you have a sane developmemt environment, you can proceed with the standard 
 Install Roosevelt and create an app
 ---
 
-First install the command line tool globally (may require admin or root privileges):
+Globally install [Yeoman](http://yeoman.io).
 
 ```
-npm install -g mkroosevelt
+npm i -g yo
 ```
 
-Use the command line tool to create a sample app:
+Globally install Roosevelt Yeoman generator.
 
 ```
-mkroosevelt myapp
+npm i -g generator-roosevelt
 ```
 
-Inside your new `myapp` folder you'll find a `bin` directory with the following files:
+Create a Roosevelt app.
 
 ```
-mac.command
-unix.sh
-windows.bat
+yo roosevelt
 ```
 
-Open the one relevant to whichever operating system you're running. That will install all the dependencies and start your new app!
+Then follow the prompts.
 
-If you want to do that manually instead using the console, then change into your new app's directory and then install dependencies:
+Afterward:
 
-```
-cd myapp
-npm install
-```
-
-Then run your app:
+Install dependencies.
 
 ```
-node app.js
+npm i
 ```
 
+Run in development mode.
+
+```
+npm run dev
+```
 
 Other ways to run Roosevelt apps
 ---
@@ -131,7 +129,7 @@ Other ways to run Roosevelt apps
 Run your app in production mode:
 
 ```
-export NODE_ENV=production && node app.js
+npm run prod
 ```
 
 Run your app on two CPUs:
@@ -140,22 +138,11 @@ Run your app on two CPUs:
 node app.js -cores 2
 ```
 
-Run your app on all your CPUs:
+Run your app on all your CPUs (this is the default behavior):
 
 ```
 node app.js -cores max
 ```
-
-While developing your app, a more convenient way to run the app is to use the `npm start` script.
-
-The `npm start` script will run your app through [nodemon](https://github.com/remy/nodemon) and will automatically restart whenever you modify any JS, JSON, LESS, or HTML files.
-
-Make sure you install nodemon first via `npm install -g nodemon` (may require admin or root privileges) and then simply execute this command:
-
-```
-npm start
-```
-
 
 Default directory structure
 ===
