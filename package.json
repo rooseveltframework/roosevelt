@@ -26,11 +26,11 @@
     "morgan": "^1.0.0",
     "parent-require": "^1.0.0",
     "serve-favicon": "^2.3.0",
-    "toobusy-js": "^0.5.1"
+    "toobusy-js": "^0.5.1",
+    "vnu-jar": "17.3.0"
   },
   "devDependencies": {
-    "eslint": "^3.5.0",
-    "vnu-jar": "17.3.0"
+    "eslint": "^3.5.0"
   },
   "repository": {
     "type": "git",
