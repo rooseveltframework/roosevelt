@@ -2,7 +2,7 @@
 Roosevelt MVC web framework
 ===
 
-[![Build Status](https://travis-ci.org/kethinov/roosevelt.svg?branch=master)](https://travis-ci.org/kethinov/roosevelt) [![NPM version](https://badge.fury.io/js/roosevelt.png)](http://badge.fury.io/js/roosevelt) [![Dependency Status](https://gemnasium.com/kethinov/roosevelt.png)](https://gemnasium.com/kethinov/roosevelt) [![Gittip](http://img.shields.io/gittip/kethinov.png)](https://www.gittip.com/kethinov/)
+[![Build Status](https://travis-ci.org/kethinov/roosevelt.svg?branch=master)](https://travis-ci.org/kethinov/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
 Roosevelt is a web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical Express app and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
@@ -54,6 +54,7 @@ Reasons for this include:
 - Default directory structure is simple, but easily configured.
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
+- Automatic HTML validation.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
 
 
@@ -61,7 +62,7 @@ Reasons for this include:
 Create and run a Roosevelt app
 ===
 
-First you will need to install [Node.js](http://nodejs.org) or [io.js](https://iojs.org). Then you might need to install some other stuff depending on what operating system you're running.
+First you will need to install [Node.js](http://nodejs.org) and the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html). (The JRE is required for the local HTML validator feature.) Then you might need to install some other stuff depending on what operating system you're running.
 
 
 Platform specific prerequisites
@@ -81,8 +82,6 @@ Platform specific prerequisites
 
 - Install build-essential: `sudo apt-get install build-essential`
 - You may also need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common JS modules.
-
-If you intend to use Roosevelt's default JS minifier (Closure Compiler), then you should also make sure to install the [Java JRE](http://www.oracle.com/technetwork/java/javase/downloads/index.html) as well. If you don't, then Roosevelt will install it as a dependency of your app which will bloat the size of your app by several tens of megabytes.
 
 Once you have a sane developmemt environment, you can proceed with the standard install procedure below.
 
