@@ -30,7 +30,7 @@
     "vnu-jar": "17.3.0"
   },
   "devDependencies": {
-    "eslint": "^3.5.0"
+    "eslint": "^3.19.0"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,9 @@
     "mvc"
   ],
   "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6
+    },
     "env": {
       "browser": true,
       "node": true,
