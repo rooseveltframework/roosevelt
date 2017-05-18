@@ -112,11 +112,13 @@ module.exports = function(params) {
   function startServer() {
 
     // initialize HTML validator
-    require('./lib/htmlValidator')(app);
+    validateHTML();
+
+    function validateHTML() {
+      require('./lib/htmlValidator')(app, preprocessCss);
+    }
 
     require('./lib/htmlMinify')(app);
-
-    preprocessCss();
 
     function preprocessCss() {
       require('./lib/preprocessCss')(app, bundleJs);
