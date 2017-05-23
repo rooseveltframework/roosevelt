@@ -3,7 +3,7 @@
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
   "version": "0.8.3",
-  "homepage": "https://github.com/kethinov/roosevelt",
+  "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
   "readmeFilename": "README.md",
@@ -34,7 +34,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/kethinov/roosevelt.git"
+    "url": "git://github.com/rooseveltframework/roosevelt.git"
   },
   "keywords": [
     "roosevelt.js",
