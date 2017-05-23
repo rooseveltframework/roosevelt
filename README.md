@@ -2,45 +2,45 @@
 Roosevelt MVC web framework
 ===
 
-[![Build Status](https://travis-ci.org/kethinov/roosevelt.svg?branch=master)](https://travis-ci.org/kethinov/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
+[![Build Status](https://travis-ci.org/rooseveltframework/roosevelt.svg?branch=master)](https://travis-ci.org/rooseveltframework/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
 Roosevelt is a web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical web application using Express and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
 Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time.html) whose facial hair just so happens to look like a curly brace, Roosevelt's main goal is to be the easiest JS-based web framework to learn and use by setting sane defaults while also providing easy ways to override the defaults and tap into the full potential of Express.
 
-By default Roosevelt integrates [Teddy](https://github.com/kethinov/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
+By default Roosevelt integrates [Teddy](https://github.com/rooseveltframework/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [Closure Compiler](https://developers.google.com/closure/compiler) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
 
 Roosevelt will also automatically validate your HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;'>
 
-![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/kethinov/generator-roosevelt/blob/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
+![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/sampleApp/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
 
 Table of contents
 ===
 
-- [Why use Roosevelt](https://github.com/kethinov/roosevelt#why-use-roosevelt)
-- [Create and run a Roosevelt app](https://github.com/kethinov/roosevelt#create-and-run-a-roosevelt-app)
-  - [Platform specific prerequisites](https://github.com/kethinov/roosevelt#platform-specific-prerequisites)
-  - [Install Roosevelt and create an app](https://github.com/kethinov/roosevelt#install-roosevelt-and-create-an-app)
-  - [Other ways to run Roosevelt apps](https://github.com/kethinov/roosevelt#other-ways-to-run-roosevelt-apps)
-- [Default directory structure](https://github.com/kethinov/roosevelt#default-directory-structure)
-  - [Default .gitignore](https://github.com/kethinov/roosevelt#default-gitignore)
-- [Configure your app with parameters](https://github.com/kethinov/roosevelt#configure-your-app-with-parameters)
-  - [App behavior parameters](https://github.com/kethinov/roosevelt#app-behavior-parameters)
-  - [MVC parameters](https://github.com/kethinov/roosevelt#mvc-parameters)
-  - [Error page parameters](https://github.com/kethinov/roosevelt#error-page-parameters)
-  - [Statics parameters](https://github.com/kethinov/roosevelt#statics-parameters)
-  - [Public folder parameters](https://github.com/kethinov/roosevelt#public-folder-parameters)
-  - [Events](https://github.com/kethinov/roosevelt#events)
-  - [Event list](https://github.com/kethinov/roosevelt#event-list)
-- [Making controller files](https://github.com/kethinov/roosevelt#making-controller-files)
-- [Making model files](https://github.com/kethinov/roosevelt#making-model-files)
-- [Making view files](https://github.com/kethinov/roosevelt#making-view-files)
-- [Express variables exposed by Roosevelt](https://github.com/kethinov/roosevelt#express-variables-exposed-by-roosevelt)
-- [Express middleware and other configurations automatically provided by Roosevelt](https://github.com/kethinov/roosevelt#express-middleware-and-other-configurations-automatically-provided-by-roosevelt)
-- [Warning: Roosevelt is beta software!](https://github.com/kethinov/roosevelt#warning-roosevelt-is-beta-software)
-- [Contributing to Roosevelt](https://github.com/kethinov/roosevelt#contributing-to-roosevelt)
-  - [Help wanted!](https://github.com/kethinov/roosevelt#help-wanted)
+- [Why use Roosevelt](https://github.com/rooseveltframework/roosevelt#why-use-roosevelt)
+- [Create and run a Roosevelt app](https://github.com/rooseveltframework/roosevelt#create-and-run-a-roosevelt-app)
+  - [Platform specific prerequisites](https://github.com/rooseveltframework/roosevelt#platform-specific-prerequisites)
+  - [Install Roosevelt and create an app](https://github.com/rooseveltframework/roosevelt#install-roosevelt-and-create-an-app)
+  - [Other ways to run Roosevelt apps](https://github.com/rooseveltframework/roosevelt#other-ways-to-run-roosevelt-apps)
+- [Default directory structure](https://github.com/rooseveltframework/roosevelt#default-directory-structure)
+  - [Default .gitignore](https://github.com/rooseveltframework/roosevelt#default-gitignore)
+- [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
+  - [App behavior parameters](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters)
+  - [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters)
+  - [Error page parameters](https://github.com/rooseveltframework/roosevelt#error-page-parameters)
+  - [Statics parameters](https://github.com/rooseveltframework/roosevelt#statics-parameters)
+  - [Public folder parameters](https://github.com/rooseveltframework/roosevelt#public-folder-parameters)
+  - [Events](https://github.com/rooseveltframework/roosevelt#events)
+  - [Event list](https://github.com/rooseveltframework/roosevelt#event-list)
+- [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
+- [Making model files](https://github.com/rooseveltframework/roosevelt#making-model-files)
+- [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
+- [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
+- [Express middleware and other configurations automatically provided by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-middleware-and-other-configurations-automatically-provided-by-roosevelt)
+- [Warning: Roosevelt is beta software!](https://github.com/rooseveltframework/roosevelt#warning-roosevelt-is-beta-software)
+- [Contributing to Roosevelt](https://github.com/rooseveltframework/roosevelt#contributing-to-roosevelt)
+  - [Help wanted!](https://github.com/rooseveltframework/roosevelt#help-wanted)
 
 Why use Roosevelt?
 ===
@@ -52,7 +52,7 @@ Reasons for this include:
 - Minimal boilerplate to get started. All the magic of [Express](http://expressjs.com) is preconfigured for you.
 - Default directory structure is simple, but easily configured.
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
-- [Teddy](https://github.com/kethinov/teddy) HTML templates are much easier to read and maintain than popular alternatives.
+- [Teddy](https://github.com/rooseveltframework/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - Automatic HTML validation.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
 
@@ -275,7 +275,7 @@ MVC parameters
   - Default: `mvc/views`
 - `viewEngine`: What templating engine to use, formatted as `'fileExtension: nodeModule'`. Supply an array of engines to use in that format in order to make use of multiple templating engines. Each engine you use must also be marked as a dependency in your app's package.json. Whichever engine you supply first with this parameter will be considered the default. Set to `none` to use no templating engine.
   - Default: `html: teddy`
-  - Also by default the module [teddy](https://github.com/kethinov/teddy) is marked as a dependency in package.json.
+  - Also by default the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in package.json.
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: `mvc/controllers`
 
@@ -312,7 +312,7 @@ Statics parameters
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
   - Default: `{nodeModule: 'roosevelt-less', params: {compress: true}}`.
-  - Also by default the module [roosevelt-less](https://github.com/kethinov/roosevelt-less) is marked as a dependency in package.json.
+  - Also by default the module [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) is marked as a dependency in package.json.
 - `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files.
   - Default: `undefined`
 - `cssCompiledOutput`: Where to place compiled CSS files. This folder will be made public by default.
@@ -332,7 +332,7 @@ Statics parameters
   - Note: `params` is optional. If it is not set, these default params will be sent: `{paths: yourJsPath}`
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
   - Default: `{nodeModule: "roosevelt-closure", params: {compilationLevel: 'ADVANCED'}}`.
-  - Also by default the module [roosevelt-closure](https://github.com/kethinov/roosevelt-closure) is marked as a dependency in package.json.
+  - Also by default the module [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure) is marked as a dependency in package.json.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `undefined`
   - Example: `library-name/example.js:lib/example.min.js` (customizes both file path and file name of minified file)
@@ -432,7 +432,7 @@ module.exports = {some: 'data'};
 Making view files
 ===
 
-Views are [Teddy](https://github.com/kethinov/teddy) templates. See the Teddy documentation for information about how to author Teddy templates.
+Views are [Teddy](https://github.com/rooseveltframework/teddy) templates. See the Teddy documentation for information about how to author Teddy templates.
 
 You can also use different templating engines by tweaking Roosevelt's parameters (see above parameter documentation).
 
@@ -506,10 +506,10 @@ To run the unit tests on your code changes, run this command:
 npm test
 ```
 
-If you want to hack on the CLI tool, see [generator-roosevelt](https://github.com/kethinov/generator-roosevelt).
+If you want to hack on the CLI tool, see [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
 
 
 Help wanted!
 ---
 
-There is plenty of opportunity to help improve Roosevelt if you're interested in lending a hand. If you'd like to help, take a look at the [open issues](https://github.com/kethinov/roosevelt/issues?state=open) and submit a pull request!
+There is plenty of opportunity to help improve Roosevelt if you're interested in lending a hand. If you'd like to help, take a look at the [open issues](https://github.com/rooseveltframework/roosevelt/issues?state=open) and submit a pull request!
