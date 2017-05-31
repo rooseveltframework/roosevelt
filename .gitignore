@@ -21,3 +21,5 @@ jsdoc
 nbproject
 
 .jscodehints
+
+package-lock.json
