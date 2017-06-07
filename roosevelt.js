@@ -32,9 +32,8 @@ module.exports = function(params) {
       numCPUs = 1,
       servers = [],
       i,
-      sockets = {},
-      socketId,
-      nextSocketId = 0;
+      connections = {},
+      key;
 
   // expose initial vars
   app.set('express', express);
@@ -88,13 +87,14 @@ module.exports = function(params) {
   app.httpServer = httpServer;
   app.httpsServer = httpsServer;
 
-  // add open sockets to array when connected
-  httpServer.on('connection', function (socket) {
-    sockets[nextSocketId++] = socket;
+  // assign individual keys to connections when opened
+  httpServer.on('connection', function (conn) {
+    key = conn.remoteAddress + ':' + conn.remotePort;
+    connections[key] = conn; 
 
-    // once the socket closes, remove socket from array
-    socket.once('close', function () {
-      delete sockets[socketId];
+    // once the connection closes, remove
+    conn.on('close', function () {
+      delete connections[key];
     });
   });
 
@@ -193,9 +193,9 @@ module.exports = function(params) {
           }
         });
 
-        // destroy sockets when server is killed
-        for (socketId in sockets) {
-          sockets[socketId].destroy();
+        // destroy connections when server is killed
+        for (key in connections) {
+          connections[key].destroy();
         }
 
         setTimeout(function() {
