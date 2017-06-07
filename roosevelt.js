@@ -33,6 +33,7 @@ module.exports = function(params) {
       servers = [],
       i,
       sockets = {},
+      socketId,
       nextSocketId = 0;
 
   // expose initial vars
@@ -89,8 +90,7 @@ module.exports = function(params) {
 
   // add open sockets to array when connected
   httpServer.on('connection', function (socket) {
-    var socketId = nextSocketId++;
-    sockets[socketId] = socket;
+    sockets[nextSocketId++] = socket;
 
     // once the socket closes, remove socket from array
     socket.once('close', function () {
@@ -194,7 +194,7 @@ module.exports = function(params) {
         });
 
         // destroy sockets when server is killed
-        for (var socketId in sockets) {
+        for (socketId in sockets) {
           sockets[socketId].destroy();
         }
 
