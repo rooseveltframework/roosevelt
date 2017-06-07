@@ -31,7 +31,9 @@ module.exports = function(params) {
       passphrase,
       numCPUs = 1,
       servers = [],
-      i;
+      i,
+      sockets = {},
+      nextSocketId = 0;
 
   // expose initial vars
   app.set('express', express);
@@ -84,6 +86,17 @@ module.exports = function(params) {
 
   app.httpServer = httpServer;
   app.httpsServer = httpsServer;
+
+  // add open sockets to array when connected
+  httpServer.on('connection', function (socket) {
+    var socketId = nextSocketId++;
+    sockets[socketId] = socket;
+
+    // once the socket closes, remove socket from array
+    socket.once('close', function () {
+      delete sockets[socketId];
+    });
+  });
 
   // enable gzip compression
   app.use(require('compression')());
@@ -179,6 +192,12 @@ module.exports = function(params) {
             exitLog();
           }
         });
+
+        // destroy sockets when server is killed
+        for (var socketId in sockets) {
+          sockets[socketId].destroy();
+        }
+
         setTimeout(function() {
           console.error(('💥  ' + (app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
           process.exit(1);
@@ -210,6 +229,7 @@ module.exports = function(params) {
       }
       else {
         if (!app.get('params').httpsOnly) {
+
           servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))));
         }
         if (app.get('params').https) {
