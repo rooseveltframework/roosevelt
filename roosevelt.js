@@ -90,7 +90,7 @@ module.exports = function(params) {
   // assign individual keys to connections when opened
   httpServer.on('connection', function (conn) {
     key = conn.remoteAddress + ':' + conn.remotePort;
-    connections[key] = conn; 
+    connections[key] = conn;
 
     // once the connection closes, remove
     conn.on('close', function () {
