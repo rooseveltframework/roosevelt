@@ -110,7 +110,7 @@ module.exports = function(params) {
     params.onServerInit(app);
   }
 
-  // Initialize Roosevelt app middleware and prepare static css,js
+  // Initialize Roosevelt app middleware and prepare static css.js
   function initServer(cb) {
     if (initialized) {
       return cb();
