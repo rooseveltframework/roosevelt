@@ -117,6 +117,8 @@ module.exports = function(params) {
     }
     initialized = true;
 
+    preProcessCss();
+
     function preprocessCss() {
       require('./lib/preprocessCss')(app, bundleJs);
     }
@@ -126,14 +128,11 @@ module.exports = function(params) {
     }
 
     function compileJs() {
-      require('./lib/jsCompiler')(app, mapRoutes);
+      require('./lib/jsCompiler')(app, validateHTML);
     }
 
-     // initialize HTML validator
-    validateHTML();
-
     function validateHTML() {
-      require('./lib/htmlValidator')(app, preprocessCss);
+      require('./lib/htmlValidator')(app, mapRoutes);
     }
 
     require('./lib/htmlMinify')(app);
