@@ -110,21 +110,12 @@ module.exports = function(params) {
     params.onServerInit(app);
   }
 
-  // Initialize Roosevelt app middleware and prepare static css,js
+  // Initialize Roosevelt app middleware and prepare static css.js
   function initServer(cb) {
     if (initialized) {
       return cb();
     }
     initialized = true;
-
-    // initialize HTML validator
-    validateHTML();
-
-    function validateHTML() {
-      require('./lib/htmlValidator')(app, preprocessCss);
-    }
-
-    require('./lib/htmlMinify')(app);
 
     function preprocessCss() {
       require('./lib/preprocessCss')(app, bundleJs);
@@ -137,6 +128,15 @@ module.exports = function(params) {
     function compileJs() {
       require('./lib/jsCompiler')(app, mapRoutes);
     }
+
+    // initialize HTML validator
+    validateHTML();
+
+    function validateHTML() {
+      require('./lib/htmlValidator')(app, preprocessCss);
+    }
+
+    require('./lib/htmlMinify')(app);
 
     function mapRoutes() {
       // map routes
