@@ -32,12 +32,9 @@ module.exports = function(params) {
       numCPUs = 1,
       servers = [],
       i,
-<<<<<<< HEAD
       connections = {},
-      key;
-=======
+      key,
       initialized = false;
->>>>>>> 2d022c6f1de92f96956e9afb47d9d8e6cd8520da
 
   // expose initial vars
   app.set('express', express);
