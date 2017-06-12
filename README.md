@@ -458,7 +458,9 @@ Additionally the Roosevelt constructor returns the following object:
 | ---------------- | ---------------------------------------- |
 | `expressApp`     | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
 | `httpServer`     | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
-| `startServer`    | Calls [http.listen()](http://nodejs.org/api/http.html#http_server_listen_port_hostname_backlog_callback) to start the web server with Roosevelt's config. |
+| `httpsServer`     | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
+| `initServer`    | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
+| `startServer`    | Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 
 
 Express middleware and other configurations automatically provided by Roosevelt
