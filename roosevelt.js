@@ -117,7 +117,7 @@ module.exports = function(params) {
     }
     initialized = true;
 
-    preProcessCss();
+    preprocessCss();
 
     function preprocessCss() {
       require('./lib/preprocessCss')(app, bundleJs);
