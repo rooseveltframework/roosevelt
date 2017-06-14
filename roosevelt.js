@@ -203,6 +203,12 @@ module.exports = function(params) {
           exitLog();
         }
       });
+
+      // destroy connections when server is killed
+      for (key in connections) {
+        connections[key].destroy();
+      }
+
       setTimeout(function() {
         console.error(('💥  ' + (app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
         process.exit(1);
