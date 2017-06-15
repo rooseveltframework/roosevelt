@@ -187,6 +187,7 @@ module.exports = function(params) {
 
     // start server
     function gracefulShutdown() {
+      var key;
       function exitLog() {
         console.log(('✔️  ' + (app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
         process.exit();
