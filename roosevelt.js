@@ -33,7 +33,6 @@ module.exports = function(params) {
       servers = [],
       i,
       connections = {},
-      key,
       initialized = false;
 
   // expose initial vars
@@ -90,7 +89,7 @@ module.exports = function(params) {
 
   // assign individual keys to connections when opened
   httpServer.on('connection', function (conn) {
-    key = conn.remoteAddress + ':' + conn.remotePort;
+    var key = conn.remoteAddress + ':' + conn.remotePort;
     connections[key] = conn;
 
     // once the connection closes, remove
