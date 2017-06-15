@@ -32,6 +32,7 @@ module.exports = function(params) {
       numCPUs = 1,
       servers = [],
       i,
+      connections = {},
       initialized = false;
 
   // expose initial vars
@@ -85,6 +86,17 @@ module.exports = function(params) {
 
   app.httpServer = httpServer;
   app.httpsServer = httpsServer;
+
+  // assign individual keys to connections when opened
+  httpServer.on('connection', function (conn) {
+    var key = conn.remoteAddress + ':' + conn.remotePort;
+    connections[key] = conn;
+
+    // once the connection closes, remove
+    conn.on('close', function () {
+      delete connections[key];
+    });
+  });
 
   // enable gzip compression
   app.use(require('compression')());
@@ -174,6 +186,7 @@ module.exports = function(params) {
 
     // start server
     function gracefulShutdown() {
+      var key;
       function exitLog() {
         console.log(('✔️  ' + (app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
         process.exit();
@@ -189,6 +202,12 @@ module.exports = function(params) {
           exitLog();
         }
       });
+
+      // destroy connections when server is killed
+      for (key in connections) {
+        connections[key].destroy();
+      }
+
       setTimeout(function() {
         console.error(('💥  ' + (app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
         process.exit(1);
