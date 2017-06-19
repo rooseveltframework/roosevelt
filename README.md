@@ -318,7 +318,7 @@ Statics parameters
   - Example declaring multiple bundles: `[{outputFile: "bundle1.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}, {outputFile: "bundle2.js", files: ["somethingElse.js", "anotherThing.js", "etc.js"]}, etc...]`
   - Note: Omitting `env` will result in bundling in both modes.
   - Note: `params` is optional. If it is not set, these default params will be sent: `{paths: yourJsPath}`
-- `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
+- `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier. Set `showWarnings` to `true` to display compiler warnings.
   - Default: `{nodeModule: "roosevelt-closure", showWarnings: false, params: {compilationLevel: "ADVANCED"}}`.
   - Also by default the module [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure) is marked as a dependency in package.json.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
