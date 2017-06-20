@@ -327,7 +327,8 @@ Statics parameters
   - Example: `library-name/example.js:lib/example.min.js` (customizes both file path and file name of minified file)
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
   - Default: `.build/js`
-
+- `nodeEnv`: Param to override the `NODE_ENV` environment variable.
+  - Default: `undefined`
 
 
 Public folder parameters
