@@ -10,16 +10,17 @@ var http = require('http'),
 module.exports = function(params) {
   params = params || {}; // ensure params are an object
 
+  // check for command line overrides for NODE_ENV
   process.argv.forEach(function (val, index, array) {
     switch (val) {
       case '-dev':
         process.env.NODE_ENV = 'development';
-        params.devProd = 'dev';
+        params.nodeEnv = 'dev';
         break;
       case '-prod':
         process.env.NODE_ENV = 'production';
         params.alwaysHostPublic = true; // only with -prod flag, not when NODE_ENV is naturally set to production
-        params.devProd = 'prod';
+        params.nodeEnv = 'prod';
         break;
     }
   });
