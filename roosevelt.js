@@ -15,12 +15,12 @@ module.exports = function(params) {
     switch (val) {
       case '-dev':
         process.env.NODE_ENV = 'development';
-        params.nodeEnv = 'dev';
+        params.nodeEnv = 'development';
         break;
       case '-prod':
         process.env.NODE_ENV = 'production';
         params.alwaysHostPublic = true; // only with -prod flag, not when NODE_ENV is naturally set to production
-        params.nodeEnv = 'prod';
+        params.nodeEnv = 'production';
         break;
     }
   });
