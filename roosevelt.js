@@ -10,18 +10,16 @@ var http = require('http'),
 module.exports = function(params) {
   params = params || {}; // ensure params are an object
 
-  //flag for env variables
-  var isEnvFlagSet = false;
   process.argv.forEach(function (val, index, array) {
     switch (val) {
       case '-dev':
         process.env.NODE_ENV = 'development';
-        isEnvFlagSet = true;
+        params.devProd = 'dev';
         break;
       case '-prod':
         process.env.NODE_ENV = 'production';
         params.alwaysHostPublic = true; // only with -prod flag, not when NODE_ENV is naturally set to production
-        isEnvFlagSet = true;
+        params.devProd = 'prod';
         break;
     }
   });
@@ -46,19 +44,6 @@ module.exports = function(params) {
   app = require('./lib/sourceParams')(app);
 
   console.log(('💭  ' + 'Starting ' + app.get('appName') + ' in ' + app.get('env') + ' mode...').bold);
-
-  // check if env comes from cmd line then leave as is, else use params
-  if( !isEnvFlagSet && app.get('params').devProd !== undefined){
-    var val = app.get('params').devProd;
-    //set devProd as the default environment variable
-    if (val === 'dev'){
-        process.env.NODE_ENV = 'development';
-    }
-    else if (val === 'prod'){
-        process.env.NODE_ENV = 'production';
-        params.alwaysHostPublic = true; // only with -prod flag, not when NODE_ENV is naturally set to production
-    } 
-  }
 
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
