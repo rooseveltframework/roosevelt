@@ -142,8 +142,6 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.html": "./node_modules/.bin/htmlhint --config .htmlhintrc",
-    "*.less": "./node_modules/.bin/stylelint --syntax less",
     "*.js": "./node_modules/.bin/eslint"
   }
 }
