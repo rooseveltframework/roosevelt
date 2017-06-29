@@ -29,7 +29,7 @@
     "parent-require": "~1.0.0",
     "serve-favicon": "~2.4.0",
     "toobusy-js": "~0.5.0",
-    "vnu-jar": "~17.3.0"
+    "vnu-jar": "~17.7.0"
   },
   "devDependencies": {
     "eslint": "^3.19.0",
