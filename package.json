@@ -2,7 +2,7 @@
   "name": "roosevelt",
   "description": "Roosevelt MVC web framework",
   "author": "Eric Newport <kethinov@gmail.com>",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
@@ -32,7 +32,9 @@
     "vnu-jar": "~17.3.0"
   },
   "devDependencies": {
-    "eslint": "^4.1.0"
+    "eslint": "^4.1.0",
+    "lint-staged": "^4.0.0",
+    "husky": "^0.13.4"
   },
   "repository": {
     "type": "git",
@@ -136,6 +138,10 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "./node_modules/.bin/eslint ."
+    "test": "./node_modules/.bin/eslint .",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.js": "./node_modules/.bin/eslint"
   }
 }
