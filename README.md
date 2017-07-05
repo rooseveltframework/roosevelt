@@ -208,7 +208,8 @@ Each param can also be defined in `package.json` under `"rooseveltConfig"`.
 
 App behavior parameters
 ---
-
+- `appDir`: Useful to change when using a test environment like Mocha or if you just want to specify it by hand.
+  -  Default: The directory where your project package.json is located. `{appDir: 'User/Path/to/project'}`
 - `port`: The port your app will run on. Can also be defined using `HTTP_PORT` or `NODE_PORT` environment variable.
   - Default: `43711`
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
