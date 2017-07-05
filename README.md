@@ -220,6 +220,9 @@ App behavior parameters
   - Default: `false`
 - `enableValidator`: Enables or disables the built-in HTML validator in dev mode.
   - Default: `false`
+  - Use the environment variable `ROOSEVELT_ENABLE_VALIDATOR` to force the validator on or off regardless of dev or prod mode
+  - e.g. force validator off in dev mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=false && npm run dev`
+  - e.g. force validator on in prod mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=true && npm run prod`
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown.
   - Default:  `{port: '8888', format: 'text', suppressWarnings: false}`
   - Can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`.
@@ -461,8 +464,8 @@ Additionally the Roosevelt constructor returns the following object:
 | ---------------- | ---------------------------------------- |
 | `expressApp`     | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
 | `httpServer`     | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
-| `httpsServer`     | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
-| `initServer`    | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
+| `httpsServer`    | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
+| `initServer`     | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
 | `startServer`    | Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 
 
