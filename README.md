@@ -54,6 +54,7 @@ Reasons for this include:
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/rooseveltframework/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - Automatic HTML validation.
+- Automatically [reload](https://www.npmjs.com/package/reload) browser on server restart.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
 
 
@@ -238,6 +239,8 @@ App behavior parameters
   - Default: `{extended: true}`
 - `bodyParserJsonParams`: Supply parameters to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: `{}`
+- `reload`: Setup [reload](https://www.npmjs.com/package/reload). Takes an object containing `enabled` (true/false) (required) and `opts` (optional) [reload options](https://www.npmjs.com/package/reload#table-of-options-for-reload-opts-parameter).
+  - Default: `{enable: true}`
 
 
 
