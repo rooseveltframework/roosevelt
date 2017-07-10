@@ -152,6 +152,9 @@ module.exports = function(params) {
     require('./lib/htmlMinify')(app);
 
     function mapRoutes() {
+      // enable reload
+      require('./lib/reload')(app);
+
       // map routes
       app = require('./lib/mapRoutes')(app);
 
