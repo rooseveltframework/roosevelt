@@ -241,7 +241,7 @@ App behavior parameters
 - `bodyParserJsonParams`: Supply parameters to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: `{}`
 - `reload`: Setup [reload](https://www.npmjs.com/package/reload). Takes an object containing `enabled` (true/false) (required) and `opts` (optional) [reload options](https://www.npmjs.com/package/reload#table-of-options-for-reload-opts-parameter).
-  - Default: `{enable: true}`
+  - Default: `{enabled: true}`
 
 ### Configuring [reload](https://www.npmjs.com/package/reload)
 
