@@ -153,7 +153,9 @@ module.exports = function(params) {
 
     function mapRoutes() {
       // enable reload
-      require('./lib/reload')(app);
+      if (app.get('params').reload.enabled === true) {
+        require('./lib/reload')(app);
+      }
 
       // map routes
       app = require('./lib/mapRoutes')(app);

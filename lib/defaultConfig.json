@@ -11,6 +11,7 @@
   "shutdownTimeout": 30000,
   "bodyParserUrlencodedParams": {"extended": true},
   "bodyParserJsonParams": {},
+  "reload": {"enabled": true},
   "https": false,
   "httpsOnly": false,
   "httpsPort": 43733,
