@@ -136,6 +136,7 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "test": "./node_modules/.bin/eslint ."
+    "test": "./node_modules/.bin/eslint .",
+    "killValidator": "node ./lib/killValidator.js"
   }
 }
