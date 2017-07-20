@@ -133,23 +133,24 @@ Run your app in production mode:
 npm run prod
 ```
 
-Run your app with an attached HTML Validator (HTML Validator is attached by default):
+Run your app with an attached HTML validator (HTML validator is attached by default):
 
 ```
 npm run dev attach
 ```
 
-Run your app with a detached HTML Validator:
+Run your app with a detached HTML validator:
 
 ```
 npm run dev detach
 ```
 
-After running your app with a detached HTML Validator, use this command to shut down the HTML Validator:
+After running your app with a detached HTML validator, use this command to shut down the HTML validator:
 
 ```
 npm run killValidator
 ```
+_Note: if your Roosevelt app was created with an older version, you may not have this command in your npm scripts. If so, then manually add this npm script to your package.json: "killValidator": "node ./node_modules/roosevelt/lib/killValidator.js"_
 
 Run your app on two CPUs:
 
