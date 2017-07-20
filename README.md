@@ -226,7 +226,8 @@ Each param can also be defined in `package.json` under `"rooseveltConfig"`.
 
 App behavior parameters
 ---
-
+- `appDir`: Useful to change when using a test environment like Mocha or if you just want to specify it by hand.
+  -  Default: The directory where your project package.json is located. `{appDir: 'User/Path/to/project'}`
 - `port`: The port your app will run on. Can also be defined using `HTTP_PORT` or `NODE_PORT` environment variable.
   - Default: `43711`
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
@@ -239,6 +240,11 @@ App behavior parameters
   - Default: `false`
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown. When `separateProcess` is turned to true the HTML validator will run separately from the node process.
   - Default:  `{port: '8888', separateProcess: false, format: 'text', suppressWarnings: false}`
+  - Use the environment variable `ROOSEVELT_ENABLE_VALIDATOR` to force the validator on or off regardless of dev or prod mode
+  - e.g. force validator off in dev mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=false && npm run dev`
+  - e.g. force validator on in prod mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=true && npm run prod`
+- `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown.
+  - Default:  `{port: '8888', format: 'text', suppressWarnings: false}`
   - Can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`.
 - `validatorExceptions`: Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - Default: `{'requestHeader': 'Partial', 'modelValue': '_disableValidator'}`
@@ -339,12 +345,14 @@ Statics parameters
 - `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier.
   - Default: `{nodeModule: "roosevelt-closure", showWarnings: false, params: {compilationLevel: "ADVANCED"}}`.
   - Also by default the module [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure) is marked as a dependency in package.json.
+  - Note: Set `showWarnings` to `true` to display compiler warnings.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `undefined`
   - Example: `library-name/example.js:lib/example.min.js` (customizes both file path and file name of minified file)
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
   - Default: `.build/js`
-
+- `nodeEnv`: Param to override the `NODE_ENV` environment variable.
+  - Default: `undefined`
 
 
 Public folder parameters
@@ -476,8 +484,8 @@ Additionally the Roosevelt constructor returns the following object:
 | ---------------- | ---------------------------------------- |
 | `expressApp`     | The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
 | `httpServer`     | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
-| `httpsServer`     | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
-| `initServer`    | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
+| `httpsServer`    | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
+| `initServer`     | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
 | `startServer`    | Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 
 
