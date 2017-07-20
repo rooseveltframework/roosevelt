@@ -139,7 +139,6 @@
   "gitHead": "",
   "scripts": {
     "test": "./node_modules/.bin/eslint .",
-    "killValidator": "node ./lib/killValidator.js",
     "precommit": "lint-staged"
   },
   "lint-staged": {
