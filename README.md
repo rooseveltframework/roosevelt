@@ -139,7 +139,7 @@ Run your app with an attached HTML validator (HTML validator is attached by defa
 npm run dev attach
 ```
 
-Run your app with a detached HTML validator:
+Run your app with a detached HTML validator (runs validator as a separate process in the background; process must be manually killed later, see below):
 
 ```
 npm run dev detach
@@ -242,11 +242,9 @@ App behavior parameters
   - Use the environment variable `ROOSEVELT_ENABLE_VALIDATOR` to force the validator on or off regardless of dev or prod mode
   - e.g. force validator off in dev mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=false && npm run dev`
   - e.g. force validator on in prod mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=true && npm run prod`
-- `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown. When `separateProcess` is turned to true the HTML validator will run separately from the node process.
+- `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown. When `separateProcess` is set to true the HTML validator will run separately from the node process.
   - Default:  `{port: '8888', separateProcess: false, format: 'text', suppressWarnings: false}`
   - Can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`.
-  - e.g. force validator to detach regardless of app settings: `export ENABLE_DETACH=true && npm run dev`
-  - e.g. force validator to attach regardless of app settings: `export ENABLE_DETACH=false && npm run dev`
 - `validatorExceptions`: Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - Default: `{'requestHeader': 'Partial', 'modelValue': '_disableValidator'}`
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
