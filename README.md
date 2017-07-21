@@ -148,9 +148,9 @@ npm run dev detach
 After running your app with a detached HTML validator, use this command to shut down the HTML validator:
 
 ```
-npm run killValidator
+npm run kill-validator
 ```
-_Note: if your Roosevelt app was created with an older version, you may not have this command in your npm scripts. If so, then manually add this npm script to your package.json: "killValidator": "node ./node_modules/roosevelt/lib/killValidator.js"_
+_Note: if your Roosevelt app was created with an older version, you may not have this command in your npm scripts. If so, then manually add this npm script to your package.json: "kill-validator": "node ./node_modules/roosevelt/lib/killValidator.js"_
 
 Run your app on two CPUs:
 
@@ -239,9 +239,8 @@ App behavior parameters
   - Default: `false`
 - `enableValidator`: Enables or disables the built-in HTML validator in dev mode.
   - Default: `false`
-  - Use the environment variable `ROOSEVELT_ENABLE_VALIDATOR` to force the validator on or off regardless of dev or prod mode
-  - e.g. force validator off in dev mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=false && npm run dev`
-  - e.g. force validator on in prod mode regardless of app settings:  `export ROOSEVELT_ENABLE_VALIDATOR=true && npm run prod`
+  - e.g. force validator off in dev mode regardless of app settings: `npm run dev disable-validator`
+  - e.g. force validator on in prod mode regardless of app settings: `npm run dev enable-validator`
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) (if `enableValidator` is set to true). When `suppressWarnings` is set to true validation warnings will be hidden and only errors will be shown. When `separateProcess` is set to true the HTML validator will run separately from the node process.
   - Default:  `{port: '8888', separateProcess: false, format: 'text', suppressWarnings: false}`
   - Can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`.
