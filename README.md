@@ -142,7 +142,7 @@ npm run dev attach
 Run your app with a detached HTML validator (runs validator as a separate process in the background; process must be manually killed later, see below):
 
 ```
-npm run dev detach
+npm run dev detach-validator
 ```
 
 After running your app with a detached HTML validator, use this command to shut down the HTML validator:
