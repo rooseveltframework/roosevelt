@@ -27,6 +27,7 @@ Table of contents
   - [Default .gitignore](https://github.com/rooseveltframework/roosevelt#default-gitignore)
 - [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
   - [App behavior parameters](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters)
+    - [Configuring reload](https://github.com/rooseveltframework/roosevelt#configuring-reload)
   - [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters)
   - [Error page parameters](https://github.com/rooseveltframework/roosevelt#error-page-parameters)
   - [Statics parameters](https://github.com/rooseveltframework/roosevelt#statics-parameters)
@@ -54,6 +55,7 @@ Reasons for this include:
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/rooseveltframework/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - Automatic HTML validation.
+- Automatically [reload](https://www.npmjs.com/package/reload) browser on server restart.
 - [LESS](http://lesscss.org) and [Closure Compiler](https://developers.google.com/closure/compiler) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
 
 
@@ -256,8 +258,21 @@ App behavior parameters
   - Default: `{extended: true}`
 - `bodyParserJsonParams`: Supply parameters to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: `{}`
+- `reload`: Setup [reload](https://www.npmjs.com/package/reload). Takes an object containing `enabled` (true/false) (required) and `opts` (optional) [reload options](https://www.npmjs.com/package/reload#table-of-options-for-reload-opts-parameter).
+  - Default: `{enabled: true, opts: {webSocketServerWaitStart: true }}`
 
+### Configuring [reload](https://www.npmjs.com/package/reload)
 
+Setting up reload is easy, simply make [every webpage](https://github.com/alallier/reload#express-example) contain this script tag and make sure to have reload enabled in Roosevelt.
+
+```html
+<script src="/reload/reload.js"></script>
+```
+
+Notes:
+
+* The best way to achieve this would to be use a templating engine to remove the need to have to copy and paste this script tag onto every page.
+* Reload runs on it's own [default port](https://github.com/alallier/reload#table-of-options-for-reload-opts-parameter), if this does not work for you be sure to change the port.
 
 HTTPS parameters
 ---

@@ -35,7 +35,8 @@ module.exports = function(params) {
       servers = [],
       i,
       connections = {},
-      initialized = false;
+      initialized = false,
+      reloadReturned;
 
   // expose initial vars
   app.set('express', express);
@@ -152,6 +153,11 @@ module.exports = function(params) {
     require('./lib/htmlMinify')(app);
 
     function mapRoutes() {
+      // enable reload
+      if (app.get('params').reload.enabled === true) {
+        reloadReturned = require('./lib/reload')(app);
+      }
+
       // map routes
       app = require('./lib/mapRoutes')(app);
 
@@ -163,6 +169,8 @@ module.exports = function(params) {
   }
 
   function startHttpServer() {
+    reloadReturned.startWebSocketServer();
+
     // determine number of CPUs to use
     process.argv.some(function(val, index, array) {
       var arg = array[index + 1],
