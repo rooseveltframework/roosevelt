@@ -4,6 +4,8 @@ var http = require('http'),
     https = require('https'),
     express = require('express'),
     cluster = require('cluster'),
+    utils = require('./lib/utils'),
+    rimraf = require('rimraf'),
     os = require('os'),
     fs = require('fs');
 
@@ -22,6 +24,9 @@ module.exports = function(params) {
         params.alwaysHostPublic = true; // only with -prod flag, not when NODE_ENV is naturally set to production
         params.nodeEnv = 'production';
         break;
+      case '-cleanup':
+        params.nodeEnv = 'cleanup';
+        break;
     }
   });
 
@@ -35,7 +40,8 @@ module.exports = function(params) {
       servers = [],
       i,
       connections = {},
-      initialized = false;
+      initialized = false,
+      params;
 
   // expose initial vars
   app.set('express', express);
@@ -43,6 +49,38 @@ module.exports = function(params) {
 
   // source user supplied params
   app = require('./lib/sourceParams')(app);
+
+  if (params.nodeEnv === 'cleanup') {
+    params = app.get('params');
+
+    console.log(('🛁  Cleaning up ' + app.get('appName')).bold);
+
+    // remove public directory
+    if (utils.fileExists(params.publicFolder)) {
+      console.log('🗑  Removing directory: ' + params.publicFolder);
+      rimraf.sync(params.publicFolder);
+    }
+
+    // remove compiled js directory
+    if (utils.fileExists(params.jsCompiledOutput)) {
+      console.log('🗑  Removing directory: ' + params.jsCompiledOutput);
+      rimraf.sync(params.jsCompiledOutput);
+    }
+
+    // remove compiled css directory
+    if (utils.fileExists(params.cssCompiledOutput)) {
+      console.log('🗑  Removing directory: ' + params.cssCompiledOutput);
+      rimraf.sync(params.cssCompiledOutput);
+    }
+
+    // remove bundled js directory
+    if (utils.fileExists(params.bundledJsPath)) {
+      console.log('🗑  Removing directory: ' + params.bundledJsPath);
+      rimraf.sync(params.bundledJsPath);
+    }
+
+    process.exit();
+  }
 
   console.log(('💭  ' + 'Starting ' + app.get('appName') + ' in ' + app.get('env') + ' mode...').bold);
 
