@@ -4,6 +4,7 @@ var http = require('http'),
     https = require('https'),
     express = require('express'),
     cluster = require('cluster'),
+    utils = require('./lib/utils'),
     os = require('os'),
     fs = require('fs');
 
@@ -11,7 +12,7 @@ module.exports = function(params) {
   params = params || {}; // ensure params are an object
 
   // check for command line overrides for NODE_ENV
-  process.argv.forEach(function (val, index, array) {
+  process.argv.forEach(function(val, index, array) {
     switch (val) {
       case '-dev':
         process.env.NODE_ENV = 'development';
@@ -26,6 +27,8 @@ module.exports = function(params) {
   });
 
   var app = express(), // initialize express
+      appName,
+      appEnv,
       httpServer,
       httpsServer,
       httpsOptions,
@@ -44,7 +47,18 @@ module.exports = function(params) {
   // source user supplied params
   app = require('./lib/sourceParams')(app);
 
-  console.log(('💭  ' + 'Starting ' + app.get('appName') + ' in ' + app.get('env') + ' mode...').bold);
+  // use existence of public folder to determine first run
+  if (!utils.fileExists(app.get('appDir') + app.get('params').publicFolder)) {
+    // run the param audit
+    require('./lib/configAuditor');
+  }
+
+  appName = app.get('appName'),
+  appEnv = app.get('env');
+
+  if (!app.get('suppressLogs')) {
+    console.log(`💭  Starting ${appName} in ${appEnv} mode...`.bold);
+  }
 
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
@@ -90,7 +104,7 @@ module.exports = function(params) {
   app.httpsServer = httpsServer;
 
   // assign individual keys to connections when opened
-  httpServer.on('connection', function (conn) {
+  httpServer.on('connection', function(conn) {
     var key = conn.remoteAddress + ':' + conn.remotePort;
     connections[key] = conn;
 
@@ -108,8 +122,9 @@ module.exports = function(params) {
 
   // enable favicon support
   if (app.get('params').favicon !== 'none') {
-    app.use(require('serve-favicon')(app.get('params').staticsRoot + app.get('params').favicon));
+    app.use(require('serve-favicon')(app.get('appDir') + app.get('params').staticsRoot + app.get('params').favicon));
   }
+
 
   // bind user-defined middleware which fires at the beginning of each request if supplied
   if (params.onReqStart && typeof params.onReqStart === 'function') {
@@ -178,7 +193,7 @@ module.exports = function(params) {
             numCPUs = arg;
           }
           else {
-            console.warn(('⚠️  ' + (app.get('appName') || 'Roosevelt') + ' warning: invalid value "' + array[index + 1] + '" supplied to -cores param.').red);
+            console.warn(`⚠️  ${appName} warning: invalid value "${array[index + 1]}" supplied to -cores param.`.red);
             numCPUs = 1;
           }
         }
@@ -190,12 +205,16 @@ module.exports = function(params) {
     function gracefulShutdown() {
       var key;
       function exitLog() {
-        console.log(('✔️  ' + (app.get('appName') || 'Roosevelt') + ' successfully closed all connections and shut down gracefully.').magenta);
+        if (!app.get('suppressLogs')) {
+          console.log(`✔️  ${appName} successfully closed all connections and shut down gracefully.`.magenta);
+        }
         process.exit();
       }
 
       app.set('roosevelt:state', 'disconnecting');
-      console.log(('\n' + '💭  ' + (app.get('appName') || 'Roosevelt') + ' received kill signal, attempting to shut down gracefully.').magenta);
+      if (!app.get('suppressLogs')) {
+        console.log(`\n💭  ${appName} received kill signal, attempting to shut down gracefully.`.magenta);
+      }
       servers[0].close(function() {
         if (servers.length > 1) {
           servers[1].close(exitLog);
@@ -211,7 +230,7 @@ module.exports = function(params) {
       }
 
       setTimeout(function() {
-        console.error(('💥  ' + (app.get('appName') || 'Roosevelt') + ' could not close all connections in time; forcefully shutting down.').red);
+        console.error(`💥  ${appName} could not close all connections in time; forcefully shutting down.`.red);
         process.exit(1);
       }, app.get('params').shutdownTimeout);
     }
@@ -219,8 +238,9 @@ module.exports = function(params) {
     var lock = {},
         startupCallback = function(proto, port) {
           return function() {
-            console.log('🎧  ' + (app.get('appName') + proto + ' server listening on port ' + port + ' (' + app.get('env') + ' mode)').bold);
-
+            if (!app.get('suppressLogs')) {
+              console.log(`🎧  ${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold);
+            }
             if (!Object.isFrozen(lock)) {
               Object.freeze(lock);
               // fire user-defined onServerStart event
@@ -236,15 +256,17 @@ module.exports = function(params) {
         cluster.fork();
       }
       cluster.on('exit', function(worker, code, signal) {
-        console.log(('⚰️  ' + (app.get('appName') || 'Roosevelt') + ' thread ' + worker.process.pid + ' died').magenta);
+        if (!app.get('suppressLogs')) {
+          console.log(`⚰️  ${appName} thread ${worker.process.pid} died`.magenta);
+        }
       });
     }
     else {
       if (!app.get('params').httpsOnly) {
-        servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))));
+        servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))));
       }
       if (app.get('params').https) {
-        servers.push(httpsServer.listen(app.get('params').httpsPort, (params.localhostOnly && app.get('env') !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').httpsPort)));
+        servers.push(httpsServer.listen(app.get('params').httpsPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').httpsPort)));
       }
       process.on('SIGTERM', gracefulShutdown);
       process.on('SIGINT', gracefulShutdown);
