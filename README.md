@@ -445,6 +445,35 @@ module.exports = function(app) { // app is the Express app created by Roosevelt
 };
 ```
 
+In addition to our standard controller modules, you may wish to separate controller logic from your routing. This can be done by creating a requireable controller function.
+
+To create a requireable controller function, first make a new JavaScript file in the controllers directory as you would a traditional Roosevelt controller. Then, instead of using the Express `app` instance to define your routes, simply export a function that accepts the Express `app`, `req`, and `res` object arguments and define your controller's business logic within. You can then import this function into your existing controller modules for execution. The following is an example of requireable controller logic:
+
+```js
+/* Module "render404HTML.js" exports callable logic to render a 404 HTML page */
+module.exports = function(app, req, res) {
+  var model = { content: 'Cannot find this page' };
+
+  model.appVersion = app.get('package').version;
+
+  res.status(404);
+  res.render('404', model);
+}
+```
+
+Then in a controller that requires the logic to render a 404 HTML response:
+```js
+// Import the 404 HTML controller logic previously defined
+var render404HTML = require('controllers/render404HTML');
+
+module.exports = function(app) {
+  /* Catch-all controller for non-existant routes */
+  app.use('*').all(function(req, res) {
+    // Execute your reusable, encapsulated controller logic
+    render404HTML(app, req, res);
+  });
+};
+```
 
 Making model files
 ===
