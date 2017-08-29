@@ -445,32 +445,45 @@ module.exports = function(app) { // app is the Express app created by Roosevelt
 };
 ```
 
-In addition to our standard controller modules, you may wish to separate controller logic from your routing. This can be done by creating a requireable controller function.
+Sometimes it is also useful to separate controller logic from your routing. This can be done by creating a reusable controller module.
 
-To create a requireable controller function, first make a new JavaScript file in the controllers directory as you would a traditional Roosevelt controller. Then, instead of using the Express `app` instance to define your routes, simply export a function that accepts the Express `app`, `req`, and `res` object arguments and define your controller's business logic within. You can then import this function into your existing controller modules for execution. The following is an example of requireable controller logic:
+A typical example would be creating a reusable controller for "404 not found" pages:
 
 ```js
-/* Module "render404HTML.js" exports callable logic to render a 404 HTML page */
+// reusable controller "notFound.js"
 module.exports = function(app, req, res) {
   var model = { content: 'Cannot find this page' };
-
-  model.appVersion = app.get('package').version;
-
   res.status(404);
   res.render('404', model);
 }
 ```
 
-Then in a controller that requires the logic to render a 404 HTML response:
+Reusable controller modules differ from standard controller modules in that they accept `req` and `res` arguments in addition to `app`. They are meant to be called from within routes rather than define new routes.
+
+This allows them to be called at will in any other controller's route when needed:
+
 ```js
-// Import the 404 HTML controller logic previously defined
-var render404HTML = require('controllers/render404HTML');
+// import the "notFound" controller logic previously defined
+var throw404 = require('controllers/notFound');
 
 module.exports = function(app) {
-  /* Catch-all controller for non-existant routes */
-  app.use('*').all(function(req, res) {
-    // Execute your reusable, encapsulated controller logic
-    render404HTML(app, req, res);
+  app.route('/whatever').get(function(req, res) {
+    
+    // test some logic that could fail
+    // thus triggering the need for the 404 controller
+    if (something) {
+
+      // logic didn't fail
+      // so just render the page normally
+      var model = require('models/dataModel');
+      res.render('whatever', model);
+    }
+    else {
+
+      // logic failed
+      // so throw the 404 by executing your reusable controller
+      throw404(app, req, res);
+    }
   });
 };
 ```
