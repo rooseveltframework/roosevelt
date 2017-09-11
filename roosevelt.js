@@ -4,7 +4,7 @@ var http = require('http'),
     https = require('https'),
     express = require('express'),
     cluster = require('cluster'),
-    utils = require('./lib/utils'),
+    path = require('path'),
     os = require('os'),
     fs = require('fs');
 
@@ -46,12 +46,6 @@ module.exports = function(params) {
 
   // source user supplied params
   app = require('./lib/sourceParams')(app);
-
-  // use existence of public folder to determine first run
-  if (!utils.fileExists(app.get('appDir') + app.get('params').publicFolder)) {
-    // run the param audit
-    require('./lib/configAuditor');
-  }
 
   appName = app.get('appName'),
   appEnv = app.get('env');
@@ -109,7 +103,7 @@ module.exports = function(params) {
     connections[key] = conn;
 
     // once the connection closes, remove
-    conn.on('close', function () {
+    conn.on('close', function() {
       delete connections[key];
     });
   });
@@ -122,7 +116,7 @@ module.exports = function(params) {
 
   // enable favicon support
   if (app.get('params').favicon !== 'none') {
-    app.use(require('serve-favicon')(app.get('appDir') + app.get('params').staticsRoot + app.get('params').favicon));
+    app.use(require('serve-favicon')(path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)));
   }
 
 
