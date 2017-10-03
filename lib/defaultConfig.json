@@ -1,7 +1,6 @@
 {
   "port": 43711,
   "localhostOnly": true,
-  "disableLogger": false,
   "noMinify": false,
   "enableValidator": false,
   "htmlValidator": {"port": "8888", "separateProcess": false, "format": "text", "suppressWarnings": false},
@@ -11,7 +10,7 @@
   "shutdownTimeout": 30000,
   "bodyParserUrlencodedParams": {"extended": true},
   "bodyParserJsonParams": {},
-  "suppressLogs": false,
+  "suppressLogs": {"httpLogs": false, "rooseveltLogs": false},
   "https": false,
   "httpsOnly": false,
   "httpsPort": 43733,

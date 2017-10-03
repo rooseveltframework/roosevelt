@@ -63,7 +63,7 @@ Create and run a Roosevelt app
 
 First you will need to install [Node.js](http://nodejs.org) and the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html). (The JDK is required for the local HTML validator feature.)
 
-If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges. 
+If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges.
 
 Then you might need to install some other stuff depending on what operating system you're running.
 
@@ -248,8 +248,8 @@ App behavior parameters
   - Default: `43711`
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: `true`
-- `disableLogger`: When this option is set to true, Roosevelt will not log HTTP requests to the console.
-  - Default: `false`
+- `suppressLogs`: When `httpLogs` is set to true, Roosevelt will not log HTTP requests to the console. When `rooseveltLogs` is set to true, Roosevelt will not log app status to the console.
+  - Default: `{httpLogs: false, rooseveltLogs: false}`
 - `noMinify`: Disables HTML minification as well as the minification step in (supporting) CSS and JS compilers. Automatically enabled during dev mode. Can also be passed as the command line argument `-no-minify`.
   - Default: `false`
 - `enableValidator`: Enables or disables the built-in HTML validator in dev mode.
@@ -271,8 +271,6 @@ App behavior parameters
   - Default: `{extended: true}`
 - `bodyParserJsonParams`: Supply parameters to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: `{}`
-- `suppressLogs`: When this option is set to true, Roosevelt will not log app status to the console. Useful when running Roosevelt in a testing context.
-  - Default: `false`
 
 
 
@@ -468,7 +466,7 @@ var throw404 = require('controllers/notFound');
 
 module.exports = function(app) {
   app.route('/whatever').get(function(req, res) {
-    
+
     // test some logic that could fail
     // thus triggering the need for the 404 controller
     if (something) {
@@ -534,7 +532,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `params`                             | The params you sent to Roosevelt.        |
 | `port`                               | Port Roosevelt is running on.            |
-| `suppressLogs`                       | Whether or not Roosevelt is suppressing console logging. |
 
 Additionally the Roosevelt constructor returns the following object:
 
