@@ -33,8 +33,8 @@
     "vnu-jar": "~17.9.0"
   },
   "devDependencies": {
-    "eslint": "^4.1.0",
-    "lint-staged": "^4.0.0",
+    "eslint": "^4.6.0",
+    "lint-staged": "^4.1.0",
     "husky": "^0.14.2"
   },
   "repository": {
@@ -93,7 +93,11 @@
         2,
         2,
         {
-          "VariableDeclarator": 2,
+          "VariableDeclarator": {
+            "var": 2,
+            "let": 2,
+            "const": 3
+          },
           "SwitchCase": 1
         }
       ],
@@ -132,6 +136,10 @@
       ],
       "space-before-blocks": [
         "error"
+      ],
+      "space-before-function-paren": [
+        "error",
+        "never"
       ]
     }
   },

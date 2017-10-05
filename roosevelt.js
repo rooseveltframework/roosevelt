@@ -4,7 +4,7 @@ var http = require('http'),
     https = require('https'),
     express = require('express'),
     cluster = require('cluster'),
-    utils = require('./lib/utils'),
+    path = require('path'),
     os = require('os'),
     fs = require('fs');
 
@@ -47,16 +47,10 @@ module.exports = function(params) {
   // source user supplied params
   app = require('./lib/sourceParams')(app);
 
-  // use existence of public folder to determine first run
-  if (!utils.fileExists(app.get('appDir') + app.get('params').publicFolder)) {
-    // run the param audit
-    require('./lib/configAuditor');
-  }
-
   appName = app.get('appName'),
   appEnv = app.get('env');
 
-  if (!app.get('suppressLogs')) {
+  if (!app.get('params').suppressLogs.rooseveltLogs) {
     console.log(`💭  Starting ${appName} in ${appEnv} mode...`.bold);
   }
 
@@ -109,7 +103,7 @@ module.exports = function(params) {
     connections[key] = conn;
 
     // once the connection closes, remove
-    conn.on('close', function () {
+    conn.on('close', function() {
       delete connections[key];
     });
   });
@@ -122,7 +116,7 @@ module.exports = function(params) {
 
   // enable favicon support
   if (app.get('params').favicon !== 'none') {
-    app.use(require('serve-favicon')(app.get('appDir') + app.get('params').staticsRoot + app.get('params').favicon));
+    app.use(require('serve-favicon')(path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)));
   }
 
 
@@ -205,14 +199,14 @@ module.exports = function(params) {
     function gracefulShutdown() {
       var key;
       function exitLog() {
-        if (!app.get('suppressLogs')) {
+        if (!app.get('params').suppressLogs.rooseveltLogs) {
           console.log(`✔️  ${appName} successfully closed all connections and shut down gracefully.`.magenta);
         }
         process.exit();
       }
 
       app.set('roosevelt:state', 'disconnecting');
-      if (!app.get('suppressLogs')) {
+      if (!app.get('params').suppressLogs.rooseveltLogs) {
         console.log(`\n💭  ${appName} received kill signal, attempting to shut down gracefully.`.magenta);
       }
       servers[0].close(function() {
@@ -238,7 +232,7 @@ module.exports = function(params) {
     var lock = {},
         startupCallback = function(proto, port) {
           return function() {
-            if (!app.get('suppressLogs')) {
+            if (!app.get('params').suppressLogs.rooseveltLogs) {
               console.log(`🎧  ${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold);
             }
             if (!Object.isFrozen(lock)) {
@@ -256,7 +250,7 @@ module.exports = function(params) {
         cluster.fork();
       }
       cluster.on('exit', function(worker, code, signal) {
-        if (!app.get('suppressLogs')) {
+        if (!app.get('params').suppressLogs.rooseveltLogs) {
           console.log(`⚰️  ${appName} thread ${worker.process.pid} died`.magenta);
         }
       });
