@@ -97,7 +97,7 @@ module.exports = function (params) {
 
   // assign individual keys to connections when opened
   httpServer.on('connection', function (conn) {
-    var key = conn.remoteAddress + ':' + conn.remotePort
+    let key = conn.remoteAddress + ':' + conn.remotePort
     connections[key] = conn
 
     // once the connection closes, remove
@@ -191,7 +191,7 @@ module.exports = function (params) {
 
     // start server
     function gracefulShutdown () {
-      var key
+      let key
       function exitLog () {
         if (!app.get('params').suppressLogs.rooseveltLogs) {
           console.log(`✔️  ${appName} successfully closed all connections and shut down gracefully.`.magenta)
