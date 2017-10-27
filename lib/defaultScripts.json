@@ -6,7 +6,7 @@
   "cleanup": "node ./node_modules/roosevelt/lib/appCleanup.js",
   "audit": "node ./node_modules/roosevelt/lib/configAuditor.js",
   "test": "npm run lint",
-  "eslint": "./node_modules/.bin/eslint .",
+  "eslint": "standard",
   "stylelint": "./node_modules/.bin/stylelint \"statics/css/**/*.less\" --syntax less",
   "htmlhint": "./node_modules/.bin/htmlhint --config .htmlhintrc mvc/views",
   "lint": "npm run htmlhint && npm run stylelint && npm run eslint",
