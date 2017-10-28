@@ -33,9 +33,9 @@
     "vnu-jar": "~17.11.0"
   },
   "devDependencies": {
-    "eslint": "^4.6.0",
     "lint-staged": "^4.1.0",
-    "husky": "^0.14.2"
+    "husky": "^0.14.2",
+    "standard": "^10.0.0"
   },
   "repository": {
     "type": "git",
@@ -49,109 +49,15 @@
     "teddy",
     "mvc"
   ],
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 6
-    },
-    "env": {
-      "browser": true,
-      "node": true,
-      "mocha": true
-    },
-    "rules": {
-      "eqeqeq": 2,
-      "curly": 2,
-      "semi": 2,
-      "strict": [
-        2,
-        "never"
-      ],
-      "quotes": [
-        2,
-        "single"
-      ],
-      "no-trailing-spaces": [
-        "error",
-        {
-          "skipBlankLines": false
-        }
-      ],
-      "camelcase": [
-        2,
-        {
-          "properties": "always"
-        }
-      ],
-      "comma-spacing": [
-        2,
-        {
-          "before": false,
-          "after": true
-        }
-      ],
-      "indent": [
-        2,
-        2,
-        {
-          "VariableDeclarator": {
-            "var": 2,
-            "let": 2,
-            "const": 3
-          },
-          "SwitchCase": 1
-        }
-      ],
-      "eol-last": 0,
-      "handle-callback-err": 0,
-      "no-use-before-define": [
-        2,
-        "nofunc"
-      ],
-      "no-unused-vars": [
-        2,
-        {
-          "vars": "all",
-          "args": "none"
-        }
-      ],
-      "no-console": 0,
-      "no-mixed-requires": 0,
-      "one-var": [
-        2,
-        "always"
-      ],
-      "dot-notation": 0,
-      "no-path-concat": 0,
-      "no-alert": 0,
-      "brace-style": [
-        2,
-        "stroustrup"
-      ],
-      "keyword-spacing": [
-        "error",
-        {
-          "before": true,
-          "after": true
-        }
-      ],
-      "space-before-blocks": [
-        "error"
-      ],
-      "space-before-function-paren": [
-        "error",
-        "never"
-      ]
-    }
-  },
   "preferGlobal": true,
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
     "postinstall": "node ./lib/configAuditor.js",
-    "test": "./node_modules/.bin/eslint .",
+    "test": "standard",
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "*.js": "./node_modules/.bin/eslint"
+    "*.js": "standard"
   }
 }
