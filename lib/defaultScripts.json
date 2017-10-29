@@ -8,7 +8,6 @@
   "test": "npm run lint",
   "eslint": "standard",
   "stylelint": "./node_modules/.bin/stylelint \"statics/css/**/*.less\" --syntax less",
-  "htmlhint": "./node_modules/.bin/htmlhint --config .htmlhintrc mvc/views",
-  "lint": "npm run htmlhint && npm run stylelint && npm run eslint",
+  "lint": "npm run stylelint && npm run eslint",
   "precommit": "lint-staged"
 }
