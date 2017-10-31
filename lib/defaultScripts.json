@@ -41,6 +41,6 @@
   },
   "precommit": {
     "value": "lint-staged",
-    "priority": "error"
+    "priority": "ignore"
   }
 }
