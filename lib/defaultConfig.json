@@ -37,7 +37,7 @@
   "bundledJsPath": ".bundled",
   "exposeBundles": true,
   "browserifyBundles": [],
-  "jsCompiler": {"nodeModule": "roosevelt-closure", "showWarnings": false, "params": {"rooseveltNoRecurse": true, "compilationLevel": "ADVANCED"}},
+  "jsCompiler": {"nodeModule": "roosevelt-uglify", "showWarnings": false, "params": {"rooseveltNoRecurse": true}},
   "jsCompiledOutput": ".build/js",
   "jsCompilerWhitelist": null,
   "publicFolder": "public",
