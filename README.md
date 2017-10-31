@@ -355,7 +355,7 @@ Statics parameters
   - Example declaring multiple bundles: `[{outputFile: "bundle1.js", files: ["landingPage.js", "main.js", "etc.js"], params: {someOpt: "someValue"}}, {outputFile: "bundle2.js", files: ["somethingElse.js", "anotherThing.js", "etc.js"]}, etc...]`
   - Note: Omitting `env` will result in bundling in both modes.
   - Note: `params` is optional. If it is not set, these default params will be sent: `{paths: yourJsPath}`
-- `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier. Use `params` to pass [UglifyJS minify options](https://github.com/mishoo/UglifyJS2#minify-options)
+- `jsCompiler`: Which JS minifier, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no JS minifier. Use `params` to pass [UglifyJS minify options](https://github.com/mishoo/UglifyJS2#minify-options).
   - Default: `{nodeModule: "roosevelt-uglify", showWarnings: false, params: {}}`.
   - Also by default the module [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify) is marked as a dependency in package.json.
   - Note: Set `showWarnings` to `true` to display compiler warnings.
