@@ -8,7 +8,7 @@ Roosevelt is a web application development framework based on [Express](http://e
 
 Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time.html) whose facial hair just so happens to look like a curly brace, Roosevelt's main goal is to be the easiest JS-based web framework to learn and use by setting sane defaults while also providing easy ways to override the defaults and tap into the full potential of Express.
 
-By default Roosevelt integrates [Teddy](https://github.com/rooseveltframework/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [UglifyJS](https://github.com/mishoo/UglifyJS2) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
+By default Roosevelt integrates [Teddy](https://github.com/rooseveltframework/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [UglifyJS](http://lisperator.net/uglifyjs/) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
 
 Roosevelt will also automatically validate your HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;'>
 
@@ -54,7 +54,7 @@ Reasons for this include:
 - Concise [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - [Teddy](https://github.com/rooseveltframework/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - Automatic HTML validation.
-- [LESS](http://lesscss.org) and [UglifyJS](https://github.com/mishoo/UglifyJS2) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
+- [LESS](http://lesscss.org) and [UglifyJS](http://lisperator.net/uglifyjs/) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
 
 
 
