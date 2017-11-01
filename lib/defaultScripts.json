@@ -1,13 +1,46 @@
 {
-  "start": "npm run prod",
-  "kill-validator": "node ./node_modules/roosevelt/lib/killValidator.js",
-  "prod": "./node_modules/.bin/supervisor -k -e js,json,less,html -i statics/.build/,.git/,public/,node_modules/,jsdoc/ -- app.js -prod",
-  "dev": "./node_modules/.bin/supervisor -k -e js,json,less,html -i statics/.build/,.git/,public/,node_modules/,jsdoc/ -- app.js -dev",
-  "cleanup": "node ./node_modules/roosevelt/lib/appCleanup.js",
-  "audit": "node ./node_modules/roosevelt/lib/configAuditor.js",
-  "test": "npm run lint",
-  "eslint": "standard",
-  "stylelint": "./node_modules/.bin/stylelint \"statics/css/**/*.less\" --syntax less",
-  "lint": "npm run stylelint && npm run eslint",
-  "precommit": "lint-staged"
+  "start": {
+    "value": "npm run prod",
+    "priority": "error"
+  },
+  "kill-validator": {
+    "value": "node ./node_modules/roosevelt/lib/killValidator.js",
+    "priority": "error"
+  },
+  "prod": {
+    "value":"./node_modules/.bin/supervisor -k -e js,json,less,html -i statics/.build/,.git/,public/,node_modules/,jsdoc/ -- app.js -prod",
+    "priority": "error"
+  },
+  "dev": {
+    "value": "./node_modules/.bin/supervisor -k -e js,json,less,html -i statics/.build/,.git/,public/,node_modules/,jsdoc/ -- app.js -dev",
+    "priority": "error"
+  },
+  "cleanup": {
+    "value": "node ./node_modules/roosevelt/lib/appCleanup.js",
+    "priority": "error"
+  },
+  "audit": {
+    "value": "node ./node_modules/roosevelt/lib/configAuditor.js",
+    "priority": "error"
+  },
+  "test": {
+    "value": "npm run lint",
+    "priority": "warning"
+  },
+  "eslint": {
+    "value": "standard",
+    "priority": "ignore"
+  },
+  "stylelint": {
+    "value": "./node_modules/.bin/stylelint \"statics/css/**/*.less\" --syntax less",
+    "priority": "ignore"
+  },
+  "lint": {
+    "value": "npm run stylelint && npm run eslint",
+    "priority": "ignore"
+  },
+  "precommit": {
+    "value": "lint-staged",
+    "priority": "ignore"
+  }
 }
