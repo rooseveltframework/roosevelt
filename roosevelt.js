@@ -78,14 +78,22 @@ module.exports = function (params) {
         httpsOptions.passphrase = passphrase
       }
       if (ca) {
-        // String or array
-        if (typeof ca === 'string') {
-          httpsOptions.ca = fs.readFileSync(ca)
-        } else if (ca instanceof Array) {
-          httpsOptions.ca = []
-          ca.forEach(function (val, index, array) {
-            httpsOptions.ca.push(fs.readFileSync(val))
-          })
+        try {
+          // String or array
+          if (typeof ca === 'string') {
+            httpsOptions.ca = fs.readFileSync(ca)
+          } else if (ca instanceof Array) {
+            httpsOptions.ca = []
+            ca.forEach(function (val, index, array) {
+              httpsOptions.ca.push(fs.readFileSync(val))
+            })
+          }
+        } catch (err) {
+          if (err.code !== 'ENOENT') {
+            throw err
+          }
+          // assume we were passed a string or array of full certificate data, instead of file path(s)
+          httpOptions.ca = ca
         }
       }
     }
