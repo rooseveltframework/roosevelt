@@ -92,7 +92,7 @@ module.exports = function (params) {
           if (err.code !== 'ENOENT') {
             throw err
           }
-          // assume we were passed a string or array of full certificate data, instead of file path(s)
+          // assume we were passed a string or array of full certificate data, instead of file paths
           httpOptions.ca = ca
         }
       }
