@@ -57,7 +57,7 @@ module.exports = function (params) {
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
     httpServer = http.Server(app)
-    httpServer.on('connection', mapConnections)    
+    httpServer.on('connection', mapConnections)
   }
 
   if (app.get('params').https) {
@@ -99,7 +99,7 @@ module.exports = function (params) {
       }
     }
     httpsServer = https.Server(httpsOptions, app)
-    httpsServer.on('connection', mapConnections)    
+    httpsServer.on('connection', mapConnections)
   }
 
   app.httpServer = httpServer
