@@ -57,6 +57,7 @@ module.exports = function (params) {
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
     httpServer = http.Server(app)
+    httpServer.on('connection', mapConnections)    
   }
 
   if (app.get('params').https) {
@@ -98,21 +99,11 @@ module.exports = function (params) {
       }
     }
     httpsServer = https.Server(httpsOptions, app)
+    httpsServer.on('connection', mapConnections)    
   }
 
   app.httpServer = httpServer
   app.httpsServer = httpsServer
-
-  // assign individual keys to connections when opened
-  httpServer.on('connection', function (conn) {
-    let key = conn.remoteAddress + ':' + conn.remotePort
-    connections[key] = conn
-
-    // once the connection closes, remove
-    conn.on('close', function () {
-      delete connections[key]
-    })
-  })
 
   // enable gzip compression
   app.use(require('compression')())
@@ -136,6 +127,17 @@ module.exports = function (params) {
   // fire user-defined onServerInit event
   if (params.onServerInit && typeof params.onServerInit === 'function') {
     params.onServerInit(app)
+  }
+
+  // assign individual keys to connections when opened so they can be destroyed gracefully
+  function mapConnections (conn) {
+    let key = conn.remoteAddress + ':' + conn.remotePort
+    connections[key] = conn
+
+    // once the connection closes, remove
+    conn.on('close', function () {
+      delete connections[key]
+    })
   }
 
   // Initialize Roosevelt app middleware and prepare static css,js
