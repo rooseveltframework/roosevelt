@@ -336,7 +336,7 @@ Statics parameters
 - `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
-  - Default: `{nodeModule: 'roosevelt-less', params: {cleanCSS: {advanced: true, aggressiveMerging: true}, sourceMap: {}}}`.
+  - Default: `{nodeModule: 'roosevelt-less', params: {cleanCSS: {advanced: true, aggressiveMerging: true}, sourceMap: null}`.
   - Also by default the module [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) is marked as a dependency in package.json.
     - Note: Use `cleanCSS` to configure options passed to [less-plugin-clean-css](https://github.com/jakubpawlowicz/clean-css/tree/v3.0.1#how-to-use-clean-css-programmatically).
     - Note: `sourceMap is optional. Configuration details can be found in the [LESS API documentation](http://lesscss.org/usage/index.html#programmatic-usage).
