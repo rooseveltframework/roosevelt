@@ -337,9 +337,7 @@ Statics parameters
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
   - Default: `{nodeModule: 'roosevelt-less', params: {cleanCSS: {advanced: true, aggressiveMerging: true}, sourceMap: null}`.
-  - Also by default the module [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) is marked as a dependency in package.json.
-    - Note: Use `cleanCSS` to configure options passed to [less-plugin-clean-css](https://github.com/jakubpawlowicz/clean-css/tree/v3.0.1#how-to-use-clean-css-programmatically).
-    - Note: `sourceMap is optional. Configuration details can be found in the [LESS API documentation](http://lesscss.org/usage/index.html#programmatic-usage).
+  - Also by default the module [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) is marked as a dependency in package.json. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
 - `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null`
   - Example: `less/example.less:styles/example.min.css` (customizes both file path and file name of minified file)
