@@ -336,10 +336,13 @@ Statics parameters
 - `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
   - Default: `css`
 - `cssCompiler`: Which CSS preprocessor, if any, to use. Must also be marked as a dependency in your app's package.json. Set to `none` to use no CSS preprocessor.
-  - Default: `{nodeModule: 'roosevelt-less', params: {compress: true}}`.
+  - Default: `{nodeModule: 'roosevelt-less', params: {cleanCSS: {advanced: true, aggressiveMerging: true}, sourceMap: null}`.
   - Also by default the module [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) is marked as a dependency in package.json.
-- `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files.
-  - Default: `undefined`
+    - Note: Use `cleanCSS` to configure options passed to [less-plugin-clean-css](https://github.com/jakubpawlowicz/clean-css/tree/v3.0.1#how-to-use-clean-css-programmatically).
+    - Note: `sourceMap is optional. Configuration details can be found in the [LESS API documentation](http://lesscss.org/usage/index.html#programmatic-usage).
+- `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
+  - Default: `null`
+  - Example: `less/example.less:styles/example.min.css` (customizes both file path and file name of minified file)
 - `cssCompiledOutput`: Where to place compiled CSS files. This folder will be made public by default.
   - Default: `.build/css`
 - `jsPath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored elsewhere when the app is started.
@@ -360,7 +363,7 @@ Statics parameters
   - Also by default the module [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify) is marked as a dependency in package.json.
   - Note: Set `showWarnings` to `true` to display compiler warnings.
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
-  - Default: `undefined`
+  - Default: `null`
   - Example: `library-name/example.js:lib/example.min.js` (customizes both file path and file name of minified file)
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be made public by default.
   - Default: `.build/js`
