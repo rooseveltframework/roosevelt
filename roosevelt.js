@@ -67,7 +67,7 @@ module.exports = function (params) {
       rejectUnauthorized: app.get('params').rejectUnauthorized
     }
     ca = app.get('params').ca
-    cafile = !(app.get('params').cafile === false)
+    cafile = app.get('params').cafile !== false
     passphrase = app.get('params').passphrase
 
     if (app.get('params').keyPath) {
