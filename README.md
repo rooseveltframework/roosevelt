@@ -290,8 +290,10 @@ HTTPS parameters
   - Default: `null`
 - `passphrase`: Supply the HTTPS server with the password for the certificate being used, if necessary.
   - Default: `null`
-- `ca`: Certificate authority to match client certificates against, as a file path or array of file paths.
+- `ca`: Certificate authority to match client certificates against, as a file path or array of file paths. Can also be a full certificate string, requiring `cafile` to be `false`.
   - Default: `null`
+- `cafile`: Whether or not the entry supplied by `ca` is a file.
+  - Default: `true`
 - `requestCert`: Request a certificate from a client and attempt to verify it.
   - Default: `false`
 - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.

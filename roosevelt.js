@@ -33,6 +33,7 @@ module.exports = function (params) {
   let httpsServer
   let httpsOptions
   let ca
+  let cafile
   let passphrase
   let numCPUs = 1
   let servers = []
@@ -66,6 +67,7 @@ module.exports = function (params) {
       rejectUnauthorized: app.get('params').rejectUnauthorized
     }
     ca = app.get('params').ca
+    cafile = app.get('params').cafile !== false
     passphrase = app.get('params').passphrase
 
     if (app.get('params').keyPath) {
@@ -79,7 +81,8 @@ module.exports = function (params) {
         httpsOptions.passphrase = passphrase
       }
       if (ca) {
-        try {
+        // Are we using a CA file, or are we sending the CA directly?
+        if (cafile) {
           // String or array
           if (typeof ca === 'string') {
             httpsOptions.ca = fs.readFileSync(ca)
@@ -89,11 +92,7 @@ module.exports = function (params) {
               httpsOptions.ca.push(fs.readFileSync(val))
             })
           }
-        } catch (err) {
-          if (err.code !== 'ENOENT') {
-            throw err
-          }
-          // assume we were passed a string or array of full certificate data, instead of file paths
+        } else {
           httpsOptions.ca = ca
         }
       }
