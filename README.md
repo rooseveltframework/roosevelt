@@ -6,11 +6,11 @@ Roosevelt MVC web framework
 
 Roosevelt is a web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical web application using Express and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
-Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time.html) whose facial hair just so happens to look like a curly brace, Roosevelt's main goal is to be the easiest JS-based web framework to learn and use by setting sane defaults while also providing easy ways to override the defaults and tap into the full potential of Express.
+Named for [the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time.html), whose facial hair is a curly brace, Roosevelt's main goal is to be the easiest web framework to learn and use on the [Node.js](https://nodejs.org) stack by setting sane defaults while also providing easy ways to override the defaults and tap into the full potential of Express.
 
 By default Roosevelt integrates [Teddy](https://github.com/rooseveltframework/teddy) for HTML templating, [LESS](http://lesscss.org) for CSS preprocessing, and [UglifyJS](http://lisperator.net/uglifyjs/) for JS minification. But you can use other templating systems, CSS preprocessors, or JS minifiers if you like, as Roosevelt is easy to configure.
 
-Roosevelt will also automatically validate your HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;'>
+Roosevelt will also automatically validate your HTML in development mode using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;'>
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
@@ -45,7 +45,7 @@ Table of contents
 Why use Roosevelt?
 ===
 
-Roosevelt is easy to use and has a low learning curve, unlike many other popular JS-based web frameworks.
+Roosevelt is easy to use and has a low learning curve, unlike many other popular [Node.js](https://nodejs.org) web frameworks.
 
 Reasons for this include:
 
@@ -55,6 +55,7 @@ Reasons for this include:
 - [Teddy](https://github.com/rooseveltframework/teddy) HTML templates are much easier to read and maintain than popular alternatives.
 - Automatic HTML validation.
 - [LESS](http://lesscss.org) and [UglifyJS](http://lisperator.net/uglifyjs/) preconfigured out of the box to intelligently minify your external facing CSS and JS files.
+- Built-in, easy to use interface to [browserify](http://browserify.org) bundling for frontend JS modularization using the Node.js module `exports` and `require` syntax.
 
 
 
@@ -62,8 +63,6 @@ Create and run a Roosevelt app
 ===
 
 First you will need to install [Node.js](http://nodejs.org) and the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html). (The JDK is required for the local HTML validator feature.)
-
-If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges.
 
 Then you might need to install some other stuff depending on what operating system you're running.
 
@@ -83,11 +82,13 @@ Some dependencies require Python or a C++ compiler. The procedure for getting th
 **Mac:**
 
 - Install [Xcode](https://developer.apple.com/xcode).
+- If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges.
 
 **Ubuntu:**
 
 - Install build-essential: `sudo apt-get install build-essential`
 - You may also need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common JS modules.
+- If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges.
 
 Once you have a sane developmemt environment, you can proceed with the standard install procedure below.
 
@@ -95,13 +96,13 @@ Once you have a sane developmemt environment, you can proceed with the standard 
 Install Roosevelt and create an app
 ---
 
-Globally install [Yeoman](http://yeoman.io).
+Globally install [Yeoman](http://yeoman.io):
 
 ```
 npm i -g yo
 ```
 
-Globally install Roosevelt Yeoman generator.
+Globally install the [Roosevelt Yeoman generator](https://github.com/rooseveltframework/generator-roosevelt):
 
 ```
 npm i -g generator-roosevelt
@@ -140,13 +141,7 @@ Note: `npm start` is aliased to `npm run prod`.
 Other useful scripts
 ---
 
-Run your app with an attached HTML validator (HTML validator is attached by default):
-
-```
-npm run dev attach
-```
-
-Run your app with a detached HTML validator (runs validator as a separate process in the background; process must be manually killed later, see below):
+Run your app with a detached HTML validator instead of the default attached validator (runs validator as a separate process in the background; process must be manually killed later, see below):
 
 ```
 npm run dev detach-validator
@@ -157,24 +152,18 @@ After running your app with a detached HTML validator, use this command to shut 
 ```
 npm run kill-validator
 ```
-Run your app on two CPUs:
+Run your app on two CPUs (default is `max`):
 
 ```
 node app.js -cores 2
 ```
 
-Run your app on all your CPUs (this is the default behavior):
-
-```
-node app.js -cores max
-```
-
-Remove all symlinks and directories generated by Roosevelt:
+Remove all symlinks and directories in your app generated by Roosevelt (will prompt to confirm before deleting any files):
 
 ```
 npm run cleanup
 ```
-Scan current package.json Roosevelt configuration and warn about any issues:
+Scan current Roosevelt config in package.json and warn about any params that doesn't match the current API:
 
 ```
 npm run audit
@@ -183,22 +172,17 @@ Default directory structure
 ===
 
 - `app.js`: main app file. Feel free to rename this, but make sure to update package.json's reference to it.
-- `bin`: folder with operating system-specfic executables for your app.
-  - `mac.command`: open this in Mac OS X to start your app graphically.
-  - `unix.sh`: open this in UNIX-like environments like Ubuntu or other Linux distros to start your app graphically.
-  - `windows.bat`: open this in Windows to start your app graphically.
-- `mvc`: folder for models, views, and controllers.
+- `mvc`: folder for models, views, and controllers. All configurable via params (see below).
   - `controllers`: folder for controller files.
   - `models`: folder for model files.
   - `views`: folder for view files.
-- `lib`: Optional folder for any modules, utility libraries, or other dependencies your app may require which aren't in npm.
 - `node_modules`: a standard folder where all modules your app depends on (such as Roosevelt) are installed to. This folder is created by the `npm install` command.
-- `package.json`: a standard file for configuring your app.
+- `package.json`: a standard file in Node.js apps for configuring your app.
 - `public`: all contents within this folder will be exposed as static files.
-- `statics`: folder for CSS, images, JS files, and other statics. Some of the contents of this folder are symlinked to from public, which you can configure (see below).
-  - `css`: folder for CSS files.
-  - `images`: folder for image files.
-  - `js`: folder for JS files.
+- `statics`: folder for source CSS, images, JS files, and other statics. Some of the contents of this folder are symlinked to from public, which you can configure (see below).
+  - `css`: folder for source CSS files.
+  - `images`: folder for source image files.
+  - `js`: folder for source JS files.
 - `.gitignore`: a standard file which contains a list of files and folders to ignore if your project is in a  git repo.
 
 
@@ -212,7 +196,7 @@ Some notable things ignored by default and why:
 
 - `public`: It's recommended that you don't create files in this folder manually, but instead use the `symlinksToStatics` feature detailed below to expose folders in your `statics` directory via auto-generated symlinks.
 - `.build`: By default Roosevelt will compile LESS and JS files down to minified versions in `statics/.build` when the server starts. As such, it's not recommended to place files in the build directory manually.
-- `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally <a href='https://npmjs.org/doc/faq.html'>not recommended</a> to commit the `node_modules` folder to git.
+- `node_modules`: This folder will be auto-generated when you run the `npm install` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally not recommended to commit the `node_modules` folder to git.
 
 
 
@@ -227,7 +211,7 @@ require('roosevelt')().startServer();
 
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
 
-Inside `app.js`, you can pass any of the below optional parameters to Roosevelt via its constructor like so:
+Also, while it is recommended that you pass params to Roosevelt via `package.json` under `"rooseveltConfig"`, you can also pass params programmatically via Roosevelt's constructor like so:
 
 ```js
 require('roosevelt')({
@@ -237,11 +221,11 @@ require('roosevelt')({
 }).startServer();
 ```
 
-Each param can also be defined in `package.json` under `"rooseveltConfig"`.
-
+This is particularly useful for setting params that can't be defined in `package.json` such as event handlers (see below).
 
 App behavior parameters
 ---
+
 - `appDir`: Useful to change when using a test environment like Mocha or if you just want to specify it by hand.
   -  Default: The directory where your project package.json is located. `{appDir: 'User/Path/to/project'}`
 - `port`: The port your app will run on. Can also be defined using `HTTP_PORT` or `NODE_PORT` environment variable.
