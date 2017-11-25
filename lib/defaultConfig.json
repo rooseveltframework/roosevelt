@@ -3,7 +3,7 @@
   "localhostOnly": true,
   "noMinify": false,
   "enableValidator": false,
-  "htmlValidator": {"port": "8888", "separateProcess": false, "format": "text", "suppressWarnings": false},
+  "htmlValidator": {"port": 8888, "separateProcess": false, "format": "text", "suppressWarnings": false},
   "validatorExceptions": {"requestHeader": "Partial", "modelValue": "_disableValidator"},
   "multipart": {"multiples": true},
   "maxLagPerRequest": 70,
