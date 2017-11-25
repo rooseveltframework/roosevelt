@@ -235,7 +235,7 @@ App behavior parameters
 ---
 
 - `port`: The port your app will run on. Can also be defined using `HTTP_PORT` or `NODE_PORT` environment variable.
-  - Default: *[String]* `43711`
+  - Default: *[String]* `43711`.
 - `appDir`: Project root. Can be useful to change in testing environments like [Mocha](http://mochajs.org) or if you just want to specify it by hand.
   -  Default: *[String]* The directory where your project `package.json` is located.
   -  Example customization:
@@ -248,7 +248,7 @@ App behavior parameters
 ````
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
-  - Default: *[Boolean]* `true`
+  - Default: *[Boolean]* `true`.
 - `suppressLogs`: Accepts an object containing two related parameters:
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console. 
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
@@ -263,9 +263,9 @@ App behavior parameters
  ```
 
 - `noMinify`: Disables HTML minification as well as the minification step in supporting CSS and JS compilers. Automatically enabled during development mode. Can also be passed as the command line argument `-no-minify` in production mode.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 - `enableValidator`: Enables or disables the built-in HTML validator in development mode.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
   - If enabled, it can be disabled for individual requests by sending the request header `Partial` with the value set to `true` or by passing `_disableValidator` to the model and setting it to `true`. This is configurable with the `validatorExceptions` param (see below).
   - You can also force the validator off in `dev` mode regardless of app settings with `npm run dev disable-validator`.
   - You can also force the validator on in `prod` mode regardless of app settings with `npm run dev enable-validator`.
@@ -308,9 +308,9 @@ App behavior parameters
 ```
 
 - `maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/STRML/node-toobusy).)
-  - Default: *[Number]* `70` (70ms)
+  - Default: *[Number]* `70` (70ms).
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
-  - Default: *[Number]* `30000` (30 seconds)
+  - Default: *[Number]* `30000` (30 seconds).
 - `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
   - Default: *[Object]* 
 
@@ -322,7 +322,7 @@ App behavior parameters
 ```
 
 - `bodyParserJsonParams`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
-  - Default: *[Object]* `{}`
+  - Default: *[Object]* `{}`.
 
 
 
@@ -330,26 +330,26 @@ HTTPS parameters
 ---
 
 - `https`: Run a HTTPS server using Roosevelt.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 - `httpsOnly`: Disable HTTP server when running a HTTPS server.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 - `httpsPort`: The port your app will run a HTTPS server on, if HTTPS is enabled. Can also be defined using the `HTTPS_PORT` environment variable.
-  - Default: *[Number]* `43733`
+  - Default: *[Number]* `43733`.
 - `pfx`: Specify whether or not your app will use pfx or standard certification.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 - `keyPath`: Stores the file paths of specific key/certificate to be used by the server.
-  - Default: `null`
+  - Default: `null`.
   - When set: *[Object]*  `pfx`, `key`, `cert` -- use one of {`pfx`} or {`key`, `cert`}.
 - `passphrase`: *[String]* Supply the HTTPS server with the password for the certificate being used, if necessary.
-  - Default: `null`
+  - Default: `null`.
 - `ca`: *[String]* Certificate authority to match client certificates against, as a file path or array of file paths. Can also be a full certificate string, requiring `cafile` to be `false`.
-  - Default: `null`
+  - Default: `null`.
 - `cafile`: Whether or not the entry supplied by `ca` is a file.
-  - Default: *[Boolean]* `true`
+  - Default: *[Boolean]* `true`.
 - `requestCert`: Request a certificate from a client and attempt to verify it.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 
 
 
@@ -357,11 +357,11 @@ MVC parameters
 ---
 
 - `modelsPath`: Relative path on filesystem to where your model files are located.
-  - Default: *[String]* `"mvc/models"`
+  - Default: *[String]* `"mvc/models"`.
 - `viewsPath`: Relative path on filesystem to where your view files are located.
-  - Default: *[String]* `"mvc/views"`
+  - Default: *[String]* `"mvc/views"`.
 - `viewEngine`: What templating engine to use, formatted as `"fileExtension: nodeModule"`. 
-  - Default: *[String]* `"html: teddy"`
+  - Default: *[String]* `"html: teddy"`.
   - Also by default the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
   - Set to `"none"` *[String]* to use no templating engine.
   - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default. 
@@ -380,7 +380,7 @@ MVC parameters
 ```
 
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
-  - Default: *[String]* `"mvc/controllers"`
+  - Default: *[String]* `"mvc/controllers"`.
 
 
 
@@ -388,11 +388,11 @@ Error page parameters
 ---
 
 - `error404`: Relative path on filesystem to where your "404 Not Found" controller is located. If you do not supply one, Roosevelt will use its default 404 controller instead.
-  - Default: *[String]* `"404.js"`
+  - Default: *[String]* `"404.js"`.
 - `error5xx`: Relative path on filesystem to where your "Internal Server Error" controller is located. If you do not supply one, Roosevelt will use its default controller instead.
-  - Default: *[String]* `"5xx.jx"`
+  - Default: *[String]* `"5xx.jx"`.
 - `error503`: Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead.
-  - Default: *[String]* `"503.js"`
+  - Default: *[String]* `"503.js"`.
 
 
 
@@ -400,7 +400,7 @@ Statics parameters
 ---
 
 - `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
-  - Default: *[String]* `"statics"`
+  - Default: *[String]* `"statics"`.
 - `htmlMinify`: Params to send to [express-minify-html](https://github.com/melonmanchan/express-minify-html), an Express middleware for [html-minifier](https://github.com/kangax/html-minifier):
   - Set `override` *[Boolean]* to false to disable minification entirely.
   - For other usage, see [express-minify-html usage](https://github.com/melonmanchan/express-minify-html#usage).
@@ -418,7 +418,7 @@ Statics parameters
 ```
 
 - `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
-  - Default: *[String]* `"css"`
+  - Default: *[String]* `"css"`.
 - `cssCompiler`: Which Roosevelt CSS preprocessor middleware, if any, to use.
   - Your chosen Roosevelt CSS preprocessor module must be marked as a dependency in your app's `package.json`.
   - Set to `"none"` *[String]* to use no CSS preprocessor.
@@ -439,16 +439,16 @@ Statics parameters
 ```
 
 - `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
-  - Default: `null` (compiles all CSS files, if a CSS preprocessing is enabled)
-  - Example: *[String]* `less/example.less:styles/example.min.css` (compiles `less/example.less` into `styles/example.min.css`)
+  - Default: `null` (compiles all CSS files, if a CSS preprocessing is enabled).
+  - Example: *[String]* `less/example.less:styles/example.min.css` (compiles `less/example.less` into `styles/example.min.css`).
 - `cssCompiledOutput`: Where to place compiled CSS files. This folder will be symlinked into `public` by default.
-  - Default: *[String]* `".build/css"`
+  - Default: *[String]* `".build/css"`.
 - `jsPath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored elsewhere when the app is started.
-  - Default: *[String]* `"js"`
+  - Default: *[String]* `"js"`.
 - `browserifyBundles`: Declare one or more files in your `jsPath` to be [browserify](http://browserify.org) bundles via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts). Use of browserify in Roosevelt is optional. If no bundles are defined here, the browserify step will be skipped.
-  - Default: *[Array]* `[]`
+  - Default: *[Array]* `[]`.
   - `env` param: *[String]* bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
-  - `params` param: *[Object]* the [browserify params](https://github.com/browserify/browserify#methods) to send to browserify. If it is not set, these default params will be sent: `{"paths": your jsPath}`
+  - `params` param: *[Object]* the [browserify params](https://github.com/browserify/browserify#methods) to send to browserify. If it is not set, these default params will be sent: `{"paths": your jsPath}`.
   - Examples: *[Array]* of *[Objects]*
 
 
@@ -518,9 +518,9 @@ Browserify bundle example declaring multiple bundles:
 ```
 
 - `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
-  - Default: *[String]* `".bundled"`
+  - Default: *[String]* `".bundled"`.
 - `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
-  - Default: *[Boolean]* `true`
+  - Default: *[Boolean]* `true`.
 - `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use. 
   - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`. 
   - Set to `"none"` *[String]* to use no JS minifier. 
@@ -539,21 +539,21 @@ Browserify bundle example declaring multiple bundles:
 ```
 
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
-  - Default: `null` (compiles all JS files, if a JS minifier is enabled)
-  - Example: *[String]* `library-name/example.js:lib/example.min.js` (compiles `library-name/example.js` into `lib/example.min.js`)
+  - Default: `null` (compiles all JS files, if a JS minifier is enabled).
+  - Example: *[String]* `library-name/example.js:lib/example.min.js` (compiles `library-name/example.js` into `lib/example.min.js`).
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be symlinked into `public` by default.
-  - Default: *[String]* `".build/js"`
+  - Default: *[String]* `".build/js"`.
 - `nodeEnv`: *[String]* Param to override the `NODE_ENV` environment variable.
-  - Default: `undefined`
+  - Default: `undefined`.
 
 
 Public folder parameters
 ---
 
 - `publicFolder`: All files and folders specified in this path will be exposed as static files.
-  -  Default: *[String]* `"public"`
+  -  Default: *[String]* `"public"`.
 - `favicon`: Location of your [favicon](https://en.wikipedia.org/wiki/Favicon) file.
-  - Default: *[String]* `"images/favicon.ico"`
+  - Default: *[String]* `"images/favicon.ico"`.
   - Disable favicon support by supplying `"none"` *[String]* to this parameter.
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `"linkName: linkTarget"` (whitespace optional) or simply `"linkName"` if the link target has the same name as the desired link name.
   - Default: *[Array]* of *[Strings]*
@@ -568,7 +568,7 @@ Public folder parameters
 ```
 
 - `versionedStatics`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 - `versionedCssFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`.
   - Default: `undefined`.
   - Example usage (with roosevelt-less): *[Object]* 
