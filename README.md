@@ -285,7 +285,7 @@ App behavior parameters
   - `port`: *[Number]* Port to spawn the validator process on.
   - `separateProcess`: *[Boolean]* When set to true, the HTML validator will run detached (separate from the node process) by default. You can kill the process by running `npm run kill-validator`.
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
-  - Default:
+  - Default: *[Object]* 
 
 
 ```json
@@ -312,7 +312,7 @@ App behavior parameters
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: *[Number]* `30000` (30 seconds)
 - `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
-  - Default:
+  - Default: *[Object]* 
 
 
 ```json
