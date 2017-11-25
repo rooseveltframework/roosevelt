@@ -449,7 +449,7 @@ Statics parameters
   - Default: *[Array]* `[]`
   - `env` param: *[String]* bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
   - `params` param: *[Object]* the [browserify params](https://github.com/browserify/browserify#methods) to send to browserify. If it is not set, these default params will be sent: `{"paths": your jsPath}`
-  - Examples: *[Array]* of *[Objects]*s 
+  - Examples: *[Array]* of *[Objects]*
 
 
 Browserify bundle example declaring one bundle:
@@ -556,7 +556,7 @@ Public folder parameters
   - Default: *[String]* `"images/favicon.ico"`
   - Disable favicon support by supplying `"none"` *[String]* to this parameter.
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `"linkName: linkTarget"` (whitespace optional) or simply `"linkName"` if the link target has the same name as the desired link name.
-  - Default: *[Array]* of *[String]*s 
+  - Default: *[Array]* of *[Strings]*
 
 
 ```json
