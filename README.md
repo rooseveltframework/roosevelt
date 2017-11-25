@@ -588,7 +588,7 @@ Assuming the default Roosevelt configuration otherwise, this will result in a fi
 ```
 
 - `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
-  - Default: *[Boolean]* `false`
+  - Default: *[Boolean]* `false`.
 
 
 
