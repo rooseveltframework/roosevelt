@@ -27,6 +27,7 @@ module.exports = function (params) {
   })
 
   let app = express() // initialize express
+  let logger
   let appName
   let appEnv
   let httpServer
@@ -47,13 +48,12 @@ module.exports = function (params) {
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
+  logger = require('./lib/logger')(app)
 
   appName = app.get('appName')
   appEnv = app.get('env')
 
-  if (!app.get('params').suppressLogs.rooseveltLogs) {
-    console.log(`💭  Starting ${appName} in ${appEnv} mode...`.bold)
-  }
+  logger.log(`💭 Starting ${appName} in ${appEnv} mode...`.bold)
 
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
@@ -202,16 +202,12 @@ module.exports = function (params) {
     function gracefulShutdown () {
       let key
       function exitLog () {
-        if (!app.get('params').suppressLogs.rooseveltLogs) {
-          console.log(`✔️  ${appName} successfully closed all connections and shut down gracefully.`.magenta)
-        }
+        logger.log(`✔️ ${appName} successfully closed all connections and shut down gracefully.`.magenta)
         process.exit()
       }
 
       app.set('roosevelt:state', 'disconnecting')
-      if (!app.get('params').suppressLogs.rooseveltLogs) {
-        console.log(`\n💭  ${appName} received kill signal, attempting to shut down gracefully.`.magenta)
-      }
+      logger.log(`\n💭 ${appName} received kill signal, attempting to shut down gracefully.`.magenta)
       servers[0].close(function () {
         if (servers.length > 1) {
           servers[1].close(exitLog)
@@ -234,9 +230,7 @@ module.exports = function (params) {
     let lock = {}
     let startupCallback = function (proto, port) {
       return function () {
-        if (!app.get('params').suppressLogs.rooseveltLogs) {
-          console.log(`🎧  ${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold)
-        }
+        logger.log(`🎧 ${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold)
         if (!Object.isFrozen(lock)) {
           Object.freeze(lock)
               // fire user-defined onServerStart event
@@ -252,9 +246,7 @@ module.exports = function (params) {
         cluster.fork()
       }
       cluster.on('exit', function (worker, code, signal) {
-        if (!app.get('params').suppressLogs.rooseveltLogs) {
-          console.log(`⚰️  ${appName} thread ${worker.process.pid} died`.magenta)
-        }
+        logger.log(`⚰️  ${appName} thread ${worker.process.pid} died`.magenta)
       })
     } else {
       if (!app.get('params').httpsOnly) {
