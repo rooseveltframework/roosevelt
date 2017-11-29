@@ -202,7 +202,7 @@ module.exports = function (params) {
     function gracefulShutdown () {
       let key
       function exitLog () {
-        logger.log(`✔️ ${appName} successfully closed all connections and shut down gracefully.`.magenta)
+        logger.log('✔️ ', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
         process.exit()
       }
 
@@ -246,7 +246,7 @@ module.exports = function (params) {
         cluster.fork()
       }
       cluster.on('exit', function (worker, code, signal) {
-        logger.log(`⚰️  ${appName} thread ${worker.process.pid} died`.magenta)
+        logger.log(`⚰️ ${appName} thread ${worker.process.pid} died`.magenta)
       })
     } else {
       if (!app.get('params').httpsOnly) {
