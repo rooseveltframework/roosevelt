@@ -191,7 +191,7 @@ module.exports = function (params) {
           if (arg <= max && arg > 0) {
             numCPUs = arg
           } else {
-            console.warn(`⚠️  ${appName} warning: invalid value "${array[index + 1]}" supplied to -cores param.`.red)
+            logger.warn(`${appName} warning: invalid value "${array[index + 1]}" supplied to -cores param.`.red)
             numCPUs = 1
           }
         }
@@ -222,7 +222,7 @@ module.exports = function (params) {
       }
 
       setTimeout(function () {
-        console.error(`💥  ${appName} could not close all connections in time; forcefully shutting down.`.red)
+        logger.error(`${appName} could not close all connections in time; forcefully shutting down.`.red)
         process.exit(1)
       }, app.get('params').shutdownTimeout)
     }
