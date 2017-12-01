@@ -8,7 +8,7 @@
   "appDir": {
     "name": "appDir",
     "optional": true,
-    "value": ""
+    "value": null
   },
 
   "localhostOnly": {
@@ -304,8 +304,11 @@
         "parent": "cssCompiler",
         "optional": true,
         "value": {
-          "advanced": true,
-          "aggressiveMerging": true
+          "cleanCSS": {
+            "advanced": true,
+            "aggressiveMerging": true
+          },
+          "sourceMap": null
         }
       }
     }
