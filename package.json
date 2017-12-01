@@ -33,7 +33,7 @@
     "vnu-jar": "~17.11.0"
   },
   "devDependencies": {
-    "lint-staged": "^5.0.0",
+    "lint-staged": "^6.0.0",
     "husky": "^0.14.2",
     "standard": "^10.0.0"
   },
