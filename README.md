@@ -250,7 +250,7 @@ App behavior parameters
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: *[Boolean]* `true`.
 - `suppressLogs`: Accepts an object containing two related parameters:
-  - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console. 
+  - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - Default: *[Object]*
 
@@ -285,7 +285,7 @@ App behavior parameters
   - `port`: *[Number]* Port to spawn the validator process on.
   - `separateProcess`: *[Boolean]* When set to true, the HTML validator will run detached (separate from the node process) by default. You can kill the process by running `npm run kill-validator`.
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
-  - Default: *[Object]* 
+  - Default: *[Object]*
 
 
 ```json
@@ -312,7 +312,7 @@ App behavior parameters
 - `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
   - Default: *[Number]* `30000` (30 seconds).
 - `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
-  - Default: *[Object]* 
+  - Default: *[Object]*
 
 
 ```json
@@ -360,12 +360,12 @@ MVC parameters
   - Default: *[String]* `"mvc/models"`.
 - `viewsPath`: Relative path on filesystem to where your view files are located.
   - Default: *[String]* `"mvc/views"`.
-- `viewEngine`: What templating engine to use, formatted as `"fileExtension: nodeModule"`. 
+- `viewEngine`: What templating engine to use, formatted as `"fileExtension: nodeModule"`.
   - Default: *[String]* `"html: teddy"`.
   - Also by default the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
   - Set to `"none"` *[String]* to use no templating engine.
-  - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default. 
-  - Example configuration using multiple templating systems: *[Object]* 
+  - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
+  - Example configuration using multiple templating systems: *[Object]*
 
 
 ```json
@@ -404,7 +404,7 @@ Statics parameters
 - `htmlMinify`: Params to send to [express-minify-html](https://github.com/melonmanchan/express-minify-html), an Express middleware for [html-minifier](https://github.com/kangax/html-minifier):
   - Set `override` *[Boolean]* to false to disable minification entirely.
   - For other usage, see [express-minify-html usage](https://github.com/melonmanchan/express-minify-html#usage).
-  - Default: *[Object]* 
+  - Default: *[Object]*
 
 
 ```json
@@ -423,7 +423,7 @@ Statics parameters
   - Your chosen Roosevelt CSS preprocessor module must be marked as a dependency in your app's `package.json`.
   - Set to `"none"` *[String]* to use no CSS preprocessor.
   - The default preprocessor is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
-  - Default configuration: *[Object]* 
+  - Default configuration: *[Object]*
 
 
 ```json
@@ -459,12 +459,12 @@ Browserify bundle example declaring one bundle:
   {
     "outputFile": "bundle.js",
     "files": [
-      "landingPage.js", 
-      "main.js", 
+      "landingPage.js",
+      "main.js",
       "etc.js"
-    ], 
+    ],
     "params": {
-      "someOpt": 
+      "someOpt":
       "someValue"
     }
   }
@@ -476,13 +476,13 @@ Browserify bundle example declaring one bundle only used in `dev` mode:
 ```json
 [
   {
-    "outputFile": "bundle.js", 
-    "env": "dev", 
+    "outputFile": "bundle.js",
+    "env": "dev",
     "files": [
-      "landingPage.js", 
-      "main.js", 
+      "landingPage.js",
+      "main.js",
       "etc.js"
-    ], 
+    ],
     "params": {
       "someOpt": "someValue"
     }
@@ -495,24 +495,24 @@ Browserify bundle example declaring multiple bundles:
 ```json
 [
   {
-    "outputFile": "bundle1.js", 
+    "outputFile": "bundle1.js",
     "files": [
-      "landingPage.js", 
-      "main.js", 
+      "landingPage.js",
+      "main.js",
       "etc.js"
-    ], 
+    ],
     "params": {
       "someOpt": "someValue"
     }
-  }, 
+  },
   {
-    "outputFile": "bundle2.js", 
+    "outputFile": "bundle2.js",
     "files": [
-      "somethingElse.js", 
-      "anotherThing.js", 
+      "somethingElse.js",
+      "anotherThing.js",
       "etc.js"
     ]
-  }, 
+  },
   etc...
 ]
 ```
@@ -521,19 +521,19 @@ Browserify bundle example declaring multiple bundles:
   - Default: *[String]* `".bundled"`.
 - `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
   - Default: *[Boolean]* `true`.
-- `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use. 
-  - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`. 
-  - Set to `"none"` *[String]* to use no JS minifier. 
+- `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use.
+  - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`.
+  - Set to `"none"` *[String]* to use no JS minifier.
   - `showWarnings` param: *[Boolean]* Set to true to display compiler module warnings.
   - The default minifier is [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-uglify usage](https://github.com/rooseveltframework/roosevelt-uglify#usage) for details on what params are available.
     - The Roosevelt team also maintains [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure), an alternative to roosevelt-uglify.
-  - Default configuration: *[Object]* 
+  - Default configuration: *[Object]*
 
 
 ```json
 {
   "nodeModule": "roosevelt-uglify",
-  "showWarnings": false, 
+  "showWarnings": false,
   "params": {}
 }
 ```
@@ -561,7 +561,7 @@ Public folder parameters
 
 ```json
 [
-  "css: .build/css", 
+  "css: .build/css",
   "images",
   "js: .build/js"
 ]
@@ -571,7 +571,7 @@ Public folder parameters
   - Default: *[Boolean]* `false`.
 - `versionedCssFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`.
   - Default: `undefined`.
-  - Example usage (with roosevelt-less): *[Object]* 
+  - Example usage (with roosevelt-less): *[Object]*
 
 
 ```json

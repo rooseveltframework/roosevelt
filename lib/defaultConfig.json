@@ -1,50 +1,437 @@
 {
-  "port": 43711,
-  "localhostOnly": true,
-  "noMinify": false,
-  "enableValidator": false,
-  "htmlValidator": {"port": 8888, "separateProcess": false, "format": "text", "suppressWarnings": false},
-  "validatorExceptions": {"requestHeader": "Partial", "modelValue": "_disableValidator"},
-  "multipart": {"multiples": true},
-  "maxLagPerRequest": 70,
-  "shutdownTimeout": 30000,
-  "bodyParserUrlencodedParams": {"extended": true},
-  "bodyParserJsonParams": {},
-  "suppressLogs": {"httpLogs": false, "rooseveltLogs": false},
-  "https": false,
-  "httpsOnly": false,
-  "httpsPort": 43733,
-  "pfx": false,
-  "keyPath": null,
-  "passphrase": null,
-  "ca": null,
-  "cafile": true,
-  "requestCert": false,
-  "rejectUnauthorized": false,
-  "modelsPath": "mvc/models",
-  "viewsPath": "mvc/views",
-  "viewEngine": "html: teddy",
-  "controllersPath": "mvc/controllers",
-  "error404": "404.js",
-  "error5xx": "5xx.js",
-  "error503": "503.js",
-  "staticsRoot": "statics",
-  "htmlMinify": {"override": true, "exception_url": false, "htmlMinifier": {"rooseveltNoRecurse": true, "html5": true}},
-  "cssPath": "css",
-  "cssCompiler": {"nodeModule": "roosevelt-less", "params": {"rooseveltNoRecurse": true, "compress": true}},
-  "cssCompiledOutput": ".build/css",
-  "cssCompilerWhitelist": null,
-  "jsPath": "js",
-  "bundledJsPath": ".bundled",
-  "exposeBundles": true,
-  "browserifyBundles": [],
-  "jsCompiler": {"nodeModule": "roosevelt-uglify", "showWarnings": false, "params": {"rooseveltNoRecurse": true}},
-  "jsCompiledOutput": ".build/js",
-  "jsCompilerWhitelist": null,
-  "publicFolder": "public",
-  "favicon": "images/favicon.ico",
-  "symlinksToStatics": ["css: .build/css", "images", "js: .build/js"],
-  "versionedStatics": false,
-  "versionedCssFile": null,
-  "alwaysHostPublic": false
+  "port": {
+    "name": "port",
+    "optional": false,
+    "value": 43711
+  },
+
+  "appDir": {
+    "name": "appDir",
+    "optional": true,
+    "value": null
+  },
+
+  "localhostOnly": {
+    "name": "localhostOnly",
+    "optional": false,
+    "value": true
+  },
+
+  "suppressLogs": {
+    "name": "suppressLogs",
+    "optional": false,
+    "value": {
+      "httpLogs": {
+        "name": "httpLogs",
+        "parent": "suppressLogs",
+        "optional": false,
+        "value": false
+      },
+      "rooseveltLogs": {
+        "name": "rooseveltLogs",
+        "parent": "suppressLogs",
+        "optional": false,
+        "value": false
+      }
+    }
+  },
+
+  "noMinify": {
+    "name": "noMinify",
+    "optional": false,
+    "value": false
+  },
+
+  "enableValidator": {
+    "name": "enableValidator",
+    "optional": false,
+    "value": false
+  },
+
+  "validatorExceptions": {
+    "name": "validatorExceptions",
+    "optional": false,
+    "value": {
+      "requestHeader": {
+        "name": "requestHeader",
+        "parent": "validatorExceptions",
+        "optional": false,
+        "value": "Partial"
+      },
+      "modelValue": {
+        "name": "modelValue",
+        "parent": "validatorExceptions",
+        "optional": false,
+        "value": "_disableValidator"
+      }
+    }
+  },
+
+  "htmlValidator": {
+    "name": "htmlValidator",
+    "optional": false,
+    "value": {
+      "port": {
+        "name": "port",
+        "parent": "htmlValidator",
+        "optional": false,
+        "value": 8888
+      },
+
+      "separateProcess": {
+        "name": "separateProcess",
+        "parent": "htmlValidator",
+        "optional": false,
+        "value": false
+      },
+
+      "format": {
+        "name": "format",
+        "parent": "htmlValidator",
+        "optional": false,
+        "value": "text"
+      },
+
+      "suppressWarnings": {
+        "name": "suppressWarnings",
+        "parent": "htmlValidator",
+        "optional": false,
+        "value": false
+      }
+    }
+  },
+
+  "multipart": {
+    "name": "multipart",
+    "optional": false,
+    "value": {
+      "multiples": {
+        "name": "multiples",
+        "parent": "multipart",
+        "optional": false,
+        "value": true
+      }
+    }
+  },
+
+  "maxLagPerRequest": {
+    "name": "maxLagPerRequest",
+    "optional": false,
+    "value": 70
+  },
+
+  "shutdownTimeout": {
+    "name": "shutdownTimeout",
+    "optional": false,
+    "value": 30000
+  },
+
+  "bodyParserUrlencodedParams": {
+    "name": "bodyParserUrlencodedParams",
+    "optional": false,
+    "value": {
+      "extended": {
+        "name": "extended",
+        "parent": "bodyParserUrlencodedParams",
+        "optional": false,
+        "value": true
+      }
+    }
+  },
+
+  "bodyParserJsonParams": {
+    "name": "bodyParserJsonParams",
+    "optional": false,
+    "value": {}
+  },
+
+  "https": {
+    "name": "https",
+    "optional": false,
+    "value": false
+  },
+
+  "httpsOnly": {
+    "name": "httpsOnly",
+    "optional": false,
+    "value": false
+  },
+
+  "httpsPort": {
+    "name": "httpsPort",
+    "optional": false,
+    "value": 43711
+  },
+
+  "pfx": {
+    "name": "pfx",
+    "optional": false,
+    "value": false
+  },
+
+  "keyPath": {
+    "name": "keyPath",
+    "optional": false,
+    "value": null
+  },
+
+  "passphrase": {
+    "name": "passphrase",
+    "optional": false,
+    "value": null
+  },
+
+  "ca": {
+    "name": "ca",
+    "optional": false,
+    "value": null
+  },
+
+  "cafile": {
+    "name": "cafile",
+    "optional": false,
+    "value": true
+  },
+
+  "requestCert": {
+    "name": "requestCert",
+    "optional": false,
+    "value": false
+  },
+
+  "rejectUnauthorized": {
+    "name": "rejectUnauthorized",
+    "optional": false,
+    "value": false
+  },
+
+  "modelsPath": {
+    "name": "modelsPath",
+    "optional": false,
+    "value": "mvc/models"
+  },
+
+  "viewsPath": {
+    "name": "viewsPath",
+    "optional": false,
+    "value": "mvc/views"
+  },
+
+  "viewEngine": {
+    "name": "viewEngine",
+    "optional": false,
+    "value": "html: teddy"
+  },
+
+  "controllersPath": {
+    "name": "controllersPath",
+    "optional": false,
+    "value": "mvc/controllers"
+  },
+
+  "error404": {
+    "name": "error404",
+    "optional": false,
+    "value": "404.js"
+  },
+
+  "error5xx": {
+    "name": "error5xx",
+    "optional": false,
+    "value": "5xx.js"
+  },
+
+  "error503": {
+    "name": "error503",
+    "optional": false,
+    "value": "503.js"
+  },
+
+  "staticsRoot": {
+    "name": "staticsRoot",
+    "optional": false,
+    "value": "statics"
+  },
+
+  "htmlMinify": {
+    "name": "htmlMinify",
+    "optional": false,
+    "value": {
+      "override": {
+        "name": "override",
+        "parent": "htmlMinify",
+        "optional": false,
+        "value": true
+      },
+
+      "exception_url": {
+        "name": "exception_url",
+        "parent": "htmlMinify",
+        "optional": false,
+        "value": false
+      },
+
+      "htmlMinifier": {
+        "name": "htmlMinifier",
+        "parent": "htmlMinify",
+        "optional": true,
+        "value": {
+          "html5": true
+        }
+      }
+    }
+  },
+
+  "cssPath": {
+    "name": "cssPath",
+    "optional": false,
+    "value": "css"
+  },
+
+  "cssCompiler": {
+    "name": "cssCompiler",
+    "optional": false,
+    "value": {
+      "nodeModule": {
+        "name": "nodeModule",
+        "parent": "cssCompiler",
+        "optional": false,
+        "value": "roosevelt-less"
+      },
+
+      "params": {
+        "name": "params",
+        "parent": "cssCompiler",
+        "optional": true,
+        "value": {
+          "cleanCSS": {
+            "advanced": true,
+            "aggressiveMerging": true
+          },
+          "sourceMap": null
+        }
+      }
+    }
+  },
+
+  "cssCompilerWhitelist": {
+    "name": "cssCompilerWhitelist",
+    "optional": false,
+    "value": null
+  },
+
+  "cssCompiledOutput": {
+    "name": "cssCompiledOutput",
+    "optional": false,
+    "value": ".build/css"
+  },
+
+  "jsPath": {
+    "name": "jsPath",
+    "optional": false,
+    "value": "js"
+  },
+
+  "browserifyBundles": {
+    "name": "browserifyBundles",
+    "optional": false,
+    "value": []
+  },
+
+  "bundledJsPath": {
+    "name": "bundledJsPath",
+    "optional": false,
+    "value": ".bundled"
+  },
+
+  "exposeBundles": {
+    "name": "exposeBundles",
+    "optional": false,
+    "value": true
+  },
+
+  "jsCompiler": {
+    "name": "jsCompiler",
+    "optional": false,
+    "value": {
+      "nodeModule": {
+        "name": "nodeModule",
+        "parent": "jsCompiler",
+        "optional": false,
+        "value": "roosevelt-uglify"
+      },
+
+      "showWarnings": {
+        "name": "showWarnings",
+        "parent": "jsCompiler",
+        "optional": true,
+        "value": false
+      },
+
+      "params": {
+        "name": "params",
+        "parent": "jsCompiler",
+        "optional": true,
+        "value": {}
+      }
+    }
+  },
+
+  "jsCompilerWhitelist": {
+    "name": "jsCompilerWhitelist",
+    "optional": false,
+    "value": null
+  },
+
+  "jsCompiledOutput": {
+    "name": "jsCompiledOutput",
+    "optional": false,
+    "value": ".build/js"
+  },
+
+  "nodeEnv": {
+    "name": "nodeEnv",
+    "optional": true,
+    "value": null
+  },
+
+  "publicFolder": {
+    "name": "publicFolder",
+    "optional": false,
+    "value": "public"
+  },
+
+  "favicon": {
+    "name": "favicon",
+    "optional": false,
+    "value": "images/favicon.ico"
+  },
+
+  "symlinksToStatics": {
+    "name": "symlinksToStatics",
+    "optional": false,
+    "value": [
+      "css: .build/css",
+      "images",
+      "js: .build/js"
+    ]
+  },
+
+  "versionedStatics": {
+    "name": "versionedStatics",
+    "optional": false,
+    "value": false
+  },
+
+  "versionedCssFile": {
+    "name": "versionedCssFile",
+    "optional": false,
+    "value": null
+  },
+
+  "alwaysHostPublic": {
+    "name": "alwaysHostPublic",
+    "optional": false,
+    "value": false
+  }
 }
