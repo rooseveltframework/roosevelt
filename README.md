@@ -423,6 +423,7 @@ Statics parameters
   - Your chosen Roosevelt CSS preprocessor module must be marked as a dependency in your app's `package.json`.
   - Set to `"none"` *[String]* to use no CSS preprocessor.
   - The default preprocessor is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
+    - The Roosevelt team also maintains [roosevelt-sass](https://github.com/rooseveltframework/roosevelt-sass), an alternative to roosevelt-less.
   - Default configuration: *[Object]*
 
 
