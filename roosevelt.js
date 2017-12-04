@@ -230,7 +230,7 @@ module.exports = function (params) {
     let lock = {}
     let startupCallback = function (proto, port) {
       return function () {
-        logger.log('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold)
+        logger.log('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
         if (!Object.isFrozen(lock)) {
           Object.freeze(lock)
               // fire user-defined onServerStart event
