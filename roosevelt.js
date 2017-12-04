@@ -53,7 +53,7 @@ module.exports = function (params) {
   appName = app.get('appName')
   appEnv = app.get('env')
 
-  logger.log(`💭 Starting ${appName} in ${appEnv} mode...`.bold)
+  logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
   // let's try setting up the servers with user-supplied params
   if (!app.get('params').httpsOnly) {
@@ -202,12 +202,12 @@ module.exports = function (params) {
     function gracefulShutdown () {
       let key
       function exitLog () {
-        logger.log('✔️ ', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
+        logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
         process.exit()
       }
 
       app.set('roosevelt:state', 'disconnecting')
-      logger.log(`\n💭 ${appName} received kill signal, attempting to shut down gracefully.`.magenta)
+      logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
       servers[0].close(function () {
         if (servers.length > 1) {
           servers[1].close(exitLog)
@@ -230,7 +230,7 @@ module.exports = function (params) {
     let lock = {}
     let startupCallback = function (proto, port) {
       return function () {
-        logger.log(`🎧 ${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold)
+        logger.log('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode)`.bold)
         if (!Object.isFrozen(lock)) {
           Object.freeze(lock)
               // fire user-defined onServerStart event
@@ -246,7 +246,7 @@ module.exports = function (params) {
         cluster.fork()
       }
       cluster.on('exit', function (worker, code, signal) {
-        logger.log(`⚰️ ${appName} thread ${worker.process.pid} died`.magenta)
+        logger.log('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
       })
     } else {
       if (!app.get('params').httpsOnly) {
