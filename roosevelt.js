@@ -7,6 +7,7 @@ const cluster = require('cluster')
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
+const fileExists = require('./lib/fileExists')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -41,6 +42,7 @@ module.exports = function (params) {
   let i
   let connections = {}
   let initialized = false
+  let faviconPath
 
   // expose initial vars
   app.set('express', express)
@@ -111,8 +113,11 @@ module.exports = function (params) {
   app.use(require('cookie-parser')())
 
   // enable favicon support
-  if (app.get('params').favicon !== 'none') {
-    app.use(require('serve-favicon')(path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)))
+  if (app.get('params').favicon !== ('none' || null)) {
+    faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
+    if (fileExists(faviconPath)) {
+      app.use(require('serve-favicon')(faviconPath))
+    }
   }
 
   // bind user-defined middleware which fires at the beginning of each request if supplied
