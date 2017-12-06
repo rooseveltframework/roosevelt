@@ -239,6 +239,7 @@ App behavior parameters
 - `appDir`: Project root. Can be useful to change in testing environments like [Mocha](http://mochajs.org) or if you just want to specify it by hand.
   -  Default: *[String]* The directory where your project `package.json` is located.
   -  Example customization:
+
       ```json
       {
         "appDir": "/some/other/path"
@@ -251,6 +252,7 @@ App behavior parameters
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - Default: *[Object]*
+
       ```json
       {
         "httpLogs": false,
@@ -267,12 +269,13 @@ App behavior parameters
   - You can also force the validator on in `prod` mode regardless of app settings with `npm run dev enable-validator`.
 - `validatorExceptions`: Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - Default: *[Object]*
-    ```json
-    {
-      "requestHeader": "Partial",
-      "modelValue": "_disableValidator"
-    }
-    ```
+
+      ```json
+      {
+        "requestHeader": "Partial",
+        "modelValue": "_disableValidator"
+      }
+      ```
 
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) if the validator is enabled:
   - `format`: *[String]* This is the formatting of the returned data. It [supports](https://github.com/zrrrzzt/html-validator#usage) JSON (default), HTML, XHTML, XML, GNU and text.
@@ -280,14 +283,15 @@ App behavior parameters
   - `separateProcess`: *[Boolean]* When set to true, the HTML validator will run detached (separate from the node process) by default. You can kill the process by running `npm run kill-validator`.
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
   - Default: *[Object]*
-    ```json
-    {
-      "format": "text",
-      "port": 8888,
-      "separateProcess": false,
-      "suppressWarnings": false
-    }
-    ```
+
+      ```json
+      {
+        "format": "text",
+        "port": 8888,
+        "separateProcess": false,
+        "suppressWarnings": false
+      }
+      ```
 
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
   - Default: *[Boolean]*
@@ -303,11 +307,12 @@ App behavior parameters
   - Default: *[Number]* `30000` (30 seconds).
 - `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
   - Default: *[Object]*
-    ```json
-    {
-      "extended": true
-    }
-    ```
+
+      ```json
+      {
+        "extended": true
+      }
+      ```
 
 - `bodyParserJsonParams`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: *[Object]* `{}`.
@@ -354,16 +359,17 @@ MVC parameters
   - Set to `"none"` *[String]* to use no templating engine.
   - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
   - Example configuration using multiple templating systems: *[Object]*
-    ```json
-    {
-      "viewEngine": [
-        "html: teddy",
-        "mustache: mustache",
-        "handlebars: handlebars",
-        "ejs: ejs"
-      ]
-    }
-    ```
+
+      ```json
+      {
+        "viewEngine": [
+          "html: teddy",
+          "mustache: mustache",
+          "handlebars: handlebars",
+          "ejs: ejs"
+        ]
+      }
+      ```
 
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: *[String]* `"mvc/controllers"`.
@@ -391,6 +397,7 @@ Statics parameters
   - Set `override` *[Boolean]* to false to disable minification entirely.
   - For other usage, see [express-minify-html usage](https://github.com/melonmanchan/express-minify-html#usage).
   - Default: *[Object]*
+
       ```json
       {
         "override": true,
@@ -408,6 +415,7 @@ Statics parameters
   - Set to `"none"` *[String]* to use no CSS preprocessor.
   - The default preprocessor is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
   - Default configuration: *[Object]*
+
       ```json
       {
         "nodeModule": "roosevelt-less",
@@ -435,26 +443,26 @@ Statics parameters
   - Examples: *[Array]* of *[Objects]*
 
 
-     - Browserify bundle example declaring one bundle:
+      - Browserify bundle example declaring one bundle:
 
-        ```json
-        [
-          {
-            "outputFile": "bundle.js",
-            "files": [
-              "landingPage.js",
-              "main.js",
-              "etc.js"
-            ],
-            "params": {
-              "someOpt":
-              "someValue"
+          ```json
+          [
+            {
+              "outputFile": "bundle.js",
+              "files": [
+                "landingPage.js",
+                "main.js",
+                "etc.js"
+              ],
+              "params": {
+                "someOpt":
+                "someValue"
+              }
             }
-          }
-        ]
-        ```
+          ]
+          ```
 
-     - Browserify bundle example declaring one bundle only used in `dev` mode:
+      - Browserify bundle example declaring one bundle only used in `dev` mode:
 
           ```json
           [
@@ -498,26 +506,27 @@ Statics parameters
             },
             etc...
           ]
-    -
-        ```
-        - `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
-          - Default: *[String]* `".bundled"`.
-        - `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
-          - Default: *[Boolean]* `true`.
-        - `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use.
-          - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`.
-          - Set to `"none"` *[String]* to use no JS minifier.
-          - `showWarnings` param: *[Boolean]* Set to true to display compiler module warnings.
-          - The default minifier is [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-uglify usage](https://github.com/rooseveltframework/roosevelt-uglify#usage) for details on what params are available.
-            - The Roosevelt team also maintains [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure), an alternative to roosevelt-uglify.
-          - Default configuration: *[Object]*
-              ```json
-              {
-                "nodeModule": "roosevelt-uglify",
-                "showWarnings": false,
-                "params": {}
-              }
-        ```
+          ```
+
+- `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
+  - Default: *[String]* `".bundled"`.
+- `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
+  - Default: *[Boolean]* `true`.
+- `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use.
+  - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`.
+  - Set to `"none"` *[String]* to use no JS minifier.
+  - `showWarnings` param: *[Boolean]* Set to true to display compiler module warnings.
+  - The default minifier is [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-uglify usage](https://github.com/rooseveltframework/roosevelt-uglify#usage) for details on what params are available.
+    - The Roosevelt team also maintains [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure), an alternative to roosevelt-uglify.
+  - Default configuration: *[Object]*
+
+      ```json
+      {
+        "nodeModule": "roosevelt-uglify",
+        "showWarnings": false,
+        "params": {}
+      }
+      ```
 
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null` (compiles all JS files, if a JS minifier is enabled).
