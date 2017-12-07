@@ -8,11 +8,11 @@
     "priority": "error"
   },
   "prod": {
-    "value":"./node_modules/.bin/supervisor -k -e js,json,less,html -i statics/.build/,.git/,public/,node_modules/,jsdoc/ -- app.js -prod",
+    "value": "nodemon app.js -prod",
     "priority": "error"
   },
   "dev": {
-    "value": "./node_modules/.bin/supervisor -k -e js,json,less,html -i statics/.build/,.git/,public/,node_modules/,jsdoc/ -- app.js -dev",
+    "value": "nodemon app.js -dev",
     "priority": "error"
   },
   "cleanup": {
