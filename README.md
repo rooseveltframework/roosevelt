@@ -240,12 +240,11 @@ App behavior parameters
   -  Default: *[String]* The directory where your project `package.json` is located.
   -  Example customization:
 
-
-````json
-{
-  "appDir": "/some/other/path"
-}
-````
+      ```json
+      {
+        "appDir": "/some/other/path"
+      }
+      ```
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: *[Boolean]* `true`.
@@ -254,13 +253,12 @@ App behavior parameters
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - Default: *[Object]*
 
-
- ```json
-{
-  "httpLogs": false,
-  "rooseveltLogs": false
-}
- ```
+      ```json
+      {
+        "httpLogs": false,
+        "rooseveltLogs": false
+      }
+      ```
 
 - `noMinify`: Disables HTML minification as well as the minification step in supporting CSS and JS compilers. Automatically enabled during development mode. Can also be passed as the command line argument `-no-minify` in production mode.
   - Default: *[Boolean]* `false`.
@@ -272,13 +270,12 @@ App behavior parameters
 - `validatorExceptions`: Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - Default: *[Object]*
 
-
-```json
-{
-  "requestHeader": "Partial",
-  "modelValue": "_disableValidator"
-}
-```
+      ```json
+      {
+        "requestHeader": "Partial",
+        "modelValue": "_disableValidator"
+      }
+      ```
 
 - `htmlValidator`: Params to send to [html-validator](https://github.com/zrrrzzt/html-validator#usage) if the validator is enabled:
   - `format`: *[String]* This is the formatting of the returned data. It [supports](https://github.com/zrrrzzt/html-validator#usage) JSON (default), HTML, XHTML, XML, GNU and text.
@@ -287,25 +284,22 @@ App behavior parameters
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
   - Default: *[Object]*
 
-
-```json
-{
-  "format": "text",
-  "port": 8888,
-  "separateProcess": false,
-  "suppressWarnings": false
-}
-```
+      ```json
+      {
+        "format": "text",
+        "port": 8888,
+        "separateProcess": false,
+        "suppressWarnings": false
+      }
+      ```
 
 - `multipart`: Settings to pass along to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the `uploadDir` when the request ends automatically. To keep any, be sure to move them before the request ends. To disable multipart forms entirely, set this option to false.
   - Default: *[Boolean]*
-
-
-```json
-{
-  "multiples": true
-}
-```
+    ```json
+    {
+      "multiples": true
+    }
+    ```
 
 - `maxLagPerRequest`: Maximum amount of time in miliseconds a given request is allowed to take before being interrupted with a 503 error. (See [node-toobusy](https://github.com/STRML/node-toobusy).)
   - Default: *[Number]* `70` (70ms).
@@ -314,12 +308,11 @@ App behavior parameters
 - `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
   - Default: *[Object]*
 
-
-```json
-{
-  "extended": true
-}
-```
+      ```json
+      {
+        "extended": true
+      }
+      ```
 
 - `bodyParserJsonParams`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: *[Object]* `{}`.
@@ -367,17 +360,16 @@ MVC parameters
   - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
   - Example configuration using multiple templating systems: *[Object]*
 
-
-```json
-{
-  "viewEngine": [
-    "html: teddy",
-    "mustache: mustache",
-    "handlebars: handlebars",
-    "ejs: ejs"
-  ]
-}
-```
+      ```json
+      {
+        "viewEngine": [
+          "html: teddy",
+          "mustache: mustache",
+          "handlebars: handlebars",
+          "ejs: ejs"
+        ]
+      }
+      ```
 
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
   - Default: *[String]* `"mvc/controllers"`.
@@ -406,16 +398,15 @@ Statics parameters
   - For other usage, see [express-minify-html usage](https://github.com/melonmanchan/express-minify-html#usage).
   - Default: *[Object]*
 
-
-```json
-{
-  "override": true,
-  "exception_url": false,
-  "htmlMinifier": {
-    "html5": true
-  }
-}
-```
+      ```json
+      {
+        "override": true,
+        "exception_url": false,
+        "htmlMinifier": {
+          "html5": true
+        }
+      }
+      ```
 
 - `cssPath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored elsewhere when the app is started.
   - Default: *[String]* `"css"`.
@@ -423,21 +414,20 @@ Statics parameters
   - Your chosen Roosevelt CSS preprocessor module must be marked as a dependency in your app's `package.json`.
   - Set to `"none"` *[String]* to use no CSS preprocessor.
   - The default preprocessor is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
-    - The Roosevelt team also maintains [roosevelt-sass](https://github.com/rooseveltframework/roosevelt-sass), an alternative to roosevelt-less.
   - Default configuration: *[Object]*
 
-
-```json
-{
-  "nodeModule": "roosevelt-less",
-  "params": {
-    "cleanCSS": {
-      "advanced": true,
-      "aggressiveMerging": true
-    },
-    "sourceMap": null
-  }
-```
+      ```json
+      {
+        "nodeModule": "roosevelt-less",
+        "params": {
+          "cleanCSS": {
+            "advanced": true,
+            "aggressiveMerging": true
+          },
+          "sourceMap": null
+        }
+      }
+      ```
 
 - `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null` (compiles all CSS files, if a CSS preprocessing is enabled).
@@ -453,70 +443,70 @@ Statics parameters
   - Examples: *[Array]* of *[Objects]*
 
 
-Browserify bundle example declaring one bundle:
+      - Browserify bundle example declaring one bundle:
 
-```json
-[
-  {
-    "outputFile": "bundle.js",
-    "files": [
-      "landingPage.js",
-      "main.js",
-      "etc.js"
-    ],
-    "params": {
-      "someOpt":
-      "someValue"
-    }
-  }
-]
-```
+          ```json
+          [
+            {
+              "outputFile": "bundle.js",
+              "files": [
+                "landingPage.js",
+                "main.js",
+                "etc.js"
+              ],
+              "params": {
+                "someOpt":
+                "someValue"
+              }
+            }
+          ]
+          ```
 
-Browserify bundle example declaring one bundle only used in `dev` mode:
+      - Browserify bundle example declaring one bundle only used in `dev` mode:
 
-```json
-[
-  {
-    "outputFile": "bundle.js",
-    "env": "dev",
-    "files": [
-      "landingPage.js",
-      "main.js",
-      "etc.js"
-    ],
-    "params": {
-      "someOpt": "someValue"
-    }
-  }
-]
-```
+          ```json
+          [
+            {
+              "outputFile": "bundle.js",
+              "env": "dev",
+              "files": [
+                "landingPage.js",
+                "main.js",
+                "etc.js"
+              ],
+              "params": {
+                "someOpt": "someValue"
+              }
+            }
+          ]
+          ```
 
-Browserify bundle example declaring multiple bundles:
+      - Browserify bundle example declaring multiple bundles:
 
-```json
-[
-  {
-    "outputFile": "bundle1.js",
-    "files": [
-      "landingPage.js",
-      "main.js",
-      "etc.js"
-    ],
-    "params": {
-      "someOpt": "someValue"
-    }
-  },
-  {
-    "outputFile": "bundle2.js",
-    "files": [
-      "somethingElse.js",
-      "anotherThing.js",
-      "etc.js"
-    ]
-  },
-  etc...
-]
-```
+          ```json
+          [
+            {
+              "outputFile": "bundle1.js",
+              "files": [
+                "landingPage.js",
+                "main.js",
+                "etc.js"
+              ],
+              "params": {
+                "someOpt": "someValue"
+              }
+            },
+            {
+              "outputFile": "bundle2.js",
+              "files": [
+                "somethingElse.js",
+                "anotherThing.js",
+                "etc.js"
+              ]
+            },
+            etc...
+          ]
+          ```
 
 - `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
   - Default: *[String]* `".bundled"`.
@@ -530,14 +520,13 @@ Browserify bundle example declaring multiple bundles:
     - The Roosevelt team also maintains [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure), an alternative to roosevelt-uglify.
   - Default configuration: *[Object]*
 
-
-```json
-{
-  "nodeModule": "roosevelt-uglify",
-  "showWarnings": false,
-  "params": {}
-}
-```
+      ```json
+      {
+        "nodeModule": "roosevelt-uglify",
+        "showWarnings": false,
+        "params": {}
+      }
+      ```
 
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null` (compiles all JS files, if a JS minifier is enabled).
@@ -558,35 +547,31 @@ Public folder parameters
   - Disable favicon support by supplying `"none"` *[String]* to this parameter.
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `"linkName: linkTarget"` (whitespace optional) or simply `"linkName"` if the link target has the same name as the desired link name.
   - Default: *[Array]* of *[Strings]*
-
-
-```json
-[
-  "css: .build/css",
-  "images",
-  "js: .build/js"
-]
-```
+      ```json
+      [
+        "css: .build/css",
+        "images",
+        "js: .build/js"
+      ]
+      ```
 
 - `versionedStatics`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your statics URLs. Versioning your statics is useful for resetting your users' browser cache when you release a new version.
   - Default: *[Boolean]* `false`.
 - `versionedCssFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`.
   - Default: `undefined`.
   - Example usage (with roosevelt-less): *[Object]*
+      ```json
+      {
+        "fileName": "_version.less",
+        "varName": "appVersion"
+      }
+      ```
 
+  - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
 
-```json
-{
-  "fileName": "_version.less",
-  "varName": "appVersion"
-}
-```
-
-Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
-
-```less
-/* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
-```
+      ```less
+      /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
+      ```
 
 - `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
   - Default: *[Boolean]* `false`.
