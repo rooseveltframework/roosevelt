@@ -117,6 +117,8 @@ module.exports = function (params) {
     faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
     if (fileExists(faviconPath)) {
       app.use(require('serve-favicon')(faviconPath))
+    } else {
+      logger.warn(`${app.get('params').favicon} specified in favicon does not exist. Please ensure file is entered properly.`.yellow)
     }
   }
 
