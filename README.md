@@ -356,7 +356,7 @@ MVC parameters
 - `viewEngine`: What templating engine to use, formatted as `"fileExtension: nodeModule"`.
   - Default: *[String]* `"html: teddy"`.
   - Also by default the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
-  - Set to `"none"` *[String]* to use no templating engine.
+  - Set to `"none"` *[String]* or `null` to use no templating engine.
   - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
   - Example configuration using multiple templating systems: *[Object]*
 
@@ -412,7 +412,7 @@ Statics parameters
   - Default: *[String]* `"css"`.
 - `cssCompiler`: Which Roosevelt CSS preprocessor middleware, if any, to use.
   - Your chosen Roosevelt CSS preprocessor module must be marked as a dependency in your app's `package.json`.
-  - Set to `"none"` *[String]* to use no CSS preprocessor.
+  - Set to `"none"` *[String]* or `null` to use no CSS preprocessor.
   - The default preprocessor is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
   - Default configuration: *[Object]*
 
@@ -514,7 +514,7 @@ Statics parameters
   - Default: *[Boolean]* `true`.
 - `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use.
   - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`.
-  - Set to `"none"` *[String]* to use no JS minifier.
+  - Set to `"none"` *[String]* or `null` to use no JS minifier.
   - `showWarnings` param: *[Boolean]* Set to true to display compiler module warnings.
   - The default minifier is [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-uglify usage](https://github.com/rooseveltframework/roosevelt-uglify#usage) for details on what params are available.
     - The Roosevelt team also maintains [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure), an alternative to roosevelt-uglify.
@@ -544,7 +544,7 @@ Public folder parameters
   -  Default: *[String]* `"public"`.
 - `favicon`: Location of your [favicon](https://en.wikipedia.org/wiki/Favicon) file.
   - Default: *[String]* `"images/favicon.ico"`.
-  - Disable favicon support by supplying `"none"` *[String]* to this parameter.
+  - Disable favicon support by supplying `"none"` *[String]* or `null` to this parameter.
 - `symlinksToStatics`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `"linkName: linkTarget"` (whitespace optional) or simply `"linkName"` if the link target has the same name as the desired link name.
   - Default: *[Array]* of *[Strings]*
       ```json

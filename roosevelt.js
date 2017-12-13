@@ -113,7 +113,7 @@ module.exports = function (params) {
   app.use(require('cookie-parser')())
 
   // enable favicon support
-  if (app.get('params').favicon !== ('none' || null)) {
+  if (app.get('params').favicon !== 'none' || app.get('params').favicon !== null) {
     faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
     if (fileExists(faviconPath)) {
       app.use(require('serve-favicon')(faviconPath))
