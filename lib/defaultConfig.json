@@ -145,6 +145,12 @@
     "value": {}
   },
 
+  "generateFolderStructure": {
+    "name": "generateFolderStructure",
+    "optional": false,
+    "value": true
+  },
+
   "https": {
     "name": "https",
     "optional": false,
