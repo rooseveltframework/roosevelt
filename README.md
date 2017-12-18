@@ -573,6 +573,10 @@ Public folder parameters
       /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
       ```
 
+  - Some things to note:
+    - If there is already a file there with that name, this will overwrite it, so be careful!
+    - It's generally a good idea to add this file to `.gitignore`, since it is a build artifact.
+
 - `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
   - Default: *[Boolean]* `false`.
 
