@@ -31,6 +31,7 @@
     "rimraf": "2.6.2",
     "serve-favicon": "~2.4.0",
     "toobusy-js": "~0.5.0",
+    "tamper": "1.0.0",
     "vnu-jar": "~17.11.0"
   },
   "devDependencies": {
