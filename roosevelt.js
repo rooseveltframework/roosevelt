@@ -7,7 +7,7 @@ const cluster = require('cluster')
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
-const fileExists = require('./lib/fileExists')
+const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -50,7 +50,7 @@ module.exports = function (params) {
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
-  logger = require('./lib/logger')(app)
+  logger = require('./lib/tools/logger')(app)
 
   appName = app.get('appName')
   appEnv = app.get('env')
@@ -115,7 +115,7 @@ module.exports = function (params) {
   // enable favicon support
   if (app.get('params').favicon !== 'none' && app.get('params').favicon !== null) {
     faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
-    if (fileExists(faviconPath)) {
+    if (fsr.fileExists(faviconPath)) {
       app.use(require('serve-favicon')(faviconPath))
     } else {
       logger.warn(`Favicon ${app.get('params').favicon} does not exist. Please ensure the "favicon" param is configured correctly.`.yellow)
