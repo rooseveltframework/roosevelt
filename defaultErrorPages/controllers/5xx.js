@@ -12,11 +12,11 @@ module.exports = function (app, err, req, res) {
       </head>
       <body>
         <main>
-          <header role='banner'>
+          <header>
             <h1>${status} Internal Server Error</h1>
           </header>
           <p>The requested URL ${req.url} is temporarily unavailable at this time.</p>
-          <footer role='contentinfo'>
+          <footer>
             <address>${req.headers['x-forwarded-host'] || req.headers.host}</address>
           </footer>
         </main>

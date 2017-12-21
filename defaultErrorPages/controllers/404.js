@@ -12,11 +12,11 @@ module.exports = function (app) {
         </head>
         <body>
           <main>
-            <header role='banner'>
+            <header>
               <h1>Not Found</h1>
             </header>
             <p>The requested URL ${req.url} was not found on this server.</p>
-            <footer role='contentinfo'>
+            <footer>
               <address>${req.headers['x-forwarded-host'] || req.headers.host}</address>
             </footer>
           </main>

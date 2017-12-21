@@ -148,6 +148,7 @@
   "generateFolderStructure": {
     "name": "generateFolderStructure",
     "optional": false,
+    "audit": false,
     "value": true
   },
 
@@ -297,27 +298,7 @@
   "cssCompiler": {
     "name": "cssCompiler",
     "optional": false,
-    "value": {
-      "nodeModule": {
-        "name": "nodeModule",
-        "parent": "cssCompiler",
-        "optional": false,
-        "value": "roosevelt-less"
-      },
-
-      "params": {
-        "name": "params",
-        "parent": "cssCompiler",
-        "optional": true,
-        "value": {
-          "cleanCSS": {
-            "advanced": true,
-            "aggressiveMerging": true
-          },
-          "sourceMap": null
-        }
-      }
-    }
+    "value": "none"
   },
 
   "cssCompilerWhitelist": {
@@ -359,28 +340,7 @@
   "jsCompiler": {
     "name": "jsCompiler",
     "optional": false,
-    "value": {
-      "nodeModule": {
-        "name": "nodeModule",
-        "parent": "jsCompiler",
-        "optional": false,
-        "value": "roosevelt-uglify"
-      },
-
-      "showWarnings": {
-        "name": "showWarnings",
-        "parent": "jsCompiler",
-        "optional": true,
-        "value": false
-      },
-
-      "params": {
-        "name": "params",
-        "parent": "jsCompiler",
-        "optional": true,
-        "value": {}
-      }
-    }
+    "value": "none"
   },
 
   "jsCompilerWhitelist": {
@@ -410,7 +370,7 @@
   "favicon": {
     "name": "favicon",
     "optional": false,
-    "value": "images/favicon.ico"
+    "value": "none"
   },
 
   "symlinksToStatics": {
