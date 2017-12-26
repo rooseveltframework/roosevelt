@@ -13,13 +13,17 @@ module.exports = function (params) {
   params = params || {} // ensure params are an object
 
   // check for command line overrides for NODE_ENV
-  process.argv.forEach(function (val, index, array) {
+  process.argv.forEach((val, index, array) => {
     switch (val) {
+      case '-development-mode':
       case '-dev':
+      case '-d' :
         process.env.NODE_ENV = 'development'
         params.nodeEnv = 'development'
         break
+      case '-production-mode':
       case '-prod':
+      case '-p':
         process.env.NODE_ENV = 'production'
         params.alwaysHostPublic = true // only with -prod flag, not when NODE_ENV is naturally set to production
         params.nodeEnv = 'production'
@@ -186,11 +190,11 @@ module.exports = function (params) {
 
   function startHttpServer () {
     // determine number of CPUs to use
-    process.argv.some(function (val, index, array) {
+    process.argv.some((val, index, array) => {
       let arg = array[index + 1]
       let max = os.cpus().length
 
-      if (val === '-cores') {
+      if (val === '-cores' || val === '-c') {
         if (arg === 'max') {
           numCPUs = max
         } else {

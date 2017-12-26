@@ -146,7 +146,7 @@ Other useful scripts
 Run your app with a detached HTML validator instead of the default attached validator (runs validator as a separate process in the background; process must be manually killed later, see below):
 
 ```
-npm run dev detach-validator
+npm run dev -detach-validator
 ```
 
 After running your app with a detached HTML validator, use this command to shut down the HTML validator:
@@ -157,7 +157,7 @@ npm run kill-validator
 Or if your app is configured to detach the validator by default, you can force the validator to be attached like so:
 
 ```
-npm run dev attach-validator
+npm run dev -attach-validator
 ```
 
 Run your app on two CPUs (default is `max`):
@@ -463,9 +463,9 @@ Statics parameters
             }
           ]
           ```
-
+    
       - Browserify bundle example declaring one bundle only used in `dev` mode:
-
+    
           ```json
           [
             {
@@ -482,9 +482,9 @@ Statics parameters
             }
           ]
           ```
-
+    
       - Browserify bundle example declaring multiple bundles:
-
+    
           ```json
           [
             {
@@ -512,8 +512,10 @@ Statics parameters
 
 - `bundledJsPath`: Subdirectory within `jsPath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces (if you use browserify).
   - Default: *[String]* `".bundled"`.
+
 - `exposeBundles`: Whether or not to copy the `bundledJsPath` directory to your build directory (defined below in `jsCompiledOutput`).
   - Default: *[Boolean]* `true`.
+
 - `jsCompiler`: Which Roosevelt JS minifier middleware, if any, to use.
   - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`.
   - Set to `"none"` *[String]* or `null` to use no JS minifier.
@@ -533,10 +535,20 @@ Statics parameters
 - `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null` (compiles all JS files, if a JS minifier is enabled).
   - Example: *[String]* `library-name/example.js:lib/example.min.js` (compiles `library-name/example.js` into `lib/example.min.js`).
+  - `jsCompilerBlacklist`: Array of JS files to exempt from minification. These files will be copied as is to the build folder. Leave undefined to compile all files.
+  - Default: `null` (compiles all JS files, if a JS minifier is enabled).
+  - Example: *[String]* `example.js`
+
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be symlinked into `public` by default.
   - Default: *[String]* `".build/js"`.
+
 - `nodeEnv`: *[String]* Param to override the `NODE_ENV` environment variable.
   - Default: `undefined`.
+
+- `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. mvc, statics, build).
+
+  - Default *[Boolean]* `true`
+  - Note: When starting a Roosevelt app via the constructor this param will be disabled by default.
 
 
 Public folder parameters

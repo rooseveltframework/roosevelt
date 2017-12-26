@@ -295,6 +295,12 @@
     "value": null
   },
 
+  "jsCompilerBlacklist": {
+    "name": "jsCompilerBlacklist",
+    "optional": false,
+    "value": null
+  },
+
   "jsCompiledOutput": {
     "name": "jsCompiledOutput",
     "optional": false,
