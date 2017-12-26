@@ -146,7 +146,7 @@ Other useful scripts
 Run your app with a detached HTML validator instead of the default attached validator (runs validator as a separate process in the background; process must be manually killed later, see below):
 
 ```
-npm run dev -detach-validator
+npm run dev -- -detach-validator
 ```
 
 After running your app with a detached HTML validator, use this command to shut down the HTML validator:
@@ -157,7 +157,7 @@ npm run kill-validator
 Or if your app is configured to detach the validator by default, you can force the validator to be attached like so:
 
 ```
-npm run dev -attach-validator
+npm run dev -- -attach-validator
 ```
 
 Run your app on two CPUs (default is `max`):
@@ -431,7 +431,7 @@ Statics parameters
       }
       ```
 
-- `cssCompilerWhitelist`: Whitelist of CSS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
+- `cssCompilerWhitelist`: Array of CSS files to whitelist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null` (compiles all CSS files, if a CSS preprocessing is enabled).
   - Example: *[String]* `less/example.less:styles/example.min.css` (compiles `less/example.less` into `styles/example.min.css`).
 - `cssCompiledOutput`: Where to place compiled CSS files. This folder will be symlinked into `public` by default.
@@ -532,10 +532,10 @@ Statics parameters
       }
       ```
 
-- `jsCompilerWhitelist`: Whitelist of JS files to compile as an array. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
+- `jsCompilerWhitelist`: Array of JS files to whitelist for minification. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
   - Default: `null` (compiles all JS files, if a JS minifier is enabled).
   - Example: *[String]* `library-name/example.js:lib/example.min.js` (compiles `library-name/example.js` into `lib/example.min.js`).
-  - `jsCompilerBlacklist`: Array of JS files to exempt from minification. These files will be copied as is to the build folder. Leave undefined to compile all files.
+  - `jsCompilerBlacklist`: Array of JS files to exempt from minification. These files will be copied as-is to the build folder. Leave undefined to compile all files.
   - Default: `null` (compiles all JS files, if a JS minifier is enabled).
   - Example: *[String]* `example.js`
 
@@ -545,8 +545,7 @@ Statics parameters
 - `nodeEnv`: *[String]* Param to override the `NODE_ENV` environment variable.
   - Default: `undefined`.
 
-- `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. mvc, statics, build).
-
+- `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
   - Default *[Boolean]* `true`
   - Note: When starting a Roosevelt app via the constructor this param will be disabled by default.
 
