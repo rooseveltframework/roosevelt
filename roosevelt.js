@@ -12,6 +12,9 @@ const fsr = require('./lib/tools/fsr')()
 module.exports = function (params) {
   params = params || {} // ensure params are an object
 
+  // appDir is either specified by the user or sourced from the parent require
+  params.appDir = params.appDir || path.dirname(module.parent.filename)
+
   // check for command line overrides for NODE_ENV
   process.argv.forEach((val, index, array) => {
     switch (val) {
