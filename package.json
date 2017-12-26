@@ -55,7 +55,7 @@
   "_from": "roosevelt@*",
   "gitHead": "",
   "scripts": {
-    "postinstall": "node ./lib/configAuditor.js",
+    "postinstall": "node ./lib/scripts/configAuditor.js",
     "test": "standard",
     "precommit": "lint-staged"
   },
