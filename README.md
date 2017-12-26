@@ -323,26 +323,28 @@ HTTPS parameters
 ---
 
 - `https`: Run a HTTPS server using Roosevelt.
-  - Default: *[Boolean]* `false`.
-- `httpsOnly`: Disable HTTP server when running a HTTPS server.
-  - Default: *[Boolean]* `false`.
-- `httpsPort`: The port your app will run a HTTPS server on, if HTTPS is enabled. Can also be defined using the `HTTPS_PORT` environment variable.
-  - Default: *[Number]* `43733`.
-- `pfx`: Specify whether or not your app will use pfx or standard certification.
-  - Default: *[Boolean]* `false`.
-- `keyPath`: Stores the file paths of specific key/certificate to be used by the server.
-  - Default: `null`.
-  - When set: *[Object]*  `pfx`, `key`, `cert` -- use one of {`pfx`} or {`key`, `cert`}.
-- `passphrase`: *[String]* Supply the HTTPS server with the password for the certificate being used, if necessary.
-  - Default: `null`.
-- `ca`: *[String]* Certificate authority to match client certificates against, as a file path or array of file paths. Can also be a full certificate string, requiring `cafile` to be `false`.
-  - Default: `null`.
-- `cafile`: Whether or not the entry supplied by `ca` is a file.
-  - Default: *[Boolean]* `true`.
-- `requestCert`: Request a certificate from a client and attempt to verify it.
-  - Default: *[Boolean]* `false`.
-- `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
-  - Default: *[Boolean]* `false`.
+  - Default: *[Object]* `{}`.
+  - `enable`: Enable HTTPS server.
+    - Default: *[Boolean]* `false`.
+  - `httpsOnly`: Disable HTTP server when running a HTTPS server.
+    - Default: *[Boolean]* `false`.
+  - `httpsPort`: The port your app will run a HTTPS server on, if HTTPS is enabled. Can also be defined using the `HTTPS_PORT` environment variable.
+    - Default: *[Number]* `43733`.
+  - `pfx`: Specify whether or not your app will use pfx or standard certification.
+    - Default: *[Boolean]* `false`.
+  - `keyPath`: Stores the file paths of specific key/certificate to be used by the server.
+    - Default: `null`.
+    - When set: *[Object]*  `pfx`, `key`, `cert` -- use one of {`pfx`} or {`key`, `cert`}.
+  - `passphrase`: *[String]* Supply the HTTPS server with the password for the certificate being used, if necessary.
+    - Default: `null`.
+  - `ca`: *[String]* Certificate authority to match client certificates against, as a file path or array of file paths. Can also be a full certificate string, requiring `cafile` to be `false`.
+    - Default: `null`.
+  - `cafile`: Whether or not the entry supplied by `ca` is a file.
+    - Default: *[Boolean]* `true`.
+  - `requestCert`: Request a certificate from a client and attempt to verify it.
+    - Default: *[Boolean]* `false`.
+  - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
+    - Default: *[Boolean]* `false`.
 
 
 

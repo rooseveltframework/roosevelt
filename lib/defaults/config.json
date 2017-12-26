@@ -158,60 +158,6 @@
     "value": false
   },
 
-  "httpsOnly": {
-    "name": "httpsOnly",
-    "optional": false,
-    "value": false
-  },
-
-  "httpsPort": {
-    "name": "httpsPort",
-    "optional": false,
-    "value": 43711
-  },
-
-  "pfx": {
-    "name": "pfx",
-    "optional": false,
-    "value": false
-  },
-
-  "keyPath": {
-    "name": "keyPath",
-    "optional": false,
-    "value": null
-  },
-
-  "passphrase": {
-    "name": "passphrase",
-    "optional": false,
-    "value": null
-  },
-
-  "ca": {
-    "name": "ca",
-    "optional": false,
-    "value": null
-  },
-
-  "cafile": {
-    "name": "cafile",
-    "optional": false,
-    "value": true
-  },
-
-  "requestCert": {
-    "name": "requestCert",
-    "optional": false,
-    "value": false
-  },
-
-  "rejectUnauthorized": {
-    "name": "rejectUnauthorized",
-    "optional": false,
-    "value": false
-  },
-
   "modelsPath": {
     "name": "modelsPath",
     "optional": false,

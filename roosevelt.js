@@ -58,26 +58,26 @@ module.exports = function (params) {
   logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
   // let's try setting up the servers with user-supplied params
-  if (!app.get('params').httpsOnly) {
+  if (!app.get('params').https.httpsOnly) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
   }
 
-  if (app.get('params').https) {
+  if (app.get('params').https.enable) {
     httpsOptions = {
-      requestCert: app.get('params').requestCert,
-      rejectUnauthorized: app.get('params').rejectUnauthorized
+      requestCert: app.get('params').https.requestCert,
+      rejectUnauthorized: app.get('params').https.rejectUnauthorized
     }
-    ca = app.get('params').ca
-    cafile = app.get('params').cafile !== false
+    ca = app.get('params').https.ca
+    cafile = app.get('params').https.cafile !== false
     passphrase = app.get('params').passphrase
 
-    if (app.get('params').keyPath) {
-      if (app.get('params').pfx) {
-        httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx)
+    if (app.get('params').https.keyPath) {
+      if (app.get('params').https.pfx) {
+        httpsOptions.pfx = fs.readFileSync(app.get('params').https.keyPath.pfx)
       } else {
-        httpsOptions.key = fs.readFileSync(app.get('params').keyPath.key)
-        httpsOptions.cert = fs.readFileSync(app.get('params').keyPath.cert)
+        httpsOptions.key = fs.readFileSync(app.get('params').https.keyPath.key)
+        httpsOptions.cert = fs.readFileSync(app.get('params').https.keyPath.cert)
       }
       if (passphrase) {
         httpsOptions.passphrase = passphrase
