@@ -463,9 +463,9 @@ Statics parameters
             }
           ]
           ```
-    
+
       - Browserify bundle example declaring one bundle only used in `dev` mode:
-    
+
           ```json
           [
             {
@@ -482,9 +482,9 @@ Statics parameters
             }
           ]
           ```
-    
+
       - Browserify bundle example declaring multiple bundles:
-    
+
           ```json
           [
             {
