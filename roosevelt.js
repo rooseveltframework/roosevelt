@@ -10,29 +10,21 @@ const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
+  const flags = require('./lib/sourceFlags')() // parse cli args
   params = params || {} // ensure params are an object
 
   // appDir is either specified by the user or sourced from the parent require
   params.appDir = params.appDir || path.dirname(module.parent.filename)
 
   // check for command line overrides for NODE_ENV
-  process.argv.forEach((val, index, array) => {
-    switch (val) {
-      case '-development-mode':
-      case '-dev':
-      case '-d' :
-        process.env.NODE_ENV = 'development'
-        params.nodeEnv = 'development'
-        break
-      case '-production-mode':
-      case '-prod':
-      case '-p':
-        process.env.NODE_ENV = 'production'
-        params.alwaysHostPublic = true // only with -prod flag, not when NODE_ENV is naturally set to production
-        params.nodeEnv = 'production'
-        break
-    }
-  })
+  if (flags.productionMode) {
+    process.env.NODE_ENV = 'production'
+  } else if (flags.developmentMode) {
+    process.env.NODE_ENV = 'development'
+  } else {
+    // default to production mode
+    process.env.NODE_ENV = 'production'
+  }
 
   let app = express() // initialize express
   let logger
@@ -54,6 +46,7 @@ module.exports = function (params) {
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
+  app.set('flags', flags)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
@@ -193,24 +186,18 @@ module.exports = function (params) {
 
   function startHttpServer () {
     // determine number of CPUs to use
-    process.argv.some((val, index, array) => {
-      let arg = array[index + 1]
-      let max = os.cpus().length
+    const max = os.cpus().length
+    let cores = flags.cores
 
-      if (val === '-cores' || val === '-c') {
-        if (arg === 'max') {
-          numCPUs = max
-        } else {
-          arg = parseInt(arg)
-          if (arg <= max && arg > 0) {
-            numCPUs = arg
-          } else {
-            logger.warn(`${appName} warning: invalid value "${array[index + 1]}" supplied to -cores param.`.red)
-            numCPUs = 1
-          }
-        }
+    if (cores) {
+      if (cores === 'max') {
+        numCPUs = max
+      } else if (cores <= max && cores > 0) {
+        numCPUs = cores
+      } else {
+        logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`.yellow)
       }
-    })
+    }
 
     // start server
     function gracefulShutdown () {
