@@ -178,7 +178,7 @@ npm run dev -- -attach-validator
 ```
 - `-a` can also be used.
 
-Configure how many CPUs your app will run on (default is 1).
+Configure how many CPUs your app will run on. Can set to `max` to use all available CPUs. (default is 1).
 
 ```
 npm run dev -- --cores 2
