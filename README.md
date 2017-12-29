@@ -178,7 +178,7 @@ npm run dev -- -attach-validator
 ```
 - `-a` can also be used.
 
-Configure how many CPUs your app will run with. Can set to `max` to use all available CPUs. (Default is 1)
+Configure how many CPUs your app will run on (default is 1).
 
 ```
 npm run dev -- --cores 2
@@ -754,6 +754,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `params`                             | The params you sent to Roosevelt.        |
 | `port`                               | Port Roosevelt is running on.            |
+| `flags`                              | Command line flags sent to Roosevelt.    |
 
 Additionally the Roosevelt constructor returns the following object:
 

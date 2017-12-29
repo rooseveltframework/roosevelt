@@ -184,6 +184,7 @@ module.exports = function (params) {
     }
   }
 
+  // start server
   function startHttpServer () {
     // determine number of CPUs to use
     const max = os.cpus().length
@@ -199,7 +200,6 @@ module.exports = function (params) {
       }
     }
 
-    // start server
     function gracefulShutdown () {
       let key
       function exitLog () {
