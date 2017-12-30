@@ -534,7 +534,7 @@ Statics parameters
   - Example: *[String]* `library-name/example.js:lib/example.min.js` (compiles `library-name/example.js` into `lib/example.min.js`).
   - `jsCompilerBlacklist`: Array of JS files to exempt from minification. These files will be copied as-is to the build folder. Leave undefined to compile all files.
   - Default: `null` (compiles all JS files, if a JS minifier is enabled).
-  - Example: *[String]* `example.js`
+  - Example: *[String]* `example.js`.
 
 - `jsCompiledOutput`: Where to place compiled JS files. This folder will be symlinked into `public` by default.
   - Default: *[String]* `".build/js"`.
@@ -543,8 +543,19 @@ Statics parameters
   - Default: `undefined`.
 
 - `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
-  - Default *[Boolean]* `true`
-  - Note: When starting a Roosevelt app via the constructor this param will be disabled by default.
+  - Default *[Boolean]* `true`.
+    - Note: When `package.json` is not present or `rooseveltConfig` is not present in `package.json`, this param will be disabled by default. This is a defensive measure to minimize the risk of files and folders being created in scenarios when they are not wanted. 
+  - This param is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). For example:
+    - Create a new folder and `cd` into it.
+    - `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
+    - Create `app.js`.
+    - Put this code in `app.js` it:
+      ```javascript
+      require('roosevelt')({
+        'generateFolderStructure': true
+      }).startServer()  
+      ```
+    - `node app.js`. This will create a Roosevelt app with bare minimum viability and start the server.
 
 
 Public folder parameters
