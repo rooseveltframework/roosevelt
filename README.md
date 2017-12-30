@@ -544,7 +544,7 @@ Statics parameters
 
 - `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
   - Default *[Boolean]* `true`.
-    - Note: When `package.json` is not present or `rooseveltConfig` is not present in `package.json`, this param will be disabled by default.
+    - Note: When `package.json` is not present or `rooseveltConfig` is not present in `package.json`, this param will be disabled by default. This is a defensive measure to minimize the risk of files and folders being created in scenarios when they are not wanted. 
   - This param is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). For example:
     - Create a new folder and `cd` into it.
     - `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
