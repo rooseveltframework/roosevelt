@@ -21,7 +21,6 @@ Table of contents
 
 - [Why use Roosevelt](https://github.com/rooseveltframework/roosevelt#why-use-roosevelt)
 - [Create and run a Roosevelt app](https://github.com/rooseveltframework/roosevelt#create-and-run-a-roosevelt-app)
-  - [Platform specific prerequisites](https://github.com/rooseveltframework/roosevelt#platform-specific-prerequisites)
   - [Install Roosevelt and create an app](https://github.com/rooseveltframework/roosevelt#install-roosevelt-and-create-an-app)
   - [Other useful scripts](https://github.com/rooseveltframework/roosevelt#other-useful-scripts)
 - [Default directory structure](https://github.com/rooseveltframework/roosevelt#default-directory-structure)
@@ -64,33 +63,9 @@ Reasons for this include:
 Create and run a Roosevelt app
 ===
 
-First you will need to install [Node.js](http://nodejs.org) and the [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html). (The JDK is required for the local HTML validator feature.)
+First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you install Node.js using [nvm](https://github.com/creationix/nvm) rather than the official installer, as nvm will allow you to switch between multiple versions of Node.js easily. Be warned, if you decline to use nvm or another Node.js version manager, you may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
-Then you might need to install some other stuff depending on what operating system you're running.
-
-
-Platform specific prerequisites
----
-
-Some dependencies require Python or a C++ compiler. The procedure for getting these on your system varies by operating system:
-
-**Windows:**
-
-- Install python 2.7.6 (not 3.x, [that doesn't work](https://code.google.com/p/gyp/issues/detail?id=36)). [Download that here](http://www.python.org/download/releases/2.7.6).
-- Add python to your PATH. [Instructions for that are here](http://stackoverflow.com/questions/6318156/adding-python-path-on-windows-7).
-- Install Visual Studio (payware) or Visual Studio Express for Windows Desktop (registerware): [Download that here](http://www.visualstudio.com/downloads/download-visual-studio-vs).
-- Windows users are advised to run their command line as administrator due to [symlink creation requiring elevated command prompt in Windows](https://github.com/rooseveltframework/roosevelt/issues/120).
-
-**Mac:**
-
-- Install [Xcode](https://developer.apple.com/xcode).
-- If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges.
-
-**Ubuntu:**
-
-- Install build-essential: `sudo apt-get install build-essential`
-- You may also need to `sudo apt-get remove gyp` if you already have gyp installed. Ubuntu's gyp is incompatible with common JS modules.
-- If this is your first time running a Node.js application, be sure to follow npm's instructions for [setting npm permissions correctly](https://docs.npmjs.com/getting-started/fixing-npm-permissions) so you can run npm commands without elevated privileges.
+The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
 
 Once you have a sane developmemt environment, you can proceed with the standard install procedure below.
 
