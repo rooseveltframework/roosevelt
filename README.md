@@ -271,12 +271,14 @@ App behavior parameters
 - `suppressLogs`: Accepts an object containing two related parameters:
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
+  - `rooseveltWarnings`: *[Boolean]* When set to true, Roosevelt will not log app warnings to the console.
   - Default: *[Object]*
 
       ```json
       {
         "httpLogs": false,
-        "rooseveltLogs": false
+        "rooseveltLogs": false,
+        "rooseveltWarnings": false
       }
       ```
 

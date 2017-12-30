@@ -10,7 +10,8 @@ const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
-  const flags = require('./lib/sourceFlags')() // parse cli args
+  const sourceName = path.basename(module.parent.filename) // name of file that required roosevelt
+  const flags = require('./lib/sourceFlags')(sourceName) // parse cli args
   params = params || {} // ensure params are an object
 
   // appDir is either specified by the user or sourced from the parent require
