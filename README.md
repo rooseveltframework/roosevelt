@@ -550,11 +550,11 @@ Statics parameters
     - `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
     - Create `app.js`.
     - Put this code in `app.js` it:
-    ```javascript
-    require('roosevelt')({
-      'generateFolderStructure': true
-    }).startServer()  
-    ```
+      ```javascript
+      require('roosevelt')({
+        'generateFolderStructure': true
+      }).startServer()  
+      ```
     - `node app.js`. This will create a Roosevelt app with bare minimum viability and start the server.
 
 
