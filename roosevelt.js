@@ -7,24 +7,25 @@ const cluster = require('cluster')
 const path = require('path')
 const os = require('os')
 const fs = require('fs')
+const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
+  const sourceName = path.basename(module.parent.filename) // name of file that required roosevelt
+  const flags = require('./lib/sourceFlags')(sourceName) // parse cli args
   params = params || {} // ensure params are an object
 
+  // appDir is either specified by the user or sourced from the parent require
+  params.appDir = params.appDir || path.dirname(module.parent.filename)
+
   // check for command line overrides for NODE_ENV
-  process.argv.forEach(function (val, index, array) {
-    switch (val) {
-      case '-dev':
-        process.env.NODE_ENV = 'development'
-        params.nodeEnv = 'development'
-        break
-      case '-prod':
-        process.env.NODE_ENV = 'production'
-        params.alwaysHostPublic = true // only with -prod flag, not when NODE_ENV is naturally set to production
-        params.nodeEnv = 'production'
-        break
-    }
-  })
+  if (flags.productionMode) {
+    process.env.NODE_ENV = 'production'
+  } else if (flags.developmentMode) {
+    process.env.NODE_ENV = 'development'
+  } else {
+    // default to production mode
+    process.env.NODE_ENV = 'production'
+  }
 
   let app = express() // initialize express
   let logger
@@ -41,14 +42,16 @@ module.exports = function (params) {
   let i
   let connections = {}
   let initialized = false
+  let faviconPath
 
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
+  app.set('flags', flags)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
-  logger = require('./lib/logger')(app)
+  logger = require('./lib/tools/logger')(app)
 
   appName = app.get('appName')
   appEnv = app.get('env')
@@ -56,26 +59,26 @@ module.exports = function (params) {
   logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
   // let's try setting up the servers with user-supplied params
-  if (!app.get('params').httpsOnly) {
+  if (!app.get('params').https.httpsOnly) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
   }
 
-  if (app.get('params').https) {
+  if (app.get('params').https.enable) {
     httpsOptions = {
-      requestCert: app.get('params').requestCert,
-      rejectUnauthorized: app.get('params').rejectUnauthorized
+      requestCert: app.get('params').https.requestCert,
+      rejectUnauthorized: app.get('params').https.rejectUnauthorized
     }
-    ca = app.get('params').ca
-    cafile = app.get('params').cafile !== false
+    ca = app.get('params').https.ca
+    cafile = app.get('params').https.cafile !== false
     passphrase = app.get('params').passphrase
 
-    if (app.get('params').keyPath) {
-      if (app.get('params').pfx) {
-        httpsOptions.pfx = fs.readFileSync(app.get('params').keyPath.pfx)
+    if (app.get('params').https.keyPath) {
+      if (app.get('params').https.pfx) {
+        httpsOptions.pfx = fs.readFileSync(app.get('params').https.keyPath.pfx)
       } else {
-        httpsOptions.key = fs.readFileSync(app.get('params').keyPath.key)
-        httpsOptions.cert = fs.readFileSync(app.get('params').keyPath.cert)
+        httpsOptions.key = fs.readFileSync(app.get('params').https.keyPath.key)
+        httpsOptions.cert = fs.readFileSync(app.get('params').https.keyPath.cert)
       }
       if (passphrase) {
         httpsOptions.passphrase = passphrase
@@ -111,8 +114,13 @@ module.exports = function (params) {
   app.use(require('cookie-parser')())
 
   // enable favicon support
-  if (app.get('params').favicon !== 'none') {
-    app.use(require('serve-favicon')(path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)))
+  if (app.get('params').favicon !== 'none' && app.get('params').favicon !== null) {
+    faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
+    if (fsr.fileExists(faviconPath)) {
+      app.use(require('serve-favicon')(faviconPath))
+    } else {
+      logger.warn(`Favicon ${app.get('params').favicon} does not exist. Please ensure the "favicon" param is configured correctly.`.yellow)
+    }
   }
 
   // bind user-defined middleware which fires at the beginning of each request if supplied
@@ -177,28 +185,22 @@ module.exports = function (params) {
     }
   }
 
+  // start server
   function startHttpServer () {
     // determine number of CPUs to use
-    process.argv.some(function (val, index, array) {
-      let arg = array[index + 1]
-      let max = os.cpus().length
+    const max = os.cpus().length
+    let cores = flags.cores
 
-      if (val === '-cores') {
-        if (arg === 'max') {
-          numCPUs = max
-        } else {
-          arg = parseInt(arg)
-          if (arg <= max && arg > 0) {
-            numCPUs = arg
-          } else {
-            logger.warn(`${appName} warning: invalid value "${array[index + 1]}" supplied to -cores param.`.red)
-            numCPUs = 1
-          }
-        }
+    if (cores) {
+      if (cores === 'max') {
+        numCPUs = max
+      } else if (cores <= max && cores > 0) {
+        numCPUs = cores
+      } else {
+        logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`.yellow)
       }
-    })
+    }
 
-    // start server
     function gracefulShutdown () {
       let key
       function exitLog () {

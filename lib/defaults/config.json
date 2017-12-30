@@ -32,6 +32,12 @@
         "parent": "suppressLogs",
         "optional": false,
         "value": false
+      },
+      "rooseveltWarnings": {
+        "name": "rooseveltWarnings",
+        "parent": "suppressLogs",
+        "optional": false,
+        "value": false
       }
     }
   },
@@ -145,62 +151,15 @@
     "value": {}
   },
 
-  "https": {
-    "name": "https",
+  "generateFolderStructure": {
+    "name": "generateFolderStructure",
     "optional": false,
-    "value": false
-  },
-
-  "httpsOnly": {
-    "name": "httpsOnly",
-    "optional": false,
-    "value": false
-  },
-
-  "httpsPort": {
-    "name": "httpsPort",
-    "optional": false,
-    "value": 43711
-  },
-
-  "pfx": {
-    "name": "pfx",
-    "optional": false,
-    "value": false
-  },
-
-  "keyPath": {
-    "name": "keyPath",
-    "optional": false,
-    "value": null
-  },
-
-  "passphrase": {
-    "name": "passphrase",
-    "optional": false,
-    "value": null
-  },
-
-  "ca": {
-    "name": "ca",
-    "optional": false,
-    "value": null
-  },
-
-  "cafile": {
-    "name": "cafile",
-    "optional": false,
+    "audit": false,
     "value": true
   },
 
-  "requestCert": {
-    "name": "requestCert",
-    "optional": false,
-    "value": false
-  },
-
-  "rejectUnauthorized": {
-    "name": "rejectUnauthorized",
+  "https": {
+    "name": "https",
     "optional": false,
     "value": false
   },
@@ -220,7 +179,7 @@
   "viewEngine": {
     "name": "viewEngine",
     "optional": false,
-    "value": "html: teddy"
+    "value": "none"
   },
 
   "controllersPath": {
@@ -291,27 +250,7 @@
   "cssCompiler": {
     "name": "cssCompiler",
     "optional": false,
-    "value": {
-      "nodeModule": {
-        "name": "nodeModule",
-        "parent": "cssCompiler",
-        "optional": false,
-        "value": "roosevelt-less"
-      },
-
-      "params": {
-        "name": "params",
-        "parent": "cssCompiler",
-        "optional": true,
-        "value": {
-          "cleanCSS": {
-            "advanced": true,
-            "aggressiveMerging": true
-          },
-          "sourceMap": null
-        }
-      }
-    }
+    "value": "none"
   },
 
   "cssCompilerWhitelist": {
@@ -353,32 +292,17 @@
   "jsCompiler": {
     "name": "jsCompiler",
     "optional": false,
-    "value": {
-      "nodeModule": {
-        "name": "nodeModule",
-        "parent": "jsCompiler",
-        "optional": false,
-        "value": "roosevelt-uglify"
-      },
-
-      "showWarnings": {
-        "name": "showWarnings",
-        "parent": "jsCompiler",
-        "optional": true,
-        "value": false
-      },
-
-      "params": {
-        "name": "params",
-        "parent": "jsCompiler",
-        "optional": true,
-        "value": {}
-      }
-    }
+    "value": "none"
   },
 
   "jsCompilerWhitelist": {
     "name": "jsCompilerWhitelist",
+    "optional": false,
+    "value": null
+  },
+
+  "jsCompilerBlacklist": {
+    "name": "jsCompilerBlacklist",
     "optional": false,
     "value": null
   },
@@ -404,7 +328,7 @@
   "favicon": {
     "name": "favicon",
     "optional": false,
-    "value": "images/favicon.ico"
+    "value": "none"
   },
 
   "symlinksToStatics": {
