@@ -36,7 +36,7 @@
     "value": "npm run kill-validator",
     "priority": "ignore"
   },
-  "cleanup": {
+  "clean": {
     "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
     "priority": "error",
     "inspect": true
