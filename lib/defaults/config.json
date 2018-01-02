@@ -10,7 +10,7 @@
   "noMinify": false,
   "htmlValidator": {
     "enabled": false,
-    "separateProcess": true,
+    "separateProcess": false,
     "port": 8888,
     "suppressWarnings": false,
     "exceptions": {

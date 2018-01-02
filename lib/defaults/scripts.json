@@ -1,46 +1,85 @@
 {
   "start": {
-    "value": "npm run prod",
+    "value": "npm run production",
     "priority": "error"
   },
-  "kill-validator": {
-    "value": "node ./node_modules/roosevelt/lib/killValidator.js",
+  "production": {
+    "value": "nodemon app.js --production-mode",
     "priority": "error"
   },
   "prod": {
-    "value": "nodemon app.js -prod",
+    "value": "npm run production",
+    "priority": "ignore"
+  },
+  "p": {
+    "value": "npm run production",
+    "priority": "ignore"
+  },
+  "development": {
+    "value": "nodemon app.js --development-mode",
     "priority": "error"
   },
   "dev": {
-    "value": "nodemon app.js -dev",
-    "priority": "error"
+    "value": "npm run development",
+    "priority": "ignore"
+  },
+  "d": {
+    "value": "npm run development",
+    "priority": "ignore"
+  },
+  "kill-validator": {
+    "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
+    "priority": "error",
+    "inspect": true
+  },
+  "kv": {
+    "value": "npm run kill-validator",
+    "priority": "ignore"
   },
   "cleanup": {
-    "value": "node ./node_modules/roosevelt/lib/appCleanup.js",
-    "priority": "error"
+    "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
+    "priority": "error",
+    "inspect": true
+  },
+  "c": {
+    "value": "npm run cleanup",
+    "priority": "ignore"
   },
   "audit": {
-    "value": "node ./node_modules/roosevelt/lib/configAuditor.js",
-    "priority": "error"
+    "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
+    "priority": "error",
+    "inspect": true
   },
-  "test": {
-    "value": "npm run lint",
-    "priority": "warning"
+  "a": {
+    "value": "npm run audit",
+    "priority": "ignore"
   },
-  "eslint": {
+  "standard": {
     "value": "standard",
     "priority": "ignore"
   },
   "stylelint": {
-    "value": "./node_modules/.bin/stylelint \"statics/css/**/*.less\" --syntax less",
+    "value": "stylelint \"statics/css/**/*.less\" --syntax less",
     "priority": "ignore"
   },
   "lint": {
-    "value": "npm run stylelint && npm run eslint",
+    "value": "npm run standard && npm run stylelint",
+    "priority": "ignore"
+  },
+  "l": {
+    "value": "npm run lint",
     "priority": "ignore"
   },
   "precommit": {
     "value": "lint-staged",
     "priority": "ignore"
+  },
+  "pc": {
+    "value": "lint-staged",
+    "priority": "ignore"
+  },
+  "test": {
+    "value": "npm run lint",
+    "priority": "warning"
   }
 }
