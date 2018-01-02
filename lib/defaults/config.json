@@ -45,7 +45,8 @@
     "sourceDir": "css",
     "compiler": "none",
     "whitelist": null,
-    "output": ".build/css"
+    "output": ".build/css",
+    "versionFile": null
   },
   "js": {
     "sourceDir": "js",
@@ -67,6 +68,5 @@
     "js: .build/js"
   ],
   "versionedPublic": false,
-  "versionedCSSFile": null,
   "alwaysHostPublic": false
 }
