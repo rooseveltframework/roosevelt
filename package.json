@@ -24,21 +24,21 @@
     "formidable": "~1.1.0",
     "fs-extra": "~5.0.0",
     "klaw-sync": "~3.0.0",
-    "html-validator": "~2.2.0",
     "method-override": "~2.3.0",
     "morgan": "~1.9.0",
     "node-emoji": "~1.8.1",
     "parent-require": "~1.0.0",
     "rimraf": "2.6.2",
     "serve-favicon": "~2.4.0",
-    "toobusy-js": "~0.5.0",
-    "tamper": "1.0.0",
-    "vnu-jar": "~17.11.0"
+    "toobusy-js": "~0.5.0"
   },
   "devDependencies": {
-    "lint-staged": "^6.0.0",
+    "html-validator": "~2.2.0",
     "husky": "^0.14.2",
-    "standard": "^10.0.0"
+    "lint-staged": "^6.0.0",
+    "standard": "^10.0.0",
+    "tamper": "1.0.0",
+    "vnu-jar": "~17.11.0"
   },
   "repository": {
     "type": "git",
