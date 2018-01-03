@@ -115,8 +115,25 @@ npm run prod
 
 Note: `npm start` is aliased to `npm run prod`.
 
+It is also possible to create a Roosevelt app without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt). This will result in a more minimalist default configuration (e.g. no CSS or JS preprocessors enabled by default).
+
+To do that:
+
+- First create a new folder and `cd` into it.
+- Then `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
+- Create `app.js`.
+- Put this code in `app.js`:
+  ```javascript
+  require('roosevelt')({
+    'generateFolderStructure': true
+  }).startServer()
+  ```
+ - Then `node app.js`. If the `generateFolderStructure` param is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
+
 Other useful scripts
 ---
+
+Roosevelt apps created with the generator come with a range of other useful npm scripts beyond `npm run dev` and `npm run prod`:
 
 Run your app with the HTML validator enabled:
 
@@ -229,21 +246,6 @@ require('roosevelt')({
 
 This is particularly useful for setting params that can't be defined in `package.json` such as event handlers (see below).
 
-It is also possible to create a Roosevelt app without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt). This will result in a more minimalist default configuration (e.g. no CSS or JS preprocessors enabled by default).
-
-To do that:
-
-- First create a new folder and `cd` into it.
-- Then `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
-- Create `app.js`.
-- Put this code in `app.js`:
-  ```javascript
-  require('roosevelt')({
-    'generateFolderStructure': true
-  }).startServer()
-  ```
- - Then `node app.js`. If the `generateFolderStructure` param is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
-
 App behavior parameters
 ---
 
@@ -254,7 +256,7 @@ App behavior parameters
 - `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
   - Default: *[Boolean]* `true`.
     - Note: When `package.json` is not present or `rooseveltConfig` is not present in `package.json`, this param will be reset to `false` by default. This is a defensive measure to minimize the risk of files and folders being created in scenarios when they are not wanted.
-  - This param is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). See previous section for an example.
+  - This param is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). See above for an example.
 - `appDir`: Project root. Can be useful to change in testing environments like [Mocha](http://mochajs.org) or if you just want to specify it by hand.
   -  Default: *[String]* The directory where your project `package.json` is located.
   -  Example customization:
