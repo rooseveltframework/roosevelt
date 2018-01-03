@@ -32,13 +32,13 @@
     "rimraf": "~2.6.2",
     "serve-favicon": "~2.4.0",
     "tamper": "~1.0.0",
-    "toobusy-js": "~0.5.0"
+    "toobusy-js": "~0.5.0",
+    "vnu-jar": "~17.11.0"
   },
   "devDependencies": {
     "husky": "~0.14.2",
     "lint-staged": "~6.0.0",
-    "standard": "~10.0.0",
-    "vnu-jar": "~17.11.0"
+    "standard": "~10.0.0"
   },
   "repository": {
     "type": "git",
