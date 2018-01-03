@@ -9,7 +9,7 @@
   },
   "noMinify": false,
   "htmlValidator": {
-    "enabled": false,
+    "enable": false,
     "separateProcess": false,
     "port": 8888,
     "suppressWarnings": false,
