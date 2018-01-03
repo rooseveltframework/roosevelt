@@ -17,16 +17,6 @@ module.exports = function (params) {
   // appDir is either specified by the user or sourced from the parent require
   params.appDir = params.appDir || path.dirname(module.parent.filename)
 
-  // check for command line overrides for NODE_ENV
-  if (flags.productionMode) {
-    process.env.NODE_ENV = 'production'
-  } else if (flags.developmentMode) {
-    process.env.NODE_ENV = 'development'
-  } else {
-    // default to production mode
-    process.env.NODE_ENV = 'production'
-  }
-
   let app = express() // initialize express
   let logger
   let appName
