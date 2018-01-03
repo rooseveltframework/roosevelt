@@ -229,6 +229,21 @@ require('roosevelt')({
 
 This is particularly useful for setting params that can't be defined in `package.json` such as event handlers (see below).
 
+It is also possible to create a Roosevelt app without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt). This will result in a more minimalist default configuration (e.g. no CSS or JS preprocessors enabled by default).
+
+To do that:
+
+- First create a new folder and `cd` into it.
+- Then `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
+- Create `app.js`.
+- Put this code in `app.js`:
+  ```javascript
+  require('roosevelt')({
+    'generateFolderStructure': true
+  }).startServer()
+  ```
+ - Then `node app.js`. If the `generateFolderStructure` param is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
+
 App behavior parameters
 ---
 
@@ -239,17 +254,7 @@ App behavior parameters
 - `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
   - Default: *[Boolean]* `true`.
     - Note: When `package.json` is not present or `rooseveltConfig` is not present in `package.json`, this param will be reset to `false` by default. This is a defensive measure to minimize the risk of files and folders being created in scenarios when they are not wanted.
-  - This param is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). For example:
-    - Create a new folder and `cd` into it.
-    - `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
-    - Create `app.js`.
-    - Put this code in `app.js`:
-      ```javascript
-      require('roosevelt')({
-        'generateFolderStructure': true
-      }).startServer()
-      ```
-    - `node app.js`. This will create a Roosevelt app with bare minimum viability and start the server.
+  - This param is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). See previous section for an example.
 - `appDir`: Project root. Can be useful to change in testing environments like [Mocha](http://mochajs.org) or if you just want to specify it by hand.
   -  Default: *[String]* The directory where your project `package.json` is located.
   -  Example customization:
@@ -375,9 +380,9 @@ MVC parameters
 - `viewsPath`: Relative path on filesystem to where your view files are located.
   - Default: *[String]* `"mvc/views"`.
 - `viewEngine`: What templating engine to use, formatted as `"fileExtension: nodeModule"`.
-  - Default: *[String]* `"html: teddy"`.
-  - Also by default the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
-  - Set to `"none"` *[String]* or `null` to use no templating engine.
+  - [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) default: *[String]* `"html: teddy"`.
+  - Also by default when using the generator, the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
+  - Bare Roosevelt default (when an app is created without the generator): *[String]* `none`. Can also be set to `null` to use no templating engine.
   - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
   - Example configuration using multiple templating systems: *[Object]*
 
@@ -434,9 +439,8 @@ Statics parameters
   - `sourceDir`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and stored in a build directory when the app is started.
   - `compiler`: *[Object]* Which Roosevelt CSS preprocessor middleware, if any, to use.
     - Your chosen Roosevelt CSS preprocessor module must be marked as a dependency in your app's `package.json`.
-    - Set to `"none"` *[String]* or `null` to use no CSS preprocessor.
-    - The default preprocessor is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
-    - Default configuration: *[Object]*
+    - The default preprocessor for a Roosevelt app created with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
+    - [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) default configuration: *[Object]*
 
         ```json
         {
@@ -450,6 +454,7 @@ Statics parameters
           }
         }
         ```
+    - Bare Roosevelt default (when an app is created without the generator): *[String]* `none`. Can also be set to `null` to use no CSS compiler.
 
   - `whitelist`: Array of CSS files to whitelist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
     - Example array member: *[String]* `less/example.less:.build/css/example.min.css` (compiles `less/example.less` into `.build/css/example.min.css`).
@@ -499,11 +504,10 @@ Statics parameters
   - `sourceDir`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and stored in a build directory when the app is started.
   - `compiler`: Which Roosevelt JS minifier middleware, if any, to use.
     - Your chosen Roosevelt JS minifier module must also be marked as a dependency in your app's `package.json`.
-    - Set to `"none"` *[String]* or `null` to use no JS minifier.
     - `showWarnings` param: *[Boolean]* Set to true to display compiler module warnings.
-    - The default minifier is [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-uglify usage](https://github.com/rooseveltframework/roosevelt-uglify#usage) for details on what params are available.
+    - The default minifier for a Roosevelt app created with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) is [roosevelt-uglify](https://github.com/rooseveltframework/roosevelt-uglify), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-uglify usage](https://github.com/rooseveltframework/roosevelt-uglify#usage) for details on what params are available.
       - The Roosevelt team also maintains [roosevelt-closure](https://github.com/rooseveltframework/roosevelt-closure), an alternative to roosevelt-uglify.
-    - Default configuration: *[Object]*
+    - [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) default configuration: *[Object]*
 
         ```json
         {
@@ -512,6 +516,7 @@ Statics parameters
           "params": {}
         }
         ```
+    - Bare Roosevelt default (when an app is created without the generator): *[String]* `none`. Can also be set to `null` to use no JS minifier.
 
   - `whitelist`: Array of JS files to whitelist for minification. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
     - Default: `null` (compiles all JS files, if a JS minifier is enabled).
@@ -625,8 +630,8 @@ Public folder parameters
 - `publicFolder`: All files and folders specified in this path will be exposed as static files.
   -  Default: *[String]* `"public"`.
 - `favicon`: Location of your [favicon](https://en.wikipedia.org/wiki/Favicon) file.
-  - Default: *[String]* `"images/favicon.ico"`.
-  - Disable favicon support by supplying `"none"` *[String]* or `null` to this parameter.
+  - [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) default: *[String]* `"images/favicon.ico"`.
+  - Bare Roosevelt default (when an app is created without the generator): *[String]* `none`. Can also be set to `null` to use no favicon.
 - `staticsSymlinksToPublic`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `"linkName: linkTarget"` (whitespace optional) or simply `"linkName"` if the link target has the same name as the desired link name.
   - Default: *[Array]* of *[Strings]*
       ```json
