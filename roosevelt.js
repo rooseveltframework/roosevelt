@@ -241,11 +241,11 @@ module.exports = function (params) {
         logger.log('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
       })
     } else {
-      if (!app.get('params').httpsOnly) {
+      if (!app.get('params').https.httpsOnly) {
         servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))))
       }
-      if (app.get('params').https) {
-        servers.push(httpsServer.listen(app.get('params').httpsPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').httpsPort)))
+      if (app.get('params').https.enable) {
+        servers.push(httpsServer.listen(app.get('params').https.httpsPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').https.httpsPort)))
       }
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
