@@ -2,6 +2,7 @@
 
 const assert = require('assert')
 const fs = require('fs')
+const fse = require('fs-extra')
 const path = require('path')
 const rimraf = require('rimraf')
 
@@ -14,7 +15,7 @@ describe('package.json params', function () {
   let app
 
   before(function () {
-    fs.mkdirSync(path.join(appDir))
+    fse.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(pkg))
 
     app = require('../../roosevelt')({

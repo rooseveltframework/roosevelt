@@ -21,4 +21,4 @@ jsdoc
 nbproject
 
 .jscodehints
-test/app/*
+test/app
