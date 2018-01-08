@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 const rimraf = require('rimraf')
 
-describe('packags.json params', function () {
+describe('package.json params', function () {
   const appDir = path.join(__dirname, '../app/packageParam')
   const pkgConfig = require('../lib/testPkgConfig.json')
   const pkg = {
