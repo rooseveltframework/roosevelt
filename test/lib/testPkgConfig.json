@@ -1,0 +1,71 @@
+{
+  "port": "package",
+  "generateFolderStructure": false,
+  "localhostOnly": "package",
+  "suppressLogs": {
+    "httpLogs": true,
+    "rooseveltLogs": true,
+    "rooseveltWarnings": true
+  },
+  "noMinify": "package",
+  "htmlValidator": {
+    "enable": "package",
+    "separateProcess": "package",
+    "port": "package",
+    "suppressWarnings": "package",
+    "exceptions": {
+      "requestHeader": "package",
+      "modelValue": "package"
+    }
+  },
+  "multipart": {
+    "multiples": "package"
+  },
+  "toobusy": {
+    "maxLagPerRequest": "package",
+    "lagCheckInterval": "package"
+  },
+  "shutdownTimeout": "package",
+  "bodyParserUrlencodedParams": {
+    "extended": "package"
+  },
+  "bodyParserJsonParams": "package",
+  "https": "package",
+  "modelsPath": "package",
+  "viewsPath": "package",
+  "controllersPath": "package",
+  "viewEngine": "none",
+  "error404": "package",
+  "error5xx": "package",
+  "error503": "package",
+  "staticsRoot": "package",
+  "htmlMinify": {
+    "override": "package",
+    "exception_url": "package",
+    "htmlMinifier": "package"
+  },
+  "css": {
+    "sourceDir": "package",
+    "compiler": "package",
+    "whitelist": "package",
+    "output": "package",
+    "versionFile": "package"
+  },
+  "js": {
+    "sourceDir": "package",
+    "compiler": "package",
+    "whitelist": "package",
+    "blacklist": "package",
+    "output": "package",
+    "bundler": {
+      "bundles": "package",
+      "output": "package",
+      "expose": "package"
+    }
+  },
+  "publicFolder": "package",
+  "favicon": "package",
+  "staticsSymlinksToPublic": "package",
+  "versionedPublic": "package",
+  "alwaysHostPublic": "package"
+}
