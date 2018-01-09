@@ -9,7 +9,7 @@ const rimraf = require('rimraf')
 describe('package.json params', function () {
   const appDir = path.join(__dirname, '../app/packageParam')
   const pkgConfig = require('../lib/testPkgConfig.json')
-  let arg = Object.keys(pkgConfig)
+  let param = Object.keys(pkgConfig)
   const pkg = {
     rooseveltConfig: pkgConfig
   }
@@ -34,7 +34,7 @@ describe('package.json params', function () {
     })
   })
 
-  arg.forEach((individualParams) => {
+  param.forEach((individualParams) => {
     if (individualParams !== 'suppressLogs' && individualParams !== 'generateFolderStructure') {
       it(`should set param "${individualParams}" from package.json`, function () {
         assert.equal(app.expressApp.get('params')[individualParams], pkgConfig[individualParams])

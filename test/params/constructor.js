@@ -10,7 +10,7 @@ describe('Constructor params', function () {
   const appDir = path.join(__dirname, '../app/constructorParam')
   const config = require('../lib/testConstructorConfig.json')
   const pkgConfig = require('../lib/testPkgConfig.json')
-  let arg = Object.keys(config)
+  let param = Object.keys(config)
   const pkg = {
     rooseveltConfig: pkgConfig
   }
@@ -36,7 +36,7 @@ describe('Constructor params', function () {
     })
   })
 
-  arg.forEach((individualParams) => {
+  param.forEach((individualParams) => {
     if (individualParams !== 'suppressLogs' && individualParams !== 'generateFolderStructure') {
       it(`should set param "${individualParams}" from constructor`, function () {
         assert.equal(app.expressApp.get('params')[individualParams], config[individualParams])
