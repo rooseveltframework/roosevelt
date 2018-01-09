@@ -22,3 +22,6 @@ nbproject
 
 .jscodehints
 test/app
+
+coverage
+.nyc_output
