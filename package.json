@@ -36,9 +36,11 @@
     "vnu-jar": "~17.11.0"
   },
   "devDependencies": {
+    "coveralls": "~3.0.0",
     "husky": "~0.14.2",
     "lint-staged": "~6.0.0",
     "mocha": "~4.1.0",
+    "nyc": "~11.4.1",
     "standard": "~10.0.0"
   },
   "repository": {
@@ -58,6 +60,8 @@
   "gitHead": "",
   "scripts": {
     "postinstall": "node ./lib/scripts/configAuditor.js",
+    "coverage": "nyc --reporter=html --reporter=text mocha --recursive test",
+    "coveralls": "nyc --reporter=lcov mocha recursive test && cat ./coverage/lcov.info | coveralls",
     "standard": "standard",
     "test": "mocha --recursive test && npm run standard",
     "precommit": "lint-staged"
