@@ -40,4 +40,13 @@ describe('package.json params', function () {
   it('should set param "localhostOnly" from package.json', function () {
     assert.equal(app.expressApp.get('params').localhostOnly, pkgConfig.localhostOnly)
   })
+
+  let paramaters = Object.keys(pkgConfig)
+  paramaters.forEach(function (Individualparams) {
+    if (Individualparams !== 'suppressLogs' && Individualparams !== 'generateFolderStructure') {
+      it('should set param ' + Individualparams + ' from package.json', function () {
+        assert.equal(app.expressApp.get('params')[Individualparams], pkgConfig[Individualparams])
+      })
+    }
+  })
 })

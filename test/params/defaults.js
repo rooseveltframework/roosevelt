@@ -25,4 +25,13 @@ describe('Default Params', function () {
   it('should set correct default for param "localhostOnly"', function () {
     assert.equal(app.expressApp.get('params').localhostOnly, defaults.localhostOnly)
   })
+
+  let paramaters = Object.keys(defaults)
+  paramaters.forEach(function (Individualparams) {
+    if (Individualparams !== 'suppressLogs' && Individualparams !== 'generateFolderStructure') {
+      it('should set correct default for param ' + Individualparams, function () {
+        assert.equal(app.expressApp.get('params')[Individualparams], defaults[Individualparams])
+      })
+    }
+  })
 })

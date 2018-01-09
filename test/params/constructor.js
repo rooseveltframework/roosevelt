@@ -43,9 +43,12 @@ describe('Constructor params', function () {
     assert.equal(app.expressApp.get('params').localhostOnly, config.localhostOnly)
   })
 
-  it('testing to see if I can acess the var with object.test', function () {
-    var test = Object.keys(app.expressApp.get('params'))
-    console.dir(test)
-    assert.equal(app.expressApp.get('params')[test[0]], config.port)
+  let paramaters = Object.keys(config)
+  paramaters.forEach(function (Individualparams) {
+    if (Individualparams !== 'suppressLogs' && Individualparams !== 'generateFolderStructure') {
+      it('should set param ' + Individualparams + ' from constructor', function () {
+        assert.equal(app.expressApp.get('params')[Individualparams], config[Individualparams])
+      })
+    }
   })
 })
