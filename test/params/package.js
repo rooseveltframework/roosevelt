@@ -9,6 +9,7 @@ const rimraf = require('rimraf')
 describe('package.json params', function () {
   const appDir = path.join(__dirname, '../app/packageParam')
   const pkgConfig = require('../lib/testPkgConfig.json')
+  let paramaters = Object.keys(pkgConfig)
   const pkg = {
     rooseveltConfig: pkgConfig
   }
@@ -33,15 +34,6 @@ describe('package.json params', function () {
     })
   })
 
-  it('should set param "port" from package.json', function () {
-    assert.equal(app.expressApp.get('params').port, pkgConfig.port)
-  })
-
-  it('should set param "localhostOnly" from package.json', function () {
-    assert.equal(app.expressApp.get('params').localhostOnly, pkgConfig.localhostOnly)
-  })
-
-  let paramaters = Object.keys(pkgConfig)
   paramaters.forEach(function (Individualparams) {
     if (Individualparams !== 'suppressLogs' && Individualparams !== 'generateFolderStructure') {
       it('should set param ' + Individualparams + ' from package.json', function () {
