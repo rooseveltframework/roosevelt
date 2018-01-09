@@ -5,7 +5,7 @@ const path = require('path')
 
 describe('Default Params', function () {
   const defaults = require('../../lib/defaults/config.json')
-  let paramaters = Object.keys(defaults)
+  let arg = Object.keys(defaults)
   let app
 
   before(function () {
@@ -19,10 +19,10 @@ describe('Default Params', function () {
     })
   })
 
-  paramaters.forEach(function (Individualparams) {
-    if (Individualparams !== 'suppressLogs' && Individualparams !== 'generateFolderStructure') {
-      it('should set correct default for param ' + Individualparams, function () {
-        assert.equal(app.expressApp.get('params')[Individualparams], defaults[Individualparams])
+  arg.forEach((individualParams) => {
+    if (individualParams !== 'suppressLogs' && individualParams !== 'generateFolderStructure') {
+      it(`should set correct default for param "${individualParams}"`, function () {
+        assert.equal(app.expressApp.get('params')[individualParams], defaults[individualParams])
       })
     }
   })
