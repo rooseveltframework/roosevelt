@@ -8,7 +8,7 @@
   "main": "roosevelt.js",
   "readmeFilename": "README.md",
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "engineStrict": true,
   "dependencies": {
@@ -61,7 +61,7 @@
   "scripts": {
     "postinstall": "node ./lib/scripts/configAuditor.js",
     "coverage": "nyc --reporter=html --reporter=text mocha --recursive test",
-    "coveralls": "nyc --reporter=lcov mocha recursive test && cat ./coverage/lcov.info | coveralls",
+    "coveralls": "nyc --reporter=lcov mocha --recursive test && cat ./coverage/lcov.info | coveralls",
     "standard": "standard",
     "test": "mocha --recursive test && npm run standard",
     "precommit": "lint-staged"
