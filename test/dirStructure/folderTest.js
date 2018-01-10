@@ -31,6 +31,9 @@ describe('Folder Tests', function () {
       }
     })
 
+    let jsSource = app.expressApp.get('params').js.sourceDir.replace('staticsRootTest', '')
+    let cssSource = app.expressApp.get('params').css.sourceDir.replace('staticsRootTest', '')
+
     expectedFolders = [
       path.join(appDir, app.expressApp.get('params').viewsPath),
       path.join(appDir, app.expressApp.get('params').modelsPath),
@@ -40,7 +43,12 @@ describe('Folder Tests', function () {
       path.join(appDir, app.expressApp.get('params').js.sourceDir),
       path.join(appDir, app.expressApp.get('params').css.sourceDir),
       path.join(appDir, '/mvc'),
-      path.join(appDir, '/staticsRootTest/images')
+      path.join(appDir, '/staticsRootTest/images'),
+      path.join(appDir, app.expressApp.get('params').publicFolder, 'css'),
+      path.join(appDir, app.expressApp.get('params').publicFolder, 'js'),
+      path.join(appDir, app.expressApp.get('params').publicFolder, 'images'),
+      path.join(appDir, app.expressApp.get('params').publicFolder, jsSource),
+      path.join(appDir, app.expressApp.get('params').publicFolder, cssSource)
     ]
 
     app.initServer(function () {})
@@ -134,10 +142,10 @@ describe('Folder Tests', function () {
   })
 
   it('should not generate extra directories into the appDir', function () {
-    const dirs = klawSync(appDir, {nofile: true})
+    const dirs = klawSync(appDir)
     dirs.forEach((dir) => {
       let test = expectedFolders.includes(dir.path)
-      assert.equal(test, true, `There is an extra directory of ${dir.path}`)
+      assert.equal(test, true, `There is an extra directory at ${dir.path}`)
     })
   })
 })
