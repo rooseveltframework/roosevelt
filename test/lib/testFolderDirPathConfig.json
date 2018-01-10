@@ -1,6 +1,0 @@
-{"viewsPath": "mvc/viewsTest",
-"modelsPath": "mvc/modelsTest",
-"controllersPath": "mvc/controllersTest",
-"staticsRoot": "staticsRootTest",
-"publicFolder": "publicFolderTest"
-}

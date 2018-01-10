@@ -8,8 +8,6 @@ const rimraf = require('rimraf')
 
 describe('Folder Tests', function () {
   const appDir = path.join(__dirname, '../app/folderTest')
-  const folderPaths = require('../lib/testFolderDirPathConfig.json')
-  const paths = Object.keys(folderPaths)
   let app
 
   before(function () {
@@ -18,7 +16,21 @@ describe('Folder Tests', function () {
     app = require('../../roosevelt')({
       appDir: appDir,
       generateFolderStructure: true,
-      ...folderPaths
+      viewsPath: 'mvc/viewsTest',
+      modelsPath: 'mvc/modelsTest',
+      controllersPath: 'mvc/controllersTest',
+      staticsRoot: 'staticsRootTest',
+      publicFolder: 'publicFolderTest'
+      /*
+      js: {
+        sourceDir: 'jsTest',
+        output: '.buildTest/jsTest'
+      },
+      css: {
+        sourceDir: 'cssTest',
+        output: '.buildTest/cssTest'
+      },
+      */
     })
 
     app.initServer(function () {})
@@ -34,11 +46,8 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have made a new directory for "views" based on the given parameters and be a directory', function (done) {
-    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[0]]}`)
-    let test = fs.existsSync(foldertest)
-    assert.equal(test, true)
-
+  it('should generate "viewsPath" directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').viewsPath)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -48,11 +57,8 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have made a new directory for "models" based on the given parameters and be a directory', function (done) {
-    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[1]]}`)
-    let test = fs.existsSync(foldertest)
-    assert.equal(test, true)
-
+  it('should generate "modelsPath" directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').modelsPath)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -62,11 +68,8 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have made a new directory for "controllers" based on the given parameters and be a directory', function (done) {
-    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[2]]}`)
-    let test = fs.existsSync(foldertest)
-    assert.equal(test, true)
-
+  it('should generate "controllersPath" directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').controllersPath)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -76,11 +79,8 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have made a new directory for "staticsRoot" based on the given parameters and be a directory', function (done) {
-    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[3]]}`)
-    let test = fs.existsSync(foldertest)
-    assert.equal(test, true)
-
+  it('should generate "staticsRoot" directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').staticsRoot)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -90,11 +90,8 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have made a new directory for "publicFolder" based on the given parameters and be a directory', function (done) {
-    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[4]]}`)
-    let test = fs.existsSync(foldertest)
-    assert.equal(test, true)
-
+  it('should generate "publicFolder" directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').publicFolder)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -103,4 +100,26 @@ describe('Folder Tests', function () {
       }
     })
   })
+
+  it('should not generate extra directories into the appDir', function (done) {
+    fs.readdir(appDir, (err, files) => {
+      if (err) {
+        done(err)
+      } else {
+        var mvc = files.includes('mvc')
+        var publicFolder = files.includes(app.expressApp.get('params').publicFolder)
+        var staticsRoot = files.includes(app.expressApp.get('params').staticsRoot)
+        assert.equal(files.length, 3)
+        assert.equal(mvc, true)
+        assert.equal(publicFolder, true)
+        assert.equal(staticsRoot, true)
+        done()
+      }
+    })
+  })
+  /*
+  it('should generate "js" directory', function () {
+    console.dir(app.expressApp.get('jsCompiledOutput'))
+  })
+  */
 })
