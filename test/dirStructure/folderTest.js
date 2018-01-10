@@ -20,19 +20,14 @@ describe('Folder Tests', function () {
       modelsPath: 'mvc/modelsTest',
       controllersPath: 'mvc/controllersTest',
       staticsRoot: 'staticsRootTest',
-      publicFolder: 'publicFolderTest'
-      /*
+      publicFolder: 'publicFolderTest',
       js: {
-        sourceDir: 'jsTest',
-        output: '.buildTest/jsTest'
+        sourceDir: 'jsTest'
       },
       css: {
-        sourceDir: 'cssTest',
-        output: '.buildTest/cssTest'
-      },
-      */
+        sourceDir: 'cssTest'
+      }
     })
-
     app.initServer(function () {})
   })
 
@@ -117,9 +112,26 @@ describe('Folder Tests', function () {
       }
     })
   })
-  /*
-  it('should generate "js" directory', function () {
-    console.dir(app.expressApp.get('jsCompiledOutput'))
+
+  it('should generate "js" source directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').js.sourceDir)
+    fs.lstat(foldertest, (err, stats) => {
+      if (err) {
+        done(err)
+      } else {
+        done()
+      }
+    })
   })
-  */
+
+  it('should generate "css" source directory', function (done) {
+    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').css.sourceDir)
+    fs.lstat(foldertest, (err, stats) => {
+      if (err) {
+        done(err)
+      } else {
+        done()
+      }
+    })
+  })
 })
