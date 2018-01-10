@@ -5,10 +5,12 @@ const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
 const rimraf = require('rimraf')
+const klawSync = require('klaw-sync')
 
 describe('Folder Tests', function () {
   const appDir = path.join(__dirname, '../app/folderTest')
   let app
+  let expectedFolders
 
   before(function () {
     fse.ensureDirSync(path.join(appDir))
@@ -28,6 +30,19 @@ describe('Folder Tests', function () {
         sourceDir: 'cssTest'
       }
     })
+
+    expectedFolders = [
+      path.join(appDir, app.expressApp.get('params').viewsPath),
+      path.join(appDir, app.expressApp.get('params').modelsPath),
+      path.join(appDir, app.expressApp.get('params').controllersPath),
+      path.join(appDir, app.expressApp.get('params').staticsRoot),
+      path.join(appDir, app.expressApp.get('params').publicFolder),
+      path.join(appDir, app.expressApp.get('params').js.sourceDir),
+      path.join(appDir, app.expressApp.get('params').css.sourceDir),
+      path.join(appDir, '/mvc'),
+      path.join(appDir, '/staticsRootTest/images')
+    ]
+
     app.initServer(function () {})
   })
 
@@ -42,7 +57,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "viewsPath" directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').viewsPath)
+    const foldertest = path.join(appDir, app.expressApp.get('params').viewsPath)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -53,7 +68,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "modelsPath" directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').modelsPath)
+    const foldertest = path.join(appDir, app.expressApp.get('params').modelsPath)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -64,7 +79,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "controllersPath" directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').controllersPath)
+    const foldertest = path.join(appDir, app.expressApp.get('params').controllersPath)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -75,7 +90,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "staticsRoot" directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').staticsRoot)
+    const foldertest = path.join(appDir, app.expressApp.get('params').staticsRoot)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -86,7 +101,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "publicFolder" directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').publicFolder)
+    const foldertest = path.join(appDir, app.expressApp.get('params').publicFolder)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -96,25 +111,8 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should not generate extra directories into the appDir', function (done) {
-    fs.readdir(appDir, (err, files) => {
-      if (err) {
-        done(err)
-      } else {
-        var mvc = files.includes('mvc')
-        var publicFolder = files.includes(app.expressApp.get('params').publicFolder)
-        var staticsRoot = files.includes(app.expressApp.get('params').staticsRoot)
-        assert.equal(files.length, 3)
-        assert.equal(mvc, true)
-        assert.equal(publicFolder, true)
-        assert.equal(staticsRoot, true)
-        done()
-      }
-    })
-  })
-
   it('should generate "js" source directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').js.sourceDir)
+    const foldertest = path.join(appDir, app.expressApp.get('params').js.sourceDir)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -125,13 +123,21 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "css" source directory', function (done) {
-    const foldertest = path.join(__dirname, '../app/folderTest', app.expressApp.get('params').css.sourceDir)
+    const foldertest = path.join(appDir, app.expressApp.get('params').css.sourceDir)
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
         done()
       }
+    })
+  })
+
+  it('should not generate extra directories into the appDir', function () {
+    const dirs = klawSync(appDir, {nofile: true})
+    dirs.forEach((dir) => {
+      let test = expectedFolders.includes(dir.path)
+      assert.equal(test, true, `There is an extra directory of ${dir.path}`)
     })
   })
 })
