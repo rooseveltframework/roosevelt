@@ -9,6 +9,7 @@ const rimraf = require('rimraf')
 describe('Folder Tests', function () {
   const appDir = path.join(__dirname, '../app/folderTest')
   const folderPaths = require('../lib/testFolderDirPathConfig.json')
+  const paths = Object.keys(folderPaths)
   let app
 
   before(function () {
@@ -33,63 +34,72 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have made a new directory for "views" based on the given parameters and be a directory', function () {
-    const foldertest = path.join(__dirname, '../app/folderTest/mvc/viewsTest')
-    const foldertesterror = path.join(__dirname, '../app/folderTest/mvc/viewsTests')
-    let test = fs.existsSync(foldertest)
-    assert.equal(test, true)
-
-    fs.lstat(foldertesterror, (err, stats) => {
-      if (err) {
-        assert.fail(21, 42, 'Test Failed', '###')
-      }
-    })
-  })
-
-  it('should have made a new directory for "models" based on the given parameters and be a directory', function () {
-    const foldertest = path.join(__dirname, '../app/folderTest/mvc/modelsTest')
+  it('should have made a new directory for "views" based on the given parameters and be a directory', function (done) {
+    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[0]]}`)
     let test = fs.existsSync(foldertest)
     assert.equal(test, true)
 
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
-        return console.log(err)
+        done(err)
+      } else {
+        done()
       }
     })
   })
 
-  it('should have made a new directory for "controllers" based on the given parameters and be a directory', function () {
-    const foldertest = path.join(__dirname, '../app/folderTest/mvc/controllersTest')
+  it('should have made a new directory for "models" based on the given parameters and be a directory', function (done) {
+    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[1]]}`)
     let test = fs.existsSync(foldertest)
     assert.equal(test, true)
 
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
-        return console.log(err)
+        done(err)
+      } else {
+        done()
       }
     })
   })
 
-  it('should have made a new directory for "staticsRoot" based on the given parameters and be a directory', function () {
-    const foldertest = path.join(__dirname, '../app/folderTest/staticsRootTest')
+  it('should have made a new directory for "controllers" based on the given parameters and be a directory', function (done) {
+    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[2]]}`)
     let test = fs.existsSync(foldertest)
     assert.equal(test, true)
 
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
-        return console.log(err)
+        done(err)
+      } else {
+        done()
       }
     })
   })
 
-  it('should have made a new directory for "publicFolder" based on the given parameters and be a directory', function () {
-    const foldertest = path.join(__dirname, '../app/folderTest/publicFolderTest')
+  it('should have made a new directory for "staticsRoot" based on the given parameters and be a directory', function (done) {
+    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[3]]}`)
     let test = fs.existsSync(foldertest)
     assert.equal(test, true)
 
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
-        return console.log(err)
+        done(err)
+      } else {
+        done()
+      }
+    })
+  })
+
+  it('should have made a new directory for "publicFolder" based on the given parameters and be a directory', function (done) {
+    const foldertest = path.join(__dirname, `../app/folderTest/${folderPaths[paths[4]]}`)
+    let test = fs.existsSync(foldertest)
+    assert.equal(test, true)
+
+    fs.lstat(foldertest, (err, stats) => {
+      if (err) {
+        done(err)
+      } else {
+        done()
       }
     })
   })
