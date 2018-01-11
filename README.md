@@ -790,6 +790,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `jsPath`                             | Full path on the file system to where your app's JS source files are located. |
 | `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
 | `jsCompiledOutput`                   | Full path on the file system to where your app's minified JS files are located. |
+| `jsBundledOutput`                    | Full path on the file system to where your app's bundled JS files are located. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath`                          | Full path on the file system to where your app's views folder is located. |
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |

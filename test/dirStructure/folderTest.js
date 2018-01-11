@@ -131,7 +131,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "js" source directory', function (done) {
-    const foldertest = path.join(appDir, app.expressApp.get('params').js.sourceDir)
+    const foldertest = path.join(app.expressApp.get('jsPath'))
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -143,7 +143,7 @@ describe('Folder Tests', function () {
   })
 
   it('should generate "css" source directory', function (done) {
-    const foldertest = path.join(appDir, app.expressApp.get('params').css.sourceDir)
+    const foldertest = path.join(app.expressApp.get('cssPath'))
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -202,13 +202,13 @@ describe('Folder Tests', function () {
     })
   })
 
-  it.skip('should set "cssPath" express variable to absolute path of "css.sourceDir"', function () {
+  it('should set "cssPath" express variable to absolute path of "css.sourceDir"', function () {
     const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').css.sourceDir)
     const test = folderCheck === app.expressApp.get('cssPath')
     assert.equal(test, true, 'the path given by the combined paths and the path given by cssPath do not match')
   })
 
-  it.skip('should set "jsPath" express variable to absolute path of "js.sourceDir"', function () {
+  it('should set "jsPath" express variable to absolute path of "js.sourceDir"', function () {
     const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').js.sourceDir)
     const test = folderCheck === app.expressApp.get('jsPath')
     assert.equal(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
@@ -217,8 +217,10 @@ describe('Folder Tests', function () {
   it('should not generate extra directories or files into the appDir', function () {
     const dirs = klawSync(appDir)
     dirs.forEach((dir) => {
-      let test = expectedFolders.includes(dir.path)
-      assert.equal(test, true, `There is an extra directory or file at ${dir.path}`)
+      if (!dir.path.includes('.DS_Store')) {
+        let test = expectedFolders.includes(dir.path)
+        assert.equal(test, true, `There is an extra directory or file at ${dir.path}`)
+      }
     })
   })
 })
