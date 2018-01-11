@@ -66,9 +66,7 @@
   "publicFolder": "public",
   "favicon": "none",
   "staticsSymlinksToPublic": [
-    "images",
-    "css: .build/css",
-    "js: .build/js"
+    "images"
   ],
   "versionedPublic": false,
   "alwaysHostPublic": false
