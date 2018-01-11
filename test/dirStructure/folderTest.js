@@ -18,6 +18,9 @@ describe('Folder Tests', function () {
     app = require('../../roosevelt')({
       appDir: appDir,
       generateFolderStructure: true,
+      suppressLogs: {
+        rooseveltLogs: true
+      },
       viewsPath: 'mvc/viewsTest',
       modelsPath: 'mvc/modelsTest',
       controllersPath: 'mvc/controllersTest',
@@ -198,13 +201,13 @@ describe('Folder Tests', function () {
     })
   })
 
-  it('should have the path of cssPath and the path by putting together appDir, staticsRoot param and css.sourceDir param equal', function () {
+  it('should set "cssPath" express variable to absolute path of "css.sourceDir"', function () {
     const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').css.sourceDir)
     const test = folderCheck === app.expressApp.get('cssPath')
     assert.equal(test, true, 'the path given by the combined paths and the path given by cssPath do not match')
   })
 
-  it('should have the path of jsPath and the path by putting together appDir, staticsRoot param and js.sourceDir param equal', function () {
+  it('should set "jsPath" express variable to absolute path of "js.sourceDir"', function () {
     const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').js.sourceDir)
     const test = folderCheck === app.expressApp.get('jsPath')
     assert.equal(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
