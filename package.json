@@ -14,7 +14,7 @@
   "dependencies": {
     "app-module-path": "~2.2.0",
     "body-parser": "~1.18.0",
-    "browserify": "~15.0.0",
+    "browserify": "~15.1.0",
     "colors": "~1.1.0",
     "compression": "~1.7.0",
     "cookie-parser": "~1.4.0",
