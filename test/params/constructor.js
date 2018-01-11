@@ -10,6 +10,7 @@ describe('Constructor params', function () {
   const appDir = path.join(__dirname, '../app/constructorParam')
   const config = require('../lib/testConstructorConfig.json')
   const pkgConfig = require('../lib/testPkgConfig.json')
+  let params = Object.keys(config)
   const pkg = {
     rooseveltConfig: pkgConfig
   }
@@ -35,11 +36,11 @@ describe('Constructor params', function () {
     })
   })
 
-  it('should set param "port" from constructor', function () {
-    assert.equal(app.expressApp.get('params').port, config.port)
-  })
-
-  it('should set param "localhostOnly" from constructor', function () {
-    assert.equal(app.expressApp.get('params').localhostOnly, config.localhostOnly)
+  params.forEach((param) => {
+    if (param !== 'suppressLogs' && param !== 'generateFolderStructure') {
+      it(`should set param "${param}" from constructor`, function () {
+        assert.deepEqual(app.expressApp.get('params')[param], config[param])
+      })
+    }
   })
 })
