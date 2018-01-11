@@ -19,7 +19,8 @@ describe('Folder Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       suppressLogs: {
-        rooseveltLogs: true
+        rooseveltLogs: true,
+        rooseveltWarnings: true
       },
       viewsPath: 'mvc/viewsTest',
       modelsPath: 'mvc/modelsTest',
