@@ -7,7 +7,7 @@ const path = require('path')
 const rimraf = require('rimraf')
 const fork = require('child_process').fork
 
-describe.only('Command Line Tests', function () {
+describe('Command Line Tests', function () {
   const appDir = path.join(__dirname, '../app/commandLineTest')
 
   before(function () {
