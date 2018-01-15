@@ -38,10 +38,10 @@ describe('Command Line Tests', function () {
     })
   })
 
-  /* check individual flags */
+  /* checking soon to be deprecated flags */
 
-  it('should change the app to development mode ("--dev")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+  it('should change the app to development mode ("-dev")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['-dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', params => {
       assert.equal(params.nodeEnv, 'development')
@@ -49,8 +49,55 @@ describe('Command Line Tests', function () {
     })
   })
 
-  it('should change the app to development mode ("-dev")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+  it('should change the app to production mode ("-prod")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.nodeEnv, 'production')
+      done()
+    })
+  })
+
+  it('should change the app to enable validator ("enable-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['enable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.htmlValidator.enable, true)
+      done()
+    })
+  })
+
+  it('should change the app to disable validator ("disable-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['disable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.htmlValidator.enable, false)
+      done()
+    })
+  })
+
+  it('should change the app to detach the html Validator ("detach-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.htmlValidator.separateProcess, true)
+      done()
+    })
+  })
+
+  it('should change the app to attach the html Validator ("attach-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['-attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.htmlValidator.separateProcess, false)
+      done()
+    })
+  })
+
+  /* check individual flags */
+
+  it('should change the app to development mode ("--dev")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', params => {
       assert.equal(params.nodeEnv, 'development')
@@ -72,15 +119,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.equal(params.nodeEnv, 'development')
-      done()
-    })
-  })
-
-  it('should change the app to production mode ("-prod")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
       done()
     })
   })
@@ -112,15 +150,6 @@ describe('Command Line Tests', function () {
     })
   })
 
-  it('should change the app to enable validator ("enable-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['enable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.htmlValidator.enable, true)
-      done()
-    })
-  })
-
   it('should change the app to enable validator ("--enable-validator")', function (done) {
     const testApp = fork(path.join(appDir, 'app.js'), ['--enable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
@@ -144,15 +173,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.equal(params.htmlValidator.enable, true)
-      done()
-    })
-  })
-
-  it('should change the app to disable validator ("disable-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['disable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.htmlValidator.enable, false)
       done()
     })
   })
@@ -184,15 +204,6 @@ describe('Command Line Tests', function () {
     })
   })
 
-  it('should change the app to detach the html Validator ("detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
   it('should change the app to detach the html Validator ("--background-validator")', function (done) {
     const testApp = fork(path.join(appDir, 'app.js'), ['--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
@@ -207,15 +218,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to attach the html Validator ("attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.htmlValidator.separateProcess, false)
       done()
     })
   })
@@ -240,8 +242,8 @@ describe('Command Line Tests', function () {
 
   /* check combination of flags */
 
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("-dev, enable-validator, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-dev', 'enable-validator', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+  it('should change the app to put it into dev mode, enable validator, and attach validator ("--development-mode, --enable-validator, --attach-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--enable-validator', '--attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', params => {
       assert.equal(params.nodeEnv, 'development')
@@ -251,189 +253,79 @@ describe('Command Line Tests', function () {
     })
   })
 
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--development-mode, enable-validator, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', 'enable-validator', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+  it('should change the app to put it into dev mode, disable validator, and attach validator ("--development-mode, --disable-validator, --attach-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--disable-validator', '--attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', params => {
       assert.equal(params.nodeEnv, 'development')
+      assert.equal(params.htmlValidator.enable, false)
+      assert.equal(params.htmlValidator.separateProcess, false)
+      done()
+    })
+  })
+
+  it('should change the app to put it into dev mode, disable validator, and detach validator ("--development-mode, --disable-validator, --background-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--disable-validator', '--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.nodeEnv, 'development')
+      assert.equal(params.htmlValidator.enable, false)
+      assert.equal(params.htmlValidator.separateProcess, true)
+      done()
+    })
+  })
+
+  it('should change the app to put it into dev mode, enable validator, and detach validator ("--development-mode, --disable-validator, --background-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--enable-validator', '--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.nodeEnv, 'development')
+      assert.equal(params.htmlValidator.enable, true)
+      assert.equal(params.htmlValidator.separateProcess, true)
+      done()
+    })
+  })
+
+  it('should change the app to put it into production mode, disable validator, and detach validator ("--production-mode, --disable-validator, --background-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--disable-validator', '--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.nodeEnv, 'production')
+      assert.equal(params.htmlValidator.enable, false)
+      assert.equal(params.htmlValidator.separateProcess, true)
+      done()
+    })
+  })
+
+  it('should change the app to put it into production mode, enable validator, and attach validator ("--production-mode, --enable-validator, --attach-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--enable-validator', '--attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', params => {
+      assert.equal(params.nodeEnv, 'production')
       assert.equal(params.htmlValidator.enable, true)
       assert.equal(params.htmlValidator.separateProcess, false)
       done()
     })
   })
 
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--dev, enable-validator, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', 'enable-validator', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+  it('should change the app to put it into production mode, disable validator, and attach validator ("--production-mode, --disable-validator, --attach-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--disable-validator', '--attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
-      assert.equal(params.htmlValidator.enable, true)
+      assert.equal(params.nodeEnv, 'production')
+      assert.equal(params.htmlValidator.enable, false)
       assert.equal(params.htmlValidator.separateProcess, false)
       done()
     })
   })
 
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("-d, --enable-validator, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-d', 'enable-validator', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+  it('should change the app to put it into production mode, enable validator, and detach validator ("--production-mode, --enable-validator, --background-validator")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--enable-validator', '--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
+      assert.equal(params.nodeEnv, 'production')
       assert.equal(params.htmlValidator.enable, true)
       assert.equal(params.htmlValidator.separateProcess, false)
-      done()
-    })
-  })
-
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--dev, --enable-validator, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--enable-validator', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
-      assert.equal(params.htmlValidator.enable, true)
-      assert.equal(params.htmlValidator.separateProcess, false)
-      done()
-    })
-  })
-
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--dev, --html-validator, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--html-validator', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
-      assert.equal(params.htmlValidator.enable, true)
-      assert.equal(params.htmlValidator.separateProcess, false)
-      done()
-    })
-  })
-
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--dev, -h, attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-h', 'attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
-      assert.equal(params.htmlValidator.enable, true)
-      assert.equal(params.htmlValidator.separateProcess, false)
-      done()
-    })
-  })
-
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--dev, enable-validator, --attach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', 'enable-validator', '--attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
-      assert.equal(params.htmlValidator.enable, true)
-      assert.equal(params.htmlValidator.separateProcess, false)
-      done()
-    })
-  })
-
-  it('should change the app to put it into dev mode, enable validator, and attach validator ("--dev, enable-validator, -a")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', 'enable-validator', '-a'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'development')
-      assert.equal(params.htmlValidator.enable, true)
-      assert.equal(params.htmlValidator.separateProcess, false)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-prod, disable-validator, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod', 'disable-validator', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("--production-mode, disable-validator, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', 'disable-validator', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("--prod, disable-validator, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod', 'disable-validator', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-p, disable-validator, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-p', 'disable-validator', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-prod, --disable-validator, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod', '--disable-validator', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-prod, --raw, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod', '--raw', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-prod, -r, detach-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod', '-r', 'detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-prod, disable-validator, --background-validator")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod', 'disable-validator', '--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
-      done()
-    })
-  })
-
-  it('should change the app to put it into production mode, disable validator, and detach validator ("-prod, disable-validator, -b")', function (done) {
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod', 'disable-validator', '-b'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', params => {
-      assert.equal(params.nodeEnv, 'production')
-      assert.equal(params.htmlValidator.enable, false)
-      assert.equal(params.htmlValidator.separateProcess, true)
       done()
     })
   })
