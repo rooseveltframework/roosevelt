@@ -21,6 +21,8 @@ describe('Command Line Tests', function () {
     if (process.send) {
       process.send(app.expressApp.get('params'))
     }
+
+    process.exit()
     `
 
     fs.writeFileSync(path.join(appDir, 'app.js'), dataIn)
