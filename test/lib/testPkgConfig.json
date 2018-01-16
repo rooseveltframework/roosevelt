@@ -9,7 +9,7 @@
   },
   "noMinify": "package",
   "htmlValidator": {
-    "enable": "package",
+    "enable": false,
     "separateProcess": "package",
     "port": "package",
     "suppressWarnings": "package",
