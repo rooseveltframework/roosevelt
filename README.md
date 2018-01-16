@@ -63,7 +63,12 @@ Reasons for this include:
 Create and run a Roosevelt app
 ===
 
-First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you install Node.js using [nvm](https://github.com/creationix/nvm) rather than the official installer, as nvm will allow you to switch between multiple versions of Node.js easily. Be warned, if you decline to use nvm or another Node.js version manager, you may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
+First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you install using a Node.js version manager like [nvm](https://github.com/creationix/nvm) rather than the official installer, as a version manager will allow you to switch between multiple versions of Node.js easily.
+
+Some important caveats to note:
+
+- nvm is not available on Windows.
+- Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
 The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
 
@@ -72,6 +77,8 @@ Once you have a sane developmemt environment, you can proceed with the standard 
 
 Install Roosevelt and create an app
 ---
+
+*Note: Windows users may need to run their command line as administrator to avoid permission errors relating to symlink creation.*
 
 Globally install [Yeoman](http://yeoman.io):
 
