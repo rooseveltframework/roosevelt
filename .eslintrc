@@ -1,0 +1,14 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
+  },
+  "plugins": [
+    "no-only-tests"
+  ],
+  "rules": {
+    "no-only-tests/no-only-tests": 2
+  }
+}
