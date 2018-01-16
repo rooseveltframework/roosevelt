@@ -4,11 +4,11 @@ const assert = require('assert')
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-const rimraf = require('rimraf')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const klawSync = require('klaw-sync')
 
 describe('Folder Tests', function () {
-  const appDir = path.join(__dirname, '../app/folderTest')
+  const appDir = path.join(__dirname, '../app/folderStructure')
   let app
   let expectedFolders
 
@@ -61,7 +61,7 @@ describe('Folder Tests', function () {
   })
 
   after(function (done) {
-    rimraf(appDir, (err) => {
+    cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
       } else {

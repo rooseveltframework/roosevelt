@@ -4,11 +4,11 @@ const assert = require('assert')
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-const rimraf = require('rimraf')
+const cleanupTestApp = require('../util/cleanupTestApp')
 
 describe('package.json params', function () {
-  const appDir = path.join(__dirname, '../app/packageParam')
-  const pkgConfig = require('../lib/testPkgConfig.json')
+  const appDir = path.join(__dirname, '../app/pkgParams')
+  const pkgConfig = require('../util/testPkgConfig.json')
   let params = Object.keys(pkgConfig)
   const pkg = {
     rooseveltConfig: pkgConfig
@@ -25,7 +25,7 @@ describe('package.json params', function () {
   })
 
   after(function (done) {
-    rimraf(appDir, (err) => {
+    cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
       } else {

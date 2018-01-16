@@ -4,16 +4,16 @@ const assert = require('assert')
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-const rimraf = require('rimraf')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 
 describe('Command Line Tests', function () {
-  const appDir = path.join(__dirname, '../app/commandLineTest')
+  const appDir = path.join(__dirname, '../app/cliFlags')
 
   before(function (done) {
     fse.ensureDirSync(path.join(appDir))
 
-    fs.readFile(path.join(__dirname, '../lib/app.js'), (err, buffer) => {
+    fs.readFile(path.join(__dirname, '../util/app.js'), (err, buffer) => {
       if (err) {
         throw err
       }
@@ -27,7 +27,7 @@ describe('Command Line Tests', function () {
   })
 
   after(function (done) {
-    rimraf(appDir, (err) => {
+    cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
       } else {
@@ -55,8 +55,8 @@ describe('Command Line Tests', function () {
       })
     })
 
-    it('should change the app to enable validator ("enable-validator")', function (done) {
-      const testApp = fork(path.join(appDir, 'app.js'), ['enable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    it('should change the app to enable validator in development mode ("enable-validator")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['enable-validator', '-d'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
@@ -147,8 +147,8 @@ describe('Command Line Tests', function () {
       })
     })
 
-    it('should change the app to enable validator ("--enable-validator")', function (done) {
-      const testApp = fork(path.join(appDir, 'app.js'), ['--enable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    it('should change the app to enable validator in development mode ("--enable-validator")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['--enable-validator', '-d'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
@@ -156,8 +156,8 @@ describe('Command Line Tests', function () {
       })
     })
 
-    it('should change the app to enable validator ("--html-validator")', function (done) {
-      const testApp = fork(path.join(appDir, 'app.js'), ['--html-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    it('should change the app to enable validator in development mode ("--html-validator")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['--html-validator', '-d'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
@@ -165,8 +165,8 @@ describe('Command Line Tests', function () {
       })
     })
 
-    it('should change the app to enable validator ("-h")', function (done) {
-      const testApp = fork(path.join(appDir, 'app.js'), ['-h'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    it('should change the app to enable validator in development mode ("-h")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['-h', '-d'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
@@ -469,8 +469,8 @@ describe('Command Line Tests', function () {
       })
     })
 
-    it('should change the app to enable validator, even with a disable validator flag ("--enable-validator, --disable-validator")', function (done) {
-      const testApp = fork(path.join(appDir, 'app.js'), ['--enable-validator', '--disable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    it('should change the app to enable validator, even with a disable validator flag in development mode ("--enable-validator, --disable-validator")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['--enable-validator', '--disable-validator', '-d'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
