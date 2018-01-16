@@ -10,7 +10,7 @@ describe('Default Params', function () {
 
   before(function () {
     app = require('../../roosevelt')({
-      appDir: path.join(__dirname, '../app/defaultParam'),
+      appDir: path.join(__dirname, '../app/defaultParams'),
       suppressLogs: {
         httpsLogs: true,
         rooseveltLogs: true,
