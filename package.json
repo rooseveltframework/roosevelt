@@ -43,7 +43,9 @@
     "lint-staged": "~6.0.0",
     "mocha": "~4.1.0",
     "nyc": "~11.4.1",
-    "standard": "~10.0.0"
+    "standard": "~10.0.0",
+    "roosevelt-uglify": "0.2.0",
+    "roosevelt-less": "0.4.0"
   },
   "repository": {
     "type": "git",
