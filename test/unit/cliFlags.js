@@ -1,9 +1,8 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const fs = require('fs')
-const fse = require('fs-extra')
 const path = require('path')
+const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 
@@ -11,17 +10,8 @@ describe('Command Line Tests', function () {
   const appDir = path.join(__dirname, '../app/cliFlags')
 
   before(function (done) {
-    fse.ensureDirSync(path.join(appDir))
-
-    fs.readFile(path.join(__dirname, '../util/app.js'), (err, buffer) => {
-      if (err) {
-        throw err
-      }
-      fs.writeFile(path.join(appDir, 'app.js'), buffer.toString(), (error) => {
-        if (error) {
-          throw error
-        }
-      })
+    generateTestApp({
+      appDir: appDir
     })
     done()
   })
@@ -42,6 +32,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
+        testApp.kill()
         done()
       })
     })
@@ -51,6 +42,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
+        testApp.kill()
         done()
       })
     })
@@ -60,6 +52,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
+        testApp.kill()
         done()
       })
     })
@@ -69,6 +62,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
+        testApp.kill()
         done()
       })
     })
@@ -78,6 +72,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -87,6 +82,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -98,6 +94,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
+        testApp.kill()
         done()
       })
     })
@@ -107,6 +104,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
+        testApp.kill()
         done()
       })
     })
@@ -116,6 +114,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
+        testApp.kill()
         done()
       })
     })
@@ -125,6 +124,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
+        testApp.kill()
         done()
       })
     })
@@ -134,6 +134,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
+        testApp.kill()
         done()
       })
     })
@@ -143,6 +144,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
+        testApp.kill()
         done()
       })
     })
@@ -152,6 +154,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
+        testApp.kill()
         done()
       })
     })
@@ -161,6 +164,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
+        testApp.kill()
         done()
       })
     })
@@ -170,6 +174,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
+        testApp.kill()
         done()
       })
     })
@@ -179,6 +184,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
+        testApp.kill()
         done()
       })
     })
@@ -188,6 +194,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
+        testApp.kill()
         done()
       })
     })
@@ -197,6 +204,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
+        testApp.kill()
         done()
       })
     })
@@ -206,6 +214,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -215,6 +224,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -224,6 +234,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -233,6 +244,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -246,6 +258,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -257,6 +270,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -268,6 +282,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -279,6 +294,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -290,6 +306,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -301,6 +318,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -312,6 +330,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -323,6 +342,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -333,6 +353,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
+        testApp.kill()
         done()
       })
     })
@@ -346,6 +367,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -357,6 +379,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -368,6 +391,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -379,6 +403,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -390,6 +415,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -401,6 +427,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -412,6 +439,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -423,6 +451,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -434,6 +463,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -445,6 +475,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -456,6 +487,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
+        testApp.kill()
         done()
       })
     })
@@ -465,6 +497,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
+        testApp.kill()
         done()
       })
     })
@@ -474,6 +507,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
+        testApp.kill()
         done()
       })
     })
@@ -483,6 +517,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
+        testApp.kill()
         done()
       })
     })
@@ -492,6 +527,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, true)
+        testApp.kill()
         done()
       })
     })
@@ -501,6 +537,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
@@ -512,6 +549,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill()
         done()
       })
     })
