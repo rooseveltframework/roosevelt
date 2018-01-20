@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "coveralls": "~3.0.0",
-    "eslint": "~4.15.0",
+    "eslint": "~4.16.0",
     "eslint-plugin-no-only-tests": "~2.0.0",
     "husky": "~0.14.2",
     "lint-staged": "~6.0.0",
