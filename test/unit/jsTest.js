@@ -54,7 +54,6 @@ describe('JavaScript Section Test', function () {
   it('should compile all static js files using roosevelt-uglify', function (done) {
     generateStaticFolder()
     // create and init the app
-    // create and init the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -69,7 +68,7 @@ describe('JavaScript Section Test', function () {
           showWarnings: false,
           params: {}
         },
-        whitelist: []
+        whitelist: ['a.js', 'b.js', 'c.js']
       }
     }, 'initServer')
     // create a fork of it and run it
@@ -88,65 +87,12 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should be able to switch the name of the sourceDir to the one in the params', function (done) {
-    // switch name of static source dir
-    pathsOfStaticJS = [
-      path.join(appDir, 'statics', 'jsStaticTest', 'a.js'),
-      path.join(appDir, 'statics', 'jsStaticTest', 'b.js'),
-      path.join(appDir, 'statics', 'jsStaticTest', 'c.js')
-    ]
-    staticDirname = 'jsStaticTest'
-    generateStaticFolder()
-    // create and init the app
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: true,
-        rooseveltWarnings: true
-      },
-      js: {
-        compiler: {
-          nodeModule: 'roosevelt-uglify',
-          showWarnings: false,
-          params: {}
-        },
-        output: '.build/js',
-        sourceDir: 'jsStaticTest',
-        whitelist: []
-      }
-    }, 'initServer')
-    // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-    testApp.on('message', () => {
-      // test to see if their is the changed static file in the app and if all the files were written correctly
-      const changedStaticJS = path.join(appDir, 'statics', 'jsStaticTest')
-      const changedStaticJSArray = klawSync(changedStaticJS)
-      changedStaticJSArray.forEach((file) => {
-        let test = pathsOfStaticJS.includes(file.path)
-        assert.equal(test, true)
-      })
-    // test to see if the default source Dir was made or not
-      const regularStaticJSDir = path.join(appDir, 'statics', 'js')
-      assert.equal(fs.existsSync(regularStaticJSDir), false)
-      testApp.kill()
-      done()
-    })
-  })
-
   it('should only compile files that are whitelisted', function (done) {
-    // return everything back to what it was before
-    pathsOfStaticJS = [
-      path.join(appDir, 'statics', 'js', 'a.js'),
-      path.join(appDir, 'statics', 'js', 'b.js'),
-      path.join(appDir, 'statics', 'js', 'c.js')
-    ]
-    staticDirname = 'js'
     generateStaticFolder()
     // make a new array to compare the test files too
     let pathOfWhiteListedFiles = [
-      path.join(appDir, 'statics', '.build', 'js', 'a.js')
+      path.join(appDir, 'statics', '.build', 'js', 'a.js'),
+      path.join(appDir, 'statics', '.build', 'js', 'c.js')
     ]
     // create and init the app
     generateTestApp({
@@ -165,7 +111,7 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/js',
         sourceDir: 'js',
-        whitelist: ['a.js']
+        whitelist: ['a.js', 'c.js']
       }
     }, 'initServer')
     // create a fork of it and run it
@@ -243,7 +189,7 @@ describe('JavaScript Section Test', function () {
     staticJSFiles[1] = 'var b = "turkey"'
     staticJSFiles[2] = 'var c = true'
     generateStaticFolder()
-
+    // alter the pathsOfCompiledJS array to check for output directory with new name
     pathsOfCompiledJS = [
       path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'a.js'),
       path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'b.js'),
@@ -266,7 +212,7 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/jsCompiledTest',
         sourceDir: 'js',
-        whitelist: []
+        whitelist: ['a.js', 'b.js', 'c.js']
       }
     }, 'initServer')
 
@@ -274,6 +220,7 @@ describe('JavaScript Section Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
+      // test to see if the folder exist and if the compiled files are there with no extras
       const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'jsCompiledTest'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
