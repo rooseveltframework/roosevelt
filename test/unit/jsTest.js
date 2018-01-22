@@ -4,9 +4,10 @@ const assert = require('assert')
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-// const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('../util/cleanupTestApp')
+const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
-const rimraf = require('rimraf')
+const fork = require('child_process').fork
 
 describe('JavaScript Section Test', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
@@ -14,8 +15,6 @@ describe('JavaScript Section Test', function () {
   const test2 = 'var b = "turkey"'
   const test3 = 'var c = true'
   let staticDirname = 'js'
-  let compiledDirname = 'js'
-  let filenum = 0
   let pathsOfStaticJS = [
     path.join(appDir, 'statics', 'js', 'a.js'),
     path.join(appDir, 'statics', 'js', 'b.js'),
@@ -43,31 +42,10 @@ describe('JavaScript Section Test', function () {
   }
 
   afterEach(function (done) {
-    if (fs.existsSync(path.join(__dirname, '../app/trash')) === false) {
-      fs.mkdirSync(path.join(__dirname, '../app/trash'))
-    }
-    if (fs.existsSync(path.join(appDir, 'statics', '.build', `${compiledDirname}`, 'a.js'))) {
-      fs.renameSync(path.join(appDir, 'statics', '.build', `${compiledDirname}`, 'a.js'), path.join(__dirname, '../app/trash/', `${filenum}.js`))
-      filenum++
-    }
-    if (fs.existsSync(path.join(appDir, 'statics', '.build', `${compiledDirname}`, 'b.js'))) {
-      fs.renameSync(path.join(appDir, 'statics', '.build', `${compiledDirname}`, 'b.js'), path.join(__dirname, '../app/trash/', `${filenum}.js`))
-      filenum++
-    }
-    if (fs.existsSync(path.join(appDir, 'statics', '.build', `${compiledDirname}`, 'c.js'))) {
-      fs.renameSync(path.join(appDir, 'statics', '.build', `${compiledDirname}`, 'c.js'), path.join(__dirname, '../app/trash', `${filenum}.js`))
-      filenum++
-    }
-    fs.renameSync(path.join(appDir, 'public', 'css'), path.join(__dirname, '../app/trash', `${filenum}.js`))
-    filenum++
-    fs.renameSync(path.join(appDir, 'public', 'images'), path.join(__dirname, '../app/trash', `${filenum}.js`))
-    filenum++
-
-    rimraf(appDir, (err) => {
+    cleanupTestApp(appDir, (err) => {
       if (err) {
-        console.dir(err)
+        throw err
       } else {
-        console.log('app deleted')
         done()
       }
     })
@@ -76,35 +54,36 @@ describe('JavaScript Section Test', function () {
   it('should compile all static js files using roosevelt-uglify', function (done) {
     generateStaticFolder()
     // create and init the app
-    const app = require('../../../roosevelt')({
+    // create and init the app
+    generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-        /*
-        suppressLogs: {
-          httpLogs: true,
-          rooseveltLogs: true,
-          rooseveltWarnings: true
-        },
-        */
+      suppressLogs: {
+        httpLogs: true,
+        rooseveltLogs: true,
+        rooseveltWarnings: true
+      },
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
           showWarnings: false,
           params: {}
         },
-        output: '.build/js'
+        whitelist: []
       }
-    })
-    app.initServer(() => {
-      console.log('inited server')
+    }, 'initServer')
+    // create a fork of it and run it
+    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
       // look into the .build folder to see if all the files were compiled and if there is any extras
       const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathsOfCompiledJS.includes(file.path)
-        console.log(test)
         assert.equal(test, true)
       })
+      testApp.kill()
       done()
     })
   })
@@ -119,17 +98,14 @@ describe('JavaScript Section Test', function () {
     staticDirname = 'jsStaticTest'
     generateStaticFolder()
     // create and init the app
-    const app = require('../../../roosevelt')({
+    generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      /*
       suppressLogs: {
         httpLogs: true,
         rooseveltLogs: true,
         rooseveltWarnings: true
       },
-      */
-
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -137,22 +113,24 @@ describe('JavaScript Section Test', function () {
           params: {}
         },
         output: '.build/js',
-        sourceDir: 'jsStaticTest'
+        sourceDir: 'jsStaticTest',
+        whitelist: []
       }
-    })
-    app.initServer(() => {
-      console.log('inited server')
+    }, 'initServer')
+    // create a fork of it and run it
+    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    testApp.on('message', () => {
       // test to see if their is the changed static file in the app and if all the files were written correctly
       const changedStaticJS = path.join(appDir, 'statics', 'jsStaticTest')
       const changedStaticJSArray = klawSync(changedStaticJS)
       changedStaticJSArray.forEach((file) => {
         let test = pathsOfStaticJS.includes(file.path)
-        console.log(test)
         assert.equal(test, true)
       })
-      // test to see if the default source Dir was made or not
+    // test to see if the default source Dir was made or not
       const regularStaticJSDir = path.join(appDir, 'statics', 'js')
       assert.equal(fs.existsSync(regularStaticJSDir), false)
+      testApp.kill()
       done()
     })
   })
@@ -171,17 +149,14 @@ describe('JavaScript Section Test', function () {
       path.join(appDir, 'statics', '.build', 'js', 'a.js')
     ]
     // create and init the app
-    const app = require('../../../roosevelt')({
+    generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      /*
       suppressLogs: {
         httpLogs: true,
         rooseveltLogs: true,
         rooseveltWarnings: true
       },
-      */
-
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -190,20 +165,21 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/js',
         sourceDir: 'js',
-        whitelist:
-          ['a.js']
+        whitelist: ['a.js']
       }
-    })
-    app.initServer(() => {
-      console.log('inited server')
+    }, 'initServer')
+    // create a fork of it and run it
+    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
       // test to see that only the whitelisted file was compiled
       const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathOfWhiteListedFiles.includes(file.path)
-        console.log(test)
         assert.equal(test, true)
       })
+      testApp.kill()
       done()
     })
   })
@@ -220,16 +196,14 @@ describe('JavaScript Section Test', function () {
     let staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
     let staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
-    const app = require('../../../roosevelt')({
+    generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      /*
-        suppressLogs: {
-          httpLogs: true,
-          rooseveltLogs: true,
-          rooseveltWarnings: true
-        },
-        */
+      suppressLogs: {
+        httpLogs: true,
+        rooseveltLogs: true,
+        rooseveltWarnings: true
+      },
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -238,12 +212,15 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/js',
         sourceDir: 'js',
+        whitelist: [],
         blacklist: ['c.js']
       }
-    })
+    }, 'initServer')
 
-    app.initServer(() => {
-      console.log('inited server')
+    // create a fork of it and run it
+    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
       // grab all the compiled file's info
       let compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
       let compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
@@ -255,6 +232,7 @@ describe('JavaScript Section Test', function () {
       assert.equal(test1, false)
       assert.equal(test2, false)
       assert.equal(test3, true)
+      testApp.kill()
       done()
     })
   })
@@ -264,7 +242,6 @@ describe('JavaScript Section Test', function () {
     staticJSFiles[0] = 'var a = 7'
     staticJSFiles[1] = 'var b = "turkey"'
     staticJSFiles[2] = 'var c = true'
-    compiledDirname = 'jsCompiledTest'
     generateStaticFolder()
 
     pathsOfCompiledJS = [
@@ -273,16 +250,14 @@ describe('JavaScript Section Test', function () {
       path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'c.js')
     ]
 
-    const app = require('../../../roosevelt')({
+    generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      /*
       suppressLogs: {
         httpLogs: true,
         rooseveltLogs: true,
         rooseveltWarnings: true
       },
-      */
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -290,18 +265,22 @@ describe('JavaScript Section Test', function () {
           params: {}
         },
         output: '.build/jsCompiledTest',
-        sourceDir: 'js'
+        sourceDir: 'js',
+        whitelist: []
       }
-    })
-    app.initServer(() => {
-      console.log('inited server')
+    }, 'initServer')
+
+    // create a fork of it and run it
+    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
       const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'jsCompiledTest'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathsOfCompiledJS.includes(file.path)
-        console.log(test)
         assert.equal(test, true)
       })
+      testApp.kill()
       done()
     })
   })
