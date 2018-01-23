@@ -34,6 +34,15 @@ let cssDataArray = [
   }`
 ]
 
+// version package json file
+let packageJSON = `{
+ "version": "0.3.1",
+ "rooseveltConfig": {}
+}`
+
+// version num
+let verNumber = '0.3.1'
+
 // path to CSS static files
 let pathOfCSSStaticFilesArray = [
   path.join(appDir, 'statics', 'css', 'a.css'),
@@ -93,12 +102,7 @@ describe('CSS Section Tests', function () {
           }
         }
       },
-      generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: false,
-        rooseveltWarnings: false
-      }
+      generateFolderStructure: true
     }, 'initServer')
 
     // fork the app
@@ -146,12 +150,7 @@ describe('CSS Section Tests', function () {
         },
         whitelist: ['b.css', 'c.css']
       },
-      generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: false,
-        rooseveltWarnings: false
-      }
+      generateFolderStructure: true
     }, 'initServer')
 
     // fork the app
@@ -200,12 +199,7 @@ describe('CSS Section Tests', function () {
         },
         output: '.build/cssCompiledTest'
       },
-      generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: false,
-        rooseveltWarnings: false
-      }
+      generateFolderStructure: true
     }, 'initServer')
 
     // fork the app
@@ -227,6 +221,10 @@ describe('CSS Section Tests', function () {
   })
 
   it('make a CSS file that declares a CSS varaible that contains the app Version number from package.js', function (done) {
+    // generate the package json file with basic data
+    fse.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSON)
+
     // generate the app
     generateTestApp({
       appDir: appDir,
@@ -246,12 +244,7 @@ describe('CSS Section Tests', function () {
           varName: 'appVersion'
         }
       },
-      generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: false,
-        rooseveltWarnings: false
-      }
+      generateFolderStructure: true
     }, 'initServer')
 
     // fork the app
@@ -261,8 +254,13 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       // see if the file exist inside the css folder
       let versionFilePath = path.join(appDir, 'statics', 'css', '_version.less')
-      let test = fs.existsSync(versionFilePath)
-      assert.equal(test, true)
+      let test1 = fs.existsSync(versionFilePath)
+      assert.equal(test1, true)
+      // see that the value in the css version file is correct
+      let versionFileString = fs.readFileSync(path.join(appDir, 'statics', 'css', '_version.less'), 'utf8')
+      let versionFileNum = versionFileString.split(`'`)
+      let test2 = verNumber === versionFileNum[1]
+      assert.equal(test2, true)
       testApp.kill()
       done()
     })
