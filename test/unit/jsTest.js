@@ -11,9 +11,9 @@ const fork = require('child_process').fork
 
 describe('JavaScript Section Test', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
-  const test1 = 'var a = 7'
-  const test2 = 'var b = "turkey"'
-  const test3 = 'var c = true'
+  const test1 = `var a = function() { return 1 + 2}`
+  const test2 = `var b = function(multin) { return multin * 4}`
+  const test3 = `var c = function(name) {console.log("Hello " + name)}`
   let staticDirname = 'js'
   let pathsOfStaticJS = [
     path.join(appDir, 'statics', 'js', 'a.js'),
@@ -32,7 +32,7 @@ describe('JavaScript Section Test', function () {
   ]
 
   // function to compile the static folder and files
-  let generateStaticFolder = () => {
+  function generateStaticFolder () {
   // make sure the static js directory is there
     fse.ensureDirSync(path.join(appDir, 'statics', `${staticDirname}`))
   // write up the differnt files
@@ -57,22 +57,17 @@ describe('JavaScript Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: true,
-        rooseveltWarnings: true
-      },
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
           showWarnings: false,
           params: {}
         },
-        whitelist: ['a.js', 'b.js', 'c.js']
+        whitelist: []
       }
     }, 'initServer')
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // look into the .build folder to see if all the files were compiled and if there is any extras
@@ -98,11 +93,6 @@ describe('JavaScript Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: true,
-        rooseveltWarnings: true
-      },
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -115,7 +105,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // test to see that only the whitelisted file was compiled
@@ -131,11 +121,6 @@ describe('JavaScript Section Test', function () {
   })
 
   it.skip('should minify all files except for those that are blacklisted', function (done) {
-    // change the data that would be put into the static files
-    staticJSFiles[0] = `var a = function() { return 1 + 2}`
-    staticJSFiles[1] = `var b = function(multin) { return multin * 4}`
-    staticJSFiles[2] = `var c = function(name) {console.log("Hello " + name)}`
-
     generateStaticFolder()
     // get the buffer of the static files
     let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
@@ -145,11 +130,6 @@ describe('JavaScript Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: true,
-        rooseveltWarnings: true
-      },
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -158,13 +138,12 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/js',
         sourceDir: 'js',
-        whitelist: [],
         blacklist: ['c.js']
       }
     }, 'initServer')
 
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // grab all the compiled file's info
@@ -184,10 +163,6 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should make the output compiled folder with the new name and put all the compiled JS in it', function (done) {
-    // make everything back to normal
-    staticJSFiles[0] = 'var a = 7'
-    staticJSFiles[1] = 'var b = "turkey"'
-    staticJSFiles[2] = 'var c = true'
     generateStaticFolder()
     // alter the pathsOfCompiledJS array to check for output directory with new name
     pathsOfCompiledJS = [
@@ -199,11 +174,6 @@ describe('JavaScript Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        httpLogs: true,
-        rooseveltLogs: true,
-        rooseveltWarnings: true
-      },
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',
@@ -211,13 +181,12 @@ describe('JavaScript Section Test', function () {
           params: {}
         },
         output: '.build/jsCompiledTest',
-        sourceDir: 'js',
-        whitelist: ['a.js', 'b.js', 'c.js']
+        whitelist: []
       }
     }, 'initServer')
 
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['-prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // test to see if the folder exist and if the compiled files are there with no extras
