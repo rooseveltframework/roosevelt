@@ -62,12 +62,11 @@ describe('JavaScript Section Test', function () {
           nodeModule: 'roosevelt-uglify',
           showWarnings: false,
           params: {}
-        },
-        whitelist: []
+        }
       }
     }, 'initServer')
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // look into the .build folder to see if all the files were compiled and if there is any extras
@@ -99,13 +98,11 @@ describe('JavaScript Section Test', function () {
           showWarnings: false,
           params: {}
         },
-        output: '.build/js',
-        sourceDir: 'js',
         whitelist: ['a.js', 'c.js']
       }
     }, 'initServer')
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // test to see that only the whitelisted file was compiled
@@ -120,7 +117,7 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it.skip('should minify all files except for those that are blacklisted', function (done) {
+  it('should minify all files except for those that are blacklisted', function (done) {
     generateStaticFolder()
     // get the buffer of the static files
     let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
@@ -136,14 +133,12 @@ describe('JavaScript Section Test', function () {
           showWarnings: false,
           params: {}
         },
-        output: '.build/js',
-        sourceDir: 'js',
         blacklist: ['c.js']
       }
     }, 'initServer')
 
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // grab all the compiled file's info
@@ -180,13 +175,12 @@ describe('JavaScript Section Test', function () {
           showWarnings: false,
           params: {}
         },
-        output: '.build/jsCompiledTest',
-        whitelist: []
+        output: '.build/jsCompiledTest'
       }
     }, 'initServer')
 
     // create a fork of it and run it
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
       // test to see if the folder exist and if the compiled files are there with no extras
@@ -194,6 +188,42 @@ describe('JavaScript Section Test', function () {
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathsOfCompiledJS.includes(file.path)
+        assert.equal(test, true)
+      })
+      testApp.kill()
+      done()
+    })
+  })
+  it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
+    generateStaticFolder()
+
+    // make an array with only the output of the file
+    let delimiterOutputArray = [
+      path.join(appDir, 'statics', '.build', 'js', 'test', 'something.js')
+    ]
+    // generate the app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        },
+        whitelist: ['a.js:test/something.js']
+      }
+    }, 'initServer')
+
+    // create a fork and run the app
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      // grab the folder of where the output should be
+      let pathOfCompiledDLJS = path.join(appDir, 'statics', '.build', 'js', 'test')
+      let CompiledDLJSArray = klawSync(pathOfCompiledDLJS)
+      CompiledDLJSArray.forEach((file) => {
+        let test = delimiterOutputArray.includes(file.path)
         assert.equal(test, true)
       })
       testApp.kill()
