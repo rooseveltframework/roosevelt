@@ -35,13 +35,10 @@ let cssDataArray = [
 ]
 
 // version package json file
-let packageJSON = `{
- "version": "0.3.1",
- "rooseveltConfig": {}
-}`
-
-// version num
-let verNumber = '0.3.1'
+let packageJSON = {
+  version: '0.3.1',
+  rooseveltConfig: {}
+}
 
 // path to CSS static files
 let pathOfCSSStaticFilesArray = [
@@ -57,6 +54,13 @@ let pathOfCSSCompiledfilesArray = [
   path.join(appDir, 'statics', '.build', 'css', 'c.css')
 ]
 
+// path to CSS custom directory compiled files
+let pathOfCSSCustomDirCompiledfilesArray = [
+  path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'a.css'),
+  path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'b.css'),
+  path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'c.css')
+]
+
 // function to generate the static files before each test
 const generateStaticFolder = () => {
   // generate the folder for the static stuff first
@@ -68,11 +72,6 @@ const generateStaticFolder = () => {
 }
 
 describe('CSS Section Tests', function () {
-// 1. Test to see that it compiles -check
-// 2. Test to see the whitelist compiles -check
-// 3. Test to see that changing the output name would in fact change the build output name and put compiled files in it -check
-// 4. Test to see if versionFile, if given a object, makes a versionFile CSS file - it exist, but version is not listed
-
   // clean up the old test after completion
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
@@ -106,7 +105,7 @@ describe('CSS Section Tests', function () {
     }, 'initServer')
 
     // fork the app
-    const testApp = fork(path.join(appDir, 'app.js'), ['-p'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on the message being sent back from the initialized app, test to see that they are there
     testApp.on('message', () => {
@@ -154,7 +153,7 @@ describe('CSS Section Tests', function () {
     }, 'initServer')
 
     // fork the app
-    const testApp = fork(path.join(appDir, 'app.js'), ['-p'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on the message being sent back from the initialized app, test to see that the whitelist files were compiled
     testApp.on('message', () => {
@@ -176,13 +175,6 @@ describe('CSS Section Tests', function () {
     // Generate the static files and folder
     generateStaticFolder()
 
-    // change the compiled path array to reflect the changed file name
-    pathOfCSSCompiledfilesArray = [
-      path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'a.css'),
-      path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'b.css'),
-      path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'c.css')
-    ]
-
     // generate the app
     generateTestApp({
       appDir: appDir,
@@ -203,7 +195,7 @@ describe('CSS Section Tests', function () {
     }, 'initServer')
 
     // fork the app
-    const testApp = fork(path.join(appDir, 'app.js'), ['-p'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // when the server is initialized, look to see if the folder exist and if the files are there
     testApp.on('message', () => {
@@ -211,7 +203,7 @@ describe('CSS Section Tests', function () {
       let cssCompiledArray = klawsync(pathOfCSSCompiledFolder)
       // go through each file to see if their pathname matches with the changed array above and that there are no extras
       cssCompiledArray.forEach((file) => {
-        let test = pathOfCSSCompiledfilesArray.includes(file.path)
+        let test = pathOfCSSCustomDirCompiledfilesArray.includes(file.path)
         assert.equal(test, true)
       })
       // kill and finish the test
@@ -220,10 +212,10 @@ describe('CSS Section Tests', function () {
     })
   })
 
-  it('make a CSS file that declares a CSS varaible that contains the app Version number from package.js', function (done) {
+  it('make a CSS file that declares a CSS variable that contains the app version number from package.js', function (done) {
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSON)
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // generate the app
     generateTestApp({
@@ -248,7 +240,7 @@ describe('CSS Section Tests', function () {
     }, 'initServer')
 
     // fork the app
-    const testApp = fork(path.join(appDir, 'app.js'), ['-p'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // wait for the app to be finished initialized
     testApp.on('message', () => {
@@ -259,8 +251,51 @@ describe('CSS Section Tests', function () {
       // see that the value in the css version file is correct
       let versionFileString = fs.readFileSync(path.join(appDir, 'statics', 'css', '_version.less'), 'utf8')
       let versionFileNum = versionFileString.split(`'`)
-      let test2 = verNumber === versionFileNum[1]
+      let test2 = packageJSON.version === versionFileNum[1]
       assert.equal(test2, true)
+      testApp.kill()
+      done()
+    })
+  })
+
+  it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
+    generateStaticFolder()
+
+    // make an array that holds the custom directory compiled CSS file
+    let pathOfCustomDirCompiledCSSArray = [
+      path.join(appDir, 'statics', '.build', 'css', 'test', 'blah.css')
+    ]
+
+    // generate the app
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        whitelist: ['a.css:test/blah.css']
+      },
+      generateFolderStructure: true
+    }, 'initServer')
+
+    // fork the app
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // wait for a message to test if the file is in the right position
+    testApp.on('message', () => {
+      let pathOfCompiledDLCSS = path.join(appDir, 'statics', '.build', 'css', 'test')
+      let CompiledDLCSSArray = klawsync(pathOfCompiledDLCSS)
+      CompiledDLCSSArray.forEach((file) => {
+        let test = pathOfCustomDirCompiledCSSArray.includes(file.path)
+        assert.equal(test, true)
+      })
       testApp.kill()
       done()
     })
