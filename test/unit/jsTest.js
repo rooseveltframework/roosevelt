@@ -31,6 +31,12 @@ describe('JavaScript Section Test', function () {
     test3
   ]
 
+  let pathsOfAlteredCompiledJS = [
+    path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'a.js'),
+    path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'b.js'),
+    path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'c.js')
+  ]
+
   // function to compile the static folder and files
   function generateStaticFolder () {
   // make sure the static js directory is there
@@ -159,13 +165,8 @@ describe('JavaScript Section Test', function () {
 
   it('should make the output compiled folder with the new name and put all the compiled JS in it', function (done) {
     generateStaticFolder()
-    // alter the pathsOfCompiledJS array to check for output directory with new name
-    pathsOfCompiledJS = [
-      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'a.js'),
-      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'b.js'),
-      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'c.js')
-    ]
 
+    // generate the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -187,7 +188,7 @@ describe('JavaScript Section Test', function () {
       const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'jsCompiledTest'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
-        let test = pathsOfCompiledJS.includes(file.path)
+        let test = pathsOfAlteredCompiledJS.includes(file.path)
         assert.equal(test, true)
       })
       testApp.kill()
@@ -226,6 +227,50 @@ describe('JavaScript Section Test', function () {
         let test = delimiterOutputArray.includes(file.path)
         assert.equal(test, true)
       })
+      testApp.kill()
+      done()
+    })
+  })
+
+  it('should copy over the JS files to build without changing them when the noMinify param is true', function (done) {
+    generateStaticFolder()
+
+    // get the buffer of the static files
+    let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
+    let staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
+    let staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
+
+    // generate the app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      noMinify: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, 'initServer')
+
+    // create a fork and run the app
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // On server init, grab the buffer of JS files in build and compare
+    testApp.on('message', () => {
+      // grab all the compiled file's info
+      let compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      let compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      let compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      // make tests to compare the files
+      let test1 = staticJSFilesA === compiledJSFilesA
+      let test2 = staticJSFilesB === compiledJSFilesB
+      let test3 = staticJSFilesC === compiledJSFilesC
+      // test these comparisons
+      assert.equal(test1, true)
+      assert.equal(test2, true)
+      assert.equal(test3, true)
       testApp.kill()
       done()
     })
