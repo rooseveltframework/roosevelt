@@ -11,43 +11,42 @@ const fork = require('child_process').fork
 
 describe('JavaScript Section Test', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
+
+  // sample JS source string to test the compiler with
   const test1 = `var a = function() { return 1 + 2}`
   const test2 = `var b = function(multin) { return multin * 4}`
   const test3 = `var c = function(name) {console.log("Hello " + name)}`
-  let staticDirname = 'js'
+
+  // array of paths to generated static js test files
   let pathsOfStaticJS = [
     path.join(appDir, 'statics', 'js', 'a.js'),
     path.join(appDir, 'statics', 'js', 'b.js'),
     path.join(appDir, 'statics', 'js', 'c.js')
   ]
+  // array of paths to generated compiled js test files
   let pathsOfCompiledJS = [
     path.join(appDir, 'statics', '.build', 'js', 'a.js'),
     path.join(appDir, 'statics', '.build', 'js', 'b.js'),
     path.join(appDir, 'statics', '.build', 'js', 'c.js')
   ]
+  // array to hold sample JS string data that will be written to a file
   let staticJSFiles = [
     test1,
     test2,
     test3
   ]
 
-  let pathsOfAlteredCompiledJS = [
-    path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'a.js'),
-    path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'b.js'),
-    path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'c.js')
-  ]
-
-  // function to compile the static folder and files
-  function generateStaticFolder () {
-  // make sure the static js directory is there
-    fse.ensureDirSync(path.join(appDir, 'statics', `${staticDirname}`))
-  // write up the differnt files
+  beforeEach(function () {
+    // start by generating a statics folder in the roosevelt test app directory
+    fse.ensureDirSync(path.join(appDir, 'statics', 'js'))
+    // generate sample js files in statics by looping through smaple JS source strings
     for (let x = 0; x < pathsOfStaticJS.length; x++) {
       fs.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
     }
-  }
+  })
 
   afterEach(function (done) {
+    // delete the generated test folder once we are done so that we do not have conflicting data
     cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
@@ -58,8 +57,7 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should compile all static js files using roosevelt-uglify', function (done) {
-    generateStaticFolder()
-    // create and init the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -71,7 +69,8 @@ describe('JavaScript Section Test', function () {
         }
       }
     }, 'initServer')
-    // create a fork of it and run it
+
+    // create a fork of the app.js file and run it
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -88,13 +87,12 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should only compile files that are whitelisted', function (done) {
-    generateStaticFolder()
-    // make a new array to compare the test files too
+    //  array that holds the paths for the generated whitelist compiled files
     let pathOfWhiteListedFiles = [
       path.join(appDir, 'statics', '.build', 'js', 'a.js'),
       path.join(appDir, 'statics', '.build', 'js', 'c.js')
     ]
-    // create and init the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -107,7 +105,7 @@ describe('JavaScript Section Test', function () {
         whitelist: ['a.js', 'c.js']
       }
     }, 'initServer')
-    // create a fork of it and run it
+    // create a fork of app.js and run it
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -124,12 +122,12 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should minify all files except for those that are blacklisted', function (done) {
-    generateStaticFolder()
-    // get the buffer of the static files
+    // get the buffer(string data) of the static files
     let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
     let staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
     let staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -143,15 +141,15 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of it and run it
+    // create a fork of app.js and run it
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
-      // grab all the compiled file's info
+      // get the buffer(string data) of the compiled files
       let compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
       let compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
       let compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
-      // see if the buffer from the compiled is the same as their static counterpart
+      // test if the buffer from the compiled is the same as their static counterpart
       let test1 = staticJSFilesA === compiledJSFilesA
       let test2 = staticJSFilesB === compiledJSFilesB
       let test3 = staticJSFilesC === compiledJSFilesC
@@ -164,9 +162,14 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should make the output compiled folder with the new name and put all the compiled JS in it', function (done) {
-    generateStaticFolder()
+    // array of paths to generated compile js files inside the altered output directory
+    let pathsOfAlteredCompiledJS = [
+      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'a.js'),
+      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'b.js'),
+      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'c.js')
+    ]
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -180,7 +183,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of it and run it
+    // create a fork of app.js and run it from the command line
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -195,14 +198,13 @@ describe('JavaScript Section Test', function () {
       done()
     })
   })
-  it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
-    generateStaticFolder()
 
-    // make an array with only the output of the file
+  it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
+    // array that holds the path of the delimiter file
     let delimiterOutputArray = [
       path.join(appDir, 'statics', '.build', 'js', 'test', 'something.js')
     ]
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -216,11 +218,11 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork and run the app
+    // create a fork of app.js and run it through command line
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
-      // grab the folder of where the output should be
+      // grab the folder of where the output should be and check inside it to see if only the whitelist file was compiled and named appropriately
       let pathOfCompiledDLJS = path.join(appDir, 'statics', '.build', 'js', 'test')
       let CompiledDLJSArray = klawSync(pathOfCompiledDLJS)
       CompiledDLJSArray.forEach((file) => {
@@ -233,14 +235,12 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should copy over the JS files to build without changing them when the noMinify param is true', function (done) {
-    generateStaticFolder()
-
-    // get the buffer of the static files
+    // get the buffer (string data) of the static files
     let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
     let staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
     let staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -254,16 +254,15 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork and run the app
+    // create a fork of app.js and run it through command line
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // On server init, grab the buffer of JS files in build and compare
     testApp.on('message', () => {
-      // grab all the compiled file's info
+      // get the buffer (string data) of the compiled files
       let compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
       let compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
       let compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
-      // make tests to compare the files
+      // make tests to compare the buffer in between the static and compiled files
       let test1 = staticJSFilesA === compiledJSFilesA
       let test2 = staticJSFilesB === compiledJSFilesB
       let test3 = staticJSFilesC === compiledJSFilesC
