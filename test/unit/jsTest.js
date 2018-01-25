@@ -70,7 +70,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of the app.js file and run it
+    // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -105,7 +105,7 @@ describe('JavaScript Section Test', function () {
         whitelist: ['a.js', 'c.js']
       }
     }, 'initServer')
-    // create a fork of app.js and run it
+    // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -141,7 +141,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of app.js and run it
+    // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -183,7 +183,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of app.js and run it from the command line
+    // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -218,7 +218,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of app.js and run it through command line
+    // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
@@ -254,7 +254,7 @@ describe('JavaScript Section Test', function () {
       }
     }, 'initServer')
 
-    // create a fork of app.js and run it through command line
+    // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', () => {
