@@ -73,7 +73,7 @@ describe('CSS Section Tests', function () {
   })
 
   it('should compile the static CSS files using roosevelt-less', function (done) {
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
@@ -91,7 +91,7 @@ describe('CSS Section Tests', function () {
       generateFolderStructure: true
     }, 'initServer')
 
-    // fork the app
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on the message being sent back from the initialized app, test to see that they are there
@@ -111,13 +111,13 @@ describe('CSS Section Tests', function () {
   })
 
   it('should only compiled the files that are whitelisted', function (done) {
-    // make a test array for whitelisted files
+    // array for whitelisted files
     const pathOfWhiteListedArray = [
       path.join(appDir, 'statics', '.build', 'css', 'b.css'),
       path.join(appDir, 'statics', '.build', 'css', 'c.css')
     ]
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
@@ -136,7 +136,7 @@ describe('CSS Section Tests', function () {
       generateFolderStructure: true
     }, 'initServer')
 
-    // fork the app
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on the message being sent back from the initialized app, test to see that the whitelist files were compiled
@@ -163,7 +163,7 @@ describe('CSS Section Tests', function () {
       path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'c.css')
     ]
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
@@ -182,7 +182,7 @@ describe('CSS Section Tests', function () {
       generateFolderStructure: true
     }, 'initServer')
 
-    // fork the app
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // when the server is initialized, look to see if the folder exist and if the files are there
@@ -211,7 +211,7 @@ describe('CSS Section Tests', function () {
     fse.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
@@ -233,7 +233,7 @@ describe('CSS Section Tests', function () {
       generateFolderStructure: true
     }, 'initServer')
 
-    // fork the app
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // wait for the app to be finished initialized
@@ -258,7 +258,7 @@ describe('CSS Section Tests', function () {
       path.join(appDir, 'statics', '.build', 'css', 'test', 'blah.css')
     ]
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
@@ -277,7 +277,7 @@ describe('CSS Section Tests', function () {
       generateFolderStructure: true
     }, 'initServer')
 
-    // fork the app
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // wait for a message to test if the file is in the right position
@@ -299,7 +299,7 @@ describe('CSS Section Tests', function () {
     let bufferOfStaticFileB = fs.readFileSync(pathOfCSSStaticFilesArray[1], 'utf8')
     let bufferOfStaticFileC = fs.readFileSync(pathOfCSSStaticFilesArray[2], 'utf8')
 
-    // generate the app
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
@@ -318,7 +318,7 @@ describe('CSS Section Tests', function () {
       noMinify: true
     }, 'initServer')
 
-    // create a fork and run the app
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // listen to the message and check that the build files are the same as there static counterpart
