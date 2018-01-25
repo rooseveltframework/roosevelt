@@ -12,7 +12,7 @@ const klawsync = require('klaw-sync')
 // appDir
 const appDir = path.join(__dirname, '../', 'app', 'cssTest')
 
-// basic CSS files
+// sample CSS source string to test the compiler with
 let cssDataArray = [
   `body {
   height: 100%;
@@ -37,42 +37,19 @@ h1 {
 `
 ]
 
-// version package json file
-let packageJSON = {
-  version: '0.3.1',
-  rooseveltConfig: {}
-}
-
-// path to CSS static files
+// array of paths to generated static less test files
 let pathOfCSSStaticFilesArray = [
-  path.join(appDir, 'statics', 'css', 'a.css'),
-  path.join(appDir, 'statics', 'css', 'b.css'),
-  path.join(appDir, 'statics', 'css', 'c.css')
+  path.join(appDir, 'statics', 'css', 'a.less'),
+  path.join(appDir, 'statics', 'css', 'b.less'),
+  path.join(appDir, 'statics', 'css', 'c.less')
 ]
 
-// path to CSS compiled files
+// array of paths to where compiled css files should be written
 let pathOfCSSCompiledfilesArray = [
   path.join(appDir, 'statics', '.build', 'css', 'a.css'),
   path.join(appDir, 'statics', '.build', 'css', 'b.css'),
   path.join(appDir, 'statics', '.build', 'css', 'c.css')
 ]
-
-// path to CSS custom directory compiled files
-let pathOfCSSCustomDirCompiledfilesArray = [
-  path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'a.css'),
-  path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'b.css'),
-  path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'c.css')
-]
-
-// function to generate the static files before each test
-const generateStaticFolder = () => {
-  // generate the folder for the static stuff first
-  fse.ensureDirSync(path.join(appDir, 'statics', 'css'))
-  // loop through the cssDataArry and write to each files in the paths of CSS Static Array
-  for (let x = 0; x < cssDataArray.length; x++) {
-    fs.writeFileSync(pathOfCSSStaticFilesArray[x], cssDataArray[x])
-  }
-}
 
 describe('CSS Section Tests', function () {
   // clean up the old test after completion
@@ -86,9 +63,16 @@ describe('CSS Section Tests', function () {
     })
   })
 
+  beforeEach(function () {
+    // start by generating a static folder in the roosevelt test app directory
+    fse.ensureDirSync(path.join(appDir, 'statics', 'css'))
+    // generate sample less files in statics by looping through sample CSS strings
+    for (let x = 0; x < cssDataArray.length; x++) {
+      fs.writeFileSync(pathOfCSSStaticFilesArray[x], cssDataArray[x])
+    }
+  })
+
   it('should compile the static CSS files using roosevelt-less', function (done) {
-    // generate the static files and folder
-    generateStaticFolder()
     // generate the app
     generateTestApp({
       appDir: appDir,
@@ -127,9 +111,6 @@ describe('CSS Section Tests', function () {
   })
 
   it('should only compiled the files that are whitelisted', function (done) {
-    // generate the static files and folder
-    generateStaticFolder()
-
     // make a test array for whitelisted files
     const pathOfWhiteListedArray = [
       path.join(appDir, 'statics', '.build', 'css', 'b.css'),
@@ -150,7 +131,7 @@ describe('CSS Section Tests', function () {
             sourceMap: null
           }
         },
-        whitelist: ['b.css', 'c.css']
+        whitelist: ['b.less', 'c.less']
       },
       generateFolderStructure: true
     }, 'initServer')
@@ -175,8 +156,12 @@ describe('CSS Section Tests', function () {
   })
 
   it('should rename the compiled output file to what is on the output parameter', function (done) {
-    // Generate the static files and folder
-    generateStaticFolder()
+    // path to CSS custom directory compiled files
+    let pathOfCSSCustomDirCompiledfilesArray = [
+      path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'a.css'),
+      path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'b.css'),
+      path.join(appDir, 'statics', '.build', 'cssCompiledTest', 'c.css')
+    ]
 
     // generate the app
     generateTestApp({
@@ -216,6 +201,12 @@ describe('CSS Section Tests', function () {
   })
 
   it('make a CSS file that declares a CSS variable that contains the app version number from package.js', function (done) {
+    // contents of sample package.json file to use for testing css versionFile
+    let packageJSON = {
+      version: '0.3.1',
+      rooseveltConfig: {}
+    }
+
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
@@ -262,8 +253,6 @@ describe('CSS Section Tests', function () {
   })
 
   it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
-    generateStaticFolder()
-
     // make an array that holds the custom directory compiled CSS file
     let pathOfCustomDirCompiledCSSArray = [
       path.join(appDir, 'statics', '.build', 'css', 'test', 'blah.css')
@@ -283,7 +272,7 @@ describe('CSS Section Tests', function () {
             sourceMap: null
           }
         },
-        whitelist: ['a.css:test/blah.css']
+        whitelist: ['a.less:test/blah.css']
       },
       generateFolderStructure: true
     }, 'initServer')
@@ -305,8 +294,6 @@ describe('CSS Section Tests', function () {
   })
 
   it('should copy over the CSS files to build without changing them when the noMinify param is true', function (done) {
-    generateStaticFolder()
-
     // grab the buffers of the static files
     let bufferOfStaticFileA = fs.readFileSync(pathOfCSSStaticFilesArray[0], 'utf8')
     let bufferOfStaticFileB = fs.readFileSync(pathOfCSSStaticFilesArray[1], 'utf8')
