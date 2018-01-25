@@ -14,24 +14,27 @@ const appDir = path.join(__dirname, '../', 'app', 'cssTest')
 
 // basic CSS files
 let cssDataArray = [
-  `body { 
-    height: 100%;
-  } 
-  h1 {
-    font-size: 10px;
-  }`,
-  `#selector { 
-    height: 100%;
-  } 
-  h1 {
-    font-size: 10px;
-  }`,
-  `.body { 
-    height: 100%;
-  } 
-  h1 {
-    font-size: 10px;
-  }`
+  `body {
+  height: 100%;
+}
+h1 {
+  font-size: 10px;
+}
+`,
+  `#selector {
+  height: 100%;
+}
+h1 {
+  font-size: 10px;
+}
+`,
+  `.body {
+  height: 100%;
+}
+h1 {
+  font-size: 10px;
+}
+`
 ]
 
 // version package json file
@@ -296,6 +299,56 @@ describe('CSS Section Tests', function () {
         let test = pathOfCustomDirCompiledCSSArray.includes(file.path)
         assert.equal(test, true)
       })
+      testApp.kill()
+      done()
+    })
+  })
+
+  it('should copy over the CSS files to build without changing them when the noMinify param is true', function (done) {
+    generateStaticFolder()
+
+    // grab the buffers of the static files
+    let bufferOfStaticFileA = fs.readFileSync(pathOfCSSStaticFilesArray[0], 'utf8')
+    let bufferOfStaticFileB = fs.readFileSync(pathOfCSSStaticFilesArray[1], 'utf8')
+    let bufferOfStaticFileC = fs.readFileSync(pathOfCSSStaticFilesArray[2], 'utf8')
+
+    // generate the app
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: true,
+      noMinify: true
+    }, 'initServer')
+
+    // create a fork and run the app
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // listen to the message and check that the build files are the same as there static counterpart
+    testApp.on('message', () => {
+      // grab the buffers of the *compiled* files
+      let bufferOfCompiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      let bufferOfCompiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      let bufferOfCompiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      // make the comparisons between the files in the build and the files in the static
+      let test1 = bufferOfStaticFileA === bufferOfCompiledFileA
+      let test2 = bufferOfStaticFileB === bufferOfCompiledFileB
+      let test3 = bufferOfStaticFileC === bufferOfCompiledFileC
+      // test these compairsion
+      assert.equal(test1, true)
+      assert.equal(test2, true)
+      assert.equal(test3, true)
+      // kill the app and finish test
       testApp.kill()
       done()
     })
