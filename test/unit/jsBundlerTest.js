@@ -162,7 +162,7 @@ describe('js Bundler Section Test', function () {
     // create a fork of the app.js file and run it as a child process in production
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look into the path of the bundle JS folder and see if there are any files there. (should be zero)
+    // test the path of the bundle JS folder and check if there are any files there. (should be zero)
     testApp.on('message', () => {
       let arrayOfFiles = klawsync(pathOfBundleJSFolder)
       let test = arrayOfFiles.length
@@ -172,17 +172,17 @@ describe('js Bundler Section Test', function () {
     })
   })
 
-  it('should change the output folder name to what is specified in the parameters and pass the folder to the js build folder if expose is true', function (done) {
+  it.skip('should change the output folder name to what is specified in the parameters and pass the folder to the js build folder if expose is true', function (done) {
     // array of path to altered bundle JS folder
     let arrayOfalteredBundleJSFolder = [
       path.join(appDir, 'statics', 'js', 'bundleJSTest'),
       path.join(appDir, 'statics', '.build', 'js', 'bundleJSTest')
     ]
-    // array of path to altered bundle js file in sourceDir
+    // array of path to the bundle js file in the altered sourceDir
     let arrayOfAlteredSDBundleJSFilesPaths = [
       path.join(appDir, 'statics', 'js', 'bundleJSTest', 'bundle.js')
     ]
-    // array of path to altered bundle js file in build folder
+    // array of path to the bundle js file in altered build folder
     /* let arrayOfAlteredBuildBundleJSFilesPaths = [
       path.join(appDir, 'statics', 'js', 'bundleJSTest', 'bundle.js')
     ] */
