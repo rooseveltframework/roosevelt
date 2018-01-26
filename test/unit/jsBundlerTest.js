@@ -92,7 +92,6 @@ describe('js Bundler Section Test', function () {
       arrayOfFiles.forEach((file) => {
         let test = arrayOfBundleJSFilesPaths.includes(file.path)
         assert.equal(test, true)
-        console.log(test)
       })
       testApp.kill()
       done()
@@ -130,7 +129,6 @@ describe('js Bundler Section Test', function () {
       arrayOfFiles.forEach((file) => {
         let test = arrayOfBundleJSFilesPaths.includes(file.path)
         assert.equal(test, true)
-        console.log(test)
       })
       testApp.kill()
       done()
@@ -172,7 +170,7 @@ describe('js Bundler Section Test', function () {
     })
   })
 
-  it.skip('should change the output folder name to what is specified in the parameters and pass the folder to the js build folder if expose is true', function (done) {
+  it('should change the output folder name to what is specified in the parameters and pass the folder to the js build folder if expose is true', function (done) {
     // array of path to altered bundle JS folder
     let arrayOfalteredBundleJSFolder = [
       path.join(appDir, 'statics', 'js', 'bundleJSTest'),
@@ -183,9 +181,9 @@ describe('js Bundler Section Test', function () {
       path.join(appDir, 'statics', 'js', 'bundleJSTest', 'bundle.js')
     ]
     // array of path to the bundle js file in altered build folder
-    /* let arrayOfAlteredBuildBundleJSFilesPaths = [
-      path.join(appDir, 'statics', 'js', 'bundleJSTest', 'bundle.js')
-    ] */
+    let arrayOfAlteredBuildBundleJSFilesPaths = [
+      path.join(appDir, 'statics', '.build', 'js', 'bundleJSTest', 'bundle.js')
+    ]
 
     // create the app.js file
     generateTestApp({
@@ -213,14 +211,6 @@ describe('js Bundler Section Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
     testApp.on('message', (params) => {
       // check to see that the output directory was changed to what was put into the directory and that the bundle file is there
       let arrayOfFiles = klawsync(arrayOfalteredBundleJSFolder[0])
@@ -230,12 +220,11 @@ describe('js Bundler Section Test', function () {
       })
 
       // check to see that the output directory was also made in the build folder and also has the bundle file there as well
-      /* let arrayOfFiles2 = klawsync(arrayOfalteredBundleJSFolder[1])
+      let arrayOfFiles2 = klawsync(arrayOfalteredBundleJSFolder[1])
       arrayOfFiles2.forEach((file) => {
         let test = arrayOfAlteredBuildBundleJSFilesPaths.includes(file.path)
         assert.equal(test, true)
-        console.log(test)
-      }) */
+      })
       testApp.kill()
       done()
     })
