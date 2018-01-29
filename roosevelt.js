@@ -61,7 +61,7 @@ module.exports = function (params) {
     }
     ca = app.get('params').https.ca
     cafile = app.get('params').https.cafile !== false
-    passphrase = app.get('params').passphrase
+    passphrase = app.get('params').https.passphrase
 
     if (app.get('params').https.keyPath) {
       if (app.get('params').https.pfx) {
