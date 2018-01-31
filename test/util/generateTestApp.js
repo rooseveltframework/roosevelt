@@ -10,9 +10,12 @@ module.exports = function (params, method) {
   let appJSContents = `const app = require('../../../roosevelt')(${util.inspect(params, {depth: 5})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
 
-  if (method) {
+  if (method === 'initServer') {
     appJSContents += `app.${method}(() => {\n`
     appJSContents += `  ${defaultMessages}\n})`
+  } else if (method === 'startServer') {
+    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send("something")}')
+    appJSContents += `app.${method}()`
   } else {
     appJSContents += defaultMessages
   }
