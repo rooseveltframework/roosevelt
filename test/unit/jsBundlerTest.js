@@ -80,7 +80,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -118,7 +118,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of the app.js file and run it as a child process in development mode
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -155,7 +155,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of the app.js file and run it as a child process in production
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -206,7 +206,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})

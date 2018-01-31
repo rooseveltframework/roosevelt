@@ -68,7 +68,7 @@ describe('JavaScript Section Test', function () {
           params: {}
         }
       }
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -104,7 +104,7 @@ describe('JavaScript Section Test', function () {
         },
         whitelist: ['a.js', 'c.js']
       }
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
@@ -139,7 +139,7 @@ describe('JavaScript Section Test', function () {
         },
         blacklist: ['c.js']
       }
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -181,7 +181,7 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/jsCompiledTest'
       }
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -216,7 +216,7 @@ describe('JavaScript Section Test', function () {
         },
         whitelist: ['a.js:test/something.js']
       }
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -252,7 +252,7 @@ describe('JavaScript Section Test', function () {
           params: {}
         }
       }
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})

@@ -12,7 +12,7 @@ describe('Command Line Tests', function () {
   before(function (done) {
     generateTestApp({
       appDir: appDir
-    })
+    }, '../../../roosevelt')
     done()
   })
 

@@ -89,7 +89,7 @@ describe('CSS Section Tests', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -134,7 +134,7 @@ describe('CSS Section Tests', function () {
         whitelist: ['b.less', 'c.less']
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -180,7 +180,7 @@ describe('CSS Section Tests', function () {
         output: '.build/cssCompiledTest'
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -231,7 +231,7 @@ describe('CSS Section Tests', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -275,7 +275,7 @@ describe('CSS Section Tests', function () {
         whitelist: ['a.less:test/blah.css']
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -316,7 +316,7 @@ describe('CSS Section Tests', function () {
       },
       generateFolderStructure: true,
       noMinify: true
-    }, 'initServer')
+    }, '../../../roosevelt', 'initServer')
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
