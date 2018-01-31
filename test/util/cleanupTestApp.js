@@ -1,8 +1,8 @@
 const fse = require('fs-extra')
-const path = require('path')
 
 module.exports = function (appDir, next) {
-  if (appDir.includes(`roosevelt${path.sep}test${path.sep}app`)) {
+  // use regexp to make sure that the appDir included 'roosvelt' with any characters following it follow by '/test/app'
+  if (/roosevelt.*\\test\\app/.test(appDir)) {
     fse.remove(appDir, (err) => {
       if (err) {
         next(err)
