@@ -36,6 +36,9 @@ describe('JavaScript Section Test', function () {
     test3
   ]
 
+  // options to pass into generateTestApp
+  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+
   beforeEach(function () {
     // start by generating a statics folder in the roosevelt test app directory
     fse.ensureDirSync(path.join(appDir, 'statics', 'js'))
@@ -68,7 +71,7 @@ describe('JavaScript Section Test', function () {
           params: {}
         }
       }
-    }, 'initServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -104,7 +107,7 @@ describe('JavaScript Section Test', function () {
         },
         whitelist: ['a.js', 'c.js']
       }
-    }, 'initServer')
+    }, options)
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
@@ -139,7 +142,7 @@ describe('JavaScript Section Test', function () {
         },
         blacklist: ['c.js']
       }
-    }, 'initServer')
+    }, options)
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -181,7 +184,7 @@ describe('JavaScript Section Test', function () {
         },
         output: '.build/jsCompiledTest'
       }
-    }, 'initServer')
+    }, options)
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -216,7 +219,7 @@ describe('JavaScript Section Test', function () {
         },
         whitelist: ['a.js:test/something.js']
       }
-    }, 'initServer')
+    }, options)
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -252,7 +255,7 @@ describe('JavaScript Section Test', function () {
           params: {}
         }
       }
-    }, 'initServer')
+    }, options)
 
     // create a fork of app.js and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})

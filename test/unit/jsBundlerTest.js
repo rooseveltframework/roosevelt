@@ -42,6 +42,9 @@ describe('js Bundler Section Test', function () {
   // path to where the bundle js files should be
   let pathOfBundleJSFolder = path.join(appDir, 'statics', 'js', '.bundled')
 
+  // options to pass into generateTestApp
+  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+
   beforeEach(function () {
     // start by generating the directory to hold the static js files
     fse.ensureDirSync(path.join(appDir, 'statics', 'js'))
@@ -80,7 +83,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -118,7 +121,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process in development mode
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -155,7 +158,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process in production
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -206,7 +209,7 @@ describe('js Bundler Section Test', function () {
         }
       },
       generateFolderStructure: true
-    }, 'initServer')
+    }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
