@@ -11,6 +11,9 @@ const request = require('supertest')
 describe('Roosevelt routes Section Test', function () {
   const appDir = path.join(__dirname, '../', 'app', 'routesTest')
 
+  // options to pass into generateTestApp
+  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
     fse.copySync(path.join(__dirname, '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
@@ -36,7 +39,7 @@ describe('Roosevelt routes Section Test', function () {
         'html: teddy'
       ],
       onServerStart: true
-    }, 'startServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -72,7 +75,7 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: true
-    }, 'startServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -109,7 +112,7 @@ describe('Roosevelt routes Section Test', function () {
       port: 3000,
       generateFolderStructure: true,
       onServerStart: true
-    }, 'startServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -148,7 +151,7 @@ describe('Roosevelt routes Section Test', function () {
         'html: teddy'
       ],
       onServerStart: true
-    }, 'startServer')
+    }, options)
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})

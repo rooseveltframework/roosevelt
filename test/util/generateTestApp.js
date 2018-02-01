@@ -10,7 +10,6 @@ module.exports = function (params, options) {
   let appJSContents = `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: 5})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
 
-
   if (options.method === 'initServer') {
     appJSContents += `app.${options.method}(() => {\n`
     appJSContents += `  ${defaultMessages}\n})`
