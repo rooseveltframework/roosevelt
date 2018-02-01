@@ -5,17 +5,18 @@ const fse = require('fs-extra')
 const path = require('path')
 const util = require('util')
 
-module.exports = function (params, method) {
+module.exports = function (params, options) {
   const appDir = params.appDir
-  let appJSContents = `const app = require('../../../roosevelt')(${util.inspect(params, {depth: 5})})\n\n`
+  let appJSContents = `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: 5})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
 
-  if (method === 'initServer') {
-    appJSContents += `app.${method}(() => {\n`
+
+  if (options.method === 'initServer') {
+    appJSContents += `app.${options.method}(() => {\n`
     appJSContents += `  ${defaultMessages}\n})`
-  } else if (method === 'startServer') {
+  } else if (options.method === 'startServer') {
     appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send("something")}')
-    appJSContents += `app.${method}()`
+    appJSContents += `app.${options.method}()`
   } else {
     appJSContents += defaultMessages
   }
