@@ -9,10 +9,12 @@ const fork = require('child_process').fork
 describe('Command Line Tests', function () {
   const appDir = path.join(__dirname, '../app/cliFlags')
 
+  let options = {rooseveltPath: '../../../roosevelt'}
+
   before(function (done) {
     generateTestApp({
       appDir: appDir
-    }, '../../../roosevelt')
+    }, options)
     done()
   })
 
