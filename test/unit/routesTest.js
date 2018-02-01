@@ -45,10 +45,21 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', () => {
       request('http://localhost:43711')
       .get('/teddyTest')
-      .expect(200, (err) => {
+      .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
+          testApp.kill()
+          done()
         }
+        // test that the four values that I put into the model and have in the view are being put into the page
+        let test1 = res.text.includes('Teddy Test')
+        let test2 = res.text.includes('Heading Test')
+        let test3 = res.text.includes('This is the first sentence that I am grabbing from my teddy model')
+        let test4 = res.text.includes('This is the second sentence that I am grabbing from my teddy model')
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        assert.equal(test4, true)
         testApp.kill()
         done()
       })
@@ -70,10 +81,21 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', () => {
       request('http://localhost:43711')
       .get('/HTMLTest')
-      .expect(200, (err) => {
+      .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
+          testApp.kill()
+          done()
         }
+        // test that the four values that I put into the model and have in the view are being put into the page
+        let test1 = res.text.includes('TitleX')
+        let test2 = res.text.includes('headingX')
+        let test3 = res.text.includes('sentence1X')
+        let test4 = res.text.includes('sentence2X')
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        assert.equal(test4, true)
         testApp.kill()
         done()
       })
@@ -96,10 +118,21 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', () => {
       request('http://localhost:3000')
       .get('/HTMLTest')
-      .expect(200, (err) => {
+      .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
+          testApp.kill()
+          done()
         }
+        // test that the four values that I put into the model and have in the view are being put into the page
+        let test1 = res.text.includes('TitleX')
+        let test2 = res.text.includes('headingX')
+        let test3 = res.text.includes('sentence1X')
+        let test4 = res.text.includes('sentence2X')
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        assert.equal(test4, true)
         testApp.kill()
         done()
       })
