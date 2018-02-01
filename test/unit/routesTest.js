@@ -160,6 +160,8 @@ describe('Roosevelt routes Section Test', function () {
       .expect(404, (err) => {
         if (err) {
           assert.fail(err)
+          testApp.kill()
+          done()
         }
         testApp.kill()
         done()
