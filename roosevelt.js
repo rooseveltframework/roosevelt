@@ -8,6 +8,9 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
+const cookieParser = require('cookie-parser')
+const favicon = require('serve-favicon')
+const compression = require('compression')
 
 module.exports = function (params) {
   const sourceName = path.basename(module.parent.filename) // name of file that required roosevelt
@@ -98,16 +101,19 @@ module.exports = function (params) {
   app.httpsServer = httpsServer
 
   // enable gzip compression
-  app.use(require('compression')())
+  app.set('compression', compression)
+  app.use(compression())
 
   // enable cookie parsing
-  app.use(require('cookie-parser')())
+  app.set('cookieParser', cookieParser)
+  app.use(cookieParser())
 
   // enable favicon support
+  app.set('serveFavicon', favicon)
   if (app.get('params').favicon !== 'none' && app.get('params').favicon !== null) {
     faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
     if (fsr.fileExists(faviconPath)) {
-      app.use(require('serve-favicon')(faviconPath))
+      app.use(favicon(faviconPath))
     } else {
       logger.warn(`Favicon ${app.get('params').favicon} does not exist. Please ensure the "favicon" param is configured correctly.`.yellow)
     }
@@ -171,7 +177,7 @@ module.exports = function (params) {
       // custom error page
       app = require('./lib/500ErrorPage.js')(app)
 
-      if (cb) {
+      if (cb && typeof cb === 'function') {
         cb()
       }
     }
