@@ -787,6 +787,11 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `express`                            | The [express](http://expressjs.com) module. |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
+| `cookieParser`                       | The [cookie-parser](https://github.com/expressjs/cookie-parser) module. |
+| `bodyParser`                         | The [body-parser](https://github.com/expressjs/body-parser) module. |
+| `compression`                        | The [compression](https://github.com/expressjs/compression) module. |
+| `serveFavicon`                       | The [serve-favicon](https://github.com/expressjs/serve-favicon) module. |
+| `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`. |
 | `appDir`                             | The directory the main module is in.     |
