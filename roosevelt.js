@@ -171,7 +171,7 @@ module.exports = function (params) {
       // custom error page
       app = require('./lib/500ErrorPage.js')(app)
 
-      if (cb) {
+      if (cb && typeof cb === 'function') {
         cb()
       }
     }
