@@ -145,7 +145,7 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
-  it('should  not allow warnigns to show up if "suppressWarnings" is true', function (done) {
+  it('should not allow warnigns to show up if "suppressWarnings" is true', function (done) {
     // generate the app
     generateTestApp({
       generateFolderStructure: true,
@@ -175,6 +175,243 @@ describe('Roosevelt HTML Validator Test', function () {
         let test2 = res.text.includes('<h2>Warnings:</h2>')
         assert.equal(test1, true)
         assert.equal(test2, false)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should try to validate the HTML if the response header does not have the exception value', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        exceptions: {
+          requestHeader: 'partialtest'
+        }
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/Broken')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        // test the header exception in the app param is false or not there
+        let test1 = typeof res.header.partialtest === 'undefined'
+        assert.equal(test1, true)
+        // test the text returned to see if it has the validation error page title in it
+        let test2 = res.text.includes('HTML did not pass validation')
+        assert.equal(test2, true)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should not try to validate the HTML if the response header has the exception value', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        exceptions: {
+          requestHeader: 'partialtest'
+        }
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/brokenHeaderTest')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        // test the header exception in the app param is false or not there
+        let test1 = typeof res.header.partialtest === 'undefined'
+        assert.equal(test1, false)
+        // test the text returned to see if it has the validation error page title in it
+        let test2 = res.text.includes('HTML did not pass validation')
+        assert.equal(test2, false)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should not try to validate the HTML page because the model in the response holds a value that is set in the exception param', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      viewEngine: [
+        'html: teddy'
+      ],
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        exceptions: {
+          modelValue: '_disableValidatorTest'
+        }
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and start it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // wait for the server to start, and then check that the page has not been validated
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/brokenObjectTest')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+
+        // check to see that the page did not validate
+        let test1 = res.text.includes('HTML did not pass validation')
+        assert.equal(test1, false)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should try to validate the HTML page because the model in the response does not holds a value that is set in the exception param', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      viewEngine: [
+        'html: teddy'
+      ],
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        exceptions: {
+          modelValue: '_disableValidatorTest'
+        }
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and start it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // wait for the server to start, and then check that the page has not been validated
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/Broken')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+
+        // check to see tha tthe page did not validate
+        let test1 = res.text.includes('HTML did not pass validation')
+        assert.equal(test1, true)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should not validate the html page when the request header sent to it has the exception value', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        exceptions: {
+          requestHeader: 'partialtest'
+        }
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/Broken')
+      .set('partialtest', 'true')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+
+        // test the header exception in the app param is false or not there
+        let test1 = typeof res.header.partialtest === 'undefined'
+        assert.equal(test1, false)
+        // check to see that the page did not validate
+        let test2 = res.text.includes('HTML did not pass validation')
+        assert.equal(test2, false)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should be able to run the validator even if we change the port number of the validator', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        port: 3000
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the server coming to life, see if we can send a request to the new port
+    testApp.on('message', () => {
+      request('http://localhost:3000')
+      .get('/')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+
+        // check to see that the page loaded
+        let test1 = res.status
+        assert.equal(test1, 200)
         testApp.kill()
         done()
       })
