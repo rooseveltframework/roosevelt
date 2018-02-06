@@ -417,4 +417,69 @@ describe('Roosevelt HTML Validator Test', function () {
       })
     })
   })
+
+  it('should be able to run the htmlValidator independently from the app if the seperateProcess param is set to true', function (done) {
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        suppressWarnings: true,
+        separateProcess: true,
+        port: 8888
+      },
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // test to see that the validator still works
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/Broken')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        // check to see that the page did validate and failed
+        let test1 = res.text.includes('HTML did not pass validation')
+        assert.equal(test1, true)
+        testApp.kill()
+      })
+
+      // check to see if the validator is accessible (should get back 200)
+      request('http://localhost:8888')
+      .get('/')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        let test2 = res.text.includes('Ready to check  - Nu Html Checker')
+        assert.equal(test2, true)
+      })
+
+      // kill the validator with a fork or the killValidator script
+      const killLine = fork(path.join(__dirname, '../', '../', 'lib', 'scripts', 'killValidator.js'))
+
+      killLine.on('exit', () => {
+      // see that the validator is no longer listening
+        request('http://localhost:8888')
+        .get('/')
+        .expect(200, (err, res) => {
+          if (err) {
+            done()
+          } else {
+            assert.fail('we were able to load the validator even after it was killed')
+            done()
+          }
+        })
+      })
+    })
+  })
 })
