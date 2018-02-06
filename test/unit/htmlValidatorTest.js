@@ -280,6 +280,10 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and start it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // wait for the server to start, and then check that the page has not been validated
     testApp.on('message', () => {
       request('http://localhost:43711')
