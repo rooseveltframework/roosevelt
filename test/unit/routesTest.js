@@ -172,12 +172,12 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should display the custom 404 page that I made if the user is requesting a page that does not exists', function (done) {
+  it('should display a custom 404 error page if the user is requesting a page that does not exists and the user had adjusted the params to accomadate their custom page', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: path.join(__dirname, '../', 'util', 'mvc', 'controllers', '404.js'),
+      error404: '404.js',
       onServerStart: true
     }, options)
 
@@ -198,6 +198,43 @@ describe('Roosevelt routes Section Test', function () {
         let test1 = res.text.includes('404 custom test error page')
         let test2 = res.text.includes('The page you are looking for is not found')
         let test3 = res.text.includes('This is a test to see if we can make custom 404 controllers and pages')
+        // test the includes (should be true)
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should display a custom 500 error page if an error has occured on the server and the user had changed the param to accomadate their custom page', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      error5xx: '500.js',
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the message that tells us that the server has started, test the path that will run into a server error
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/serverError')
+      .expect(500, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+
+        // see if the page has these 3 unique lines of text in it
+        let test1 = res.text.includes('500 custom test error page')
+        let test2 = res.text.includes('An error had occurred on the server')
+        let test3 = res.text.includes('This is a test to see if we can make custom 500 controllers and pages')
         // test the includes (should be true)
         assert.equal(test1, true)
         assert.equal(test2, true)
