@@ -9,7 +9,7 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt HTML Validator Test', function () {
-  this.timeout(15000)
+  this.timeout(20000)
 
   // location of the test app
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
