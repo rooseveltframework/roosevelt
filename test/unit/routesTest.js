@@ -171,4 +171,40 @@ describe('Roosevelt routes Section Test', function () {
       })
     })
   })
+
+  it('should display the custom 404 page that I made if the user is requesting a page that does not exists', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      error404: path.join(__dirname, '../', 'util', 'mvc', 'controllers', '404.js'),
+      onServerStart: true
+    }, options)
+
+    // create a fork of the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the message that proves that the server has started, look up a random url and see if the custom 404 page is given back
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/randomURL')
+      .expect(404, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        // see if the page has these 3 unique lines of text in it
+        let test1 = res.text.includes('404 custom test error page')
+        let test2 = res.text.includes('The page you are looking for is not found')
+        let test3 = res.text.includes('This is a test to see if we can make custom 404 controllers and pages')
+        // test the includes (should be true)
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        testApp.kill()
+        done()
+      })
+    })
+  })
 })
