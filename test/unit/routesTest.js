@@ -38,6 +38,7 @@ describe('Roosevelt routes Section Test', function () {
       viewEngine: [
         'html: teddy'
       ],
+      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -74,6 +75,7 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -111,6 +113,7 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       port: 3000,
       generateFolderStructure: true,
+      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -147,6 +150,7 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      error404: '404test.js',
       viewEngine: [
         'html: teddy'
       ],
@@ -177,7 +181,7 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: '404.js',
+      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -213,7 +217,8 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error5xx: '500.js',
+      error404: '404test.js',
+      error5xx: '500test.js',
       onServerStart: true
     }, options)
 
@@ -230,12 +235,69 @@ describe('Roosevelt routes Section Test', function () {
           testApp.kill()
           done()
         }
-
         // see if the page has these 3 unique lines of text in it
         let test1 = res.text.includes('500 custom test error page')
         let test2 = res.text.includes('An error had occurred on the server')
         let test3 = res.text.includes('This is a test to see if we can make custom 500 controllers and pages')
         // test the includes (should be true)
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('see if I could get a 503 error', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      error404: '404test.js',
+      error5xx: '500test.js',
+      error503: '503test.js',
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`${data}`)
+    })
+
+    // on the message that tells us that the server has started, test the path that will run into a server error
+    testApp.on('message', () => {
+      /*
+      for(let x =0; x < 100000; x++){
+      httpRequest('http://localhost:43711/HTMLTest', (error, response, body) => {
+        if(response !== undefined)
+          {
+            console.log(response.statusCode)
+            if(response.statusCode == 503)
+            {
+              console.log('here')
+              testApp.kill()
+              done()
+            }
+          }
+       })
+      }
+      */
+      request('http://localhost:43711')
+      .get('/custom503')
+      .expect(503, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        // sample the response text
+        const test1 = res.text.includes('503 custom test error page')
+        const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
+        const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
+        // check to make sure that all specific pharses are there
         assert.equal(test1, true)
         assert.equal(test2, true)
         assert.equal(test3, true)
