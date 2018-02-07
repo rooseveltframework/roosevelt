@@ -249,7 +249,7 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('see if I could get a 503 error', function (done) {
+  it('should display a custom 503 error if the server is unable to handle the requests quick enough and the user changed the param to accomadate their custom page', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -257,53 +257,40 @@ describe('Roosevelt routes Section Test', function () {
       error404: '404test.js',
       error5xx: '500test.js',
       error503: '503test.js',
-      onServerStart: true
+      onServerStart: true,
+      toobusy: {
+        maxLagPerRequest: 10,
+        lagCheckInterval: 16
+      }
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`${data}`)
-    })
-
     // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', () => {
-      /*
-      for(let x =0; x < 100000; x++){
-      httpRequest('http://localhost:43711/HTMLTest', (error, response, body) => {
-        if(response !== undefined)
-          {
-            console.log(response.statusCode)
-            if(response.statusCode == 503)
-            {
-              console.log('here')
-              testApp.kill()
-              done()
-            }
+      // indicator to tell whether or not we had a 503 come
+      let bool503 = false
+      for (let x = 0; x < 10; x++) {
+        request('http://localhost:43711')
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err && res !== undefined && bool503 === false) {
+            assert.equal(res.status, 503)
+            bool503 = true
+            // sample the response text
+            const test1 = res.text.includes('503 custom test error page')
+            const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
+            const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
+            // check to make sure that all specific pharses are there
+            assert.equal(test1, true)
+            assert.equal(test2, true)
+            assert.equal(test3, true)
+            testApp.kill()
+            done()
           }
-       })
+        })
       }
-      */
-      request('http://localhost:43711')
-      .get('/custom503')
-      .expect(503, (err, res) => {
-        if (err) {
-          assert.fail(err)
-          testApp.kill()
-          done()
-        }
-        // sample the response text
-        const test1 = res.text.includes('503 custom test error page')
-        const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
-        const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
-        // check to make sure that all specific pharses are there
-        assert.equal(test1, true)
-        assert.equal(test2, true)
-        assert.equal(test3, true)
-        testApp.kill()
-        done()
-      })
     })
   })
 })

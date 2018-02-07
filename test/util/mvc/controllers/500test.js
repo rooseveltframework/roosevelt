@@ -1,5 +1,4 @@
 module.exports = function (app, err, req, res) {
-  console.dir(res)
   const path = require('path')
   // grab the path of the 500 page
   const Path500 = path.join(__dirname, '../', 'views', '500test.html')
