@@ -38,7 +38,6 @@ describe('Roosevelt routes Section Test', function () {
       viewEngine: [
         'html: teddy'
       ],
-      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -75,7 +74,6 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -113,7 +111,6 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       port: 3000,
       generateFolderStructure: true,
-      error404: '404test.js',
       onServerStart: true
     }, options)
 
@@ -145,12 +142,11 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should start the server and send back a 404 status if a request is sent for non-existent page', function (done) {
+  it('should start the server and send back the default 404 error page if a request is sent for non-existent page', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: '404test.js',
       viewEngine: [
         'html: teddy'
       ],
@@ -164,19 +160,30 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', () => {
       request('http://localhost:43711')
       .get('/randomURL')
-      .expect(404, (err) => {
+      .expect(404, (err, res) => {
         if (err) {
           assert.fail(err)
           testApp.kill()
           done()
         }
+        // sample the text from the response
+        const test1 = res.text.includes('404 Not Found')
+        const test2 = res.text.includes('The requested URL /randomURL was not found on this server')
+        const test3 = res.text.includes('localhost:43711')
+        // test to see if the samples have the expected text from the default 404 error page
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
         testApp.kill()
         done()
       })
     })
   })
 
-  it('should display a custom 404 error page if the user is requesting a page that does not exists and the user had adjusted the params to accomadate their custom page', function (done) {
+  it('should start the server and display a custom 404 error page if the user is requesting a page that does not exists and the user had adjusted the params to accomadate their custom page', function (done) {
+    // copy over the custom 404 controller over to the mvc folder
+    fse.copyFileSync(path.join(__dirname, '../', 'util', '404test.js'), path.join(appDir, 'mvc', 'controllers', '404test.js'))
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -212,12 +219,11 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should display a custom 500 error page if an error has occured on the server and the user had changed the param to accomadate their custom page', function (done) {
+  it('should start the server and display a custom 500 error page if an error has occured on the server and the user had changed the param to accomadate their custom page', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: '404test.js',
       error5xx: '500test.js',
       onServerStart: true
     }, options)
@@ -249,13 +255,46 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should display a custom 503 error if the server is unable to handle the requests quick enough and the user changed the param to accomadate their custom page', function (done) {
+  it('should start the server and display the default 500 error page if an error has occured on the server', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: '404test.js',
-      error5xx: '500test.js',
+      onServerStart: true
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the message that tells us that the server has started, test the path that will run into a server error
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/serverError')
+      .expect(500, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill()
+          done()
+        }
+        // see if the page has these 3 default lines of text in it
+        const test1 = res.text.includes('500 Internal Server Error')
+        const test2 = res.text.includes('The requested URL /serverError is temporarily unavailable at this time.')
+        const test3 = res.text.includes('localhost:43711')
+        // test the includes (should be true)
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        testApp.kill()
+        done()
+      })
+    })
+  })
+
+  it('should start the server and display a custom 503 error if the server is unable to handle the requests quick enough and the user changed the param to accomadate their custom page', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
       error503: '503test.js',
       onServerStart: true,
       toobusy: {
@@ -282,6 +321,48 @@ describe('Roosevelt routes Section Test', function () {
             const test1 = res.text.includes('503 custom test error page')
             const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
             const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
+            // check to make sure that all specific pharses are there
+            assert.equal(test1, true)
+            assert.equal(test2, true)
+            assert.equal(test3, true)
+            testApp.kill()
+            done()
+          }
+        })
+      }
+    })
+  })
+
+  it('should start the server and display the default 503 error page if the server is unable to handle the requests quick enough', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: true,
+      toobusy: {
+        maxLagPerRequest: 10,
+        lagCheckInterval: 16
+      }
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the message that tells us that the server has started, test the path that will run into a server error
+    testApp.on('message', () => {
+      // indicator to tell whether or not we had a 503 come
+      let bool503 = false
+      for (let x = 0; x < 10; x++) {
+        request('http://localhost:43711')
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err && res !== undefined && bool503 === false) {
+            assert.equal(res.status, 503)
+            bool503 = true
+            // sample the response text
+            const test1 = res.text.includes('503 Service Unavailable')
+            const test2 = res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
+            const test3 = res.text.includes('localhost:43711')
             // check to make sure that all specific pharses are there
             assert.equal(test1, true)
             assert.equal(test2, true)
