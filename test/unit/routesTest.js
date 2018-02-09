@@ -9,6 +9,7 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt routes Section Test', function () {
+  this.timeout(10000)
   const appDir = path.join(__dirname, '../', 'app', 'routesTest')
 
   // options to pass into generateTestApp
