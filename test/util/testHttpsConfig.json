@@ -34,6 +34,15 @@
     "enable": true,
     "httpsOnly": false,
     "httpsPort": 1234,
+    "pfx": true,
+    "keyPath": {
+      "pfx": "",
+      "key": "",
+      "cert": ""
+    },
+    "passphrase": "",
+    "cafile": true,
+    "ca": "",
     "requestCert": false,
     "rejectUnauthorized": false
   },

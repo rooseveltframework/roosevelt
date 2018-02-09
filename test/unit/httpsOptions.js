@@ -58,14 +58,51 @@ describe('HTTPS server options', function () {
 
   it('should create https.Server when enabled', function () {
     app({appDir: appDir, ...config})
-    assert(stubHttpServer.called, 'http.Server was not called')
     assert(stubHttpsServer.called, 'https.Server was not called')
+    assert(stubHttpServer.called, 'http.Server was not called')
   })
 
   it('should not create http.Server when httpsOnly is true', function () {
     config.https.httpsOnly = true
 
     app({appDir: appDir, ...config})
-    assert(stubHttpServer.called === false, 'http.Server called despite httpsOnly flag')
+    assert(stubHttpServer.notCalled, 'http.Server called despite httpsOnly flag')
+  })
+
+  it('should use given pfx file if pfx option is true', function () {
+
+  })
+
+  it('should use key/cert if pfx option is false', function () {
+    config.https.pfx = false
+    // test
+    config.https.pfx = true
+  })
+
+  it('should read certificate authority from file if cafile is true', function () {
+    // start app
+    // read in ca file
+    // assert.equal(stubHttpsServer.args[0][0].ca, `fs-read ca`, 'https.Server CA did not match CA read from file')
+  })
+
+  it('should be able to read array of certificates', function () {
+
+  })
+
+  it('should pass certificate authority directly to httpsServer if cafile is false', function () {
+    config.https.cafile = false
+    config.https.ca = ['test ca text']
+
+    app({appDir: appDir, ...config})
+    assert.equal(stubHttpsServer.args[0][0].ca, config.https.ca, 'https.Server CA did not match supplied CA')
+
+    config.https.ca = 'original'
+    config.https.cafile = true
+  })
+
+  it('should start the https server with the correct options', function () {
+    app({appDir: appDir, ...config})
+    assert.equal(stubHttpsServer.args[0][0], config.https.httpsPort, 'httpsServer.listen port did not match supplied port')
+    assert.equal(stubHttpsServer.args[0][1], 'localhost', 'httpsServer.listen domain did not match localhost')
   })
 })
