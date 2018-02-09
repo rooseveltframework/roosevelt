@@ -14,7 +14,15 @@ module.exports = function (params, options) {
     appJSContents += `app.${options.method}(() => {\n`
     appJSContents += `  ${defaultMessages}\n})`
   } else if (options.method === 'startServer') {
-    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send("something")}')
+    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send("ServerStart")}')
+    // check to see if and what param function was added to the parameters
+    if (appJSContents.includes('onReqStart: true')) {
+      appJSContents = appJSContents.replace('onReqStart: true', `onReqStart: (req, res, next) => {res.setHeader('onreqStartTest','true')\nnext()}`)
+    } else if (appJSContents.includes('onReqBeforeRoute: true')) {
+      appJSContents = appJSContents.replace('onReqBeforeRoute: true', `onReqBeforeRoute: (req, res, next) => {res.setHeader('onreqBeforeRoute','true')\nnext()}`)
+    } else if (appJSContents.includes('onReqAfterRoute: true')) {
+      appJSContents = appJSContents.replace('onReqAfterRoute: true', `onReqAfterRoute: (req, res) => {process.send("onReqAfterRoute")}`)
+    }
     appJSContents += `app.${options.method}()`
   } else {
     appJSContents += defaultMessages
