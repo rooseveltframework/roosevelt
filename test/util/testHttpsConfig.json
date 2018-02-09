@@ -1,0 +1,77 @@
+{
+  "port": "httpstest",
+  "generateFolderStructure": false,
+  "localhostOnly": "httpstest",
+  "suppressLogs": {
+    "httpLogs": true,
+    "rooseveltLogs": true,
+    "rooseveltWarnings": true
+  },
+  "noMinify": "httpstest",
+  "htmlValidator": {
+    "enable": "httpstest",
+    "separateProcess": "httpstest",
+    "port": "httpstest",
+    "suppressWarnings": "httpstest",
+    "exceptions": {
+      "requestHeader": "httpstest",
+      "modelValue": "httpstest"
+    }
+  },
+  "multipart": {
+    "multiples": "httpstest"
+  },
+  "toobusy": {
+    "maxLagPerRequest": "httpstest",
+    "lagCheckInterval": "httpstest"
+  },
+  "shutdownTimeout": "httpstest",
+  "bodyParserUrlencodedParams": {
+    "extended": "httpstest"
+  },
+  "bodyParserJsonParams": "httpstest",
+  "https": {
+    "enable": true,
+    "httpsOnly": false,
+    "httpsPort": 1234,
+    "requestCert": false,
+    "rejectUnauthorized": false
+  },
+  "modelsPath": "httpstest",
+  "viewsPath": "httpstest",
+  "controllersPath": "httpstest",
+  "viewEngine": null,
+  "error404": "httpstest",
+  "error5xx": "httpstest",
+  "error503": "httpstest",
+  "staticsRoot": "httpstest",
+  "htmlMinify": {
+    "override": "httpstest",
+    "exception_url": "httpstest",
+    "htmlMinifier": "httpstest"
+  },
+  "css": {
+    "sourceDir": "httpstest",
+    "compiler": "httpstest",
+    "whitelist": "httpstest",
+    "output": "httpstest",
+    "versionFile": "httpstest"
+  },
+  "js": {
+    "sourceDir": "httpstest",
+    "compiler": "httpstest",
+    "whitelist": "httpstest",
+    "blacklist": "httpstest",
+    "output": "httpstest",
+    "bundler": {
+      "bundles": "httpstest",
+      "output": "httpstest",
+      "expose": "httpstest"
+    }
+  },
+  "publicFolder": "httpstest",
+  "favicon": "httpstest",
+  "staticsSymlinksToPublic": "httpstest",
+  "versionedPublic": "httpstest",
+  "alwaysHostPublic": "httpstest"
+}
