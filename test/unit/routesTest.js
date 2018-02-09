@@ -9,7 +9,6 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt routes Section Test', function () {
-  this.timeout(10000)
   const appDir = path.join(__dirname, '../', 'app', 'routesTest')
 
   // options to pass into generateTestApp
@@ -117,14 +116,6 @@ describe('Roosevelt routes Section Test', function () {
 
     // create a fork of the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
 
      // on the message sent by the app completing the start method, send a http request for the plain html page to the server and see if it sends back a response
     testApp.on('message', () => {
