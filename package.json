@@ -44,7 +44,9 @@
     "nyc": "~11.4.1",
     "roosevelt-less": "~0.4.0",
     "roosevelt-uglify": "~0.2.1",
-    "standard": "~10.0.0"
+    "standard": "~10.0.0",
+    "supertest": "~3.0.0",
+    "teddy": "~0.4.23"
   },
   "repository": {
     "type": "git",
