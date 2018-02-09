@@ -110,7 +110,7 @@ describe('Roosevelt routes Section Test', function () {
     // generate the app
     generateTestApp({
       appDir: appDir,
-      port: 3000,
+      port: 9000,
       generateFolderStructure: true,
       onServerStart: true
     }, options)
@@ -128,7 +128,7 @@ describe('Roosevelt routes Section Test', function () {
 
      // on the message sent by the app completing the start method, send a http request for the plain html page to the server and see if it sends back a response
     testApp.on('message', () => {
-      request('http://localhost:3000')
+      request('http://localhost:9000')
       .get('/HTMLTest')
       .expect(200, (err, res) => {
         if (err) {
