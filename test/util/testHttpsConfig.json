@@ -32,17 +32,17 @@
   "bodyParserJsonParams": "httpstest",
   "https": {
     "enable": true,
-    "httpsOnly": false,
+    "httpsOnly": true,
     "httpsPort": 1234,
-    "pfx": true,
+    "pfx": false,
     "keyPath": {
       "pfx": "",
-      "key": "",
-      "cert": ""
+      "key": "test/util/test.req.key",
+      "cert": "test/util/test.req.crt"
     },
     "passphrase": "",
     "cafile": true,
-    "ca": "",
+    "ca": "test/util/ca.crt",
     "requestCert": false,
     "rejectUnauthorized": false
   },
