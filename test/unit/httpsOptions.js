@@ -58,7 +58,7 @@ describe('HTTPS server options', function () {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should create both http.Server when httpsOnly is false', function () {
+  it('should create http.Server when httpsOnly is false', function () {
     config.https.httpsOnly = false
 
     app({appDir: appDir, ...config})
@@ -103,7 +103,16 @@ describe('HTTPS server options', function () {
   })
 
   it('should be able to read array of certificates', function () {
+    let ca1 = fs.readFileSync(path.join(__dirname, '../util/ca.crt'))
+    let ca2 = fs.readFileSync(path.join(__dirname, '../util/ca-2.crt'))
 
+    config.https.ca = ['test/util/ca.crt', 'test/util/ca-2.crt']
+
+    app({appDir: appDir, ...config})
+    assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[1].equals(ca2), 'https.Server CA (2) did not match supplied CA')
+
+    config.https.ca = 'test/util/ca.crt'
   })
 
   it('should pass certificate authority directly to httpsServer if cafile is false', function () {
