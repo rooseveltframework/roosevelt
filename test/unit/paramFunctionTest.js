@@ -52,20 +52,20 @@ describe('parameter Function Test Section', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // check to see if a specific header was changed in the function onReqStart
         let test = res.get('onreqstarttest')
         if (test) {
           testApp.kill()
-          done()
         } else {
           assert.fail('onReqStart was not called')
           testApp.kill()
-          done()
         }
       })
+    })
+    testApp.on('exit', () => {
+      done()
     })
   })
 
@@ -88,20 +88,20 @@ describe('parameter Function Test Section', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // check to see if a specific header was changed in the function onReqBeforeRoute
         const test = res.get('onreqbeforeroute')
         if (test) {
           testApp.kill()
-          done()
         } else {
           assert.fail('onReqBeforeRoute was not called')
           testApp.kill()
-          done()
         }
       })
+    })
+    testApp.on('exit', () => {
+      done()
     })
   })
 
@@ -125,15 +125,16 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill()
-            done()
+            testApp.kill('SIGINT')
           }
         })
       // see if we get a message that was sent from the onReqAfterRoute function
       } else if (message === 'onReqAfterRoute') {
-        testApp.kill()
-        done()
+        testApp.kill('SIGINT')
       }
+    })
+    testApp.on('exit', () => {
+      done()
     })
   })
 })
