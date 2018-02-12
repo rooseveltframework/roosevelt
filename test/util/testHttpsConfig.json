@@ -36,11 +36,11 @@
     "httpsPort": 1234,
     "pfx": false,
     "keyPath": {
-      "pfx": "",
+      "pfx": "test/util/test.p12",
       "key": "test/util/test.req.key",
       "cert": "test/util/test.req.crt"
     },
-    "passphrase": "",
+    "passphrase": "testpass",
     "cafile": true,
     "ca": "test/util/ca.crt",
     "requestCert": false,

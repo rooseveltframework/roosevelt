@@ -73,17 +73,30 @@ describe('HTTPS server options', function () {
   })
 
   it('should use given pfx file if pfx option is true', function () {
+    let keytext = fs.readFileSync(path.join(__dirname, '../util/test.p12'))
+
     config.https.pfx = true
+
+    app({appDir: appDir, ...config})
+    assert(typeof stubHttpsServer.args[0][0].key === 'undefined', 'https.Server had key when using pft')
+    assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using pfx')
+    assert(stubHttpsServer.args[0][0].pfx.equals(keytext), 'https.Server pfx file did not match supplied')
 
     config.https.pfx = false
   })
 
   it('should use key/cert if pfx option is false', function () {
-    // app({appDir: appDir, ...config})
+    let keytext = fs.readFileSync(path.join(__dirname, '../util/test.req.key'))
+    let certext = fs.readFileSync(path.join(__dirname, '../util/test.req.crt'))
+
+    app({appDir: appDir, ...config})
+    assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
+    assert(stubHttpsServer.args[0][0].cert.equals(certext), 'https.Server cert file did not match supplied')
+    assert(typeof stubHttpsServer.args[0][0].pfx === 'undefined', 'https.Server had pfx when using key/cert')
   })
 
   it('should read certificate authority from file if cafile is true', function () {
-    let catext = fs.readFileSync('test/util/ca.crt')
+    let catext = fs.readFileSync(path.join(__dirname, '../util/ca.crt'))
 
     app({appDir: appDir, ...config})
     assert(stubHttpsServer.args[0][0].ca.equals(catext), 'https.Server CA did not match supplied CA')
