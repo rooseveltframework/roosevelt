@@ -21,11 +21,9 @@ describe('HTTPS server options', function () {
     Server: stubHttpsServer
   }
 
-  const stubHttpListen = sinon.stub()
-  const stubHttpOn = sinon.stub()
   const stubHttpServer = sinon.stub().returns({
-    listen: stubHttpListen,
-    on: stubHttpOn
+    listen: sinon.stub(),
+    on: sinon.stub()
   })
   const stubHttp = {
     Server: stubHttpServer
@@ -42,8 +40,6 @@ describe('HTTPS server options', function () {
     stubHttpsOn.resetHistory()
     stubHttpsServer.resetHistory()
 
-    stubHttpListen.resetHistory()
-    stubHttpOn.resetHistory()
     stubHttpServer.resetHistory()
   })
 
