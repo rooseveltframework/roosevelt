@@ -58,10 +58,14 @@ describe('HTTPS server options', function () {
   })
 
   it('should create https.Server when enabled', function () {
+    app({appDir: appDir, ...config})
+    assert(stubHttpsServer.called, 'https.Server was not called')
+  })
+
+  it('should create both http.Server when httpsOnly is false', function () {
     config.https.httpsOnly = false
 
     app({appDir: appDir, ...config})
-    assert(stubHttpsServer.called, 'https.Server was not called')
     assert(stubHttpServer.called, 'http.Server was not called')
 
     config.https.httpsOnly = true
