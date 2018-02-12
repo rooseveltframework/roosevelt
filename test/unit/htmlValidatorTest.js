@@ -55,15 +55,16 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test the text returned to see if it has the validation error page title in it
         let test1 = res.text.includes('HTML did not pass validation')
         let test2 = res.text.includes('<h2>Errors:</h2>')
         assert.equal(test1, true)
         assert.equal(test2, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -91,8 +92,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test if the elements added into the plain HTML show in the response
         let test1 = res.text.includes('TitleX')
@@ -103,7 +103,9 @@ describe('Roosevelt HTML Validator Test', function () {
         assert.equal(test2, true)
         assert.equal(test3, true)
         assert.equal(test4, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -130,8 +132,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
 
         // test the text returned to see if it has the validation error page title in it
@@ -139,9 +140,11 @@ describe('Roosevelt HTML Validator Test', function () {
         let test2 = res.text.includes('<h2>Warnings:</h2>')
         assert.equal(test1, true)
         assert.equal(test2, true)
-        testApp.kill()
-        done()
+        testApp.kill('SIGINT')
       })
+    })
+    testApp.on('exit', () => {
+      done()
     })
   })
 
@@ -166,8 +169,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
 
         // test the text returned to see if it has the validation error page title in it
@@ -175,7 +177,9 @@ describe('Roosevelt HTML Validator Test', function () {
         let test2 = res.text.includes('<h2>Warnings:</h2>')
         assert.equal(test1, true)
         assert.equal(test2, false)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -205,8 +209,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test the header exception in the app param is false or not there
         let test1 = typeof res.header.partialtest === 'undefined'
@@ -214,7 +217,9 @@ describe('Roosevelt HTML Validator Test', function () {
         // test the text returned to see if it has the validation error page title in it
         let test2 = res.text.includes('HTML did not pass validation')
         assert.equal(test2, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -244,8 +249,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test the header exception in the app param is false or not there
         let test1 = typeof res.header.partialtest === 'undefined'
@@ -253,7 +257,9 @@ describe('Roosevelt HTML Validator Test', function () {
         // test the text returned to see if it has the validation error page title in it
         let test2 = res.text.includes('HTML did not pass validation')
         assert.equal(test2, false)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -284,8 +290,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
 
         // test the header exception in the app param is false or not there
@@ -294,7 +299,9 @@ describe('Roosevelt HTML Validator Test', function () {
         // check to see that the page did not validate
         let test2 = res.text.includes('HTML did not pass validation')
         assert.equal(test2, false)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -328,14 +335,15 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
 
         // check to see that the page did not validate
         let test1 = res.text.includes('HTML did not pass validation')
         assert.equal(test1, false)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -369,14 +377,15 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
 
         // check to see tha tthe page did not validate
         let test1 = res.text.includes('HTML did not pass validation')
         assert.equal(test1, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -405,14 +414,15 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
 
         // check to see that the page loaded
         let test1 = res.status
         assert.equal(test1, 200)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -437,18 +447,20 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // test to see that the validator still works
     testApp.on('message', () => {
+      // variable to check if we had an error on the test app
+      let testAppError = false
       request('http://localhost:43711')
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
+          testAppError = true
         }
         // check to see that the page did validate and failed
         let test1 = res.text.includes('HTML did not pass validation')
         assert.equal(test1, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
       })
 
       // check to see if the validator is accessible (should get back 200)
@@ -457,8 +469,9 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          const killLine = fork(path.join(__dirname, '../', '../', 'lib', 'scripts', 'killValidator.js'))
+          testAppError = true
+          killLine.kill('SIGINT')
         }
         let test2 = res.text.includes('Ready to check  - Nu Html Checker')
         assert.equal(test2, true)
@@ -468,17 +481,26 @@ describe('Roosevelt HTML Validator Test', function () {
       const killLine = fork(path.join(__dirname, '../', '../', 'lib', 'scripts', 'killValidator.js'))
 
       killLine.on('exit', () => {
-      // see that the validator is no longer listening
-        request('http://localhost:8888')
-        .get('/')
-        .expect(200, (err, res) => {
-          if (err) {
-            done()
-          } else {
-            assert.fail('we were able to load the validator even after it was killed')
-            done()
-          }
-        })
+        if (testAppError === false) {
+          // see that the validator is no longer listening
+          request('http://localhost:8888')
+          .get('/')
+          .expect(200, (err, res) => {
+            if (err) {
+              done()
+            } else {
+              assert.fail('we were able to load the validator even after it was killed')
+              done()
+            }
+          })
+        } else {
+          done()
+        }
+      })
+      testApp.on('exit', () => {
+        if (testAppError) {
+          done()
+        }
       })
     })
   })
