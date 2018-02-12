@@ -63,7 +63,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test2, true)
         assert.equal(test3, true)
         assert.equal(test4, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -99,7 +102,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test2, true)
         assert.equal(test3, true)
         assert.equal(test4, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -136,7 +142,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test2, true)
         assert.equal(test3, true)
         assert.equal(test4, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -174,7 +183,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test1, true)
         assert.equal(test2, true)
         assert.equal(test3, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -213,7 +225,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test1, true)
         assert.equal(test2, true)
         assert.equal(test3, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -249,7 +264,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test1, true)
         assert.equal(test2, true)
         assert.equal(test3, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -284,7 +302,10 @@ describe('Roosevelt routes Section Test', function () {
         assert.equal(test1, true)
         assert.equal(test2, true)
         assert.equal(test3, true)
-        testApp.kill()
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
         done()
       })
     })
@@ -310,6 +331,7 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', () => {
       // indicator to tell whether or not we had a 503 come
       let bool503 = false
+      let killSignalSent = false
       for (let x = 0; x < 10; x++) {
         request('http://localhost:43711')
         .get('/HTMLTest')
@@ -325,9 +347,14 @@ describe('Roosevelt routes Section Test', function () {
             assert.equal(test1, true)
             assert.equal(test2, true)
             assert.equal(test3, true)
-            testApp.kill()
-            done()
+            testApp.kill('SIGINT')
           }
+          testApp.on('exit', () => {
+            if (killSignalSent === false) {
+              killSignalSent = true
+              done()
+            }
+          })
         })
       }
     })
@@ -352,6 +379,7 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', () => {
       // indicator to tell whether or not we had a 503 come
       let bool503 = false
+      let killSignalSent = false
       for (let x = 0; x < 10; x++) {
         request('http://localhost:43711')
         .get('/HTMLTest')
@@ -367,9 +395,14 @@ describe('Roosevelt routes Section Test', function () {
             assert.equal(test1, true)
             assert.equal(test2, true)
             assert.equal(test3, true)
-            testApp.kill()
-            done()
+            testApp.kill('SIGINT')
           }
+          testApp.on('exit', () => {
+            if (killSignalSent === false) {
+              killSignalSent = true
+              done()
+            }
+          })
         })
       }
     })
