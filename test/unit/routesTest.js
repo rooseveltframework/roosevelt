@@ -51,8 +51,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test that the four values that I put into the model and have in the view are being put into the page
         let test1 = res.text.includes('Teddy Test')
@@ -90,8 +89,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test that the four values that I put into the model and have in the view are being put into the page
         let test1 = res.text.includes('TitleX')
@@ -130,8 +128,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // test that the four values that I put into the model and have in the view are being put into the page
         let test1 = res.text.includes('TitleX')
@@ -172,8 +169,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(404, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // sample the text from the response
         const test1 = res.text.includes('404 Not Found')
@@ -214,8 +210,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(404, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // see if the page has these 3 unique lines of text in it
         let test1 = res.text.includes('404 custom test error page')
@@ -253,8 +248,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(500, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // see if the page has these 3 unique lines of text in it
         let test1 = res.text.includes('500 custom test error page')
@@ -291,8 +285,7 @@ describe('Roosevelt routes Section Test', function () {
       .expect(500, (err, res) => {
         if (err) {
           assert.fail(err)
-          testApp.kill()
-          done()
+          testApp.kill('SIGINT')
         }
         // see if the page has these 3 default lines of text in it
         const test1 = res.text.includes('500 Internal Server Error')
@@ -329,34 +322,26 @@ describe('Roosevelt routes Section Test', function () {
 
     // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', () => {
-      // indicator to tell whether or not we had a 503 come
-      let bool503 = false
-      let killSignalSent = false
-      for (let x = 0; x < 10; x++) {
-        request('http://localhost:43711')
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err && res !== undefined && bool503 === false) {
-            assert.equal(res.status, 503)
-            bool503 = true
-            // sample the response text
-            const test1 = res.text.includes('503 custom test error page')
-            const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
-            const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
-            // check to make sure that all specific pharses are there
-            assert.equal(test1, true)
-            assert.equal(test2, true)
-            assert.equal(test3, true)
-            testApp.kill('SIGINT')
-          }
-          testApp.on('exit', () => {
-            if (killSignalSent === false) {
-              killSignalSent = true
-              done()
-            }
-          })
-        })
-      }
+      request('http://localhost:43711')
+      .get('/HTMLTest')
+      .expect(503, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill('SIGINT')
+        }
+        // sample the response text
+        const test1 = res.text.includes('503 custom test error page')
+        const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
+        const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
+        // check to make sure that all specific pharses are there
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
+        done()
+      })
     })
   })
 
@@ -377,34 +362,26 @@ describe('Roosevelt routes Section Test', function () {
 
     // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', () => {
-      // indicator to tell whether or not we had a 503 come
-      let bool503 = false
-      let killSignalSent = false
-      for (let x = 0; x < 10; x++) {
-        request('http://localhost:43711')
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err && res !== undefined && bool503 === false) {
-            assert.equal(res.status, 503)
-            bool503 = true
-            // sample the response text
-            const test1 = res.text.includes('503 Service Unavailable')
-            const test2 = res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
-            const test3 = res.text.includes('localhost:43711')
-            // check to make sure that all specific pharses are there
-            assert.equal(test1, true)
-            assert.equal(test2, true)
-            assert.equal(test3, true)
-            testApp.kill('SIGINT')
-          }
-          testApp.on('exit', () => {
-            if (killSignalSent === false) {
-              killSignalSent = true
-              done()
-            }
-          })
-        })
-      }
+      request('http://localhost:43711')
+      .get('/HTMLTest')
+      .expect(503, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill('SIGINT')
+        }
+        // sample the response text
+        const test1 = res.text.includes('503 Service Unavailable')
+        const test2 = res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
+        const test3 = res.text.includes('localhost:43711')
+        // check to make sure that all specific pharses are there
+        assert.equal(test1, true)
+        assert.equal(test2, true)
+        assert.equal(test3, true)
+        testApp.kill('SIGINT')
+      })
+      testApp.on('exit', () => {
+        done()
+      })
     })
   })
 })
