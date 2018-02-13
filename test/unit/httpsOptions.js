@@ -117,26 +117,7 @@ describe('HTTPS server options', function () {
 
   it('should pass certificate authority directly to httpsServer if cafile is false', function () {
     config.https.cafile = false
-    config.https.ca = '-----BEGIN CERTIFICATE-----\n' + // I don't think template strings work here
-    'MIIDQzCCAiugAwIBAgIQF8srJKSW5mmwV866G/hT5TANBgkqhkiG9w0BAQsFADAW\n' +
-    'MRQwEgYDVQQDEwtFYXN5LVJTQSBDQTAeFw0xODAyMTIxNzAwMDZaFw0yODAyMTAx\n' +
-    'NzAwMDZaMBYxFDASBgNVBAMTC0Vhc3ktUlNBIENBMIIBIjANBgkqhkiG9w0BAQEF\n' +
-    'AAOCAQ8AMIIBCgKCAQEAhM0ODGErReN9K2R8YWykJYz9epwBNXGt9+APgyebvCq4\n' +
-    'ObvA+oD4UYW/XpXOm9zjqiLWXU6CHHxjEMfla1JJmpMSNH0/5PSc4d9k9rXuL6gp\n' +
-    'J7wBchMLTi05NB82nm8URyflhmQ2T+zbK80v/S3tZiPlT02ZC7OPP5d0zBw5jYvy\n' +
-    'uxrp9/A5HYuxUPbJ8SgNJLPH63TguBV2OlpObH08+6kcY9DCYIgEVvwMmMN1YBL8\n' +
-    'ofdnnfk8VbDz7RJVrafgW0mwgArRn9dLC7cm96CypXUFPJU46bZhuTKoxWHxIqkt\n' +
-    'ro8UEaDLF66NY6hca5p7nrMIl1vrY04jO723YuSsQQIDAQABo4GMMIGJMB0GA1Ud\n' +
-    'DgQWBBS5433NSfKiVlgW7wFp+e6+sYDXszBNBgNVHSMERjBEgBS5433NSfKiVlgW\n' +
-    '7wFp+e6+sYDXs6EapBgwFjEUMBIGA1UEAxMLRWFzeS1SU0EgQ0GCEBfLKySkluZp\n' +
-    'sFfOuhv4U+UwDAYDVR0TBAUwAwEB/zALBgNVHQ8EBAMCAQYwDQYJKoZIhvcNAQEL\n' +
-    'BQADggEBAGXgFtDkA/S2D3BnEMZNvDcRaEczEfE8XT1hF2j4nhOEHojrDoazEtVe\n' +
-    'SKqAaMynIs5OqoxWQv7z7trRnQ73yEv1Vxi8lHVZoopuobrOFANGIjC73ceoMPRM\n' +
-    'IK9XVUF9lm3HzIRDviixPA01E+xW+g1PPBhz8vwKYBS/Nb8N/qoQqTYDBxsDLAJV\n' +
-    'NDTIbDFOADN0VtuAl9NDPMlgie1OUzxz3P44RANN5XdCg+zmuCMyu1KH6AzMtg4/\n' +
-    'lPEuFed++GKPVVLnWr2JMMUjkAuaaznPKa7/8EOaTsHMSZn112FWefx42EVilCwt\n' +
-    'XCZitgHzPt438kahlyyc+gOqBrrc+vk=' +
-    '-----END CERTIFICATE-----'
+    config.https.ca = fs.readFileSync(config.https.ca, 'UTF8')
 
     app({appDir: appDir, ...config})
     assert.equal(stubHttpsServer.args[0][0].ca, config.https.ca, 'https.Server CA did not match supplied CA')
