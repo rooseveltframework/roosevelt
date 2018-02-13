@@ -7,6 +7,7 @@ const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 const fse = require('fs-extra')
 const request = require('supertest')
+const async = require('async')
 
 describe('Roosevelt routes Section Test', function () {
   const appDir = path.join(__dirname, '../', 'app', 'routesTest')
@@ -322,26 +323,39 @@ describe('Roosevelt routes Section Test', function () {
 
     // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', () => {
-      request('http://localhost:43711')
-      .get('/HTMLTest')
-      .expect(503, (err, res) => {
+      async.series([
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) }
+      ], (err, result) => {
+        // if any one of the test brings an error. (one of them should). Check to see if the err response text has the custom 503 page we put in there
         if (err) {
-          assert.fail(err)
+          // sample the response text
+          const test1 = err.res.text.includes('503 custom test error page')
+          const test2 = err.res.text.includes('The server is either too busy or is under maintence, please try again later')
+          const test3 = err.res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
+          // check to make sure that all specific pharses are there
+          assert.equal(test1, true)
+          assert.equal(test2, true)
+          assert.equal(test3, true)
+          testApp.kill('SIGINT')
+        } else {
+          // if the callback enters here it means all tests passed and returned a status of 200
+          assert.fail('Either something is wrong with toobusy and how we use it, or the computer is too good in handling request')
           testApp.kill('SIGINT')
         }
-        // sample the response text
-        const test1 = res.text.includes('503 custom test error page')
-        const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
-        const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
-        // check to make sure that all specific pharses are there
-        assert.equal(test1, true)
-        assert.equal(test2, true)
-        assert.equal(test3, true)
-        testApp.kill('SIGINT')
       })
-      testApp.on('exit', () => {
-        done()
-      })
+    })
+
+    testApp.on('exit', () => {
+      done()
     })
   })
 
@@ -360,28 +374,40 @@ describe('Roosevelt routes Section Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message that tells us that the server has started, test the path that will run into a server error
+ // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', () => {
-      request('http://localhost:43711')
-      .get('/HTMLTest')
-      .expect(503, (err, res) => {
+      async.series([
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) },
+        function (cb) { request('http://localhost:43711').get('/HTMLTest').expect(200, (err, res) => { if (err) { cb(res, null) } else { cb(null, res) } }) }
+      ], (err, result) => {
+        // if any one of the test brings an error. (one of them should). Check to see if the err response text has the custom 503 page we put in there
         if (err) {
-          assert.fail(err)
+          // sample the response text
+          const test1 = err.res.text.includes('503 Service Unavailable')
+          const test2 = err.res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
+          const test3 = err.res.text.includes('localhost:43711')
+          // check to make sure that all specific pharses are there
+          assert.equal(test1, true)
+          assert.equal(test2, true)
+          assert.equal(test3, true)
+          testApp.kill('SIGINT')
+        } else {
+          // if the callback enters here it means all tests passed and returned a status of 200
+          assert.fail('Either something is wrong with toobusy and how we use it, or the computer is too good in handling request')
           testApp.kill('SIGINT')
         }
-        // sample the response text
-        const test1 = res.text.includes('503 Service Unavailable')
-        const test2 = res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
-        const test3 = res.text.includes('localhost:43711')
-        // check to make sure that all specific pharses are there
-        assert.equal(test1, true)
-        assert.equal(test2, true)
-        assert.equal(test3, true)
-        testApp.kill('SIGINT')
       })
-      testApp.on('exit', () => {
-        done()
-      })
+    })
+    testApp.on('exit', () => {
+      done()
     })
   })
 })

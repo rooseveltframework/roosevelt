@@ -35,6 +35,7 @@
     "vnu-jar": "~17.11.0"
   },
   "devDependencies": {
+    "async": "~2.6.0",
     "coveralls": "~3.0.0",
     "eslint": "~4.17.0",
     "eslint-plugin-no-only-tests": "~2.0.0",
