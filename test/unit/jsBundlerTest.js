@@ -96,7 +96,10 @@ describe('js Bundler Section Test', function () {
         let test = arrayOfBundleJSFilesPaths.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -133,7 +136,10 @@ describe('js Bundler Section Test', function () {
         let test = arrayOfBundleJSFilesPaths.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -168,7 +174,10 @@ describe('js Bundler Section Test', function () {
       let arrayOfFiles = klawsync(pathOfBundleJSFolder)
       let test = arrayOfFiles.length
       assert.equal(test, 0)
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -228,7 +237,10 @@ describe('js Bundler Section Test', function () {
         let test = arrayOfAlteredBuildBundleJSFilesPaths.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
