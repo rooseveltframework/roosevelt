@@ -50,7 +50,6 @@ describe('Roosevelt HTML Validator Test', function () {
     // on the message that we get back that the server has started, test the htmlValidator by trying to recieve a bad html page
     testApp.on('message', (params) => {
       // request the bad html page
-      console.log(params.port)
       request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
@@ -470,7 +469,7 @@ describe('Roosevelt HTML Validator Test', function () {
       .expect(200, (err, res) => {
         if (err) {
           assert.fail(err)
-          const killLine = fork(path.join(__dirname, '../', '../', 'lib', 'scripts', 'killValidator.js'))
+          const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
           testAppError = true
           killLine.kill('SIGINT')
         }
@@ -479,7 +478,7 @@ describe('Roosevelt HTML Validator Test', function () {
       })
 
       // kill the validator with a fork or the killValidator script
-      const killLine = fork(path.join(__dirname, '../', '../', 'lib', 'scripts', 'killValidator.js'))
+      const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       killLine.on('exit', () => {
         if (testAppError === false) {
