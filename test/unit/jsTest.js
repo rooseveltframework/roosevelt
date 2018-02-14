@@ -84,7 +84,10 @@ describe('JavaScript Section Test', function () {
         let test = pathsOfCompiledJS.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -119,7 +122,10 @@ describe('JavaScript Section Test', function () {
         let test = pathOfWhiteListedFiles.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -159,7 +165,10 @@ describe('JavaScript Section Test', function () {
       assert.equal(test1, false)
       assert.equal(test2, false)
       assert.equal(test3, true)
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -197,7 +206,10 @@ describe('JavaScript Section Test', function () {
         let test = pathsOfAlteredCompiledJS.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -232,7 +244,10 @@ describe('JavaScript Section Test', function () {
         let test = delimiterOutputArray.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -273,7 +288,10 @@ describe('JavaScript Section Test', function () {
       assert.equal(test1, true)
       assert.equal(test2, true)
       assert.equal(test3, true)
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })

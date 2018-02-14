@@ -108,7 +108,10 @@ describe('CSS Section Tests', function () {
         assert.equal(test, true)
       })
       // kill the app and say the test is done afterwards
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -153,7 +156,9 @@ describe('CSS Section Tests', function () {
         assert.equal(test, true)
       })
       // kill the app and say the test is done afterwards
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -198,7 +203,10 @@ describe('CSS Section Tests', function () {
         assert.equal(test, true)
       })
       // kill and finish the test
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -250,7 +258,10 @@ describe('CSS Section Tests', function () {
       let versionFileNum = versionFileString.split(`'`)
       let test2 = packageJSON.version === versionFileNum[1]
       assert.equal(test2, true)
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -291,7 +302,10 @@ describe('CSS Section Tests', function () {
         let test = pathOfCustomDirCompiledCSSArray.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
@@ -339,7 +353,10 @@ describe('CSS Section Tests', function () {
       assert.equal(test2, true)
       assert.equal(test3, true)
       // kill the app and finish test
-      testApp.kill()
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
