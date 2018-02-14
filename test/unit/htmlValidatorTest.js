@@ -8,7 +8,7 @@ const fork = require('child_process').fork
 const fse = require('fs-extra')
 const request = require('supertest')
 
-describe.only('Roosevelt HTML Validator Test', function () {
+describe('Roosevelt HTML Validator Test', function () {
   this.timeout(20000)
 
   // location of the test app
