@@ -14,7 +14,7 @@ module.exports = function (params, options) {
     appJSContents += `app.${options.method}(() => {\n`
     appJSContents += `  ${defaultMessages}\n})`
   } else if (options.method === 'startServer') {
-    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send("something")}')
+    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send(app.get(\'params\'))}')
     appJSContents += `app.${options.method}()`
   } else {
     appJSContents += defaultMessages
