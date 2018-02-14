@@ -8,7 +8,7 @@ const fork = require('child_process').fork
 const fse = require('fs-extra')
 const request = require('supertest')
 
-describe('Roosevelt HTML Validator Test', function () {
+describe.only('Roosevelt HTML Validator Test', function () {
   this.timeout(20000)
 
   // location of the test app
@@ -48,9 +48,10 @@ describe('Roosevelt HTML Validator Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on the message that we get back that the server has started, test the htmlValidator by trying to recieve a bad html page
-    testApp.on('message', () => {
+    testApp.on('message', (params) => {
       // request the bad html page
-      request('http://localhost:43711')
+      console.log(params.port)
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
@@ -85,9 +86,9 @@ describe('Roosevelt HTML Validator Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // On getting the message back from the server, test to see that a good html will be past back even with the validator on
-    testApp.on('message', () => {
+    testApp.on('message', (params) => {
       // get the plain html page
-      request('http://localhost:43711')
+      request(`http://localhost:${params.port}`)
       .get('/HTMLTest')
       .expect(200, (err, res) => {
         if (err) {
@@ -126,8 +127,8 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
@@ -163,8 +164,8 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
@@ -203,8 +204,8 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
@@ -243,8 +244,8 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/brokenHeaderTest')
       .expect(200, (err, res) => {
         if (err) {
@@ -283,8 +284,8 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .set('partialtest', 'true')
       .expect(200, (err, res) => {
@@ -329,8 +330,8 @@ describe('Roosevelt HTML Validator Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // wait for the server to start, and then check that the page has not been validated
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/brokenObjectTest')
       .expect(200, (err, res) => {
         if (err) {
@@ -371,8 +372,8 @@ describe('Roosevelt HTML Validator Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // wait for the server to start, and then check that the page has not been validated
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
@@ -408,8 +409,8 @@ describe('Roosevelt HTML Validator Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on the server coming to life, see if we can send a request to the new port
-    testApp.on('message', () => {
-      request('http://localhost:3000')
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.htmlValidator.port}`)
       .get('/')
       .expect(200, (err, res) => {
         if (err) {
@@ -446,10 +447,10 @@ describe('Roosevelt HTML Validator Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // test to see that the validator still works
-    testApp.on('message', () => {
+    testApp.on('message', (params) => {
       // variable to check if we had an error on the test app
       let testAppError = false
-      request('http://localhost:43711')
+      request(`http://localhost:${params.port}`)
       .get('/Broken')
       .expect(200, (err, res) => {
         if (err) {
@@ -464,7 +465,7 @@ describe('Roosevelt HTML Validator Test', function () {
       })
 
       // check to see if the validator is accessible (should get back 200)
-      request('http://localhost:8888')
+      request(`http://localhost:${params.htmlValidator.port}`)
       .get('/')
       .expect(200, (err, res) => {
         if (err) {
@@ -483,7 +484,7 @@ describe('Roosevelt HTML Validator Test', function () {
       killLine.on('exit', () => {
         if (testAppError === false) {
           // see that the validator is no longer listening
-          request('http://localhost:8888')
+          request(`http://localhost:${params.htmlValidator.port}`)
           .get('/')
           .expect(200, (err, res) => {
             if (err) {
