@@ -43,6 +43,14 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     // create a fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
     // when the server starts, send some files to the server
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
@@ -62,7 +70,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
 
         // test to see if all the info on the newly copied files are correct
         let file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
-        let test2 = file1Contents === `This is the first test document for the multipart Test.\r\nHope this goes well`
+        let test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
         assert.equal(test2, true)
 
         testApp.kill('SIGINT')
