@@ -14,7 +14,8 @@ module.exports = function (params, options) {
     appJSContents += `app.${options.method}(() => {\n`
     appJSContents += `  ${defaultMessages}\n})`
   } else if (options.method === 'startServer') {
-    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send("ServerStart")}')
+
+    appJSContents = appJSContents.replace('onServerStart: true', 'onServerStart: (app) => {process.send(app.get(\'params\'))}')
     // check to see if and what param function was added to the parameters
     if (appJSContents.includes('onReqStart: true')) {
       appJSContents = appJSContents.replace('onReqStart: true', `onReqStart: (req, res, next) => {res.setHeader('onreqStartTest','true')\nnext()}`)
