@@ -37,17 +37,17 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqStart: true,
-      onServerStart: true
+      onReqStart: `(req, res, next) => {res.setHeader("onreqStartTest","true"); next()}`,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // when the app starts and sends the message that "ServerStart", send a request and see if I get another message saying "ReqStart"
-    testApp.on('message', () => {
+    testApp.on('message', (params) => {
       // send a http request
-      request('http://localhost:43711')
+      request(`http://localhost:${params.port}`)
       .get('/HTMLTest')
       .expect(200, (err, res) => {
         if (err) {
@@ -74,16 +74,16 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqBeforeRoute: true,
-      onServerStart: true
+      onReqBeforeRoute: `(req, res, next) => {res.setHeader("onreqBeforeRoute","true"); next()}`,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', () => {
+    testApp.on('message', (params) => {
       // send a http request
-      request('http://localhost:43711')
+      request(`http://localhost:${params.port}`)
       .get('/HTMLTest')
       .expect(200, (err, res) => {
         if (err) {
@@ -110,15 +110,15 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqAfterRoute: true,
-      onServerStart: true
+      onReqAfterRoute: `(req, res) => {process.send("onReqAfterRoute")}`,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', (message) => {
-      if (message === 'ServerStart') {
+      if (message.port) {
       // send a http request
         request('http://localhost:43711')
         .get('/HTMLTest')
