@@ -117,10 +117,14 @@ describe('parameter Function Test Section', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     testApp.on('message', (message) => {
       if (message.port) {
       // send a http request
-        request('http://localhost:43711')
+        request(`http://localhost:${message.port}`)
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
