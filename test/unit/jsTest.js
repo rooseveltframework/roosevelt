@@ -576,4 +576,51 @@ describe('JavaScript Section Test', function () {
       done()
     })
   })
+
+  it('should not make the js compiled output directory if one alreadly exists', function (done) {
+    // bool var to see if the js compiled output directory was made or not
+    let jsOutputDirCreateBool = false
+    // create the js compiled output directory
+    let compiledpath = path.join(appDir, 'statics', '.build')
+    let compiledpath2 = path.join(appDir, 'statics', '.build', 'jsBuildTest')
+    fs.mkdirSync(compiledpath)
+    fs.mkdirSync(compiledpath2)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        output: '.build/jsBuildTest',
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the logs to see if the js compiled output directory gets made or not
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'statics', '.build', 'jsBuildTest')}`)) {
+        jsOutputDirCreateBool = true
+      }
+    })
+
+    // when app is done with its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when app is killed, check if the js compiled output directory was made by roosevelt
+    testApp.on('exit', () => {
+      if (jsOutputDirCreateBool) {
+        assert.fail('Roosevelt made a folder for js output even when on existed alreadly')
+      }
+      done()
+    })
+  })
 })
