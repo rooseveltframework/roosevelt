@@ -412,4 +412,124 @@ describe('JavaScript Section Test', function () {
       done()
     })
   })
+
+  it('should give an error if if whitelist is not an array/object', function (done) {
+    // bool var to hold whether or not the error about how the whitelist was not configured correctly was thrown
+    let whitelistConfigureIncorrectlyBool = false
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        },
+        whitelist: true
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // test the error log to see if the specific error had been written
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('JS whitelist not configured correctly')) {
+        whitelistConfigureIncorrectlyBool = true
+      }
+    })
+
+    // exit the app when it finished its initialization
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // on exit, check if the error was logged
+    testApp.on('exit', () => {
+      if (whitelistConfigureIncorrectlyBool === false) {
+        assert.kill('Roosevelt did not catch that whitelist was assigned a value that is not an object')
+      }
+      done()
+    })
+  })
+
+  it('should skip compiling a file if the path is Thumbs.db', function (done) {
+    // make a file inside the static js folder that has the name of Thumbs.db
+    let fileContent = 'Testing Thumbs.db'
+    let filePathName = path.join(appDir, 'statics', 'js', 'Thumbs.db')
+    fs.writeFileSync(filePathName, fileContent)
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when server starts, see if a file of Thumbs.db was made on the build
+    testApp.on('message', () => {
+      let testFilePath = path.join(appDir, 'statics', '.build', 'js', 'Thumbs.db')
+      let test = fse.existsSync(testFilePath)
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should throw an error stating that a file is not coded correctly', function (done) {
+    // create a file that has js errors in it
+    let fileContent = `console.log('blah'`
+    let filePath = path.join(appDir, 'statics', 'js', 'error.js')
+    fse.writeFileSync(filePath, fileContent)
+    // bool var that holds whether or not Roosevelt will give a warning for a js file not coded correctly
+    let fileCodedIncorrectlyBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the error logs to see if the specific error has popped up
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Please ensure that it is coded correctly')) {
+        fileCodedIncorrectlyBool = true
+      }
+    })
+
+    // when the app starts, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check if the error was logged
+    testApp.on('exit', () => {
+      if (fileCodedIncorrectlyBool === false) {
+        assert.fail('Roosevelt did not catch that a file was coded incorrectly')
+      }
+      done()
+    })
+  })
 })
