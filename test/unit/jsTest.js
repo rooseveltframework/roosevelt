@@ -295,4 +295,121 @@ describe('JavaScript Section Test', function () {
       done()
     })
   })
+
+  it(`should throw a warning if the app's js compiler nodeModule is undefined`, function (done) {
+    // bool var to hold whether or not the specific error message was given
+    let failureToIncludeBool = false
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          showWarnings: true,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // catch for the specific error of the app failing to include js compiler
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to include your JS compiler!')) {
+        failureToIncludeBool = true
+      }
+    })
+
+    // exit the app when the app finishes initilization
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      if (failureToIncludeBool === false) {
+        assert.fail('The app did not catch that the error where nodeModule param for the js compiler is undefined')
+      }
+      done()
+    })
+  })
+
+  it(`should throw a warning if the app's js compiler nodeModule is set to an incorrect or missing compiler`, function (done) {
+    // bool var to hold whether or not the specific error message was given
+    let failureToIncludeBool = false
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-jsCompiler',
+          showWarnings: true,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // catch for the specific error of the app failing to include js compiler
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to include your JS compiler!')) {
+        failureToIncludeBool = true
+      }
+    })
+
+    // exit the app when the app finishes initilization
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      if (failureToIncludeBool === false) {
+        assert.fail('The app did not catch that the error where nodeModule param for the js compiler is undefined')
+      }
+      done()
+    })
+  })
+
+  it('should give an error if there is a file named in the whitelist param that does not exists', function (done) {
+    // bool var tha that shows whether or not the app had given the warning of a js file not existing
+    let jsFileNotExistingBool = false
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        },
+        whitelist: ['a.js', 'g.js']
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // test the error log to see if we get an error that states that the file in the whitelist array does not exist
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('specified in JS whitelist does not exist')) {
+        jsFileNotExistingBool = true
+      }
+    })
+
+    // when the app is done with its initlization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      if (jsFileNotExistingBool === false) {
+        assert.fail('Roosevelt did not catch that a file listed in the whitelist array does not exist.')
+      }
+      done()
+    })
+  })
 })
