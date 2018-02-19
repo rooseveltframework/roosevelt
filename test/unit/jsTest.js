@@ -454,11 +454,10 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should skip compiling a file if the path is Thumbs.db', function (done) {
-    // make a file inside the static js folder that has the name of Thumbs.db
-    let fileContent = 'Testing Thumbs.db'
-    let filePathName = path.join(appDir, 'statics', 'js', 'Thumbs.db')
-    fs.writeFileSync(filePathName, fileContent)
+  it('should skip compiling a file if the path is a directory', function (done) {
+    // make a directory inside the static js folder
+    let filePathName = path.join(appDir, 'statics', 'js', 'testDir')
+    fse.mkdirSync(filePathName)
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -475,9 +474,9 @@ describe('JavaScript Section Test', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // when server starts, see if a file of Thumbs.db was made on the build
+    // when server starts, see if a file or directory of testDir was made on the build
     testApp.on('message', () => {
-      let testFilePath = path.join(appDir, 'statics', '.build', 'js', 'Thumbs.db')
+      let testFilePath = path.join(appDir, 'statics', '.build', 'js', 'testDir')
       let test = fse.existsSync(testFilePath)
       assert.equal(test, false)
       testApp.kill('SIGINT')
@@ -528,6 +527,51 @@ describe('JavaScript Section Test', function () {
     testApp.on('exit', () => {
       if (fileCodedIncorrectlyBool === false) {
         assert.fail('Roosevelt did not catch that a file was coded incorrectly')
+      }
+      done()
+    })
+  })
+
+  it('should create the statics js directory if it does not exist at the point of compiling', function (done) {
+    // get rid of the js folder that was copied over
+    fse.removeSync(path.join(appDir, 'statics', 'js'))
+
+    // bool var to check that a static js dir is being made
+    let staticJSDirMadeBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        sourceDir: 'jsTestA',
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output logs to see if the source dir was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'statics', 'jsTestA')}`)) {
+        staticJSDirMadeBool = true
+      }
+    })
+
+    // when app starts, end it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app ends, check to see if it created the static js folder
+    testApp.on('exit', () => {
+      if (staticJSDirMadeBool === false) {
+        assert.fail(`Roosevelt did not create a static js directory when one wasn't present`)
       }
       done()
     })
