@@ -34,7 +34,7 @@ describe('Public folder section tests', function () {
     })
   })
 
-  it('should be able to send a web page back with no problem with favicon set to something', function (done) {
+  it('should allow the user to set up a custom favicon and have the favicon that comes back from http request be the same as the one they load in', function (done) {
     // copy the favicon to the images folder within the static folder
     fse.copySync(path.join(__dirname, '../', 'util', 'faviconTest.ico'), path.join(appDir, 'statics', 'images', 'faviconTest.ico'))
 
@@ -49,7 +49,64 @@ describe('Public folder section tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // when we get back the message that the server has started, send a request to the server
+    testApp.on('message', () => {
+      // see if we could get a html page from the server
+      request('http://localhost:43711')
+      .get('/HTMLTest')
+      .expect(200, (err, res) => {
+        if (err) {
+          console.log('here')
+          assert.fail(err)
+          testApp.kill('SIGINT')
+        }
+
+        // if it had worked, grab favicon from the server
+        request('http://localhost:43711')
+        .get('/favicon.ico')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          // convert buffer to base64
+          let faviconData = res.body.toString('base64')
+          // get the base64 buffer of the favicon that we should be using in util
+          let data = fse.readFileSync(path.join(__dirname, '../', 'util', 'faviconTest.ico'))
+          let encodedImageData = Buffer.from(data, 'binary').toString('base64')
+          // check if both buffers are the same(They should be)
+          let test = faviconData === encodedImageData
+          assert.equal(test, true)
+          testApp.kill('SIGINT')
+        })
+      })
+    })
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should allow the user to set favicon to null and have no favicon show up', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: true,
+      favicon: null
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    // when the server starts, send a request to the server
     testApp.on('message', () => {
       request('http://localhost:43711')
       .get('/HTMLTest')
@@ -58,11 +115,72 @@ describe('Public folder section tests', function () {
           assert.fail(err)
           testApp.kill('SIGINT')
         }
-        testApp.kill('SIGINT')
+        // if we can get the page, send a request to get the favicon
+        request('http://localhost:43711')
+        .get('/favicon.ico')
+        .expect(200, (err, res) => {
+          if (err) {
+            testApp.kill('SIGINT')
+          } else {
+            assert.fail(`able to get the favicon.ico, even when there isn't one`)
+            testApp.kill('SIGINT')
+          }
+        })
       })
     })
 
     testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should allow the user to set favicon to a wrong or non-existent path and have no favicon show up', function (done) {
+    // bool var to keep track of whether or not the app tells the user that the provided path leads to a non existent favicon
+    let nonExistentWarningBool = false
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: true,
+      favicon: 'images/nothingHere.ico'
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Please ensure the "favicon" param is configured correctly')) {
+        nonExistentWarningBool = true
+      }
+    })
+
+    // when the server starts, send a request to the server
+    testApp.on('message', () => {
+      request('http://localhost:43711')
+      .get('/HTMLTest')
+      .expect(200, (err, res) => {
+        if (err) {
+          assert.fail(err)
+          testApp.kill('SIGINT')
+        }
+        // if we can get the page, send a request to get the favicon
+        request('http://localhost:43711')
+        .get('/favicon.ico')
+        .expect(200, (err, res) => {
+          if (err) {
+            testApp.kill('SIGINT')
+          } else {
+            assert.fail(`able to get the favicon.ico, even when there isn't one`)
+            testApp.kill('SIGINT')
+          }
+        })
+      })
+    })
+
+    testApp.on('exit', () => {
+      if (nonExistentWarningBool === false) {
+        assert.fail('There was no warning saying that the favicon warning was set improperly')
+      }
       done()
     })
   })
@@ -99,55 +217,6 @@ describe('Public folder section tests', function () {
         assert.fail('public folder name was not changed to version number')
         testApp.kill('SIGINT')
       }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should allow the user to name the symlink files in the public folder', function (done) {
-    // array that holds all the changed names for the symlinks
-    const symlinkChangedNameArray = [
-      path.join(appDir, 'public', 'cssTest'),
-      path.join(appDir, 'public', 'imagesTest'),
-      path.join(appDir, 'public', 'jsTest')]
-
-    // generate the app
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: true,
-      staticsSymlinksToPublic: [
-        'cssTest: .build/css',
-        'imagesTest: images',
-        'jsTest: .build/js'
-      ],
-      js: {
-        compiler: {
-          nodeModule: 'roosevelt-uglify'
-        }
-      },
-      css: {
-        compiler: {
-          nodeModule: 'roosevelt-less'
-        }
-      }
-    }, options)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // when the app starts up, look into the public folder and see if the names of the symlinks were changed
-    testApp.on('message', () => {
-      // klawsync the public folder
-      const files = klawSync(path.join(appDir, 'public'))
-      // look to see that all the files are there
-      files.forEach((file) => {
-        let test = symlinkChangedNameArray.includes(file.path)
-        assert.equal(test, true)
-      })
-      testApp.kill('SIGINT')
     })
 
     testApp.on('exit', () => {
