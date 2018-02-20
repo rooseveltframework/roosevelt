@@ -577,10 +577,41 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should not try to make the js folder structure if generate folder structure is false', function (done) {
+  it('should not try to make the js static folder if generate folder structure is false', function (done) {
     // get rid of the js folder that was copied over
     fse.removeSync(path.join(appDir, 'statics', 'js'))
 
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes its initialization, see if the static js folders were made
+    testApp.on('message', () => {
+      // js static folder
+      let test = fse.existsSync(path.join(appDir, 'statics', 'js'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check that the error was hit
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should not try to make the js static folder if generate folder structure is false', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -605,9 +636,6 @@ describe('JavaScript Section Test', function () {
       // output folder
       let test2 = fse.existsSync(path.join(appDir, 'statics', '.build', 'js'))
       assert.equal(test2, false)
-      // js static folder
-      let test3 = fse.existsSync(path.join(appDir, 'statics', 'js'))
-      assert.equal(test3, false)
       testApp.kill('SIGINT')
     })
 
