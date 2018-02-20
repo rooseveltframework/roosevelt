@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
 const cleanupTestApp = require('../util/cleanupTestApp')
@@ -45,7 +44,7 @@ describe('JavaScript Section Test', function () {
     fse.ensureDirSync(path.join(appDir, 'statics', 'js'))
     // generate sample js files in statics by looping through smaple JS source strings
     for (let x = 0; x < pathsOfStaticJS.length; x++) {
-      fs.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
+      fse.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
     }
   })
 
@@ -133,9 +132,9 @@ describe('JavaScript Section Test', function () {
 
   it('should minify all files except for those that are blacklisted', function (done) {
     // get the buffer(string data) of the static files
-    let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
-    let staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
-    let staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
+    let staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
+    let staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
+    let staticJSFilesC = fse.readFileSync(pathsOfStaticJS[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -156,9 +155,9 @@ describe('JavaScript Section Test', function () {
 
     testApp.on('message', () => {
       // get the buffer(string data) of the compiled files
-      let compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
-      let compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
-      let compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      let compiledJSFilesA = fse.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      let compiledJSFilesB = fse.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      let compiledJSFilesC = fse.readFileSync(pathsOfCompiledJS[2], 'utf8')
       // test if the buffer from the compiled is the same as their static counterpart
       let test1 = staticJSFilesA === compiledJSFilesA
       let test2 = staticJSFilesB === compiledJSFilesB
@@ -255,9 +254,9 @@ describe('JavaScript Section Test', function () {
 
   it('should copy over the JS files to build without changing them when the noMinify param is true', function (done) {
     // get the buffer (string data) of the static files
-    let staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
-    let staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
-    let staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
+    let staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
+    let staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
+    let staticJSFilesC = fse.readFileSync(pathsOfStaticJS[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -278,9 +277,9 @@ describe('JavaScript Section Test', function () {
 
     testApp.on('message', () => {
       // get the buffer (string data) of the compiled files
-      let compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
-      let compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
-      let compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      let compiledJSFilesA = fse.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      let compiledJSFilesB = fse.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      let compiledJSFilesC = fse.readFileSync(pathsOfCompiledJS[2], 'utf8')
       // make tests to compare the buffer in between the static and compiled files
       let test1 = staticJSFilesA === compiledJSFilesA
       let test2 = staticJSFilesB === compiledJSFilesB
@@ -578,14 +577,54 @@ describe('JavaScript Section Test', function () {
     })
   })
 
+  it('should not try to make the js folder structure if generate folder structure is false', function (done) {
+    // get rid of the js folder that was copied over
+    fse.removeSync(path.join(appDir, 'statics', 'js'))
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes its initialization, see if the build, output or static js folders were made
+    testApp.on('message', () => {
+      // build folder
+      let test = fse.existsSync(path.join(appDir, 'statics', '.build'))
+      assert.equal(test, false)
+      // output folder
+      let test2 = fse.existsSync(path.join(appDir, 'statics', '.build', 'js'))
+      assert.equal(test2, false)
+      // js static folder
+      let test3 = fse.existsSync(path.join(appDir, 'statics', 'js'))
+      assert.equal(test3, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check that the error was hit
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
   it('should not make the js compiled output directory if one alreadly exists', function (done) {
     // bool var to see if the js compiled output directory was made or not
     let jsOutputDirCreateBool = false
     // create the js compiled output directory
     let compiledpath = path.join(appDir, 'statics', '.build')
     let compiledpath2 = path.join(appDir, 'statics', '.build', 'jsBuildTest')
-    fs.mkdirSync(compiledpath)
-    fs.mkdirSync(compiledpath2)
+    fse.mkdirSync(compiledpath)
+    fse.mkdirSync(compiledpath2)
 
     // generate the app.js file
     generateTestApp({
@@ -731,10 +770,6 @@ describe('JavaScript Section Test', function () {
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
 
     // on error output, see if the specific error was given
     testApp.stderr.on('data', (data) => {
