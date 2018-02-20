@@ -8,6 +8,7 @@ const cleanupTestApp = require('../util/cleanupTestApp')
 const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
 const fork = require('child_process').fork
+const uglify = require('uglify-js')
 
 describe('JavaScript Section Test', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
@@ -619,6 +620,53 @@ describe('JavaScript Section Test', function () {
     testApp.on('exit', () => {
       if (jsOutputDirCreateBool) {
         assert.fail('Roosevelt made a folder for js output even when on existed alreadly')
+      }
+      done()
+    })
+  })
+
+  it('should skip making a compile file to the build folder if another file of the same name is alreadly there', function (done) {
+    // bool var to hold whether or not one of the files was compiled into the build folder
+    let compiledFileMadeBool = false
+    // make the compiled file using uglify
+    let result = uglify.minify(test1, {})
+    let newJs = result.code
+    // write it to the compile file
+    fse.ensureDirSync(path.join(appDir, 'statics', '.build', 'js'))
+    fse.writeFileSync(path.join(appDir, 'statics', '.build', 'js', 'a.js'), newJs)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on log output, check that Roosevelt does not log out that it had make a new a.js file in the js output folder
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`Roosevelt Express writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'a.js')}`)) {
+        compiledFileMadeBool = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is on the verge of exiting, check that the app had not written the file that alreadly exists
+    testApp.on('exit', () => {
+      if (compiledFileMadeBool) {
+        assert.fail('Roosevelt had made a file even though a file with the same name alreadly exists in the build folder')
       }
       done()
     })
