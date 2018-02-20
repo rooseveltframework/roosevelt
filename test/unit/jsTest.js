@@ -400,8 +400,9 @@ describe('JavaScript Section Test', function () {
       }
     })
 
-    // when the app is done with its initlization, kill it
+    // the app should not be able to initialize if it has this specific whitelist error
     testApp.on('message', () => {
+      assert.fail('app was able to initialize even though it should not have')
       testApp.kill('SIGINT')
     })
 
@@ -518,8 +519,9 @@ describe('JavaScript Section Test', function () {
       }
     })
 
-    // when the app starts, kill it
+    // the app should not be able to initialize if this specific error was thrown
     testApp.on('message', () => {
+      assert.fail('app was able to initialize even though it should not have')
       testApp.kill('SIGINT')
     })
 
@@ -766,8 +768,9 @@ describe('JavaScript Section Test', function () {
       }
     })
 
-    // when the app finishes its initialization, kill it
+    // the app should not be able to initailize with this specific error
     testApp.on('message', () => {
+      assert.fail('app was able to initialize even though it should not have')
       testApp.kill('SIGINT')
     })
 
@@ -806,8 +809,9 @@ describe('JavaScript Section Test', function () {
       }
     })
 
-    // when the app finishes its initialization, kill it
+    // app should not be able to initialize with this specific error
     testApp.on('message', () => {
+      assert.fail('app was able to initialize even though it should not have')
       testApp.kill('SIGINT')
     })
 
