@@ -671,4 +671,89 @@ describe('JavaScript Section Test', function () {
       done()
     })
   })
+
+  it('should throw an error if the node module passed in js compiler is not compatible or out of date with Roosevelt', function (done) {
+    // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
+    let incompatibleParserWarnBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'which',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error output, see if the specific error was given
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Selected JS compiler module') && data.includes('out of date or incompatible with this version of Roosevelt')) {
+        incompatibleParserWarnBool = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check that the error was hit
+    testApp.on('exit', () => {
+      if (incompatibleParserWarnBool === false) {
+        assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
+      }
+      done()
+    })
+  })
+
+  it('should throw an error if the node module provided to the js compiler has a parse function but does not provide the functionality that is required from a js Compiler', function (done) {
+    // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
+    let incompatibleParserWarnBool = false
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'path',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    // on error output, see if the specific error was given
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Selected JS compiler module') && data.includes('out of date or incompatible with this version of Roosevelt')) {
+        incompatibleParserWarnBool = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check that the error was hit
+    testApp.on('exit', () => {
+      if (incompatibleParserWarnBool === false) {
+        assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
+      }
+      done()
+    })
+  })
 })
