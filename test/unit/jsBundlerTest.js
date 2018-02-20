@@ -244,4 +244,106 @@ describe('js Bundler Section Test', function () {
       done()
     })
   })
+
+  it('should not make a js bundled output directory if generateFolderStructure is false', function (done) {
+    // bool var to hold whether or not the jsbundle output directory was made or not
+    let jsbundleDirCreatedBool = false
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      js: {
+        bundler: {
+          bundles: [
+            {
+              outputFile: 'bundle.js',
+              env: 'dev',
+              files: [
+                'a.js',
+                'b.js',
+                'c.js'
+              ]
+            }
+          ]
+        }
+      },
+      generateFolderStructure: false
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the log output, check to see if the directory was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${pathOfBundleJSFolder}`)) {
+        jsbundleDirCreatedBool = true
+      }
+    })
+
+    // when the app is done its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is finished, check to see if the js bundle was made or not
+    testApp.on('exit', () => {
+      if (jsbundleDirCreatedBool) {
+        assert.fail(`Roosevelt made a js bundle output directory when it shouldn't as generateFolderStructure is false`)
+      }
+      done()
+    })
+  })
+
+  it('should not make a js bundled output directory if one alreadly exists', function (done) {
+    // bool var to hold whether or not the jsbundle output directory was made or not
+    let jsbundleDirCreatedBool = false
+    // make the js bundle output folder
+    let dir1Path = path.join(appDir, 'statics', 'js')
+    fse.mkdirsSync(dir1Path)
+    let dir2Path = path.join(dir1Path, '.bundled')
+    fse.mkdirsSync(dir2Path)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      js: {
+        bundler: {
+          bundles: [
+            {
+              outputFile: 'bundle.js',
+              env: 'dev',
+              files: [
+                'a.js',
+                'b.js',
+                'c.js'
+              ]
+            }
+          ]
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the log output, check to see if the directory was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${pathOfBundleJSFolder}`)) {
+        jsbundleDirCreatedBool = true
+      }
+    })
+
+    // when the app is done its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is finished, check to see if the js bundle was made or not
+    testApp.on('exit', () => {
+      if (jsbundleDirCreatedBool) {
+        assert.fail(`Roosevelt made a js bundle output directory when it shouldn't as generateFolderStructure is false`)
+      }
+      done()
+    })
+  })
 })
