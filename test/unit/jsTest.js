@@ -597,16 +597,16 @@ describe('JavaScript Section Test', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // when the app finishes its initialization, see if the static js folders were made
+    // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      // js static folder
-      let test = fse.existsSync(path.join(appDir, 'statics', 'js'))
-      assert.equal(test, false)
       testApp.kill('SIGINT')
     })
 
-    // when the app is about to end, check that the error was hit
+    // when the app is about to end, check to see if the js static file was made or not
     testApp.on('exit', () => {
+      // js static folder
+      let test = fse.existsSync(path.join(appDir, 'statics', 'js'))
+      assert.equal(test, false)
       done()
     })
   })
@@ -628,19 +628,19 @@ describe('JavaScript Section Test', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // when the app finishes its initialization, see if the build, output or static js folders were made
+    // when the app finishes its initialization, kill it
     testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check to see if the build or output folder were made
+    testApp.on('exit', () => {
       // build folder
       let test = fse.existsSync(path.join(appDir, 'statics', '.build'))
       assert.equal(test, false)
       // output folder
       let test2 = fse.existsSync(path.join(appDir, 'statics', '.build', 'js'))
       assert.equal(test2, false)
-      testApp.kill('SIGINT')
-    })
-
-    // when the app is about to end, check that the error was hit
-    testApp.on('exit', () => {
       done()
     })
   })
@@ -815,6 +815,52 @@ describe('JavaScript Section Test', function () {
     testApp.on('exit', () => {
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
+      }
+      done()
+    })
+  })
+
+  it('should not allow the creation of any new js compiled files if the generateFolderStructure param is set to false', function (done) {
+    // bool var is hold whether or not it was logged that the js compile files were made
+    let compiledJSCreatedBool = false
+
+    // create the three files
+    fse.ensureFileSync(path.join(appDir, 'statics', '.build', 'js', 'a.js'))
+    fse.ensureFileSync(path.join(appDir, 'statics', '.build', 'js', 'b.js'))
+    fse.ensureFileSync(path.join(appDir, 'statics', '.build', 'js', 'c.js'))
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the logs to see if any of the compiled files were made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'a.js')}`) || data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'b.js')}`) || data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'c.js')}`)) {
+        compiledJSCreatedBool = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, see that the files were not made
+    testApp.on('exit', () => {
+      if (compiledJSCreatedBool) {
+        assert.fail('Roosevelt overwritten the js compiled files even when generateFolderStructure is false')
       }
       done()
     })
