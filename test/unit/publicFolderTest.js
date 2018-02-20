@@ -118,11 +118,11 @@ describe('Public folder section tests', function () {
         // if we can get the page, send a request to get the favicon
         request('http://localhost:43711')
         .get('/favicon.ico')
-        .expect(200, (err, res) => {
+        .expect(404, (err, res) => {
           if (err) {
+            assert.fail(`able to get the favicon.ico, even when there isn't one`)
             testApp.kill('SIGINT')
           } else {
-            assert.fail(`able to get the favicon.ico, even when there isn't one`)
             testApp.kill('SIGINT')
           }
         })
@@ -166,11 +166,11 @@ describe('Public folder section tests', function () {
         // if we can get the page, send a request to get the favicon
         request('http://localhost:43711')
         .get('/favicon.ico')
-        .expect(200, (err, res) => {
+        .expect(404, (err, res) => {
           if (err) {
+            assert.fail(`able to get the favicon.ico, even when there isn't one`)
             testApp.kill('SIGINT')
           } else {
-            assert.fail(`able to get the favicon.ico, even when there isn't one`)
             testApp.kill('SIGINT')
           }
         })
