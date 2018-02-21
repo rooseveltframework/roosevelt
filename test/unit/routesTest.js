@@ -38,7 +38,7 @@ describe('Roosevelt routes Section Test', function () {
       viewEngine: [
         'html: teddy'
       ],
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // create a fork of the app.js file and run it as a child process
@@ -76,7 +76,7 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // create a fork of the app.js file and run it as a child process
@@ -115,7 +115,7 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       port: 3000,
       generateFolderStructure: true,
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // create a fork of the app.js file and run it as a child process
@@ -156,7 +156,7 @@ describe('Roosevelt routes Section Test', function () {
       viewEngine: [
         'html: teddy'
       ],
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // create a fork of the app.js file and run it as a child process
@@ -195,7 +195,7 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       error404: '404test.js',
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // create a fork of the app.js file and run it as a child process
@@ -233,7 +233,7 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       error5xx: '500test.js',
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -270,7 +270,7 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -309,7 +309,7 @@ describe('Roosevelt routes Section Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       error503: '503test.js',
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       toobusy: {
         maxLagPerRequest: 10,
         lagCheckInterval: 16
@@ -371,7 +371,7 @@ describe('Roosevelt routes Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       toobusy: {
         maxLagPerRequest: 10,
         lagCheckInterval: 16
