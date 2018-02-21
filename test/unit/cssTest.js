@@ -405,4 +405,86 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should throw an error if the css processor passed in is not compatible with Roosevelt (does not have parse function)', function (done) {
+    // bool var to hold whether or not a specific error was thrown by Roosevelt
+    let IncompatibleProcessorErrorBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'camel-case',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: true,
+      noMinify: true
+    }, options)
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('out of date or incompatible with this version of Roosevelt')) {
+        IncompatibleProcessorErrorBool = true
+      }
+    })
+    testApp.on('message', () => {
+      assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
+      testApp.kill('SIGINT')
+    })
+    testApp.on('exit', () => {
+      if (IncompatibleProcessorErrorBool === false) {
+        assert.fail('Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
+      }
+      done()
+    })
+  })
+
+  it('should throw an error if the css processor passed in is not compatible with Roosevelt (it has the parse method, but it does not have the correct arguments)', function (done) {
+    // bool var to hold whether or not a specific error was thrown by Roosevelt
+    let IncompatibleProcessorErrorBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'path',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: true,
+      noMinify: true
+    }, options)
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('out of date or incompatible with this version of Roosevelt')) {
+        IncompatibleProcessorErrorBool = true
+      }
+    })
+    testApp.on('message', () => {
+      assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
+      testApp.kill('SIGINT')
+    })
+    testApp.on('exit', () => {
+      if (IncompatibleProcessorErrorBool === false) {
+        assert.fail('Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
+      }
+      done()
+    })
+  })
 })
