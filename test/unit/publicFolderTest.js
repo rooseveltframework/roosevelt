@@ -42,7 +42,7 @@ describe('Public folder section tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       favicon: 'images/faviconTest.ico'
     }, options)
 
@@ -95,7 +95,7 @@ describe('Public folder section tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       favicon: null
     }, options)
 
@@ -141,7 +141,7 @@ describe('Public folder section tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       favicon: 'images/nothingHere.ico'
     }, options)
 
@@ -193,7 +193,7 @@ describe('Public folder section tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       versionedPublic: true
     }, options)
 
