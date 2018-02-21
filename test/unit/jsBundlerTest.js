@@ -502,6 +502,7 @@ describe('js Bundler Section Test', function () {
     fse.writeFileSync(path.join(appDir, 'statics', 'module', 'greeting.js'), js1SourceCode)
     fse.writeFileSync(path.join(appDir, 'statics', 'js', 'salutation.js'), js2SourceCode)
 
+    // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -527,23 +528,128 @@ describe('js Bundler Section Test', function () {
       }
     }, options)
 
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // when the server starts, run the bundle script which should say hello based on its module requirements and how it uses it
     testApp.on('message', () => {
       const testApp2 = fork(path.join(appDir, 'statics', 'js', '.bundled', 'bundle.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // check console logs for the 'Hello'
       testApp2.stdout.on('data', (data) => {
         if (data.includes('Hello')) {
           consolLogHelloBool = true
         }
       })
 
+      // on exit of the 2nd app, see if the hello was given
       testApp2.on('exit', () => {
         if (consolLogHelloBool === false) {
           assert.fail('the paths param could not find the module script')
         }
         done()
       })
+    })
+  })
+
+  it('should not make the bundled js file if generateFolderStructure is false', function (done) {
+    // bool var to hold whether or not Roosevelt made the bundled file
+    let jsBundledOutputFileBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      js: {
+        bundler: {
+          bundles: [
+            {
+              outputFile: 'bundle.js',
+              files: [
+                'a.js',
+                'b.js',
+                'c.js'
+              ]
+            }
+          ]
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console log, check to see if the outputfile was written
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`writing new JS file ${path.join(appDir, 'statics', 'js', '.bundled', 'bundle.js')}`)) {
+        jsBundledOutputFileBool = true
+      }
+    })
+
+    // when the app finishes initailization, make sure that the file is not made
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', 'js', '.bundled', 'bundle.js'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check whether or not the file was made by roosevelt
+    testApp.on('exit', () => {
+      if (jsBundledOutputFileBool) {
+        assert.fail('Roosevelt made the js output bundled file even though generateFolderStructure is false')
+      }
+      done()
+    })
+  })
+
+  it('should not make the bundled js file in the build folder if generateFolderStructure is false', function (done) {
+    // bool var to hold whether or not Roosevelt made the bundled file
+    let jsBundledOutputFileBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      js: {
+        bundler: {
+          expose: true,
+          bundles: [
+            {
+              outputFile: 'bundle.js',
+              files: [
+                'a.js',
+                'b.js',
+                'c.js'
+              ]
+            }
+          ]
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console log, check to see if the outputfile was written
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', '.bundled', 'bundle.js')}`)) {
+        jsBundledOutputFileBool = true
+      }
+    })
+
+    // when the app finishes initailization, check to make sure that the file was not made
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'js', '.bundled', 'bundle.js'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check whether or not the file was made by roosevelt
+    testApp.on('exit', () => {
+      if (jsBundledOutputFileBool) {
+        assert.fail('Roosevelt made the js output bundled file even though generateFolderStructure is false')
+      }
+      done()
     })
   })
 })
