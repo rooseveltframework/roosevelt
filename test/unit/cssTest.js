@@ -360,4 +360,49 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should throw an error if a css preprocessor is not provided into the node module param', function (done) {
+    // bool var to hold whether or not Roosevelt throws the error that we did not include a css preprocessor
+    let missingCSSPreprocessorBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      css: {
+        compiler: {
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on the error logs, see if the specific error is given
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to include your CSS preprocessor')) {
+        missingCSSPreprocessorBool = true
+      }
+    })
+
+    // when the app finishes its initalization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check to see if the specific error was given
+    testApp.on('exit', () => {
+      if (missingCSSPreprocessorBool === false) {
+        assert.fail('Roosevelt did not throw an error on the fact that there is no css preprocessor given to the css nodeModule param')
+      }
+      done()
+    })
+  })
 })
