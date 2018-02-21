@@ -41,7 +41,7 @@ describe('Roosevelt HTML Validator Test', function () {
       htmlValidator: {
         enable: true
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -78,7 +78,7 @@ describe('Roosevelt HTML Validator Test', function () {
       htmlValidator: {
         enable: true
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -120,7 +120,7 @@ describe('Roosevelt HTML Validator Test', function () {
         enable: true,
         suppressWarnings: false
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -157,7 +157,7 @@ describe('Roosevelt HTML Validator Test', function () {
         enable: true,
         suppressWarnings: true
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -197,7 +197,7 @@ describe('Roosevelt HTML Validator Test', function () {
           requestHeader: 'partialtest'
         }
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -237,7 +237,7 @@ describe('Roosevelt HTML Validator Test', function () {
           requestHeader: 'partialtest'
         }
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -277,7 +277,7 @@ describe('Roosevelt HTML Validator Test', function () {
           requestHeader: 'partialtest'
         }
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -322,7 +322,7 @@ describe('Roosevelt HTML Validator Test', function () {
           modelValue: '_disableValidatorTest'
         }
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and start it as a child process
@@ -364,7 +364,7 @@ describe('Roosevelt HTML Validator Test', function () {
           modelValue: '_disableValidatorTest'
         }
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and start it as a child process
@@ -401,7 +401,7 @@ describe('Roosevelt HTML Validator Test', function () {
         suppressWarnings: true,
         port: 3000
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
@@ -439,7 +439,7 @@ describe('Roosevelt HTML Validator Test', function () {
         separateProcess: true,
         port: 8888
       },
-      onServerStart: true
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
