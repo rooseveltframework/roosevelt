@@ -35,7 +35,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       multipart: {
       }
     }, options)
@@ -78,7 +78,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       multipart: {
         uploadDir: appDir
       }
@@ -115,7 +115,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       bodyParserUrlencodedParams: {
         extended: true,
         parameterLimit: 1
@@ -157,7 +157,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
       bodyParserJsonParams: {
         limit: 10
       }
