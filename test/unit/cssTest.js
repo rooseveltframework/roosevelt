@@ -430,15 +430,21 @@ describe('CSS Section Tests', function () {
     }, options)
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if any one of them are the specific error
     testApp.stderr.on('data', (data) => {
       if (data.includes('out of date or incompatible with this version of Roosevelt')) {
         IncompatibleProcessorErrorBool = true
       }
     })
+
+    // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
       testApp.kill('SIGINT')
     })
+
+    // on exit, see if the error was given
     testApp.on('exit', () => {
       if (IncompatibleProcessorErrorBool === false) {
         assert.fail('Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
@@ -469,20 +475,127 @@ describe('CSS Section Tests', function () {
       generateFolderStructure: true,
       noMinify: true
     }, options)
+
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if any one of them are the specific error
     testApp.stderr.on('data', (data) => {
       if (data.includes('out of date or incompatible with this version of Roosevelt')) {
         IncompatibleProcessorErrorBool = true
       }
     })
+
+    // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
       testApp.kill('SIGINT')
     })
+
+    // on exit, see if the error was given
     testApp.on('exit', () => {
       if (IncompatibleProcessorErrorBool === false) {
         assert.fail('Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
+      }
+      done()
+    })
+  })
+
+  it('should make the css directory if one is not present in the app directory', function (done) {
+    // bool var to see if the specific Roosevelt log is given
+    let madeCSSDirectoryBool = false
+    // get rid of the css folder that was generated before the test
+    fse.removeSync(path.join(appDir, 'statics', 'css'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, see if any one of them are the specific log we want
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'statics', 'css')}`)) {
+        madeCSSDirectoryBool = true
+      }
+    })
+
+    // when the app finishes initialization, check that the directory is ther
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', 'css'))
+      assert.equal(test, true)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check whether or not the specific log was given
+    testApp.on('exit', () => {
+      if (madeCSSDirectoryBool === false) {
+        assert.fail('Roosevelt did not make a css Directory when one is not present')
+      }
+      done()
+    })
+  })
+
+  it('should not make a css directory if generateFolderStructure is false', function (done) {
+    // bool var to see if the specific Roosevelt log is given
+    let madeCSSDirectoryBool = false
+    // get rid of the css folder that was generated before the test
+    fse.removeSync(path.join(appDir, 'statics', 'css'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: false
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, see if any one of them are the specific log we want
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'statics', 'css')}`)) {
+        madeCSSDirectoryBool = true
+      }
+    })
+
+    // when the app finishes initialization, check that the directory is not there
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', 'css'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check whether or not the specific log was given
+    testApp.on('exit', () => {
+      if (madeCSSDirectoryBool === true) {
+        assert.fail('Roosevelt did make a css Directory when generateFolderStructure is false')
       }
       done()
     })
