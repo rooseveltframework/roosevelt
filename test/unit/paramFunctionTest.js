@@ -48,21 +48,21 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', (params) => {
       // send a http request
       request(`http://localhost:${params.port}`)
-      .get('/HTMLTest')
-      .expect(200, (err, res) => {
-        if (err) {
-          assert.fail(err)
-          testApp.kill('SIGINT')
-        }
-        // check to see if a specific header was changed in the function onReqStart
-        let test = res.get('onreqstarttest')
-        if (test) {
-          testApp.kill()
-        } else {
-          assert.fail('onReqStart was not called')
-          testApp.kill()
-        }
-      })
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          // check to see if a specific header was changed in the function onReqStart
+          let test = res.get('onreqstarttest')
+          if (test) {
+            testApp.kill()
+          } else {
+            assert.fail('onReqStart was not called')
+            testApp.kill()
+          }
+        })
     })
     testApp.on('exit', () => {
       done()
@@ -84,21 +84,21 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', (params) => {
       // send a http request
       request(`http://localhost:${params.port}`)
-      .get('/HTMLTest')
-      .expect(200, (err, res) => {
-        if (err) {
-          assert.fail(err)
-          testApp.kill('SIGINT')
-        }
-        // check to see if a specific header was changed in the function onReqBeforeRoute
-        const test = res.get('onreqbeforeroute')
-        if (test) {
-          testApp.kill()
-        } else {
-          assert.fail('onReqBeforeRoute was not called')
-          testApp.kill()
-        }
-      })
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          // check to see if a specific header was changed in the function onReqBeforeRoute
+          const test = res.get('onreqbeforeroute')
+          if (test) {
+            testApp.kill()
+          } else {
+            assert.fail('onReqBeforeRoute was not called')
+            testApp.kill()
+          }
+        })
     })
     testApp.on('exit', () => {
       done()
@@ -121,14 +121,14 @@ describe('parameter Function Test Section', function () {
       if (message.port) {
       // send a http request
         request(`http://localhost:${message.port}`)
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err) {
-            assert.fail(err)
-            testApp.kill('SIGINT')
-          }
-        })
-      // see if we get a message that was sent from the onReqAfterRoute function
+          .get('/HTMLTest')
+          .expect(200, (err, res) => {
+            if (err) {
+              assert.fail(err)
+              testApp.kill('SIGINT')
+            }
+          })
+          // see if we get a message that was sent from the onReqAfterRoute function
       } else if (message === 'onReqAfterRoute') {
         testApp.kill('SIGINT')
       }
