@@ -804,7 +804,7 @@ describe('CSS Section Tests', function () {
     // when the app is exiting, check to see if the specific error was logged out
     testApp.on('exit', () => {
       if (filenameMissingErrorBool === false) {
-        assert.fail('Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param being undefined ')
+        assert.fail('Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param being undefined')
       }
       done()
     })
@@ -864,7 +864,126 @@ describe('CSS Section Tests', function () {
     // when the app is exiting, check to see if the specific error was logged out
     testApp.on('exit', () => {
       if (filenameInvalidErrorBool === false) {
-        assert.fail('Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param being undefined ')
+        assert.fail('Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param not being a string')
+      }
+      done()
+    })
+  })
+
+  it('should throw an error if versionFile is true but varName is missing', function (done) {
+    // bool var to hold whether or not the specific error was thrown
+    let varnameMissingErrorBool = false
+
+    // contents of sample package.json file to use for testing css versionFile
+    let packageJSON = {
+      version: '0.3.1',
+      rooseveltConfig: {}
+    }
+
+    // generate the package json file with basic data
+    fse.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        versionFile: {
+          fileName: 'something'
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the error logs to see if the specific error was given
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to write versioned CSS file! varName missing or invalid')) {
+        varnameMissingErrorBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is exiting, check to see if the specific error was logged out
+    testApp.on('exit', () => {
+      if (varnameMissingErrorBool === false) {
+        assert.fail('Roosevelt did not throw an error when the user is trying to make a versionFile with the var name param being undefined')
+      }
+      done()
+    })
+  })
+
+  it('should throw an error if versionFile is true but varname is not a string', function (done) {
+    // bool var to hold whether or not the specific error was thrown
+    let varnameInvalidErrorBool = false
+
+    // contents of sample package.json file to use for testing css versionFile
+    let packageJSON = {
+      version: '0.3.1',
+      rooseveltConfig: {}
+    }
+
+    // generate the package json file with basic data
+    fse.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        versionFile: {
+          fileName: 'something',
+          varName: 6
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the error logs to see if the specific error was given
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to write versioned CSS file! varName missing or invalid')) {
+        varnameInvalidErrorBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is exiting, check to see if the specific error was logged out
+    testApp.on('exit', () => {
+      if (varnameInvalidErrorBool === false) {
+        assert.fail('Roosevelt did not throw an error when the user is trying to make a versionFile with the var name param not being a string')
       }
       done()
     })
