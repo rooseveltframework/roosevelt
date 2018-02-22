@@ -57,33 +57,33 @@ describe('Public folder section tests', function () {
     testApp.on('message', () => {
       // see if we could get a html page from the server
       request('http://localhost:43711')
-      .get('/HTMLTest')
-      .expect(200, (err, res) => {
-        if (err) {
-          console.log('here')
-          assert.fail(err)
-          testApp.kill('SIGINT')
-        }
-
-        // if it had worked, grab favicon from the server
-        request('http://localhost:43711')
-        .get('/favicon.ico')
+        .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
+            console.log('here')
             assert.fail(err)
             testApp.kill('SIGINT')
           }
-          // convert buffer to base64
-          let faviconData = res.body.toString('base64')
-          // get the base64 buffer of the favicon that we should be using in util
-          let data = fse.readFileSync(path.join(__dirname, '../', 'util', 'faviconTest.ico'))
-          let encodedImageData = Buffer.from(data, 'binary').toString('base64')
-          // check if both buffers are the same(They should be)
-          let test = faviconData === encodedImageData
-          assert.equal(test, true)
-          testApp.kill('SIGINT')
+
+          // if it had worked, grab favicon from the server
+          request('http://localhost:43711')
+            .get('/favicon.ico')
+            .expect(200, (err, res) => {
+              if (err) {
+                assert.fail(err)
+                testApp.kill('SIGINT')
+              }
+              // convert buffer to base64
+              let faviconData = res.body.toString('base64')
+              // get the base64 buffer of the favicon that we should be using in util
+              let data = fse.readFileSync(path.join(__dirname, '../', 'util', 'faviconTest.ico'))
+              let encodedImageData = Buffer.from(data, 'binary').toString('base64')
+              // check if both buffers are the same(They should be)
+              let test = faviconData === encodedImageData
+              assert.equal(test, true)
+              testApp.kill('SIGINT')
+            })
         })
-      })
     })
     testApp.on('exit', () => {
       done()
@@ -109,24 +109,24 @@ describe('Public folder section tests', function () {
     // when the server starts, send a request to the server
     testApp.on('message', () => {
       request('http://localhost:43711')
-      .get('/HTMLTest')
-      .expect(200, (err, res) => {
-        if (err) {
-          assert.fail(err)
-          testApp.kill('SIGINT')
-        }
-        // if we can get the page, send a request to get the favicon
-        request('http://localhost:43711')
-        .get('/favicon.ico')
-        .expect(404, (err, res) => {
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
           if (err) {
-            assert.fail(`able to get the favicon.ico, even when there isn't one`)
-            testApp.kill('SIGINT')
-          } else {
+            assert.fail(err)
             testApp.kill('SIGINT')
           }
+          // if we can get the page, send a request to get the favicon
+          request('http://localhost:43711')
+            .get('/favicon.ico')
+            .expect(404, (err, res) => {
+              if (err) {
+                assert.fail(`able to get the favicon.ico, even when there isn't one`)
+                testApp.kill('SIGINT')
+              } else {
+                testApp.kill('SIGINT')
+              }
+            })
         })
-      })
     })
 
     testApp.on('exit', () => {
@@ -157,24 +157,24 @@ describe('Public folder section tests', function () {
     // when the server starts, send a request to the server
     testApp.on('message', () => {
       request('http://localhost:43711')
-      .get('/HTMLTest')
-      .expect(200, (err, res) => {
-        if (err) {
-          assert.fail(err)
-          testApp.kill('SIGINT')
-        }
-        // if we can get the page, send a request to get the favicon
-        request('http://localhost:43711')
-        .get('/favicon.ico')
-        .expect(404, (err, res) => {
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
           if (err) {
-            assert.fail(`able to get the favicon.ico, even when there isn't one`)
-            testApp.kill('SIGINT')
-          } else {
+            assert.fail(err)
             testApp.kill('SIGINT')
           }
+          // if we can get the page, send a request to get the favicon
+          request('http://localhost:43711')
+            .get('/favicon.ico')
+            .expect(404, (err, res) => {
+              if (err) {
+                assert.fail(`able to get the favicon.ico, even when there isn't one`)
+                testApp.kill('SIGINT')
+              } else {
+                testApp.kill('SIGINT')
+              }
+            })
         })
-      })
     })
 
     testApp.on('exit', () => {
