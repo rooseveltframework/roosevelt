@@ -600,4 +600,51 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should throw an error if the things passed into the whitelist param is not an object', function (done) {
+    // bool var to hold whether or not we recieve the specific error message or not
+    let whitelistNotCorrectErrorBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        whitelist: true
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look into the error logs and see if the specific error was given
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('CSS whitelist not configured correctly. Please ensure that it is an array')) {
+        whitelistNotCorrectErrorBool = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to finish, check that the error was given
+    testApp.on('exit', () => {
+      if (whitelistNotCorrectErrorBool === false) {
+        assert.fail('Roosevelt did not throw an error when the whitelist param is not an array')
+      }
+      done()
+    })
+  })
 })
