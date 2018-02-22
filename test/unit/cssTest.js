@@ -647,4 +647,107 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should not make a css compiled directory if one is present', function (done) {
+    // bool var to hold whether or not a specific log was given
+    let cssCompiledDirMadeBool = false
+
+    // create the compiled css folder before the creation of the app.js file
+    let dir1Path = path.join(appDir, 'statics', '.build')
+    let dir2Path = path.join(dir1Path, 'css')
+    fse.mkdirSync(dir1Path)
+    fse.mkdirSync(dir2Path)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output logs to see if the specific log was given
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${dir2Path}`)) {
+        cssCompiledDirMadeBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check that the specific log was given
+    testApp.on('exit', () => {
+      if (cssCompiledDirMadeBool) {
+        assert.fail('Roosevelt made a css compiled directory even though one is alreadly present')
+      }
+      done()
+    })
+  })
+
+  it('should not make a css compiled directory if generateFolderStructure is false', function (done) {
+    // bool var to hold whether or not a specific log was given
+    let cssCompiledDirMadeBool = false
+
+    // path to the build folder
+    const cssBuildDirPath = path.join(appDir, 'statics', '.build', 'css')
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      },
+      generateFolderStructure: false
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output logs to see if the specific log was given
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${cssBuildDirPath}`)) {
+        cssCompiledDirMadeBool = true
+      }
+    })
+
+    // when the app finishes initialization, check that the folder was not made
+    testApp.on('message', () => {
+      let test = fse.existsSync(cssBuildDirPath)
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check that the specific log was given
+    testApp.on('exit', () => {
+      if (cssCompiledDirMadeBool) {
+        assert.fail('Roosevelt made a css compiled directory even though GenerateTestApp is false')
+      }
+      done()
+    })
+  })
 })
