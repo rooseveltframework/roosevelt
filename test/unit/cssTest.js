@@ -988,4 +988,129 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should not create a versionFile file if one alreadly exists with the exact same data', function (done) {
+    // bool var to hold whether or not Roosevelt had console logged a specfic message
+    let versionFileCreationLogBool = false
+    // versionFile source String
+    let versionFileSourceString = `/* do not edit; generated automatically by Roosevelt */ @appVersion: '0.3.1';\n`
+    // write the file in the css directory
+    let versionFilePath = path.join(appDir, 'statics', 'css', '_version.less')
+    fse.writeFileSync(versionFilePath, versionFileSourceString)
+
+    // contents of sample package.json file to use for testing css versionFile
+    let packageJSON = {
+      version: '0.3.1',
+      rooseveltConfig: {}
+    }
+
+    // generate the package json file with basic data
+    fse.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        versionFile: {
+          fileName: '_version.less',
+          varName: 'appVersion'
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, check to see if the creation versionFile log was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('writing new versioned CSS file to reflect new version')) {
+        versionFileCreationLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is going to exit, see if the creation versionFile log was made
+    testApp.on('exit', () => {
+      if (versionFileCreationLogBool) {
+        assert.fail('Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
+      }
+      done()
+    })
+  })
+
+  it('should not create a versionFile file if generateTestApp is false', function (done) {
+    // bool var to hold whether or not a specific log was made
+    let versionFileCreationLogBool = false
+
+    // contents of sample package.json file to use for testing css versionFile
+    let packageJSON = {
+      version: '0.3.1',
+      rooseveltConfig: {}
+    }
+
+    // generate the package json file with basic data
+    fse.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        versionFile: {
+          fileName: '_version.less',
+          varName: 'appVersion'
+        }
+      },
+      generateFolderStructure: false
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, check to see if the creation versionFile log was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('writing new versioned CSS file to reflect new version')) {
+        versionFileCreationLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is going to exit, see if the creation versionFile log was made
+    testApp.on('exit', () => {
+      if (versionFileCreationLogBool) {
+        assert.fail('Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
+      }
+      done()
+    })
+  })
 })
