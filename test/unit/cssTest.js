@@ -1119,4 +1119,161 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should throw an error if a file specified in the CSS whitelist does not exist', function (done) {
+    // bool var to hold whether or not the specific error was given
+    let whitelistNotSpecificedError = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        whitelist: ['b.less', 'c.less', 'd.less']
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the error logs to see if the specifc whitelist error was thrown
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('specified in CSS whitelist does not exist. Please ensure file is entered properly')) {
+        whitelistNotSpecificedError = true
+      }
+    })
+
+    // when the app is finished initialization, check to see if the file is there
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'css', 'd.less'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, see if the error was thrown
+    testApp.on('exit', () => {
+      if (whitelistNotSpecificedError === false) {
+        assert.fail('Roosevelt did not throw an error when a non-existent file is placed in the whitelist array param')
+      }
+      done()
+    })
+  })
+
+  it('it should not make the compiled file if the path of the file in the whitelist array leads to a directory', function (done) {
+    // bool var to hold whether or not a specific log was given
+    let cssFileMadeLogBool = false
+
+    // create the directory in the statics css dir
+    let dirPath = path.join(appDir, 'statics', 'css', 'dir')
+    fse.mkdirSync(dirPath)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        whitelist: ['dir']
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output logs to see if Roosevelt made a compiled file out of the directory
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`writing new CSS file ${path.join(appDir, 'statics', '.build', 'css', 'dir')}`)) {
+        cssFileMadeLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, check to see that a file of the directory was not made
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'css', 'dir'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, see if the log was given
+    testApp.on('exit', () => {
+      if (cssFileMadeLogBool) {
+        assert.fail('Roosevelt made a compiled file for a directory')
+      }
+      done()
+    })
+  })
+
+  it('it should not make the compiled file if the path of the file in the whitelist array is Thumbs.db', function (done) {
+    // bool var to hold whether or not a specific log was given
+    let cssFileMadeLogBool = false
+
+    // create three files
+    let sourceCode = ''
+    let pathForThumbs = path.join(appDir, 'statics', 'css', 'Thumbs.db')
+    fse.writeFileSync(pathForThumbs, sourceCode)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        whitelist: ['Thumbs.db']
+      },
+      generateFolderStructure: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output logs to see if Roosevelt made a compiled file out of the directory
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+      if (data.includes(`writing new CSS file ${path.join(appDir, 'statics', '.build', 'css', 'Thumbs.db')}`)) {
+        cssFileMadeLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, check to see that a file of the directory was not made
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'css', 'Thumbs.db'))
+      assert.equal(test, false)
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, see if the log was given
+    testApp.on('exit', () => {
+      if (cssFileMadeLogBool) {
+        assert.fail('Roosevelt made a compiled file for a directory')
+      }
+      done()
+    })
+  })
 })
