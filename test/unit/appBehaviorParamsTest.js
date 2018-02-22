@@ -193,4 +193,57 @@ describe('Roosevelt multipart/formidable Section Test', function () {
       done()
     })
   })
+
+  it('should throw an error if something wrong occurs when formidable tries to parse file (size of fields exceed max)', function (done) {
+    // bool var to hold whether or not a specific error message comes out or not
+    let multipartParseErrorBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      multipart: {
+        multiples: false,
+        maxFieldsSize: 2
+      }
+    }, options)
+
+    // create a fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the error logs to see if the specific error comes out
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to parse multipart form')) {
+        multipartParseErrorBool = true
+      }
+    })
+    // when the app starts, make a call to the controller and pass more
+    testApp.on('message', (params) => {
+      // send multiple fields to exceed the max field size
+      request(`http://localhost:${params.port}`)
+        .post('/multipartTest')
+        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .field('testing1', 6)
+        .field('testing2', 4)
+        .field('testing3', 1)
+        .on('error', () => {
+          // roosevelt should throw an error, meaning the app passed the test
+          testApp.kill('SIGINT')
+        }).then((res) => {
+          if (res.status === 200) {
+            // if we get a 200, an error was not thrown and something is wrong
+            assert.fail('Roosevelt somehow was able to parse this form even though the setup of the test should make it fail')
+            testApp.kill('SIGINT')
+          }
+        })
+    })
+    // when the app is about to exit, see if the specific error log was given
+    testApp.on('exit', () => {
+      if (multipartParseErrorBool === false) {
+        assert.fail('Roosevelt did not throw an error when an error was suppose to occur with formidable trying to parse the form')
+      }
+      done()
+    })
+  })
 })
