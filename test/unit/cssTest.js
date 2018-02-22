@@ -1276,4 +1276,60 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should not create a new compiled file if one exist and the user set GenerateFolderStructure to false', function (done) {
+    // bool var to hold whether a specific log has be given
+    let cssCompiledCreationBool = false
+
+    // make the file first
+    let sourceCode = ''
+    let buildDirPath = path.join(appDir, 'statics', '.build')
+    fse.mkdirSync(buildDirPath)
+    let buildDirPath2 = path.join(appDir, 'statics', '.build', 'css')
+    fse.mkdirSync(buildDirPath2)
+    let fileCompiledPath = path.join(buildDirPath2, 'a.css')
+    fse.writeFileSync(fileCompiledPath, sourceCode)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        },
+        whitelist: ['a.less']
+      },
+      generateFolderStructure: false
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output logs to see if the file compiled log was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`writing new CSS file ${fileCompiledPath}`)) {
+        cssCompiledCreationBool = true
+      }
+    })
+
+    // when the app finishes initailization. kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is exiting, see if the file compiled log was made
+    testApp.on('exit', () => {
+      if (cssCompiledCreationBool) {
+        assert.fail('Roosevelt compiled the file in the whitelist array even though generateFolderStructure is false')
+      }
+      done()
+    })
+  })
 })
