@@ -1064,6 +1064,11 @@ describe('CSS Section Tests', function () {
       rooseveltConfig: {}
     }
 
+    // write the file in the css directory
+    let versionFileSourceString = ''
+    let versionFilePath = path.join(appDir, 'statics', 'css', '_version.less')
+    fse.writeFileSync(versionFilePath, versionFileSourceString)
+
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
@@ -1095,6 +1100,7 @@ describe('CSS Section Tests', function () {
 
     // on console logs, check to see if the creation versionFile log was made
     testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
       if (data.includes('writing new versioned CSS file to reflect new version')) {
         versionFileCreationLogBool = true
       }
