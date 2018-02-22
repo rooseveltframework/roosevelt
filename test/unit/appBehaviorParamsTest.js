@@ -46,27 +46,27 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     // when the server starts, send some files to the server
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
-      .post('/multipartTest')
-      .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
-      .on('error', (err) => {
-        assert.fail(err)
-        testApp.kill('SIGINT')
-      })
-      .then((res) => {
-        // test to see if the two files were uploaded
-        assert(res.body.lengthTest, true)
+        .post('/multipartTest')
+        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .on('error', (err) => {
+          assert.fail(err)
+          testApp.kill('SIGINT')
+        })
+        .then((res) => {
+          // test to see if the two files were uploaded
+          assert(res.body.lengthTest, true)
 
-        // test to see if the files exists (testing to see if they were moved from the temporary spot)
-        let test1 = fse.existsSync(path.join(appDir, 'test1.txt'))
-        assert(test1, true)
+          // test to see if the files exists (testing to see if they were moved from the temporary spot)
+          let test1 = fse.existsSync(path.join(appDir, 'test1.txt'))
+          assert(test1, true)
 
-        // test to see if all the info on the newly copied files are correct
-        let file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
-        let test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
-        assert.equal(test2, true)
+          // test to see if all the info on the newly copied files are correct
+          let file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
+          let test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
+          assert.equal(test2, true)
 
-        testApp.kill('SIGINT')
-      })
+          testApp.kill('SIGINT')
+        })
     })
     testApp.on('exit', () => {
       done()
@@ -89,18 +89,18 @@ describe('Roosevelt multipart/formidable Section Test', function () {
 
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
-      .post('/multipartUploadDir')
-      .field('uploadDir', appDir)
-      .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
-      .on('error', (err) => {
-        assert.fail(err)
-        testApp.kill('SIGINT')
-      })
-      .then((res) => {
-        // test to see that the changed parameter had changed where the file was uploaded to on the server
-        assert.equal(res.body.existsTest, true)
-        testApp.kill('SIGINT')
-      })
+        .post('/multipartUploadDir')
+        .field('uploadDir', appDir)
+        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .on('error', (err) => {
+          assert.fail(err)
+          testApp.kill('SIGINT')
+        })
+        .then((res) => {
+          // test to see that the changed parameter had changed where the file was uploaded to on the server
+          assert.equal(res.body.existsTest, true)
+          testApp.kill('SIGINT')
+        })
     })
     testApp.on('exit', () => {
       done()
@@ -128,18 +128,18 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     // when the server starts, send a request with a url that has more params then what is allowed
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
-      .post('/paramLimit')
-      .send('test1=blah')
-      .send('test2=slah')
-      .expect(200, (err, res) => {
-        if (err) {
-          if (res.body.type === 'parameters.too.many') {
-            tooManyParamErrorBool = true
+        .post('/paramLimit')
+        .send('test1=blah')
+        .send('test2=slah')
+        .expect(200, (err, res) => {
+          if (err) {
+            if (res.body.type === 'parameters.too.many') {
+              tooManyParamErrorBool = true
+            }
+            testApp.kill('SIGINT')
           }
           testApp.kill('SIGINT')
-        }
-        testApp.kill('SIGINT')
-      })
+        })
     })
     testApp.on('exit', () => {
       if (!tooManyParamErrorBool) {
@@ -169,21 +169,21 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     // on server start, see if we can get an error of entity too large by sending a bunch of json data to the post
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
-      .post('/JSONLimit')
-      .send({test1: 'adam'})
-      .send({test2: 'bob'})
-      .send({test3: 'calvin'})
-      .send({test4: 'daniel'})
-      .send({test5: 'evan'})
-      .expect(200, (err, res) => {
-        if (err) {
-          if (res.body.type === 'entity.too.large') {
-            entityTooLargeBool = true
+        .post('/JSONLimit')
+        .send({test1: 'adam'})
+        .send({test2: 'bob'})
+        .send({test3: 'calvin'})
+        .send({test4: 'daniel'})
+        .send({test5: 'evan'})
+        .expect(200, (err, res) => {
+          if (err) {
+            if (res.body.type === 'entity.too.large') {
+              entityTooLargeBool = true
+            }
+            testApp.kill('SIGINT')
           }
           testApp.kill('SIGINT')
-        }
-        testApp.kill('SIGINT')
-      })
+        })
     })
 
     testApp.on('exit', () => {

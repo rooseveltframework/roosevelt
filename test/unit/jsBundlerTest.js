@@ -35,7 +35,7 @@ describe('js Bundler Section Test', function () {
     fileB,
     fileC
   ]
-   // array of path to compiled bundled files
+  // array of path to compiled bundled files
   let arrayOfBundleJSFilesPaths = [
     path.join(appDir, 'statics', 'js', '.bundled', 'bundle.js')
   ]
