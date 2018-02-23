@@ -243,4 +243,87 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should not make a folder that has the version number if one exists', function (done) {
+    // bool var to hold whether or not the version public folder was made or not
+    let versionPublicCreationLogBool = false
+    // package.json source code
+    let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+    // create the package.json file
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
+    // create the version public folder
+    let Dirpath1 = path.join(appDir, 'public')
+    fse.mkdirSync(Dirpath1)
+    let Dirpath2 = path.join(Dirpath1, '0.5.1')
+    fse.mkdirSync(Dirpath2)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      versionedPublic: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app console logs, see if the specific creation log was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'public', '0.5.1')}`)) {
+        versionPublicCreationLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check to see if the version public folder log was outputted
+    testApp.on('exit', () => {
+      assert.equal(versionPublicCreationLogBool, false, 'Roosevelt create a new version public folder even thought one existed')
+      done()
+    })
+  })
+
+  it('should not make a public version folder if generateFolderStructure is false', function (done) {
+    // bool var to hold whether or not the version public folder was made or not
+    let versionPublicCreationLogBool = false
+    // package.json source code
+    let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+    // create the package.json file
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      versionedPublic: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app console logs, see if the specific creation log was made
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'public', '0.5.1')}`)) {
+        versionPublicCreationLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, see if a folder like that exists
+    testApp.on('message', () => {
+      let test = fse.existsSync(path.join(appDir, 'public', '0.5.1'))
+      assert.equal(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check if the specific log was made
+    testApp.on('exit', () => {
+      assert.equal(versionPublicCreationLogBool, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
+      done()
+    })
+  })
 })
