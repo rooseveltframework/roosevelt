@@ -34,4 +34,25 @@ module.exports = (app) => {
     // send back the test Object
     res.send(test)
   })
+
+  app.route('/multipartDelete').post((req, res) => {
+    // make an object that can send back whether file exists or not
+    let test = {
+      existenceTest: []
+    }
+    // grab the keys of the files
+    let keys = Object.keys(req.files)
+
+    // going through each key, delete the file
+    for (let x = 0; x < keys.length; x++) {
+      fse.removeSync(req.files[keys[x]].path)
+    }
+
+    // check whether or not the files still exists
+    for (let x = 0; x < keys.length; x++) {
+      let fileTest = fse.existsSync(req.files[keys[x]].path)
+      test.existenceTest.push(fileTest)
+    }
+    res.send(test)
+  })
 }

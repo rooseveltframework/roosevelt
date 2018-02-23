@@ -246,4 +246,54 @@ describe('Roosevelt multipart/formidable Section Test', function () {
       done()
     })
   })
+
+  it('should not throw an error if the user deletes temps files in the controller', function (done) {
+    // bool var to hold whether or not a specific error was outputted
+    let removeTmpFilesErrorBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      multipart: {
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if the specific error was logged
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to remove tmp file')) {
+        removeTmpFilesErrorBool = true
+      }
+    })
+
+    // when the app finishes its initialization and starts, send a request with some files and delete the temp files
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .post('/multipartDelete')
+        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          // see if the controller deleted all the files
+          for (let x = 0; x < res.body.existenceTest.length; x++) {
+            if (res.body.existenceTest[x] === true) {
+              assert.fail('Something was not deleted')
+            }
+          }
+          testApp.kill('SIGINT')
+        })
+    })
+
+    // when the app is about to exit, check that the 'couldn't delete tmp file' error didn't pop up
+    testApp.on('exit', () => {
+      assert.equal(removeTmpFilesErrorBool, false, 'Roosevelt threw a file not found error')
+      done()
+    })
+  })
 })
