@@ -207,4 +207,40 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should not be using Multipart middleware if the param is set to false', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      multipart: false,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    // when the app is finished initialization, post a request with some files, should get back a 500
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .post('/simpleMultipart')
+        .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
+        .attach('test2', path.join(appDir, '../', '../', 'util', 'text2.txt'))
+        .expect(500, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          testApp.kill('SIGINT')
+        })
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
