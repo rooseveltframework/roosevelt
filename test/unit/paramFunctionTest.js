@@ -137,4 +137,74 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should not make a public directory if one exists', function (done) {
+    // bool var to see if the Roosevelt making the public dir is logged
+    let publicDirCreationLogBool = false
+
+    // create a public dir
+    let publicFolderPath = path.join(appDir, 'public')
+    fse.mkdirSync(publicFolderPath)
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app logs, see if the specific log is outputted
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'public')}`)) {
+        publicDirCreationLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check if the specific log was outputted
+    testApp.on('exit', () => {
+      assert.equal(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
+      done()
+    })
+  })
+
+  it('should not make a public directory if generateFolderStructure is false', function (done) {
+    // bool var to see if the Roosevelt making the public dir is logged
+    let publicDirCreationLogBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: false,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app logs, see if the specific log is outputted
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`making new directory ${path.join(appDir, 'public')}`)) {
+        publicDirCreationLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check if the specific log was outputted
+    testApp.on('exit', () => {
+      assert.equal(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
+      done()
+    })
+  })
 })
