@@ -286,13 +286,113 @@ describe('Roosevelt multipart/formidable Section Test', function () {
               assert.fail('Something was not deleted')
             }
           }
-          testApp.kill('SIGINT')
+          setTimeout(() => { testApp.kill('SIGINT') }, 3000)
         })
     })
 
     // when the app is about to exit, check that the 'couldn't delete tmp file' error didn't pop up
     testApp.on('exit', () => {
-      assert.equal(removeTmpFilesErrorBool, false, 'Roosevelt threw a file not found error')
+      assert.equal(removeTmpFilesErrorBool, false, 'Roosevelt attempted to delete the temp file when its not suppose to (its gone before cleanup)')
+      done()
+    })
+  })
+
+  it('should not try to delete a file or throw an error if the file path was not a string', function (done) {
+    // bool var to hold whether or not a specific error was outputted
+    let removeTmpFilesErrorBool = false
+
+    // var to hold the original path of the temp file
+    let oPath = ''
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      multipart: {
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if the specific error was logged
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to remove tmp file')) {
+        removeTmpFilesErrorBool = true
+      }
+    })
+
+    // when the app starts, send a request that would also give a file to the change path controller
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .post('/multipartChangePath')
+        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          oPath = res.body.originalPath
+          setTimeout(() => { testApp.kill('SIGINT') }, 3000)
+        })
+    })
+    // when the app is about to exit, check to see if the app logged a certain error and test to see if the file is still there
+    testApp.on('exit', () => {
+      let test = fse.existsSync(oPath)
+      assert.equal(test, true, 'The temp file was deleted even though it was not suppose to be deleted')
+      assert.equal(removeTmpFilesErrorBool, false, 'Roosevelt attempted to delete the temp file when its not suppose to (its path was changed to a number)')
+      done()
+    })
+  })
+
+  it('should throw an error if something goes wrong with fs.unlink (the temp path leads to a folder)', function (done) {
+    // bool var to hold whether or not a specific error was outputted
+    let removeTmpFilesErrorBool = false
+
+    // var to hold the origianl path of the temp file
+    let Opath = ''
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      multipart: {
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if the specific error was logged
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to remove tmp file')) {
+        removeTmpFilesErrorBool = true
+      }
+    })
+
+    // when the app is finished initalization, send a post to the route that will replace the file with a dir and wait for response
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .post('/multipartDirSwitch')
+        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .expect(200)
+        .end((err, res) => {
+          if (err) {
+            assert.fail(res.err)
+            testApp.kill('SIGINT')
+          }
+          Opath = res.body.path
+          setTimeout(() => { testApp.kill('SIGINT') }, 3000)
+        })
+    })
+
+    // when the app is about to exit, check to see if the error was logged and that the path still has something associated with it
+    testApp.on('exit', () => {
+      let test = fse.existsSync(Opath)
+      assert.equal(test, true, 'Roosevelt somehow deleted a directory with fs.unlink')
+      assert.equal(removeTmpFilesErrorBool, true, 'Roosevelt did not throw an error while trying to fs.unlink a directory')
       done()
     })
   })

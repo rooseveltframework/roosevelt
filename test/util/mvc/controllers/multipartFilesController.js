@@ -55,4 +55,29 @@ module.exports = (app) => {
     }
     res.send(test)
   })
+
+  app.route('/multipartChangePath').post((req, res) => {
+    // make an object that can be sent back and looked on in mocha
+    let test = {}
+    let keys = Object.keys(req.files)
+    // hold the original path
+    test.originalPath = req.files[keys[0]].path
+    // change it to something that's not a string
+    req.files[keys[0]].path = 5
+    // send back the object
+    res.send(test)
+  })
+
+  app.route('/multipartDirSwitch').post((req, res) => {
+    // object to pass back on response
+    let test = {}
+    // hold the path to the original temp file
+    let keys = Object.keys(req.files)
+    let path = req.files[keys[0]].path
+    // delete the file and replace it with a directory, which should get an error on unlink
+    fse.removeSync(path)
+    fse.mkdirSync(path)
+    test.path = path
+    res.send(test)
+  })
 }
