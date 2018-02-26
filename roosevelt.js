@@ -229,7 +229,7 @@ module.exports = function (params) {
         logger.log('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
         if (!Object.isFrozen(lock)) {
           Object.freeze(lock)
-              // fire user-defined onServerStart event
+          // fire user-defined onServerStart event
           if (params.onServerStart && typeof params.onServerStart === 'function') {
             params.onServerStart(app)
           }
