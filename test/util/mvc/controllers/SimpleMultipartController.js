@@ -5,7 +5,7 @@ module.exports = (app) => {
     let test = {}
     // save the amount of files onto the object and send it back
     let keys = Object.keys(req.files)
-    test.count = keys.lengthW
+    test.count = keys.length
     res.send(test)
   })
 }
