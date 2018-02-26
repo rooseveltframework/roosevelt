@@ -1,0 +1,25 @@
+{
+  "port": 1234,
+  "generateFolderStructure": false,
+  "suppressLogs": {
+    "httpLogs": true,
+    "rooseveltLogs": true,
+    "rooseveltWarnings": true
+  },
+  "https": {
+    "enable": true,
+    "httpsOnly": true,
+    "httpsPort": 1234,
+    "pfx": false,
+    "keyPath": {
+      "pfx": "test/util/test.p12",
+      "key": "test/util/test.req.key",
+      "cert": "test/util/test.req.crt"
+    },
+    "passphrase": "testpass",
+    "cafile": true,
+    "ca": "test/util/ca.crt",
+    "requestCert": false,
+    "rejectUnauthorized": false
+  }
+}
