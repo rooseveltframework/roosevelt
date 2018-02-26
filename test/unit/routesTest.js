@@ -113,7 +113,7 @@ describe('Roosevelt routes Section Test', function () {
     // generate the app
     generateTestApp({
       appDir: appDir,
-      port: 3000,
+      port: 9000,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
