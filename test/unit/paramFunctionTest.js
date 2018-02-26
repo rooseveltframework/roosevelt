@@ -467,4 +467,45 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should throw an error if there is a controller that is not coded properly in the mvc', function (done) {
+    // bool var to hold whether or not the controller errors logs are outputted
+    let controllerErrorLogBool1 = false
+    let controllerErrorLogBool2 = false
+
+    // put the err Controller into the mvc
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController.js'), path.join(appDir, 'mvc', 'controllers', 'errController.js'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // listen to the error logs and see if one about the night being dark and full of error pops up
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('The night is dark and full of errors!')) {
+        controllerErrorLogBool1 = true
+      }
+      if (data.includes('failed to load controller file')) {
+        controllerErrorLogBool2 = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check to see if the two error logs were outputted
+    testApp.on('exit', () => {
+      assert.equal(controllerErrorLogBool1, true, 'Roosevelt did not toss custom Error to mark that a controller has syntax errors with it')
+      assert.equal(controllerErrorLogBool2, true, 'Roosevelt did not toss a comment to show which controller is wrong')
+      done()
+    })
+  })
 })
