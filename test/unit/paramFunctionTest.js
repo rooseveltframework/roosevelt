@@ -508,4 +508,77 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should throw an error if there is a syntax error with the 404 custom error page that is passed in', function (done) {
+    // bool var to hold whether or not the 404 load error was logged
+    let error404LoadLogBool = false
+
+    // copy the 404 error page to the mvc
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', '404errController.js'), path.join(appDir, 'mvc', 'controllers', '404errController.js'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      error404: '404errController.js'
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the error logs to see if the 404 load error was outputted
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to load 404 controller file')) {
+        error404LoadLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to exit, check to see if the 404 load errors were logged
+    testApp.on('exit', () => {
+      assert.equal(error404LoadLogBool, true, 'Roosevelt did not toss an error when there is a syntax error with the custom 404 controller file')
+      done()
+    })
+  })
+
+  it('should skip over elements that are not files when loading in controllers', function (done) {
+    // bool var to see if an error show up
+    let errorLoggedBool = false
+
+    // copy the mvc over to the app
+    fse.copySync(path.join(appDir, '../', '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+
+    // make a directory in the mvc
+    fse.mkdirSync(path.join(appDir, 'mvc', 'controllers', 'test'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      errorLoggedBool = true
+    })
+
+    // when the app is finished with its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill()
+    })
+
+    // when the app is going to exit, check to see if an error was thrown thru the entire process
+    testApp.on('exit', () => {
+      assert.equal(errorLoggedBool, false, 'An erro has occur with the feature of skipping over files in the controllers directory that are not files')
+      done()
+    })
+  })
 })
