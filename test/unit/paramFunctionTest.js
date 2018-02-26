@@ -235,8 +235,8 @@ describe('parameter Function Test Section', function () {
         .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
         .expect(500, (err, res) => {
           if (err) {
-            assert.fail(err)
             console.log(res)
+            assert.fail(err)
             testApp.kill('SIGINT')
           }
           testApp.kill('SIGINT')
