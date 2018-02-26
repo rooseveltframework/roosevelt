@@ -208,7 +208,7 @@ describe('parameter Function Test Section', function () {
     })
   })
 
-  it('should not be using Multipart middleware if the param is set to false', function (done) {
+  it.skip('should not be using Multipart middleware if the param is set to false', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -576,12 +576,7 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
       errorLoggedBool = true
-    })
-
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
     })
 
     // when the app is finished with its initialization, kill it
