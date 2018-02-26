@@ -24,6 +24,7 @@ module.exports = function (params) {
   let httpServer
   let httpsServer
   let httpsOptions
+  let keyPath
   let ca
   let cafile
   let passphrase
@@ -62,13 +63,14 @@ module.exports = function (params) {
     ca = app.get('params').https.ca
     cafile = app.get('params').https.cafile !== false
     passphrase = app.get('params').https.passphrase
+    keyPath = app.get('params').https.keyPath
 
-    if (app.get('params').https.keyPath) {
+    if (keyPath) {
       if (app.get('params').https.pfx) {
-        httpsOptions.pfx = fs.readFileSync(app.get('params').https.keyPath.pfx)
+        httpsOptions.pfx = fs.readFileSync(keyPath.pfx)
       } else {
-        httpsOptions.key = fs.readFileSync(app.get('params').https.keyPath.key)
-        httpsOptions.cert = fs.readFileSync(app.get('params').https.keyPath.cert)
+        httpsOptions.key = fs.readFileSync(keyPath.key)
+        httpsOptions.cert = fs.readFileSync(keyPath.cert)
       }
       if (passphrase) {
         httpsOptions.passphrase = passphrase
