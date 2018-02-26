@@ -1100,7 +1100,6 @@ describe('CSS Section Tests', function () {
 
     // on console logs, check to see if the creation versionFile log was made
     testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
       if (data.includes('writing new versioned CSS file to reflect new version')) {
         versionFileCreationLogBool = true
       }
@@ -1255,7 +1254,6 @@ describe('CSS Section Tests', function () {
 
     // check the output logs to see if Roosevelt made a compiled file out of the directory
     testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
       if (data.includes(`writing new CSS file ${path.join(appDir, 'statics', '.build', 'css', 'Thumbs.db')}`)) {
         cssFileMadeLogBool = true
       }
