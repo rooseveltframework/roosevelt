@@ -579,7 +579,7 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should not try to make the js static folder if generate folder structure is false', function (done) {
+  it('should not try to make the js static folder if generatefolderstructure is false', function (done) {
     // get rid of the js folder that was copied over
     fse.removeSync(path.join(appDir, 'statics', 'js'))
 
@@ -613,7 +613,7 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should not try to make the js static folder if generate folder structure is false', function (done) {
+  it('should not try to make the build or js output static folder if generatefolderstructure is false', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -635,7 +635,7 @@ describe('JavaScript Section Test', function () {
       testApp.kill('SIGINT')
     })
 
-    // when the app is about to end, check to see if the build or output folder were made
+    // when the app is about to end, check to see if the build or js output folder were made
     testApp.on('exit', () => {
       // build folder
       let test = fse.existsSync(path.join(appDir, 'statics', '.build'))
@@ -783,7 +783,7 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should throw an error if the node module provided to the js compiler has a parse function but does not provide the functionality that is required from a js Compiler', function (done) {
+  it('should throw an error if the node module provided to the js compiler has a parse function but does not provide the functionality that is required from a js compiler', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
     // generate the app.js file
