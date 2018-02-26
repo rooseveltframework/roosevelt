@@ -220,10 +220,6 @@ describe('parameter Function Test Section', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
     // when the app is finished initialization, post a request with some files, should get back a 500
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
@@ -334,7 +330,7 @@ describe('parameter Function Test Section', function () {
     // create the app.js file
     generateTestApp({
       appDir: appDir,
-      generateFolderStructure: false,
+      generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -416,6 +412,58 @@ describe('parameter Function Test Section', function () {
 
     testApp.on('exit', () => {
       assert.equal(controllersDirectoryCreationLogBool, false, 'Roosevelt created a controllers folder even though generateFolderStrucutre is false')
+      done()
+    })
+  })
+
+  it('should not make symlinks if they already exists in the app directory', function (done) {
+    // bool var to hold whether or not the symlink creation log was outputted
+    let symlinkCreationLogBool = false
+
+    // create the other directories first
+    let staticsPath = path.join(appDir, 'statics')
+    fse.mkdirSync(staticsPath)
+    let buildPath = path.join(staticsPath, '.build')
+    fse.mkdirSync(buildPath)
+    let cssPath = path.join(buildPath, 'css')
+    fse.mkdirSync(cssPath)
+    let jsPath = path.join(buildPath, 'js')
+    fse.mkdirSync(jsPath)
+    let imagesPath = path.join(staticsPath, 'images')
+    fse.mkdirSync(imagesPath)
+
+    // create the symlinks
+    let publicPath = path.join(appDir, 'public')
+    fse.mkdirSync(publicPath)
+    fse.symlinkSync(imagesPath, path.join(publicPath, 'images'))
+    fse.symlinkSync(cssPath, path.join(publicPath, 'css'))
+    fse.symlinkSync(jsPath, path.join(publicPath, 'js'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // listen to the logs and see if any of the symlinks creations were logged
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('making new symlink')) {
+        symlinkCreationLogBool = true
+      }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is exiting, see if the log was outputted
+    testApp.on('exit', () => {
+      assert.equal(symlinkCreationLogBool, false, 'Roosevelt made symlinks even though they already exists in the app Directory')
       done()
     })
   })
