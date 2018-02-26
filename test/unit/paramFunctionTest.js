@@ -220,6 +220,10 @@ describe('parameter Function Test Section', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // when the app is finished initialization, post a request with some files, should get back a 500
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
