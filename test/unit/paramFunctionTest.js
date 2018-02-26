@@ -228,6 +228,7 @@ describe('parameter Function Test Section', function () {
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
+            console.log(res)
             testApp.kill('SIGINT')
           }
           testApp.kill('SIGINT')
