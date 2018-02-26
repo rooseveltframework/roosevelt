@@ -577,7 +577,32 @@ describe('parameter Function Test Section', function () {
 
     // when the app is going to exit, check to see if an error was thrown thru the entire process
     testApp.on('exit', () => {
-      assert.equal(errorLoggedBool, false, 'An erro has occur with the feature of skipping over files in the controllers directory that are not files')
+      assert.equal(errorLoggedBool, false, 'An error has occur with the feature of skipping over files in the controllers directory that are not files')
+      done()
+    })
+  })
+
+  it('should not add a value of css to symlink array if one exist in the array alreadly', function (done) {
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      staticsSymlinksToPublic: ['images', 'js', 'css']
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes initialization, test that there isn't a value of css as the first element in the symlink array
+    testApp.on('message', (params) => {
+      let firstElement = params.staticsSymlinksToPublic[0]
+      let test = firstElement === 'css'
+      assert.equal(test, false, 'Roosevelt made a css value in the symlink array even though it alreadly has ')
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
       done()
     })
   })
