@@ -615,4 +615,41 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should only give the quirky error log back once if there are more then one broken controllers', function (done) {
+    // put in the two syntax error controllers
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController.js'), path.join(appDir, 'mvc', 'controllers', 'errController.js'))
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController2.js'), path.join(appDir, 'mvc', 'controllers', 'errController2.js'))
+
+    // num var to hold how many times the quirky error is outputted
+    let gameOfThronesErrorNum = 0
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app logs, see if the quirky error is given and keep count
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('The night is dark and full of errors!')) {
+        gameOfThronesErrorNum++
+      }
+    })
+
+    // once the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // once the app is about to finish, check the amount of times the quote has been used
+    testApp.on('exit', () => {
+      assert.equal(gameOfThronesErrorNum, 1, 'Roosevelt had thrown the Game of Thrones error more than once')
+      done()
+    })
+  })
 })
