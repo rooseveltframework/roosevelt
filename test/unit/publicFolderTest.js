@@ -49,10 +49,6 @@ describe('Public folder section tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
     // when we get back the message that the server has started, send a request to the server
     testApp.on('message', () => {
       // see if we could get a html page from the server
@@ -60,7 +56,6 @@ describe('Public folder section tests', function () {
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
-            console.log('here')
             assert.fail(err)
             testApp.kill('SIGINT')
           }
@@ -101,10 +96,6 @@ describe('Public folder section tests', function () {
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
 
     // when the server starts, send a request to the server
     testApp.on('message', () => {
