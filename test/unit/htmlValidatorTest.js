@@ -576,4 +576,45 @@ describe('Roosevelt HTML Validator Test', function () {
       done()
     })
   })
+
+  it('should be able to set the viewEngine if it was just a string', function (done) {
+    // generate the app.js
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      viewEngine: [
+        'html: teddy'
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes its initialization and is about to start, send a request to the teddy page
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .get('/teddyTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          // test that the four values that I put into the model and have in the view are being put into the page
+          let test1 = res.text.includes('Teddy Test')
+          let test2 = res.text.includes('Heading Test')
+          let test3 = res.text.includes('This is the first sentence that I am grabbing from my teddy model')
+          let test4 = res.text.includes('This is the second sentence that I am grabbing from my teddy model')
+          assert.equal(test1, true)
+          assert.equal(test2, true)
+          assert.equal(test3, true)
+          assert.equal(test4, true)
+          testApp.kill('SIGINT')
+        })
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
