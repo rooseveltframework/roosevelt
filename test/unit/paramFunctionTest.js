@@ -235,7 +235,7 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/simpleMultipart')
-        .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
+        // .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
         .expect(500, (err, res) => {
           if (err) {
             console.log(params.multipart)
