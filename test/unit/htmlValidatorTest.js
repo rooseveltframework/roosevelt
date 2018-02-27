@@ -582,9 +582,7 @@ describe('Roosevelt HTML Validator Test', function () {
     generateTestApp({
       generateFolderStructure: true,
       appDir: appDir,
-      viewEngine: [
-        'html: teddy'
-      ],
+      viewEngine: 'html: teddy',
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 

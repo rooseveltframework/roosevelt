@@ -422,4 +422,32 @@ describe('Roosevelt routes Section Test', function () {
       done()
     })
   })
+
+  it('should give a 503 error page if the app is shutting down and someone is trying to access it', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes initialization, kill it and send a request to get a 503 back for it disconnection
+    testApp.on('message', (params) => {
+      testApp.kill('SIGINT')
+      request(`http://localhost:${params.port}`)
+        .get('/HTMLTest')
+        .expect(503, (err, res) => {
+          if (err) {
+            assert.fail(err)
+          }
+        })
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
