@@ -208,7 +208,7 @@ describe('parameter Function Test Section', function () {
     })
   })
 
-  it.skip('should not be using Multipart middleware if the param is set to false', function (done) {
+  it('should not be using Multipart middleware if the param is set to false', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
