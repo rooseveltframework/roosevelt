@@ -213,7 +213,7 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      multipart: false,
+      multipart: {},
       bodyParserUrlencodedParams: {
         limit: '100kb'
       },
@@ -235,8 +235,8 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/simpleMultipart')
-        // .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
-        .expect(500, (err, res) => {
+        .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
+        .expect(200, (err, res) => {
           if (err) {
             console.log(params.multipart)
             console.log(res)
