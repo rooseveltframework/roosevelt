@@ -214,6 +214,9 @@ describe('parameter Function Test Section', function () {
       appDir: appDir,
       generateFolderStructure: true,
       multipart: false,
+      bodyParserUrlencodedParams: {
+        limit: '100kb'
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
