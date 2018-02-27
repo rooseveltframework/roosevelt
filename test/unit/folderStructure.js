@@ -17,6 +17,7 @@ describe('Folder Tests', function () {
 
     app = require('../../roosevelt')({
       appDir: appDir,
+      ignoreCLIFlags: true,
       generateFolderStructure: true,
       suppressLogs: {
         rooseveltLogs: true,

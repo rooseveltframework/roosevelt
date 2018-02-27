@@ -700,4 +700,37 @@ describe('Command Line Tests', function () {
       })
     })
   })
+
+  describe('CLI special cases', function () {
+    const appDir = path.join(__dirname, '../app/cliSpecial')
+    let options = { rooseveltPath: '../../../roosevelt' }
+
+    afterEach(function (done) {
+      cleanupTestApp(appDir, (err) => {
+        if (err) {
+          throw err
+        } else {
+          done()
+        }
+      })
+    })
+
+    it('should ignore parsing CLI flags when "ignoreCLIFlags" param is true', function (done) {
+      generateTestApp({
+        appDir: appDir,
+        ignoreCLIFlags: true
+      }, options)
+
+      const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.on('message', params => {
+        assert.equal(params.nodeEnv, 'production')
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+  })
 })
