@@ -504,4 +504,76 @@ describe('Roosevelt HTML Validator Test', function () {
       })
     })
   })
+
+  it('should throw an Error if the ViewEngine param contains strings that, if split with :, has a length of 2', function (done) {
+    // bool var to hold whether or not the error of the viewEngine param being formatted incorrectly was thrown
+    let viewEngineFormattedIncorrectlyBool = false
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      viewEngine: [
+        'html: teddy: blah'
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look at the error log and see if the error shows up
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('fatal error: viewEngine param must be formatted')) {
+        viewEngineFormattedIncorrectlyBool = true
+      }
+    })
+
+    // when the app is starting, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check to see if the error log was outputted
+    testApp.on('exit', () => {
+      assert.equal(viewEngineFormattedIncorrectlyBool, true, 'Roosevelt did not throw an error when the way viewEngine was formatted incorrectly')
+      done()
+    })
+  })
+
+  it('should throw an Error if the module passed into viewEngine is nonExistent', function (done) {
+    // bool var to hold whether or not the error of the viewEngine needing to be configured properlt
+    let viewEngineConfiguredIncorrectlyBool = false
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      viewEngine: [
+        'html: teddyza'
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look at the error log and see if the error shows up
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Failed to register viewEngine')) {
+        viewEngineConfiguredIncorrectlyBool = true
+      }
+    })
+
+    // when the app is starting, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to end, check to see if the error log was outputted
+    testApp.on('exit', () => {
+      assert.equal(viewEngineConfiguredIncorrectlyBool, true, 'Roosevelt did not throw an error when the ViewEngine contains a node module that does not exists')
+      done()
+    })
+  })
 })
