@@ -213,33 +213,20 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      multipart: {},
-      bodyParserUrlencodedParams: {
-        limit: '100kb'
-      },
+      multipart: false,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
     // when the app is finished initialization, post a request with some files, should get back a 500
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/simpleMultipart')
         .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
-        .expect(200, (err, res) => {
+        .expect(500, (err, res) => {
           if (err) {
-            console.log(params.multipart)
-            console.log(res)
             assert.fail(err)
             testApp.kill('SIGINT')
           }
