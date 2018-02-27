@@ -458,4 +458,29 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('exit', () => {
     })
   })
+
+  it('should be able to handle multiple viewEngines and set a name with a value and not change it', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      viewEngine: [
+        'html: teddy',
+        'mustache: mustache'
+      ],
+      onServerStart: `(app) => {process.send(app.get("view engine"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (viewEngine) => {
+      assert.equal(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
