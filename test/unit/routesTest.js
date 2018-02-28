@@ -466,7 +466,7 @@ describe('Roosevelt routes Section Test', function () {
       generateFolderStructure: true,
       viewEngine: [
         'html: teddy',
-        'mustache: mustache'
+        'jcs: ../test/util/jcsTemplate'
       ],
       onServerStart: `(app) => {process.send(app.get("view engine"))}`
     }, options)
@@ -477,6 +477,40 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('message', (viewEngine) => {
       assert.equal(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
       testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should be able to use templating languages that are just functions and that do not have __express function', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      viewEngine: [
+        'jcs: ../test/util/jcsTemplate'
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .get('/jcsTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          assert.equal(res.text.includes('jcs Test'), true)
+          assert.equal(res.text.includes('jcsHeader'), true)
+          assert.equal(res.text.includes('jcsParagraph'), true)
+          testApp.kill('SIGINT')
+        })
     })
 
     testApp.on('exit', () => {
