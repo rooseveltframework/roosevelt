@@ -152,7 +152,7 @@ npm run dev -- --enable-validator
 Run your app with the HTML validator disabled:
 
 ```
-npm run dev -- --disable-validaor
+npm run dev -- --disable-validator
 ```
 - `--raw` or `-r` can also be used.
 
