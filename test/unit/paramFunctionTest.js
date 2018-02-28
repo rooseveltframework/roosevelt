@@ -33,107 +33,137 @@ describe('parameter Function Test Section', function () {
   })
 
   it('should execute what is in onReqStart', function (done) {
+    // bool var to hold whether or not the app had used its body parser middleware yet
+    let bodyParserNotUsedBool = false
+
     // generate the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqStart: `(req, res, next) => {res.setHeader("onreqStartTest","true"); next()}`,
+      onReqStart: `(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}`,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the console logs to see if the req body that will be logged out has a value or if its undefined
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('body: undefined')) {
+        bodyParserNotUsedBool = true
+      }
+    })
 
     // when the app starts and sends the message that "ServerStart", send a request and see if I get another message saying "ReqStart"
     testApp.on('message', (params) => {
       // send a http request
       request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
+        .post('/paramPost')
+        .send({name: 'Bob'})
+        .send({age: '3'})
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
             testApp.kill('SIGINT')
           }
-          // check to see if a specific header was changed in the function onReqStart
-          let test = res.get('onreqstarttest')
-          if (test) {
-            testApp.kill()
-          } else {
-            assert.fail('onReqStart was not called')
-            testApp.kill()
-          }
+          testApp.kill('SIGINT')
         })
     })
+
+    // when the app is about to exit, check if the bool is true
     testApp.on('exit', () => {
+      assert.equal(bodyParserNotUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was used before it was hit')
       done()
     })
   })
 
   it('should execute what is in onReqBeforeRoute', function (done) {
+    // bool var to hold whether or not the app had used its body parser middleware yet
+    let bodyParserUsedBool = false
+
     // generate the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqBeforeRoute: `(req, res, next) => {res.setHeader("onreqBeforeRoute","true"); next()}`,
+      onReqBeforeRoute: `(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}`,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // check the console logs to see if the req body that will be logged out has a value or if its undefined
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('body: {"name":"Bob","age":"3"}')) {
+        bodyParserUsedBool = true
+      }
+    })
+
     testApp.on('message', (params) => {
       // send a http request
       request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
+        .post('/paramPost')
+        .send({name: 'Bob'})
+        .send({age: '3'})
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
             testApp.kill('SIGINT')
           }
-          // check to see if a specific header was changed in the function onReqBeforeRoute
-          const test = res.get('onreqbeforeroute')
-          if (test) {
-            testApp.kill()
-          } else {
-            assert.fail('onReqBeforeRoute was not called')
-            testApp.kill()
-          }
+          testApp.kill('SIGINT')
         })
     })
+
     testApp.on('exit', () => {
+      assert.equal(bodyParserUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was not used before it was hit')
       done()
     })
   })
 
-  it('should execute what is in onReqAfterRoute', function (done) {
+  it.skip('should execute what is in onReqAfterRoute', function (done) {
+    // two bool to check if res.text has a value in it
+    let resTextUndefinedBool = false
+    let resTextValueBool = false
+
     // generate the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqAfterRoute: `(req, res) => {process.send("onReqAfterRoute")}`,
+      onReqAfterRoute: `(req, res) => {console.dir(res)}`,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.on('message', (message) => {
-      if (message.port) {
-      // send a http request
-        request(`http://localhost:${message.port}`)
-          .get('/HTMLTest')
-          .expect(200, (err, res) => {
-            if (err) {
-              assert.fail(err)
-              testApp.kill('SIGINT')
-            }
-          })
-          // see if we get a message that was sent from the onReqAfterRoute function
-      } else if (message === 'onReqAfterRoute') {
-        testApp.kill('SIGINT')
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('text: undefined')) {
+        resTextUndefinedBool = true
+      }
+      if (data.includes('text: 2')) {
+        resTextValueBool = true
       }
     })
+
+    testApp.on('message', (params) => {
+      // send a http request
+      request(`http://localhost:${params.port}`)
+        .post('/paramPostAfter')
+        // .send({name: 'Bob'})
+        // .send({age: '3'})
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          testApp.kill('SIGINT')
+        })
+    })
+
+    // when the app is about to exit, check if both bool values are true
     testApp.on('exit', () => {
+      assert.equal(resTextUndefinedBool, true, 'res.text in the route should be undefined as it was defined yet')
+      assert.equal(resTextValueBool, true, 'res.text in the route should be have something as it was defined before onReqAfterRoute was hit')
       done()
     })
   })
