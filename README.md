@@ -260,6 +260,8 @@ App behavior parameters
   - Default: *[Number]* `43711`.
 - `nodeEnv`: *[String]* Param to override the `NODE_ENV` environment variable.
   - Default: `undefined`.
+- `ignoreCLIFlags`: *[Boolean]* Disables parsing of command line flags.
+  - Default: `undefined`.
 - `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
   - Default: *[Boolean]* `true`.
     - Note: When `package.json` is not present or `rooseveltConfig` is not present in `package.json`, this param will be reset to `false` by default. This is a defensive measure to minimize the risk of files and folders being created in scenarios when they are not wanted.

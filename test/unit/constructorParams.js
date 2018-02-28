@@ -22,6 +22,7 @@ describe('Constructor params', function () {
 
     app = require('../../roosevelt')({
       appDir: appDir,
+      ignoreCLIFlags: true,
       ...config
     })
   })

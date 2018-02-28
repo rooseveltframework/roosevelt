@@ -20,7 +20,8 @@ describe('package.json params', function () {
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(pkg))
 
     app = require('../../roosevelt')({
-      appDir: appDir
+      appDir: appDir,
+      ignoreCLIFlags: true
     })
   })
 

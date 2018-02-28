@@ -10,8 +10,6 @@ const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
-  const sourceName = path.basename(module.parent.filename) // name of file that required roosevelt
-  const flags = require('./lib/sourceFlags')(sourceName) // parse cli args
   params = params || {} // ensure params are an object
 
   // appDir is either specified by the user or sourced from the parent require
@@ -34,11 +32,11 @@ module.exports = function (params) {
   let connections = {}
   let initialized = false
   let faviconPath
+  let flags
 
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
-  app.set('flags', flags)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
@@ -46,6 +44,7 @@ module.exports = function (params) {
 
   appName = app.get('appName')
   appEnv = app.get('env')
+  flags = app.get('flags')
 
   logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
