@@ -120,16 +120,16 @@ describe('parameter Function Test Section', function () {
     })
   })
 
-  it.skip('should execute what is in onReqAfterRoute', function (done) {
+  it('should execute what is in onReqAfterRoute', function (done) {
     // two bool to check if res.text has a value in it
-    let resTextUndefinedBool = false
-    let resTextValueBool = false
+    let resHeaderUndefinedBool = false
+    let resHeaderValueBool = false
 
     // generate the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqAfterRoute: `(req, res) => {console.dir(res)}`,
+      onReqAfterRoute: `(req, res) => {console.log("Testing header after: " + res.getHeader("testing"))}`,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -137,33 +137,34 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes('text: undefined')) {
-        resTextUndefinedBool = true
+      if (data.includes('Testing header before: undefined')) {
+        resHeaderUndefinedBool = true
       }
-      if (data.includes('text: 2')) {
-        resTextValueBool = true
+      if (data.includes('Testing header after: Complete')) {
+        resHeaderValueBool = true
       }
     })
 
     testApp.on('message', (params) => {
       // send a http request
       request(`http://localhost:${params.port}`)
-        .post('/paramPostAfter')
-        // .send({name: 'Bob'})
-        // .send({age: '3'})
+        .get('/paramPostAfter')
+        .accept('application/json')
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
             testApp.kill('SIGINT')
           }
-          testApp.kill('SIGINT')
+          setTimeout(() => {
+            testApp.kill('SIGINT')
+          }, 1000)
         })
     })
 
     // when the app is about to exit, check if both bool values are true
     testApp.on('exit', () => {
-      assert.equal(resTextUndefinedBool, true, 'res.text in the route should be undefined as it was defined yet')
-      assert.equal(resTextValueBool, true, 'res.text in the route should be have something as it was defined before onReqAfterRoute was hit')
+      assert.equal(resHeaderUndefinedBool, true, 'response header should have no value as it was not assigned yet')
+      assert.equal(resHeaderValueBool, true, 'response heade should have a value since it was assigned in route')
       done()
     })
   })
