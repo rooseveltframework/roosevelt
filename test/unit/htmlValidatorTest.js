@@ -539,6 +539,7 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
+      console.log('here')
       const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       killLine.stderr.on('data', (data) => {
@@ -552,6 +553,7 @@ describe('Roosevelt HTML Validator Test', function () {
       })
 
       killLine.on('exit', () => {
+        console.log('there')
         assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
         assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
         done()
