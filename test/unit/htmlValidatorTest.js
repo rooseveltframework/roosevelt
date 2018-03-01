@@ -516,7 +516,8 @@ describe('Roosevelt HTML Validator Test', function () {
       generateFolderStructure: true,
       appDir: appDir,
       htmlValidator: {
-        enable: true
+        enable: true,
+        separateProcess: false
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
