@@ -541,7 +541,7 @@ describe('Roosevelt HTML Validator Test', function () {
     testApp.on('exit', () => {
       console.log('here')
       const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
+      console.log(killLine)
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
           requestFailedLogBool = true
@@ -551,7 +551,6 @@ describe('Roosevelt HTML Validator Test', function () {
         }
         console.log(`stderr: ${data}`)
       })
-
       killLine.on('exit', () => {
         console.log('there')
         assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
