@@ -506,7 +506,7 @@ describe('Roosevelt HTML Validator Test', function () {
   })
 
   it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
-    this.timeout(35000)
+    this.timeout(40000)
     // bool var to hold whether or not the request failed status has been given
     let requestFailedLogBool = false
     let finalWarnBool = false
@@ -539,9 +539,7 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
-      console.log('here')
       const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-      console.log(killLine)
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
           requestFailedLogBool = true
@@ -551,8 +549,12 @@ describe('Roosevelt HTML Validator Test', function () {
         }
         console.log(`stderr: ${data}`)
       })
+
+      killLine.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+      })
+
       killLine.on('exit', () => {
-        console.log('there')
         assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
         assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
         done()
