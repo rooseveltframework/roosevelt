@@ -539,26 +539,28 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
-      const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-      killLine.stderr.on('data', (data) => {
-        if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
-          requestFailedLogBool = true
-        }
-        if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
-          finalWarnBool = true
-        }
-        console.log(`stderr: ${data}`)
-      })
+      setTimeout(() => {
+        const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+        killLine.stderr.on('data', (data) => {
+          if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
+            requestFailedLogBool = true
+          }
+          if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
+            finalWarnBool = true
+          }
+          console.log(`stderr: ${data}`)
+        })
 
-      killLine.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
-      })
+        killLine.stdout.on('data', (data) => {
+          console.log(`stdout: ${data}`)
+        })
 
-      killLine.on('exit', () => {
-        assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
-        assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
-        done()
-      })
+        killLine.on('exit', () => {
+          assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
+          assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
+          done()
+        })
+      }, 10000)
     })
   })
 })
