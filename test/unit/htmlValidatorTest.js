@@ -516,8 +516,7 @@ describe('Roosevelt HTML Validator Test', function () {
       generateFolderStructure: true,
       appDir: appDir,
       htmlValidator: {
-        enable: true,
-        separateProcess: false
+        enable: false
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
@@ -533,35 +532,31 @@ describe('Roosevelt HTML Validator Test', function () {
       console.log(`stderr: ${data}`)
     })
 
-    // when the app starts, save the port number and kill the app
+    // when the app starts, kill the app
     testApp.on('message', (params) => {
       testApp.kill('SIGINT')
     })
 
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
-      setTimeout(() => {
-        const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-        killLine.stderr.on('data', (data) => {
-          if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
-            requestFailedLogBool = true
-          }
-          if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
-            finalWarnBool = true
-          }
-          console.log(`stderr: ${data}`)
-        })
-
-        killLine.stdout.on('data', (data) => {
-          console.log(`stdout: ${data}`)
-        })
-
-        killLine.on('exit', () => {
-          assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
-          assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
-          done()
-        })
-      }, 10000)
+      const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      killLine.stderr.on('data', (data) => {
+        if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
+          requestFailedLogBool = true
+        }
+        if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
+          finalWarnBool = true
+        }
+        console.log(`stderr: ${data}`)
+      })
+      killLine.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+      })
+      killLine.on('exit', () => {
+        assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
+        assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
+        done()
+      })
     })
   })
 })
