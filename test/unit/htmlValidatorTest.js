@@ -524,6 +524,14 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // when the app starts, save the port number and kill the app
     testApp.on('message', (params) => {
       testApp.kill('SIGINT')
