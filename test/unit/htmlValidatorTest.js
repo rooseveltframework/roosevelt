@@ -540,6 +540,7 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
           finalWarnBool = true
         }
+        console.log(`stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
