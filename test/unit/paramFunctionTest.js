@@ -129,7 +129,7 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqAfterRoute: `(req, res) => {console.log("Testing header after: " + res.getHeader("testing"))}`,
+      onReqAfterRoute: `(req, res) => {console.log("Testing after: " + res.Testing)}`,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -137,10 +137,10 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Testing header before: undefined')) {
+      if (data.includes('Testing before: undefined')) {
         resHeaderUndefinedBool = true
       }
-      if (data.includes('Testing header after: Complete')) {
+      if (data.includes('Testing after: someValue')) {
         resHeaderValueBool = true
       }
     })

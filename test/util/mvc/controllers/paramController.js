@@ -6,8 +6,8 @@ module.exports = (app) => {
   })
 
   app.route('/paramPostAfter').get((req, res) => {
-    console.log('Testing header before: ' + res.getHeader('testing'))
-    res.setHeader('testing', 'Complete')
+    console.log('Testing before: ' + res.Testing)
+    res.Testing = 'someValue'
     res.end()
   })
 }
