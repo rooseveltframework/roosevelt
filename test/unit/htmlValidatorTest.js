@@ -547,4 +547,47 @@ describe('Roosevelt HTML Validator Test', function () {
       })
     })
   })
+
+  it.skip('should be able to find the right port if the package.json is missing and the param port is not the default', function (done) {
+    this.timeout(40000)
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        port: 4000,
+        separateProcess: true
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.on('message', (params) => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      killLine.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`)
+      })
+
+      killLine.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+      })
+
+      killLine.on('exit', () => {
+        done()
+      })
+    })
+  })
 })
