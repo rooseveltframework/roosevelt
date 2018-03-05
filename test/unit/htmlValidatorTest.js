@@ -586,26 +586,25 @@ describe('Roosevelt HTML Validator Test', function () {
       console.log(`stderr: ${data}`)
     })
 
-    testApp.on('message', () => {
+    testApp.on('message', (params) => {
       testApp.kill('SIGINT')
     })
 
     testApp.on('exit', () => {
       const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      killLine.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
+      killLine.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`)
       })
 
       killLine.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
         if (data.includes('Validator succesfully found on port')) {
           validatorFoundBool = true
         }
         if (data.includes('Validator successfully closed on port')) {
           validatorClosedBool = true
         }
-        console.log(`stderr: ${data}`)
+        console.log(`stdout: ${data}`)
       })
 
       killLine.on('exit', () => {
