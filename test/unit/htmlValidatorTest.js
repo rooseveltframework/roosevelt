@@ -505,7 +505,7 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
-  it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
+  it.skip('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
     this.timeout(55000)
     // bool var to hold whether or not the request failed status has been given
     let requestFailedLogBool = false
@@ -576,6 +576,7 @@ describe('Roosevelt HTML Validator Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
+
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on(`data`, (data) => {
