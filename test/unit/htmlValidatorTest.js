@@ -505,7 +505,7 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
-  it.skip('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
+  it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
     this.timeout(55000)
     // bool var to hold whether or not the request failed status has been given
     let requestFailedLogBool = false
@@ -592,20 +592,20 @@ describe('Roosevelt HTML Validator Test', function () {
     })
 
     testApp.on('exit', () => {
-      const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const killLine = fork(path.join(appDir, '../', '../', '../', 'lib', 'scripts', 'killValidator.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       killLine.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`)
       })
 
       killLine.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
         if (data.includes('Validator succesfully found on port')) {
           validatorFoundBool = true
         }
         if (data.includes('Validator successfully closed on port')) {
           validatorClosedBool = true
         }
-        console.log(`stdout: ${data}`)
       })
 
       killLine.on('exit', () => {
