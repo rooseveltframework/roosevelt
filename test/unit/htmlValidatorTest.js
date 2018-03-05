@@ -539,15 +539,15 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
-      const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const killLine = fork(path.join(appDir, '../', '../', '../', 'lib', 'scripts', 'killValidator.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
       killLine.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`)
         if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
           requestFailedLogBool = true
         }
         if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
           finalWarnBool = true
         }
-        console.log(`stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
