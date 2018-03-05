@@ -586,6 +586,10 @@ describe('Roosevelt HTML Validator Test', function () {
       console.log(`stderr: ${data}`)
     })
 
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
     testApp.on('exit', () => {
       const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
