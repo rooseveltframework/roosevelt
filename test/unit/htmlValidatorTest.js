@@ -615,4 +615,67 @@ describe('Roosevelt HTML Validator Test', function () {
       })
     })
   })
+
+  it.skip('should be able to grab the htmlValidator params from the package and apply it to the app', function (done) {
+    // bool var to hold whether or not the correct logs came out of killValidator
+    let validatorFoundBool = false
+    let validatorClosedBool = false
+    let validatorDefaultNotFoundBool = false
+    // js source string to hold the data for the package.json file
+    let packageJson = {
+      rooseveltConfig: {
+        htmlValidator: {
+          enable: true,
+          port: 7302,
+          separateProcess: true
+        }
+      }
+    }
+
+    // write the package.json to the Test App folder
+    fse.ensureDir(appDir)
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson))
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app is starting, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app is about to quit, start the kill Validator script
+    testApp.on('exit', () => {
+      const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      killLine.stdout.on('data', (data) => {
+        if (data.includes('Validator successfully found on port:')) {
+          validatorFoundBool = true
+        }
+        if (data.includes('Validator successfully closed on port:')) {
+          validatorClosedBool = true
+        }
+      })
+
+      killLine.stderr.on('data', (data) => {
+        if (data.includes('Could not find validator on port:')) {
+          validatorDefaultNotFoundBool = true
+        }
+      })
+
+      killLine.on('exit', () => {
+        assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on, which is on the package.json file')
+        assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+        assert.equal(validatorDefaultNotFoundBool, false, 'killValidator was not able to find the Validator on the port it was given by package.json and has gone to scan the ports')
+        done()
+      })
+    })
+  })
 })
