@@ -539,7 +539,7 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
-      const killLine = fork(path.join(appDir, '../', '../', '../', 'lib', 'scripts', 'killValidator.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
       killLine.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`)
         if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
@@ -569,7 +569,7 @@ describe('Roosevelt HTML Validator Test', function () {
       appDir: appDir,
       htmlValidator: {
         enable: true,
-        port: 5005,
+        port: 7302,
         separateProcess: true
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -592,7 +592,7 @@ describe('Roosevelt HTML Validator Test', function () {
     })
 
     testApp.on('exit', () => {
-      const killLine = fork(path.join(appDir, '../', '../', '../', 'lib', 'scripts', 'killValidator.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       killLine.stderr.on('data', (data) => {
         console.log(`stderr: ${data}`)
