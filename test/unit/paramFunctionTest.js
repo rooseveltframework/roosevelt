@@ -32,9 +32,45 @@ describe('parameter Function Test Section', function () {
     })
   })
 
+  it('should execute what is in onServerInit', function (done) {
+    // bool vars to hold whether or not the app had returned what is given to them, and if we can access the server
+    let serverInitLogBool = false
+    let messageCounter = 0
+    // change what options method is for this test
+    options.method = 'initServer'
+
+    // generate the app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerInit: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the server has finished initialization, try to access the server or see if the message is the word that is suppose to be given back
+    testApp.on('message', (message) => {
+      messageCounter++
+      if (message === 'something') {
+        serverInitLogBool = true
+      }
+      if (messageCounter === 2) {
+        testApp.kill('SIGINT')
+      }
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(serverInitLogBool, true, 'Roosevelt did not execute what is in onServerInit')
+      done()
+    })
+  })
   it('should execute what is in onReqStart', function (done) {
     // bool var to hold whether or not the app had used its body parser middleware yet
     let bodyParserNotUsedBool = false
+
+    // make options method go back to what it once was
+    options.method = 'startServer'
 
     // generate the app
     generateTestApp({
