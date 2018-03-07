@@ -35,7 +35,8 @@ describe('Roosevelt config Auditor Test', function () {
 
     // write the package.json file
     fse.ensureDir(path.join(appDir))
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'), path.join(appDir, 'package.json'))
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
     // generate the app.js file
     generateTestApp({
