@@ -6,6 +6,7 @@ const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 const fse = require('fs-extra')
+const configAuditor = require('../../lib/scripts/configAuditor')
 
 describe('Roosevelt config Auditor Test', function () {
   // path to the Test App Directory
@@ -109,8 +110,7 @@ describe('Roosevelt config Auditor Test', function () {
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
-    // require the configAuditor and use its audit method
-    const configAuditor = require('../../lib/scripts/configAuditor')
+    // use the configAuditor's audit method
     configAuditor.audit(appDir)
 
     console.error = errorHolder
@@ -128,5 +128,74 @@ describe('Roosevelt config Auditor Test', function () {
     assert.equal(test5, true, 'configAuditor did not report that we had issues with the roosevelt config')
     assert.equal(test6, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
     done()
+  })
+
+  it.skip('should allow a user to run the configAuditor as a child process and get it to tell the user what params are missing from the package.json file', function (done) {
+    // bool vars to hold whether or not the right logs and errors are being outputted
+    /* let startingConfigAuditBool = false
+    let modelsPathMissingBool = false
+    let viewsPathMissingBool = false
+    let controllersPathMissingBool = false
+    let error1Bool = false
+    let error2Bool = false */
+
+    // write the package.json file
+    fse.ensureDir(path.join(appDir))
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // fork the configAuditor.js file and run it as a child process
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: 'C:\\Users\\Johnny\\Documents\\roosevelt\\lib', 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should not execute the configAuditor if the app already has a public folder in the app Directory', function (done) {
+    // bool var to hold whether or not a specific log was given
+    let startingConfigAuditBool = false
+
+    // write the package.json file
+    fse.ensureDir(path.join(appDir))
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // create a public folder inside the app Directory
+    fse.ensureDir(path.join(appDir, 'public'))
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look at the logs
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(startingConfigAuditBool, false, 'Roosevelt ')
+      done()
+    })
   })
 })
