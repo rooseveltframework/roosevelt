@@ -39,6 +39,13 @@ describe('Roosevelt config Auditor Test', function () {
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
+    // check to make sure the package.json file is there
+    if (fse.existsSync(path.join(appDir, 'package.json')) === false) {
+      fse.ensureDir(path.join(appDir))
+      let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+      fse.writeFileSync(path.join(appDir, 'package.json'), content)
+    }
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -110,6 +117,13 @@ describe('Roosevelt config Auditor Test', function () {
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
+    // check to make sure the package.json file is there
+    if (fse.existsSync(path.join(appDir, 'package.json')) === false) {
+      fse.ensureDir(path.join(appDir))
+      let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+      fse.writeFileSync(path.join(appDir, 'package.json'), content)
+    }
+
     // use the configAuditor's audit method
     configAuditor.audit(appDir)
 
@@ -168,6 +182,13 @@ describe('Roosevelt config Auditor Test', function () {
     fse.ensureDir(path.join(appDir))
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // check to make sure the package.json file is there
+    if (fse.existsSync(path.join(appDir, 'package.json')) === false) {
+      fse.ensureDir(path.join(appDir))
+      let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+      fse.writeFileSync(path.join(appDir, 'package.json'), content)
+    }
 
     // create a public folder inside the app Directory
     fse.ensureDir(path.join(appDir, 'public'))
