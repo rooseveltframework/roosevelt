@@ -87,4 +87,46 @@ describe('Roosevelt config Auditor Test', function () {
       done()
     })
   })
+
+  it('should be able to require the configAuditor and run the function and get a response of the things that are missing', function (done) {
+    // arrays to hold the responses that we would get from configAuditor
+    let logs = []
+    let errors = []
+    // variable to hold what console.log originally did
+    const logHolder = console.log
+    const errorHolder = console.error
+    // change console.log and console.error so that it does not print onto the screen and instead gives the data to the arrays
+    console.log = function () {
+      logs.push(arguments[1].toString('utf8'))
+    }
+    console.error = function () {
+      errors.push(arguments[1].toString('utf8'))
+    }
+
+    // make the appDir folder
+    fse.ensureDir(appDir)
+    // add the package.json file to the appDir folder
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // require the configAuditor and use its audit method
+    const configAuditor = require('../../lib/scripts/configAuditor')
+    configAuditor.audit(appDir)
+
+    console.error = errorHolder
+    console.log = logHolder
+    let test1 = logs[0].includes('Starting roosevelt user configuration audit...')
+    let test2 = errors[0].includes('Missing param "modelsPath"!')
+    let test3 = errors[1].includes('Missing param "viewsPath"!')
+    let test4 = errors[2].includes('Missing param "controllersPath"!')
+    let test5 = errors[3].includes('Issues have been detected in roosevelt config')
+    let test6 = errors[4].includes('for the latest sample rooseveltConfig.')
+    assert.equal(test1, true, 'Roosevelt did not start the configAuditor')
+    assert.equal(test2, true, 'configAuditor did not report that the package.json file is missing a models path value')
+    assert.equal(test3, true, 'configAuditor did not report that the package.json file is missing a views path value')
+    assert.equal(test4, true, 'configAuditor did not report that the package.json file is missing a controllers path value')
+    assert.equal(test5, true, 'configAuditor did not report that we had issues with the roosevelt config')
+    assert.equal(test6, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
+    done()
+  })
 })
