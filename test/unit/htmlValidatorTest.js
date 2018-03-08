@@ -392,6 +392,7 @@ describe('Roosevelt HTML Validator Test', function () {
   })
 
   it('should be able to run the validator even if we change the port number of the validator', function (done) {
+    this.timeout(30000)
     // generate the app
     generateTestApp({
       generateFolderStructure: true,
@@ -420,10 +421,15 @@ describe('Roosevelt HTML Validator Test', function () {
           // check to see that the page loaded
           let test1 = res.status
           assert.equal(test1, 200)
+
           testApp.kill('SIGINT')
         })
       testApp.on('exit', () => {
-        done()
+        const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
+
+        killLine.on('exit', () => {
+          done()
+        })
       })
     })
   })
@@ -563,7 +569,7 @@ describe('Roosevelt HTML Validator Test', function () {
   })
 
   it('should be able to find the right port if the package.json is missing and the param port is not the default', function (done) {
-    this.timeout(30000)
+    this.timeout(35000)
     // bool var that holds whether or not the validator was found or the validator was closed
     let validatorFoundBool = false
     let validatorClosedBool = false
@@ -609,7 +615,12 @@ describe('Roosevelt HTML Validator Test', function () {
         console.log(`stdout: ${data}`)
       })
 
+      killLine.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`)
+      })
+
       killLine.on('exit', () => {
+        console.log('closing test')
         assert.equal(validatorClosedBool, true, 'Roosevelt was not able to closed the HTML Validator on its seperate port')
         assert.equal(validatorFoundBool, true, 'Roosevelt was not able to find the HTML Validator on its seperate port')
         done()
