@@ -576,6 +576,10 @@ describe('Roosevelt HTML Validator Test', function () {
       console.log(`stdout: ${data}`)
     })
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // when the app is starting, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
