@@ -563,7 +563,7 @@ describe('Roosevelt HTML Validator Test', function () {
   })
 
   it('should be able to find the right port if the package.json is missing and the param port is not the default', function (done) {
-    this.timeout(25000)
+    this.timeout(30000)
     // bool var that holds whether or not the validator was found or the validator was closed
     let validatorFoundBool = false
     let validatorClosedBool = false
