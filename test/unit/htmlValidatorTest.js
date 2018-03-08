@@ -541,6 +541,11 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
           finalWarnBool = true
         }
+        console.log(`stderr: ${data}`)
+      })
+
+      killLine.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
       })
 
       killLine.on('exit', () => {
@@ -572,14 +577,6 @@ describe('Roosevelt HTML Validator Test', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
     // when the app is starting, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
@@ -595,11 +592,6 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Killed process on port')) {
           validatorClosedBool = true
         }
-        console.log(`stdout: ${data}`)
-      })
-
-      killLine.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
