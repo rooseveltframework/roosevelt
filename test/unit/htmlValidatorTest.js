@@ -642,6 +642,10 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
     // when the app is about to quit, start the kill Validator script
     testApp.on('exit', () => {
       const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
