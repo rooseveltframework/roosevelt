@@ -695,7 +695,7 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
-  it.skip('should be able to use killValidator to find a validator using the lowest port possible and kill it', function (done) {
+  it('should be able to use killValidator to find a validator using the lowest port possible and kill it', function (done) {
     // bool var to hold whether or not the right logs are outputted
     let validatorFoundBool = false
     let validatorClosedBool = false
@@ -706,7 +706,7 @@ describe('Roosevelt HTML Validator Test', function () {
       appDir: appDir,
       htmlValidator: {
         enable: true,
-        port: 1,
+        port: 1000,
         separateProcess: true
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
