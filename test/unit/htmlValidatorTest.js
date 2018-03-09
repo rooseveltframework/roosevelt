@@ -408,6 +408,14 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // on the server coming to life, see if we can send a request to the new port
     testApp.on('message', (params) => {
       request(`http://localhost:${params.htmlValidator.port}`)
@@ -424,9 +432,20 @@ describe('Roosevelt HTML Validator Test', function () {
 
           testApp.kill('SIGINT')
         })
-
       testApp.on('exit', () => {
-        done()
+        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.stdout.on('data', (data) => {
+          console.log(`killLine stdout: ${data}`)
+        })
+
+        killLine.stderr.on('data', (data) => {
+          console.log(`killLine stderr: ${data}`)
+        })
+
+        killLine.on('exit', () => {
+          done()
+        })
       })
     })
   })
