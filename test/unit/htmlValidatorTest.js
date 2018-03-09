@@ -695,7 +695,7 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
-  it('should be able to use killValidator to find a validator using the lowest port possible and kill it', function (done) {
+  it.skip('should be able to use killValidator to find a validator using the lowest port possible and kill it', function (done) {
     // bool var to hold whether or not the right logs are outputted
     let validatorFoundBool = false
     let validatorClosedBool = false
