@@ -67,14 +67,6 @@ describe('Roosevelt HTML Validator Test', function () {
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
-
         killLine.on('exit', () => {
           done()
         })
@@ -120,14 +112,6 @@ describe('Roosevelt HTML Validator Test', function () {
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
-
         killLine.on('exit', () => {
           done()
         })
@@ -170,14 +154,6 @@ describe('Roosevelt HTML Validator Test', function () {
     testApp.on('exit', () => {
       const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      killLine.stdout.on('data', (data) => {
-        console.log(`killLine stdout: ${data}`)
-      })
-
-      killLine.stderr.on('data', (data) => {
-        console.log(`killLine stderr: ${data}`)
-      })
-
       killLine.on('exit', () => {
         done()
       })
@@ -217,14 +193,6 @@ describe('Roosevelt HTML Validator Test', function () {
         })
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
 
         killLine.on('exit', () => {
           done()
@@ -270,14 +238,6 @@ describe('Roosevelt HTML Validator Test', function () {
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
-
         killLine.on('exit', () => {
           done()
         })
@@ -321,14 +281,6 @@ describe('Roosevelt HTML Validator Test', function () {
         })
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
 
         killLine.on('exit', () => {
           done()
@@ -376,14 +328,6 @@ describe('Roosevelt HTML Validator Test', function () {
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
-
         killLine.on('exit', () => {
           done()
         })
@@ -428,7 +372,11 @@ describe('Roosevelt HTML Validator Test', function () {
           testApp.kill('SIGINT')
         })
       testApp.on('exit', () => {
-        done()
+        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          done()
+        })
       })
     })
   })
@@ -471,14 +419,6 @@ describe('Roosevelt HTML Validator Test', function () {
         })
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
 
         killLine.on('exit', () => {
           done()
@@ -531,14 +471,6 @@ describe('Roosevelt HTML Validator Test', function () {
       testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
-
         killLine.on('exit', () => {
           done()
         })
@@ -587,9 +519,8 @@ describe('Roosevelt HTML Validator Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
             testAppError = true
-            killLine.kill('SIGINT')
+            testApp.kill('SIGINT')
           }
           let test2 = res.text.includes('Ready to check  - Nu Html Checker')
           assert.equal(test2, true)
