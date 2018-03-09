@@ -392,7 +392,7 @@ describe('Roosevelt HTML Validator Test', function () {
   })
 
   it('should be able to run the validator even if we change the port number of the validator', function (done) {
-    this.timeout(30000)
+    this.timeout(60000)
     // generate the app
     generateTestApp({
       generateFolderStructure: true,
@@ -425,7 +425,19 @@ describe('Roosevelt HTML Validator Test', function () {
           testApp.kill('SIGINT')
         })
       testApp.on('exit', () => {
-        done()
+        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.stdout.on('data', (data) => {
+          console.log(`killLine stdout: ${data}`)
+        })
+
+        killLine.stderr.on('data', (data) => {
+          console.log(`killLine stderr: ${data}`)
+        })
+
+        killLine.on('exit', () => {
+          done()
+        })
       })
     })
   })
