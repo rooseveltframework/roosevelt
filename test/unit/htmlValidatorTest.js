@@ -716,6 +716,14 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
@@ -730,12 +738,14 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Killed process on port:')) {
           validatorClosedBool = true
         }
+        console.log(`stdout: ${data}`)
       })
 
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port:')) {
           validatorDefaultNotFoundBool = true
         }
+        console.log(`stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
@@ -768,6 +778,14 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
@@ -782,12 +800,14 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Killed process on port:')) {
           validatorClosedBool = true
         }
+        console.log(`stdout: ${data}`)
       })
 
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port:')) {
           validatorDefaultNotFoundBool = true
         }
+        console.log(`stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
@@ -820,6 +840,14 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
@@ -834,12 +862,14 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Killed process on port:')) {
           validatorClosedBool = true
         }
+        console.log(`stdout: ${data}`)
       })
 
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port:')) {
           validatorDefaultNotFoundBool = true
         }
+        console.log(`stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
