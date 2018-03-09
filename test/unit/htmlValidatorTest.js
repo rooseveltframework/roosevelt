@@ -9,7 +9,7 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt HTML Validator Test', function () {
-  this.timeout(40000)
+  this.timeout(60000)
 
   // location of the test app
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
@@ -444,14 +444,6 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
     // on the server coming to life, see if we can send a request to the new port
     testApp.on('message', (params) => {
       request(`http://localhost:${params.htmlValidator.port}`)
@@ -573,6 +565,11 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // when the app starts, kill the app
+    testApp.on('message', (params) => {
+      testApp.kill('SIGINT')
+    })
+
     testApp.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`)
     })
@@ -581,26 +578,21 @@ describe('Roosevelt HTML Validator Test', function () {
       console.log(`stderr: ${data}`)
     })
 
-    // when the app starts, kill the app
-    testApp.on('message', (params) => {
-      testApp.kill('SIGINT')
-    })
-
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
       const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port: 8888. Scanning for validator now...')) {
           requestFailedLogBool = true
+          console.log(`killLine stderr: ${data}`)
         }
         if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
           finalWarnBool = true
         }
-        console.log(`stderr: ${data}`)
       })
 
       killLine.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
+        console.log(`KillLine stdout: ${data}`)
       })
 
       killLine.on('exit', () => {
@@ -650,7 +642,6 @@ describe('Roosevelt HTML Validator Test', function () {
       })
 
       killLine.on('exit', () => {
-        console.log('closing test')
         assert.equal(validatorClosedBool, true, 'Roosevelt was not able to closed the HTML Validator on its seperate port')
         assert.equal(validatorFoundBool, true, 'Roosevelt was not able to find the HTML Validator on its seperate port')
         done()
