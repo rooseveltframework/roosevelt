@@ -565,15 +565,7 @@ describe('Roosevelt HTML Validator Test', function () {
     testApp.on('message', (params) => {
       testApp.kill('SIGINT')
     })
-    /*
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-    */
     // when the app is about to finish, fork the kill Validator
     testApp.on('exit', () => {
       const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -584,13 +576,8 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
           finalWarnBool = true
         }
-        // console.log(`killLine stderr: ${data}`)
       })
-      /*
-      killLine.stdout.on('data', (data) => {
-        console.log(`KillLine stdout: ${data}`)
-      })
-      */
+
       killLine.on('exit', () => {
         assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
         assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
@@ -619,15 +606,7 @@ describe('Roosevelt HTML Validator Test', function () {
     // fork the app.js file and run it as a child process
 
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-    /*
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-    */
     // when the app is starting, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
@@ -643,13 +622,8 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Killed process on port')) {
           validatorClosedBool = true
         }
-        // console.log(`killLine stdout: ${data}`)
       })
-      /*
-      killLine.stderr.on('data', (data) => {
-        console.log(`killLine stderr: ${data}`)
-      })
-      */
+
       killLine.on('exit', () => {
         assert.equal(validatorClosedBool, true, 'Roosevelt was not able to closed the HTML Validator on its seperate port')
         assert.equal(validatorFoundBool, true, 'Roosevelt was not able to find the HTML Validator on its seperate port')
@@ -688,15 +662,7 @@ describe('Roosevelt HTML Validator Test', function () {
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-    /*
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-    */
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
@@ -712,14 +678,12 @@ describe('Roosevelt HTML Validator Test', function () {
         if (data.includes('Killed process on port:')) {
           validatorClosedBool = true
         }
-        // console.log(`killLine stdout: ${data}`)
       })
 
       killLine.stderr.on('data', (data) => {
         if (data.includes('Could not find validator on port:')) {
           validatorDefaultNotFoundBool = true
         }
-        // console.log(`killLine stderr: ${data}`)
       })
 
       killLine.on('exit', () => {
