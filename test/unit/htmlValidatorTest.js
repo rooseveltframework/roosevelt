@@ -424,20 +424,9 @@ describe('Roosevelt HTML Validator Test', function () {
 
           testApp.kill('SIGINT')
         })
+
       testApp.on('exit', () => {
-        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
-        })
-
-        killLine.stderr.on('data', (data) => {
-          console.log(`killLine stderr: ${data}`)
-        })
-
-        killLine.on('exit', () => {
-          done()
-        })
+        done()
       })
     })
   })
@@ -520,7 +509,7 @@ describe('Roosevelt HTML Validator Test', function () {
   })
 
   it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
-    this.timeout(30000)
+    this.timeout(60000)
     // bool var to hold whether or not the request failed status has been given
     let requestFailedLogBool = false
     let finalWarnBool = false
