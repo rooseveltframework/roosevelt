@@ -130,14 +130,14 @@ describe('Roosevelt config Auditor Test', function () {
     done()
   })
 
-  it.skip('should allow a user to run the configAuditor as a child process and get it to tell the user what params are missing from the package.json file', function (done) {
+  it('should allow a user to run the configAuditor as a child process and get it to tell the user what params are missing from the package.json file', function (done) {
     // bool vars to hold whether or not the right logs and errors are being outputted
-    /* let startingConfigAuditBool = false
+    let startingConfigAuditBool = false
     let modelsPathMissingBool = false
     let viewsPathMissingBool = false
     let controllersPathMissingBool = false
     let error1Bool = false
-    let error2Bool = false */
+    let error2Bool = false
 
     // write the package.json file
     fse.ensureDir(path.join(appDir))
@@ -145,17 +145,39 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: 'C:\\Users\\Johnny\\Documents\\roosevelt\\lib', 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: 'C:\\Users\\Johnny\\Documents\\roosevelt\\test\\app\\configAuditorTest', 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
     })
 
     testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
+      if (data.includes('Missing param "modelsPath"!')) {
+        modelsPathMissingBool = true
+      }
+      if (data.includes('Missing param "viewsPath"!')) {
+        viewsPathMissingBool = true
+      }
+      if (data.includes('Missing param "controllersPath"!')) {
+        controllersPathMissingBool = true
+      }
+      if (data.includes('Issues have been detected in roosevelt config')) {
+        error1Bool = true
+      }
+      if (data.includes('for the latest sample rooseveltConfig.')) {
+        error2Bool = true
+      }
     })
 
     testApp.on('exit', () => {
+      assert.equal(startingConfigAuditBool, true, 'configAuditor did not start')
+      assert.equal(modelsPathMissingBool, true, 'configAuditor did not report that the package.json file is missing a models path value')
+      assert.equal(viewsPathMissingBool, true, 'configAuditor did not report that the package.json file is missing a views path value')
+      assert.equal(controllersPathMissingBool, true, 'configAuditor did not report that the package.json file is missing a controllers path value')
+      assert.equal(error1Bool, true, 'configAuditor did not report that we had issues with the roosevelt config')
+      assert.equal(error2Bool, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
       done()
     })
   })
