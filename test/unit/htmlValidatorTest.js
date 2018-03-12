@@ -826,4 +826,39 @@ describe('Roosevelt HTML Validator Test', function () {
       })
     })
   })
+
+  it('should report that both the validator and the app are trying to use the same port and that the user should change one of them', function (done) {
+    // bool var to hold whether or not the correct error message was outputted
+    let samePortErrorBool = false
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      port: 2000,
+      htmlValidator: {
+        enable: true,
+        port: 2000,
+        separateProcess: true
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port')) {
+        samePortErrorBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(samePortErrorBool, true, 'Roosevelt is not catching the error that describes 2 or more servers using a single port and giving a specific message to the programmer')
+      done()
+    })
+  })
 })
