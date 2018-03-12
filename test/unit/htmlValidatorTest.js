@@ -700,13 +700,13 @@ describe('Roosevelt HTML Validator Test', function () {
     let validatorFoundBool = false
     let validatorClosedBool = false
 
-    // generate the app
+    // generate the app, the port of the html Validator cannot go lower than 1024 as jetty servers, which the htmlValidator is build with, requires root/admin permission to access ports lower than 1024
     generateTestApp({
       generateFolderStructure: true,
       appDir: appDir,
       htmlValidator: {
         enable: true,
-        port: 1030,
+        port: 1024,
         separateProcess: true
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
