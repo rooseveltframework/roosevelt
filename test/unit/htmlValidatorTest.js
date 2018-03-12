@@ -706,7 +706,7 @@ describe('Roosevelt HTML Validator Test', function () {
       appDir: appDir,
       htmlValidator: {
         enable: true,
-        port: 1024,
+        port: 1020,
         separateProcess: true
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
