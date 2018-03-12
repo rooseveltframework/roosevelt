@@ -844,20 +844,151 @@ describe('Roosevelt HTML Validator Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // If the test errors, see if it is the specfic one about the two services trying to use the same port
     testApp.stderr.on('data', (data) => {
       if (data.includes('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port')) {
         samePortErrorBool = true
       }
     })
 
+    // when we get a message from the app, signifying that the app is starting, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
+    // when the app is about to exit, see if the specifc error was outputted
     testApp.on('exit', () => {
       assert.equal(samePortErrorBool, true, 'Roosevelt is not catching the error that describes 2 or more servers using a single port and giving a specific message to the programmer')
+      done()
+    })
+  })
+
+  it('should be able to catch the 404 error that is given back if the path requested from the server does not exists', function (done) {
+    // bool vars to hold whether or not a log was outputted
+    let requestFailedBool = false
+
+    // package.json source file
+    let packageJson = {
+      rooseveltConfig: {
+        htmlValidator: {
+          enable: true,
+          port: 43711,
+          separateProcess: true
+        }
+      }
+    }
+
+    // write the package.json file into the test app Directory
+    fse.ensureDir(appDir)
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson))
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        port: 2500,
+        separateProcess: true
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when we get the message of the app finishing, run the killValidator script
+    testApp.on('message', () => {
+      // fork the kill validator script and run it as a child process
+      const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
+
+      // look at the errors and see if a specific error comes back
+      killLine.stderr.on('data', (data) => {
+        if (data.includes(`Request Failed.\nStatus Code:`)) {
+          requestFailedBool = true
+        }
+      })
+
+      killLine.on('exit', () => {
+        testApp.kill('SIGINT')
+      })
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(requestFailedBool, true, 'kill Validator does not catch the error that occurs when it tries to access a path on the server that does not exists')
+      done()
+    })
+  })
+
+  it('should be able to discern if the response from a server request to the port is not the right one and search for the right port', function (done) {
+    // bool var to hold whether or not the correct logs came out of killValidator
+    let validatorFoundBool = false
+    let validatorClosedBool = false
+    let foundAnotherPageBool = false
+    let validatorDefaultNotFoundBool = false
+    // js source string to hold the data for the package.json file
+    let packageJson = {
+      rooseveltConfig: {
+        htmlValidator: {
+          enable: true,
+          port: 43711,
+          separateProcess: true
+        }
+      }
+    }
+    // make the package.json file
+    fse.ensureDir(appDir)
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson))
+    // copy over a new controller into the mvc of the test App Dir
+    fse.copySync(path.join(appDir, '../', '../', 'util', 'htmlDefaultFile.js'), path.join(appDir, 'mvc', 'controllers', 'htmlDefaultFile.js'))
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        port: 2500,
+        separateProcess: true
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('200') && data.includes('GET')) {
+        foundAnotherPageBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      // fork the kill validator script and run it as a child process
+      const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
+      killLine.stdout.on('data', (data) => {
+        if (data.includes('Validator successfully found on port:')) {
+          validatorFoundBool = true
+        }
+        if (data.includes('Killed process on port:')) {
+          validatorClosedBool = true
+        }
+      })
+      killLine.stderr.on('data', (data) => {
+        if (data.includes('Could not find validator on port:')) {
+          validatorDefaultNotFoundBool = true
+        }
+      })
+
+      killLine.on('exit', () => {
+        testApp.kill('SIGINT')
+      })
+    })
+    testApp.on('exit', () => {
+      assert.equal(validatorClosedBool, true, 'killValidator was not able to close the validator that was opened')
+      assert.equal(validatorDefaultNotFoundBool, true, 'killValidator is translating the plainHTML page that it would get back from the roosevelt app as the HTML Validator')
+      assert.equal(validatorFoundBool, true, 'killValidator was not able to find the validator')
+      assert.equal(foundAnotherPageBool, true, 'The app made by Roosevelt has not given back the plainHTML page that it should')
       done()
     })
   })
