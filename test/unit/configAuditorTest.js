@@ -534,4 +534,40 @@ describe('Roosevelt config Auditor Test', function () {
       done()
     })
   })
+
+  it('should take the appDir of process.env.INIT_CWD if it was set to the right location and if one was not passed to the config Auditor through roosevelt', function (done) {
+    // bool var to hold whether or not the right logs were outputted
+    let startingConfigAuditBool = false
+    let noErrorsBool = false
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage5.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // set env.INIT_CWD to the correct location
+    process.env.INIT_CWD = appDir
+
+    // fork the app.js file and run it as a child process
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: path.join(appDir, '../'), 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+      if (data.includes('Configuration audit completed with no errors found.')) {
+        noErrorsBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.equal(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
+      done()
+    })
+  })
 })
