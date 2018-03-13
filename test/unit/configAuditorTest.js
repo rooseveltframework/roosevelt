@@ -220,4 +220,74 @@ describe('Roosevelt config Auditor Test', function () {
       done()
     })
   })
+
+  it('should not start the audit if there is not a package.json file located in the test app Directory', function (done) {
+    // bool var to hold whether or not the audit looked at the files
+    let rooseveltAuditStartedBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look at the logs to see if it would log out that the config audtior is starting
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        rooseveltAuditStartedBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(rooseveltAuditStartedBool, false, 'the config Auditor was still started even though there is no package.json file in the app Directory')
+      done()
+    })
+  })
+
+  it('should not start the audit if there is a package.json file located in the test app Directory but no rooseveltConfig property in it', function (done) {
+    // bool var to hold whether or not the audit looked at the files
+    let rooseveltAuditStartedBool = false
+
+    // package.json source string
+    let packageJSONSource = {
+      appDir: appDir,
+      generateFolderStructure: true
+    }
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look at the logs to see if it would log out that the config audtior is starting
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        rooseveltAuditStartedBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(rooseveltAuditStartedBool, false, 'the config Auditor was still started even though there is no package.json file in the app Directory')
+      done()
+    })
+  })
 })
