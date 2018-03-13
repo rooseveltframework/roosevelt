@@ -293,7 +293,7 @@ describe('Roosevelt config Auditor Test', function () {
 
   it('should report that there are some properties that are missing or extra for some of the object params in the package.json file', function (done) {
     // bool var to hold whether the right logs were given
-    let audtiorStartingBool = false
+    let startingConfigAuditBool = false
     let error1Bool = false
     let error2Bool = false
     let missingEnableBool = false
@@ -342,7 +342,7 @@ describe('Roosevelt config Auditor Test', function () {
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
-        audtiorStartingBool = true
+        startingConfigAuditBool = true
       }
     })
 
@@ -351,12 +351,69 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('exit', () => {
-      assert.equal(audtiorStartingBool, true, 'Roosevelt did not start the configAuditor')
+      assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the configAuditor')
       assert.equal(missingEnableBool, true, 'The config Auditor did not report that enable is missing from the htmlValidator param')
       assert.equal(missingWhiteListCSSBool, true, 'The config Auditor did not report that whitelist is missing from the CSS param')
       assert.equal(missingWhiteListJSBool, true, 'The config Auditor did not report that whitelist is missing from the JS param')
       assert.equal(extraWarningsJSBool, true, 'The config Auditor did not report that an extra param of warnings is in the JS param')
       assert.equal(missingCompilerJSBool, true, 'The config Auditor did not report that compiler is missing from the JS param')
+      assert.equal(error1Bool, true, 'configAuditor did not report that we had issues with the roosevelt config')
+      assert.equal(error2Bool, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
+      done()
+    })
+  })
+
+  it('should report that there are extra params in the whole rooseveltConfig object', function (done) {
+    // bool var to hold whether or not the correct logs are being outputted
+    let extraTurboParamBool = false
+    let extraMaxServersBool = false
+    let error1Bool = false
+    let error2Bool = false
+    let startingConfigAuditBool = false
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage3.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Extra param "turbo" found, this can be removed.')) {
+        extraTurboParamBool = true
+      }
+      if (data.includes('Extra param "maxServers" found, this can be removed.')) {
+        extraMaxServersBool = true
+      }
+      if (data.includes('Issues have been detected in roosevelt config')) {
+        error1Bool = true
+      }
+      if (data.includes('for the latest sample rooseveltConfig.')) {
+        error2Bool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.equal(extraTurboParamBool, true, 'config Auditor did not spot the extra turbo param in the rooseveltConfig')
+      assert.equal(extraMaxServersBool, true, 'config Auditor did not sport the extra maxServers param in the rooseveltConfig')
       assert.equal(error1Bool, true, 'configAuditor did not report that we had issues with the roosevelt config')
       assert.equal(error2Bool, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
       done()
