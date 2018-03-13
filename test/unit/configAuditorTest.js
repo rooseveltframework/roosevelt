@@ -510,4 +510,28 @@ describe('Roosevelt config Auditor Test', function () {
       done()
     })
   })
+
+  it('should not run the config Auditor if the file was forked and the wrong enviroment was passed to it', function (done) {
+    // bool var to hold whether or not a specific log was outputted
+    let startingConfigAuditBool = false
+
+    // put a node_module in the test app directory
+    fse.ensureDirSync(appDir)
+    fse.mkdirSync(path.join(appDir, 'node_modules'))
+
+    // fork the configAuditor.js file and run it as a child process
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(startingConfigAuditBool, false, 'Roosevelt started its config Auditor even when it was not suppose to')
+      done()
+    })
+  })
 })
