@@ -35,7 +35,7 @@ describe('Roosevelt config Auditor Test', function () {
     let error2Bool = false
 
     // write the package.json file
-    fse.ensureDir(path.join(appDir))
+    fse.ensureDirSync(path.join(appDir))
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
@@ -105,7 +105,7 @@ describe('Roosevelt config Auditor Test', function () {
     }
 
     // make the appDir folder
-    fse.ensureDir(appDir)
+    fse.ensureDirSync(appDir)
     // add the package.json file to the appDir folder
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
@@ -140,12 +140,12 @@ describe('Roosevelt config Auditor Test', function () {
     let error2Bool = false
 
     // write the package.json file
-    fse.ensureDir(path.join(appDir))
+    fse.ensureDirSync(appDir)
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: 'C:\\Users\\Johnny\\Documents\\roosevelt\\test\\app\\configAuditorTest', 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -187,7 +187,7 @@ describe('Roosevelt config Auditor Test', function () {
     let startingConfigAuditBool = false
 
     // write the package.json file
-    fse.ensureDir(path.join(appDir))
+    fse.ensureDirSync(appDir)
     let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage1.json'))
     fse.writeFileSync(path.join(appDir, 'package.json'), content)
 
