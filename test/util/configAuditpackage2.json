@@ -1,0 +1,81 @@
+{
+"rooseveltConfig": {
+  "port": 8888,
+  "generateFolderStructure": true,
+  "localhostOnly": true,
+  "suppressLogs": {
+    "httpLogs": false,
+    "rooseveltLogs": false,
+    "rooseveltWarnings": false
+  },
+  "noMinify": false,
+  "htmlValidator": {
+    "separateProcess": false,
+    "port": 8888,
+    "suppressWarnings": false,
+    "exceptions": {
+     "requestHeader": "Partial",
+      "modelValue": "_disableValidator"
+    }
+  },
+  "multipart": {
+    "multiples": true
+  },
+  "toobusy": {
+    "maxLagPerRequest": 70,
+    "lagCheckInterval": 500
+  },
+  "shutdownTimeout": 30000,
+  "bodyParserUrlencodedParams": {
+    "extended": true
+  },
+  "bodyParserJsonParams": {},
+  "https": false,
+  "modelsPath": "mvc/models",
+  "viewsPath": "mvc/views",
+  "controllersPath": "mvc/controllers",
+  "viewEngine": "none",
+  "error404": "404.js",
+  "error5xx": "5xx.js",
+  "error503": "503.js",
+  "staticsRoot": "statics",
+  "htmlMinify": {
+    "override": true,
+    "exception_url": false,
+    "htmlMinifier": {}
+  },
+  "css": {
+    "sourceDir": "css",
+    "compiler": "none",
+    "output": ".build/css",
+    "versionFile": null
+  },
+  "js": {
+    "sourceDir": "js",
+    "warnings": true, 
+    "blacklist": null,
+    "output": ".build/js",
+    "bundler": {
+      "bundles": [],
+      "output": ".bundled",
+      "expose": true
+    }
+  },
+  "publicFolder": "public",
+  "favicon": "none",
+  "staticsSymlinksToPublic": [
+    "images"
+  ],
+  "versionedPublic": false,
+  "alwaysHostPublic": false
+  },
+  "scripts": {
+    "start": "npm run app.js",
+    "production": "npm run app.js --prod",
+    "development": "npm run app.js --dev",
+    "clean": "npm run clean",
+    "audit": "npm run audit",
+    "test": "npm run t",
+    "kill-validator": "npm run kill"
+  }
+}
