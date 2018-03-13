@@ -419,4 +419,56 @@ describe('Roosevelt config Auditor Test', function () {
       done()
     })
   })
+
+  it('should report if the package.json contains script that run files from roosevelt and do not hold the up to date command', function (done) {
+    // bool var to hold whether or not a specific log was outputted
+    let cleanNotUpToDateBool = false
+    let startingConfigAuditBool = false
+    let error1Bool = false
+    let error2Bool = false
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage4.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Detected outdated script "clean". Update contents to "node ./node_modules/roosevelt/lib/scripts/appCleanup.js" to restore functionality.')) {
+        cleanNotUpToDateBool = true
+      }
+      if (data.includes('Issues have been detected in roosevelt config')) {
+        error1Bool = true
+      }
+      if (data.includes('for the latest sample rooseveltConfig.')) {
+        error2Bool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(error1Bool, true, 'configAuditor did not report that we had issues with the roosevelt config')
+      assert.equal(error2Bool, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
+      assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.equal(cleanNotUpToDateBool, true, 'configAuditor did not report that one of its scripts is not up to date with what it should be')
+      done()
+    })
+  })
 })
