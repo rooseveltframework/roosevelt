@@ -535,7 +535,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should take the appDir of process.env.INIT_CWD if it was set to the right location and if one was not passed to the config Auditor through roosevelt', function (done) {
+  it('should be able to run even if a node modules folder is located in the test App Directory', function (done) {
     // bool var to hold whether or not the right logs were outputted
     let startingConfigAuditBool = false
     let noErrorsBool = false
@@ -547,6 +547,9 @@ describe('Roosevelt config Auditor Test', function () {
 
     // set env.INIT_CWD to the correct location
     process.env.INIT_CWD = appDir
+
+    // create a node_modules folder
+    fse.ensureDirSync(path.join(appDir, 'node_modules'))
 
     // fork the app.js file and run it as a child process
     let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
