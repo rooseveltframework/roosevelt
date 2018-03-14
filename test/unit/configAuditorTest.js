@@ -529,7 +529,6 @@ describe('Roosevelt config Auditor Test', function () {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
       }
-      console.log(`stdout: ${data}`)
     })
 
     testApp.on('exit', () => {
@@ -596,7 +595,6 @@ describe('Roosevelt config Auditor Test', function () {
       if (data.includes('Configuration audit completed with no errors found.')) {
         noErrorsBool = true
       }
-      console.log(`stdout: ${data}`)
     })
 
     testApp.on('exit', () => {
