@@ -992,4 +992,61 @@ describe('Roosevelt HTML Validator Test', function () {
       done()
     })
   })
+
+  it('should not be starting another htmlValidator if one is alreadly running on the same port', function (done) {
+    // bool vars to hold whether or not specific logs have been outputted
+    let startingHTMLValidator2Bool = false
+    let detachedValidatorFound2Bool = false
+    let detachedValidatorListen2Bool = false
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        port: 2500,
+        separateProcess: true
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp2.stdout.on('data', (data) => {
+        if (data.includes('Detached validator found on port: 2500')) {
+          detachedValidatorFound2Bool = true
+        }
+        if (data.includes('Starting HTML validator...')) {
+          startingHTMLValidator2Bool = true
+        }
+        if (data.includes('HTML validator listening on port: 2500')) {
+          detachedValidatorListen2Bool = true
+        }
+      })
+
+      testApp2.on('message', () => {
+        testApp2.kill('SIGINT')
+      })
+
+      testApp2.on('exit', () => {
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          assert.equal(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
+          assert.equal(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
+          assert.equal(detachedValidatorListen2Bool, true, 'The second app is not listening to the validator that is currently running')
+          done()
+        })
+      })
+    })
+  })
 })
