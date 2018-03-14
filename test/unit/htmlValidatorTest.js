@@ -542,6 +542,63 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
+  it('should not be starting another htmlValidator if one is alreadly running on the same port', function (done) {
+    // bool vars to hold whether or not specific logs have been outputted
+    let startingHTMLValidator2Bool = false
+    let detachedValidatorFound2Bool = false
+    let detachedValidatorListen2Bool = false
+
+    // generate the app
+    generateTestApp({
+      generateFolderStructure: true,
+      appDir: appDir,
+      htmlValidator: {
+        enable: true,
+        port: 2500,
+        separateProcess: true
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp2.stdout.on('data', (data) => {
+        if (data.includes('Detached validator found on port: 2500')) {
+          detachedValidatorFound2Bool = true
+        }
+        if (data.includes('Starting HTML validator...')) {
+          startingHTMLValidator2Bool = true
+        }
+        if (data.includes('HTML validator listening on port: 2500')) {
+          detachedValidatorListen2Bool = true
+        }
+      })
+
+      testApp2.on('message', () => {
+        testApp2.kill('SIGINT')
+      })
+
+      testApp2.on('exit', () => {
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          assert.equal(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
+          assert.equal(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
+          assert.equal(detachedValidatorListen2Bool, true, 'The second app is not listening to the validator that is currently running')
+          done()
+        })
+      })
+    })
+  })
+
   it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
     this.timeout(60000)
     // bool var to hold whether or not the request failed status has been given
@@ -957,6 +1014,7 @@ describe('Roosevelt HTML Validator Test', function () {
     }, options)
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
     testApp.stdout.on('data', (data) => {
       if (data.includes('200') && data.includes('GET')) {
         foundAnotherPageBool = true
@@ -993,21 +1051,31 @@ describe('Roosevelt HTML Validator Test', function () {
     })
   })
 
-  it('should not be starting another htmlValidator if one is alreadly running on the same port', function (done) {
-    // bool vars to hold whether or not specific logs have been outputted
-    let startingHTMLValidator2Bool = false
-    let detachedValidatorFound2Bool = false
-    let detachedValidatorListen2Bool = false
+  it('should default the killValidator port number to 8888 if the package.json htmlValidator does not specify what port the Validator should run on', function (done) {
+    // bool vars to hold whether or not the right logs were outputted
+    let validatorFoundon8888Bool = false
+    let validatorClosedBool = false
+
+    // js source string to hold the data for the package.json file
+    let packageJson = {
+      rooseveltConfig: {
+        htmlValidator: {
+          enable: true,
+          separateProcess: true
+        }
+      }
+    }
+
+    // make the package.json file
+    fse.ensureDir(appDir)
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson))
+    // copy over a new controller into the mvc of the test App Dir
+    fse.copySync(path.join(appDir, '../', '../', 'util', 'htmlDefaultFile.js'), path.join(appDir, 'mvc', 'controllers', 'htmlDefaultFile.js'))
 
     // generate the app
     generateTestApp({
       generateFolderStructure: true,
       appDir: appDir,
-      htmlValidator: {
-        enable: true,
-        port: 2500,
-        separateProcess: true
-      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -1019,33 +1087,22 @@ describe('Roosevelt HTML Validator Test', function () {
     })
 
     testApp.on('exit', () => {
-      const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      // fork the kill validator script and run it as a child process
+      const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
 
-      testApp2.stdout.on('data', (data) => {
-        if (data.includes('Detached validator found on port: 2500')) {
-          detachedValidatorFound2Bool = true
+      killLine.stdout.on('data', (data) => {
+        if (data.includes('Validator successfully found on port: 8888')) {
+          validatorFoundon8888Bool = true
         }
-        if (data.includes('Starting HTML validator...')) {
-          startingHTMLValidator2Bool = true
-        }
-        if (data.includes('HTML validator listening on port: 2500')) {
-          detachedValidatorListen2Bool = true
+        if (data.includes('Killed process on port:')) {
+          validatorClosedBool = true
         }
       })
 
-      testApp2.on('message', () => {
-        testApp2.kill('SIGINT')
-      })
-
-      testApp2.on('exit', () => {
-        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.on('exit', () => {
-          assert.equal(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
-          assert.equal(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
-          assert.equal(detachedValidatorListen2Bool, true, 'The second app is not listening to the validator that is currently running')
-          done()
-        })
+      killLine.on('exit', () => {
+        assert.equal(validatorFoundon8888Bool, true, 'Kill Validator was not looking on port 8888, which it should if the package.json htmlValidator does not specify a specific port')
+        assert.equal(validatorClosedBool, true, 'Kill Validator did not close the HTML Validator')
+        done()
       })
     })
   })
