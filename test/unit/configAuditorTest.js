@@ -519,8 +519,11 @@ describe('Roosevelt config Auditor Test', function () {
     fse.ensureDirSync(appDir)
     fse.mkdirSync(path.join(appDir, 'node_modules'))
 
+    // set env.INIT_CWD to a location that does not have a node_module folder
+    process.env.INIT_CWD = path.join(appDir, '../', 'util')
+
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -563,8 +566,37 @@ describe('Roosevelt config Auditor Test', function () {
       }
     })
 
-    testApp.on('message', () => {
-      testApp.kill('SIGINT')
+    testApp.on('exit', () => {
+      assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.equal(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
+      done()
+    })
+  })
+
+  it('should choose one of the enviroment vars if both of the ones that we are looking at are the same', function (done) {
+    // bool var to see if the right logs are being logged
+    let startingConfigAuditBool = false
+    let noErrorsBool = false
+
+    // set env.INIT_CWD to the correct location
+    process.env.INIT_CWD = appDir
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    let content = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'configAuditpackage5.json'))
+    fse.writeFileSync(path.join(appDir, 'package.json'), content)
+
+    // fork the app.js file and run it as a child process
+    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+      if (data.includes('Configuration audit completed with no errors found.')) {
+        noErrorsBool = true
+      }
+      console.log(`stdout: ${data}`)
     })
 
     testApp.on('exit', () => {
