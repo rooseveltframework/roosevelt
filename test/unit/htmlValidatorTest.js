@@ -611,9 +611,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         generateFolderStructure: true,
         appDir: appDir,
         htmlValidator: {
-          enable: true,
-          port: 2500,
-          separateProcess: true
+          enable: false
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -650,7 +648,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           testApp.kill('SIGINT')
         })
       })
-
       testApp.on('exit', () => {
         assert.equal(requestFailedLogBool, true, 'Roosevelt did not stop the app from initializing if the port it wants the validator to use is being used by something else')
         done()
