@@ -600,7 +600,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       })
     })
 
-    it('should stop the app if the port that it wants to use for the validator is being used by something else', function (done) {
+    it('should stop the app if the port that it wants to use for the validator is being used by something else and it returns something other a 200 status code', function (done) {
       // bool var to hold whether or not a specific log was outputted
       let requestFailedLogBool = false
       // copy over a new controller into the mvc of the test App Dir
@@ -650,6 +650,60 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       })
       testApp.on('exit', () => {
         assert.equal(requestFailedLogBool, true, 'Roosevelt did not stop the app from initializing if the port it wants the validator to use is being used by something else')
+        done()
+      })
+    })
+
+    it('should attempt to spawn a HTMLValidator but should not be successful if another process is using that port', function (done) {
+      // bool var to hold whether or not a specific log was outputted
+      let twoProcessToPortsBool = false
+      // copy over a new controller into the mvc of the test App Dir
+      fse.copySync(path.join(appDir, '../', '../', 'util', 'htmlDefaultFile.js'), path.join(appDir, 'mvc', 'controllers', 'htmlDefaultFile.js'))
+
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: false
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.on('message', () => {
+        generateTestApp({
+          generateFolderStructure: true,
+          appDir: appDir,
+          htmlValidator: {
+            enable: true,
+            port: 43711,
+            separateProcess: true
+          },
+          onServerStart: `(app) => {process.send(app.get("params"))}`
+        }, options)
+
+        // fork the app and run it as a child process
+        const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        testApp2.stderr.on('data', (data) => {
+          if (data.includes('Both the roosevelt app and the validator are trying to access the same port')) {
+            twoProcessToPortsBool = true
+          }
+        })
+
+        testApp2.on('message', () => {
+          testApp2.kill('SIGINT')
+        })
+
+        testApp2.on('exit', () => {
+          testApp.kill('SIGINT')
+        })
+      })
+      testApp.on('exit', () => {
+        assert.equal(twoProcessToPortsBool, true, 'Roosevelt did not stop the app from initializing if the port it wants the validator to use is being used by something else')
         done()
       })
     })
