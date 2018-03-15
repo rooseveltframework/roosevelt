@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "start": "npm run app.js",
+    "production": "npm run app.js --prod",
+    "development": "npm run app.js --dev",
+    "clean": "npm run clean",
+    "audit": "npm run audit",
+    "test": "npm run t",
+    "kill-validator": "npm run kill"
+  }
+}
