@@ -600,9 +600,10 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       })
     })
 
-    it('should stop the app if the port that it wants to use for the validator is being used by something else and it returns something other a 200 status code', function (done) {
+    it('should quit initialization of the app if another process is using the port that user assigned for the HTMLValidator and it returns something other than the 200 http code', function (done) {
       // bool var to hold whether or not a specific log was outputted
       let requestFailedLogBool = false
+      let twoProcessToPortsBool = false
       // copy over a new controller into the mvc of the test App Dir
       fse.copySync(path.join(appDir, '../', '../', 'util', 'htmlValidatorError.js'), path.join(appDir, 'mvc', 'controllers', 'htmlValidatorError.js'))
 
@@ -623,6 +624,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         generateTestApp({
           generateFolderStructure: true,
           appDir: appDir,
+          port: 6729,
           htmlValidator: {
             enable: true,
             port: 43711,
@@ -638,6 +640,9 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Request Failed.\nStatus Code: 500')) {
             requestFailedLogBool = true
           }
+          if (data.includes('Another process that is not the HTMLValidator is using this port already. Quiting the initialization of your app')) {
+            twoProcessToPortsBool = true
+          }
         })
 
         testApp2.on('message', () => {
@@ -649,12 +654,13 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         })
       })
       testApp.on('exit', () => {
-        assert.equal(requestFailedLogBool, true, 'Roosevelt did not stop the app from initializing if the port it wants the validator to use is being used by something else')
+        assert.equal(requestFailedLogBool, true, 'Roosevelt did not show the response code if the request failed')
+        assert.equal(twoProcessToPortsBool, true, 'Roosevelt did not give the reason for why the HTML Validator would not run')
         done()
       })
     })
 
-    it('should attempt to spawn a HTMLValidator but should not be successful if another process is using that port', function (done) {
+    it('should stop the app from completing its initialization if another process is using the port the user assigned to the HTMLValidator', function (done) {
       // bool var to hold whether or not a specific log was outputted
       let twoProcessToPortsBool = false
       // copy over a new controller into the mvc of the test App Dir
@@ -689,7 +695,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
         testApp2.stderr.on('data', (data) => {
-          if (data.includes('Both the roosevelt app and the validator are trying to access the same port')) {
+          if (data.includes('Another process that is not the HTMLValidator is using this port already. Quiting the initialization of your app')) {
             twoProcessToPortsBool = true
           }
         })
@@ -787,7 +793,9 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
           }
-          if (data.includes('Killed process on port')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
@@ -840,10 +848,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
 
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port:')) {
+          if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
           }
-          if (data.includes('Killed process on port:')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
@@ -891,10 +901,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port:')) {
+          if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
           }
-          if (data.includes('Killed process on port:')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
@@ -935,10 +947,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port:')) {
+          if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
           }
-          if (data.includes('Killed process on port:')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
@@ -979,10 +993,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port:')) {
+          if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
           }
-          if (data.includes('Killed process on port:')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
@@ -1136,10 +1152,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         // fork the kill validator script and run it as a child process
         const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port:')) {
+          if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
           }
-          if (data.includes('Killed process on port:')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
@@ -1202,10 +1220,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
 
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port: 8888')) {
+          if (data.includes('Validator successfully found on port')) {
             validatorFoundon8888Bool = true
           }
-          if (data.includes('Killed process on port:')) {
+          if ((process.platform === 'darwin' || process.platform === 'linux') && data.includes('Killed process on port')) {
+            validatorClosedBool = true
+          } else if ((process.platform === 'win32') && data.includes('Validator successfully closed on port:')) {
             validatorClosedBool = true
           }
         })
