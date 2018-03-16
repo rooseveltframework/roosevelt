@@ -179,6 +179,7 @@ describe('parameter Function Test Section', function () {
       if (data.includes('Testing after: someValue')) {
         resHeaderValueBool = true
       }
+      console.log(`stdout: ${data}`)
     })
 
     testApp.on('message', (params) => {
