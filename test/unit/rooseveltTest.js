@@ -34,7 +34,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let defaults = fse.readFileSync(path.join(appDir, '../', '../', '../', 'lib', 'defaults', 'config.json')).toString('utf8')
     let defaultsJSON = JSON.parse(defaults)
 
-    // fork the app and run it as a child processW
+    // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // if we do get back an object of params, it means that roosevelt was able to complete its initialization
