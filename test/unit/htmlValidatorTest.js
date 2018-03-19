@@ -1280,5 +1280,52 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         })
       })
     })
+
+    it('should report a error if the problem occurs within the port that we give it or the default 8888 and then scan for the validator', function (done) {
+      // bool var to hold whether or not a specific error log was outputted
+      let otherErrorOccurredBool = false
+      let hadScannedForValudatorBool = false
+      // copy over the controller that will make a request which will not return before the timeout
+      fse.ensureDirSync(appDir)
+      fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'busy.js'), path.join(appDir, 'mvc', 'controllers', 'busy.js'))
+
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        port: 8888,
+        htmlValidator: {
+          enable: false
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app.js file and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.on('message', () => {
+        // fork the kill validator script and run it as a child process
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.stderr.on('data', (data) => {
+          if (data.includes('Error Occurred: socket hang up. Scanning for validator now')) {
+            otherErrorOccurredBool = true
+          }
+          if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
+            hadScannedForValudatorBool = true
+          }
+        })
+
+        killLine.on('exit', () => {
+          testApp.kill('SIGINT')
+        })
+      })
+
+      testApp.on('exit', () => {
+        assert.equal(otherErrorOccurredBool, true, 'killValidator did not report if the original request at the given port took too long')
+        assert.equal(hadScannedForValudatorBool, true, 'killValidator did not try to scan the other ports for the validator')
+        done()
+      })
+    })
   })
 })
