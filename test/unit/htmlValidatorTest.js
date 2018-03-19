@@ -713,6 +713,49 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should give an error saying that it cannot connect to the htmlValidator if it is trying to access it after it was killed', function (done) {
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: true,
+          separateProcess: true,
+          port: 45231
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app.js file and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.on('message', (params) => {
+        // close the htmlValidator
+        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          // request a bad page
+          request(`http://localhost:${params.port}`)
+            .get('/Broken')
+            .expect(200, (err, res) => {
+              if (err) {
+                assert.fail(err)
+                testApp.kill('SIGINT')
+              }
+              let test1 = res.text.includes('Cannot connect to validator')
+              let test2 = res.text.includes('Unable to connect to HTML validator')
+              assert.equal(test1, true, 'Roosevelt either did not detect an error or did not give back the right page (pageTitle)')
+              assert.equal(test2, true, 'Roosevelt either did not detect an error or did not give back the right page (pageHeader)')
+              testApp.kill('SIGINT')
+            })
+        })
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
   })
 
   describe('Roosevelt killValidator test', function () {
