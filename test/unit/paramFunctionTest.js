@@ -709,4 +709,39 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('should throw, catch and display an error if the controllersPath passed to roosevelt is not a dictionary', function (done) {
+    // bool var to hold whether or not a specific error log was outputted
+    let loadControllerFilesFailBool = false
+
+    // copy over an existing file over to the test app directory
+    fse.ensureDirSync(appDir)
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'faviconTest.ico'), path.join(appDir, 'mvc', 'faviconTest.ico'))
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      controllersPath: 'mvc/faviconTest.ico',
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Roosevelt Express fatal error: could not load controller files from')) {
+        loadControllerFilesFailBool = true
+      }
+    })
+
+    testApp.on('message', (params) => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
+      done()
+    })
+  })
 })
