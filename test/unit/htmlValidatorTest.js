@@ -590,6 +590,10 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         testApp2.on('exit', () => {
           const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+          killLine.stdout.on('data', (data) => {
+            console.log(`killLine stdout: ${data}`)
+          })
+
           killLine.on('exit', () => {
             assert.equal(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
             assert.equal(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
