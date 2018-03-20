@@ -590,10 +590,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         testApp2.on('exit', () => {
           const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-          killLine.stdout.on('data', (data) => {
-            console.log(`killLine stdout: ${data}`)
-          })
-
           killLine.on('exit', () => {
             assert.equal(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
             assert.equal(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
@@ -1087,13 +1083,21 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
       // when we get a message from the app, signifying that the app is starting, kill it
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          testApp.kill('SIGINT')
+        })
       })
 
       // when the app is about to exit, see if the specifc error was outputted
       testApp.on('exit', () => {
         assert.equal(samePortErrorBool, true, 'Roosevelt is not catching the error that describes 2 or more servers using a single port and giving a specific message to the programmer')
-        done()
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          done()
+        })
       })
     })
 
@@ -1121,9 +1125,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         generateFolderStructure: true,
         appDir: appDir,
         htmlValidator: {
-          enable: true,
-          port: 2500,
-          separateProcess: true
+          enable: false
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -1286,63 +1288,43 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
     })
 
     it('should report a error if the problem occurs within the port that we give it or the default 8888 and then scan for the validator', function (done) {
-      // bool var to hold whether or not a specific error log was outputted
-      let otherErrorOccurredBool = false
-      let hadScannedForValudatorBool = false
-      // copy over the controller that will make a request which will not return before the timeout
-      fse.ensureDirSync(appDir)
+      this.timeout(80000)
+      // bool var to hold whether or not a specific error logs were outputted
+      let timeoutErrorLogBool = false
+      let scanContinuedLogBool = false
+
+      fse.ensureDir(appDir)
       fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'busy.js'), path.join(appDir, 'mvc', 'controllers', 'busy.js'))
 
-      // generate the app
       generateTestApp({
-        generateFolderStructure: true,
         appDir: appDir,
+        generateFolderStructure: true,
         port: 8888,
-        htmlValidator: {
-          enable: false
-        },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
 
-      // fork the app.js file and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      testApp.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
-      })
-
-      testApp.stderr.on('data', (data) => {
-        console.log(`stderr: ${data}`)
-      })
-
       testApp.on('message', () => {
-        // fork the kill validator script and run it as a child process
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
         killLine.stderr.on('data', (data) => {
-          if (data.includes('Error Occurred: socket hang up. Scanning for validator now')) {
-            otherErrorOccurredBool = true
+          if (data.includes('Error Occurred:')) {
+            timeoutErrorLogBool = true
           }
           if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
-            hadScannedForValudatorBool = true
+            scanContinuedLogBool = true
           }
-          console.log(`killLine stderr: ${data}`)
-        })
-
-        killLine.stdout.on('data', (data) => {
-          console.log(`killLine stdout: ${data}`)
         })
 
         killLine.on('exit', () => {
-          console.log('here')
           testApp.kill('SIGINT')
         })
       })
 
       testApp.on('exit', () => {
-        console.log('there')
-        assert.equal(otherErrorOccurredBool, true, 'killValidator did not report if the original request at the given port took too long')
-        assert.equal(hadScannedForValudatorBool, true, 'killValidator did not try to scan the other ports for the validator')
+        assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of timeout')
+        assert.equal(scanContinuedLogBool, true, 'killValidator did not continue scanning the ports for the Validator after the initial scan failed')
         done()
       })
     })
