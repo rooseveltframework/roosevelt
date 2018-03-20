@@ -1303,6 +1303,14 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app.js file and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      testApp.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+      })
+
+      testApp.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`)
+      })
+
       testApp.on('message', () => {
         // fork the kill validator script and run it as a child process
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -1314,14 +1322,21 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
             hadScannedForValudatorBool = true
           }
+          console.log(`killLine stderr: ${data}`)
+        })
+
+        killLine.stdout.on('data', (data) => {
+          console.log(`killLine stdout: ${data}`)
         })
 
         killLine.on('exit', () => {
+          console.log('here')
           testApp.kill('SIGINT')
         })
       })
 
       testApp.on('exit', () => {
+        console.log('there')
         assert.equal(otherErrorOccurredBool, true, 'killValidator did not report if the original request at the given port took too long')
         assert.equal(hadScannedForValudatorBool, true, 'killValidator did not try to scan the other ports for the validator')
         done()
