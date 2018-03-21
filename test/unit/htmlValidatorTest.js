@@ -382,6 +382,54 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       })
     })
 
+    it('should still validate the HTML page if the model in the response does not holds a value that is set in the exception param', function (done) {
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        viewEngine: [
+          'html: teddy'
+        ],
+        htmlValidator: {
+          enable: true,
+          suppressWarnings: true,
+          exceptions: {
+            modelValue: '_disableValidatorTest'
+          }
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app and start it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      // wait for the server to start, and then check that the page has not been validated
+      testApp.on('message', (params) => {
+        request(`http://localhost:${params.port}`)
+          .get('/Broken')
+          .expect(200, (err, res) => {
+            if (err) {
+              assert.fail(err)
+              testApp.kill('SIGINT')
+            }
+
+            // check to see that the page did not validate
+            let test1 = res.text.includes('HTML did not pass validation')
+            let test2 = res.text.includes('Errors:')
+            assert.equal(test1, true)
+            assert.equal(test2, true)
+            testApp.kill('SIGINT')
+          })
+        testApp.on('exit', () => {
+          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+          killLine.on('exit', () => {
+            done()
+          })
+        })
+      })
+    })
+
     it('should try to validate the HTML page because the model in the response does not holds a value that is set in the exception param', function (done) {
       // generate the app
       generateTestApp({
