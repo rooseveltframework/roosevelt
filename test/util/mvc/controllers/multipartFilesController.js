@@ -80,4 +80,13 @@ module.exports = (app) => {
     test.path = path
     res.send(test)
   })
+
+  app.route('/simpleMultipart').post((req, res) => {
+    // object to send back to client
+    let test = {}
+    // save the amount of files onto the object and send it back
+    let keys = Object.keys(req.files)
+    test.count = keys.length
+    res.send(test)
+  })
 }
