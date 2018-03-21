@@ -12,7 +12,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest')
 
   // options that would be put into generateTestApp params
-  // const options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  // const options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
 
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
@@ -46,6 +46,34 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
 
     testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should allow the user to init Roosevelt without putting in a callback', function (done) {
+    // bool var to see that a message was not send back by a call back and that folders exists
+    let messageRecievedBool = false
+
+    // create a empty app.js
+    fse.ensureDirSync(appDir)
+    let contents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.js')).toString('utf8')
+    fse.writeFileSync(path.join(appDir, 'app.js'), contents)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      messageRecievedBool = true
+    })
+
+    testApp.on('exit', () => {
+      let test1 = fse.existsSync(path.join(appDir, 'mvc'))
+      let test2 = fse.existsSync(path.join(appDir, 'public'))
+      let test3 = fse.existsSync(path.join(appDir, 'statics'))
+      assert.equal(test1, true, 'Roosevelt did not make its mvc folder')
+      assert.equal(test2, true, 'Roosevelt did not make its public folder')
+      assert.equal(test3, true, 'Roosevelt did not make its statics folder')
+      assert.equal(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
       done()
     })
   })
