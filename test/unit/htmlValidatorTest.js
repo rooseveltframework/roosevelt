@@ -406,7 +406,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // wait for the server to start, and then check that the page has not been validated
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
-          .get('/Broken')
+          .get('/brokenObject2Test')
           .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
