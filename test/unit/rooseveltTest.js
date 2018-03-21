@@ -128,8 +128,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // Int var to hold how many times a server was started
     let serverStartInt = 0
 
-    console.log(os.cpus().length)
-
     // set a timeout in case the correct amount of instances are not made or something fails during initialization
     let timeout = setTimeout(function () {
       assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
@@ -144,7 +142,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '3'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
