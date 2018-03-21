@@ -422,4 +422,99 @@ describe('Roosevelt routes Section Test', function () {
       done()
     })
   })
+
+  it.skip('should give a 503 error page if the app is shutting down and someone is trying to access it', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`${data}`)
+    })
+
+    // when the app finishes initialization, kill it and send a request to get a 503 back for it disconnection
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .get('/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+          }
+          testApp.kill('SIGINT')
+          request(`http://localhost:${params.port}`)
+            .get('/HTMLTest')
+            .expect(200, (err, res) => {
+              console.log(err)
+            })
+        })
+    })
+
+    testApp.on('exit', () => {
+    })
+  })
+
+  it('should be able to handle multiple viewEngines and set a name with a value and not change it', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      viewEngine: [
+        'html: teddy',
+        'jcs: ../test/util/jcsTemplate'
+      ],
+      onServerStart: `(app) => {process.send(app.get("view engine"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (viewEngine) => {
+      assert.equal(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should be able to use templating languages that are just functions and that do not have __express function', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      viewEngine: [
+        'jcs: ../test/util/jcsTemplate'
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .get('/jcsTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            testApp.kill('SIGINT')
+          }
+          assert.equal(res.text.includes('jcs Test'), true)
+          assert.equal(res.text.includes('jcsHeader'), true)
+          assert.equal(res.text.includes('jcsParagraph'), true)
+          testApp.kill('SIGINT')
+        })
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
