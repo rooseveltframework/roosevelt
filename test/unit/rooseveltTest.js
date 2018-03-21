@@ -2,7 +2,7 @@
 
 const assert = require('assert')
 const path = require('path')
-// const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 const fse = require('fs-extra')
@@ -12,7 +12,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest')
 
   // options that would be put into generateTestApp params
-  // const options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+  const options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
 
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
@@ -54,18 +54,26 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
-    // create a empty app.js
-    fse.ensureDirSync(appDir)
-    let contents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.js')).toString('utf8')
-    fse.writeFileSync(path.join(appDir, 'app.js'), contents)
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true
+    }, options)
+
+    // get rid of the callback in the initServer function
+    let appContents = fse.readFileSync(path.join(appDir, 'app.js')).toString('utf8')
+    appContents = appContents.replace(`process.send(app.expressApp.get('params'))`, ``)
+    fse.writeFileSync(path.join(appDir, 'app.js'), appContents)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
       messageRecievedBool = true
     })
 
+    // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
       let test1 = fse.existsSync(path.join(appDir, 'mvc'))
       let test2 = fse.existsSync(path.join(appDir, 'public'))
