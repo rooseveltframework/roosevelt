@@ -147,7 +147,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
         serverStartInt++
-        if (serverStartInt === 3) {
+        if (serverStartInt === 2) {
           testApp.kill('SIGINT')
           clearTimeout(timeout)
         }
