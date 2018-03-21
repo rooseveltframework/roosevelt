@@ -128,6 +128,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // Int var to hold how many times a server was started
     let serverStartInt = 0
 
+    console.log(os.cpus().length)
+
     // set a timeout in case the correct amount of instances are not made or something fails during initialization
     let timeout = setTimeout(function () {
       assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
