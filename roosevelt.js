@@ -33,6 +33,7 @@ module.exports = function (params) {
   let initialized = false
   let faviconPath
   let flags
+  let clusterKilled = 0
 
   // expose initial vars
   app.set('express', express)
@@ -194,22 +195,31 @@ module.exports = function (params) {
       }
     }
 
+    function exitLog () {
+      logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
+      process.exit()
+    }
+
     function gracefulShutdown () {
       let key
-      function exitLog () {
-        logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
-        process.exit()
-      }
 
       app.set('roosevelt:state', 'disconnecting')
       logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
-      servers[0].close(function () {
-        if (servers.length > 1) {
-          servers[1].close(exitLog)
-        } else {
-          exitLog()
+
+      let keys = Object.keys(cluster.workers)
+      if (keys.length > 1 && keys !== undefined) {
+        for (let x = 0; x < keys.length; x++) {
+          cluster.workers[keys[x]].kill('SIGINT')
         }
-      })
+      } else {
+        servers[0].close(function () {
+          if (servers.length > 1) {
+            servers[1].close(exitLog)
+          } else {
+            exitLog()
+          }
+        })
+      }
 
       // destroy connections when server is killed
       for (key in connections) {
@@ -242,14 +252,24 @@ module.exports = function (params) {
       }
       cluster.on('exit', function (worker, code, signal) {
         logger.log('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
+        clusterKilled++
+        if (clusterKilled === parseInt(numCPUs)) {
+          exitLog()
+        }
       })
+
+      // make it so that the master process will go to gracefulShutdown when it is killed
+      process.on('SIGTERM', gracefulShutdown)
+      process.on('SIGINT', gracefulShutdown)
     } else {
+      console.log('test')
       if (!app.get('params').https.httpsOnly) {
         servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))))
       }
       if (app.get('params').https.enable) {
         servers.push(httpsServer.listen(app.get('params').https.httpsPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').https.httpsPort)))
       }
+
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
     }

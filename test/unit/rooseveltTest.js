@@ -125,8 +125,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should allow the user to change the amount of cores that the app will run on', function (done) {
-    // Int var to hold how many times a server was started
+    // Int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
+    let processKilledInt = 0
 
     // set a timeout in case the correct amount of instances are not made or something fails during initialization
     let timeout = setTimeout(function () {
@@ -152,9 +153,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
           clearTimeout(timeout)
         }
       }
+      if (data.includes('thread') && data.includes('died')) {
+        processKilledInt++
+      }
     })
 
     testApp.on('exit', () => {
+      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     })
   })
@@ -166,8 +171,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     }, 5000)
 
-    // Int var to hold how many times a server was started and how many cpu cores this enviroment has
+    // Int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
+    let processKilledInt = 0
     const maxCores = os.cpus().length
 
     // generate the app.js file
@@ -188,9 +194,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
           clearTimeout(timeout)
         }
       }
+      if (data.includes('thread') && data.includes('died')) {
+        processKilledInt++
+      }
     })
 
     testApp.on('exit', () => {
+      assert.equal(processKilledInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     })
   })
