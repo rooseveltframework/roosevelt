@@ -315,4 +315,43 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it('should be able to make a https server if it is enabled', function (done) {
+    // bool var to see if specifics log was outputted
+    let httpsServerMadeBool = false
+    let httpServerMadeBool = false
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      https: {
+        enable: true,
+        httpsPort: 43203,
+        httpsOnly: true
+      }
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
+        httpsServerMadeBool = true
+      }
+      if (data.includes('Roosevelt Express HTTP server listening on port')) {
+        httpServerMadeBool = true
+      }
+    })
+
+    testApp.on('message', (params) => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
+      assert.equal(httpServerMadeBool, false, 'Roosevelt made a http Server even though the httpsOnly param is true')
+      done()
+    })
+  })
 })
