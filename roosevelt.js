@@ -262,7 +262,6 @@ module.exports = function (params) {
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
     } else {
-      console.log('test')
       if (!app.get('params').https.httpsOnly) {
         servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))))
       }
