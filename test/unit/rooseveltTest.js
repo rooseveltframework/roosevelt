@@ -63,6 +63,10 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
       messageRecievedBool = true
@@ -91,6 +95,10 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
