@@ -56,16 +56,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
-    // copy the contents of the noCBApp.js file to app.js
+    // take the template, place the appDir and write the new appDir
+    let appContents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.txt'))
+    let position = appContents.indexOf('appDir:') + 8
+    let newAppContents = appContents.slice(0, position) + `'${appDir}'` + appContents.slice(position)
     fse.ensureDirSync(appDir)
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.js'), path.join(appDir, 'app.js'))
+    fse.writeFileSync(path.join(appDir, 'app.js'), newAppContents)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
@@ -89,16 +88,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
-    // copy the contents of the noCBApp.js file to app.js
+    // take the template, place the appDir and write the new appDir
+    let appContents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'notFunctionCBApp.txt'))
+    let position = appContents.indexOf('appDir:') + 8
+    let newAppContents = appContents.slice(0, position) + `'${appDir}'` + appContents.slice(position)
     fse.ensureDirSync(appDir)
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'notFunctionCBApp.js'), path.join(appDir, 'app.js'))
+    fse.writeFileSync(path.join(appDir, 'app.js'), newAppContents)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
