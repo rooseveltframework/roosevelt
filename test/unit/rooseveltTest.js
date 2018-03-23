@@ -57,7 +57,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let messageRecievedBool = false
 
     // copy the contents of the noCBApp.js file to app.js
-    fse.ensureDir(appDir)
+    fse.ensureDirSync(appDir)
     fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.js'), path.join(appDir, 'app.js'))
 
     // fork the app and run it as a child process
@@ -86,7 +86,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let messageRecievedBool = false
 
     // copy the contents of the noCBApp.js file to app.js
-    fse.ensureDir(appDir)
+    fse.ensureDirSync(appDir)
     fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'notFunctionCBApp.js'), path.join(appDir, 'app.js'))
 
     // fork the app and run it as a child process
