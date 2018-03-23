@@ -528,4 +528,36 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it('should not execute whatever is in onServerStart if the param passed to it is not a function', function (done) {
+    // bool var that will hold whether or not a message is recieved based on if a function was passed to onServerStart
+    let serverStartFunctionBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `something`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // if a message was recieved, then it probably means that the onServerStart param has excuted and sent something
+    testApp.on('message', () => {
+      serverStartFunctionBool = true
+      testApp.kill('SIGINT')
+    })
+
+    // since a message will not be recieved by the test suite, kill the app after a certain amount of time
+    setTimeout(function () {
+      testApp.kill('SIGINT')
+    }, 4000)
+
+    // on exit, test to see if a message was recieved by the test suite from the app
+    testApp.on('exit', () => {
+      assert.equal(serverStartFunctionBool, false, 'Roosevelt still executed what was in onServerStart even though it is not a function')
+      done()
+    })
+  })
 })
