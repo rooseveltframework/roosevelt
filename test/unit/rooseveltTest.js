@@ -13,7 +13,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest')
 
   // options that would be put into generateTestApp params
-  const options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
   const sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
 
   afterEach(function (done) {
@@ -57,16 +56,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true
-    }, options)
-
-    // get rid of the callback in the initServer function
-    let appContents = fse.readFileSync(path.join(appDir, 'app.js')).toString('utf8')
-    appContents = appContents.replace(`process.send(app.expressApp.get('params'))`, ``)
-    fse.writeFileSync(path.join(appDir, 'app.js'), appContents)
+    // copy the contents of the noCBApp.js file to app.js
+    fse.ensureDir(appDir)
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.js'), path.join(appDir, 'app.js'))
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -93,16 +85,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true
-    }, options)
-
-    // get rid of the callback in the initServer function
-    let appContents = fse.readFileSync(path.join(appDir, 'app.js')).toString('utf8')
-    appContents = appContents.replace(`process.send(app.expressApp.get('params'))`, `'something'`)
-    fse.writeFileSync(path.join(appDir, 'app.js'), appContents)
+    // copy the contents of the noCBApp.js file to app.js
+    fse.ensureDir(appDir)
+    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'notFunctionCBApp.js'), path.join(appDir, 'app.js'))
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
