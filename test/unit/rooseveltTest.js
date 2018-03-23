@@ -449,4 +449,39 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it('should be able to run the app even with the localhostOnly param set to true and in production mode', function (done) {
+    // bool var to hold whether a specific log was outputted
+    let productionModeBool = false
+
+    // generate a app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      localhostOnly: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // test to see if the app is being run in production mode
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting Roosevelt Express in production mode...')) {
+        productionModeBool = true
+      }
+    })
+
+    // when the app starts, check that localhostOnly was set correctly and then kill it
+    testApp.on('message', (params) => {
+      assert.equal(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
+      testApp.kill('SIGINT')
+    })
+
+    // on exit, see if the app started in production mode
+    testApp.on('exit', () => {
+      assert.equal(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
+      done()
+    })
+  })
 })
