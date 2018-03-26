@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
+const minimist = require('minimist')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -33,6 +34,9 @@ module.exports = function (params) {
   let initialized = false
   let faviconPath
   let flags
+
+  // parse command line arguments
+  app.set('parsedCommandLineArguments', minimist(process.argv.slice(2)))
 
   // expose initial vars
   app.set('express', express)
@@ -267,6 +271,7 @@ module.exports = function (params) {
     httpsServer: httpsServer,
     expressApp: app,
     initServer: initServer,
-    startServer: startServer
+    startServer: startServer,
+    parsedCommandLineArguments: minimist(process.argv.slice(2))
   }
 }
