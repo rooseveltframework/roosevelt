@@ -816,6 +816,7 @@ Additionally the Roosevelt constructor returns the following object:
 | `httpsServer`            | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
 | `initServer`             | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
 | `startServer`            | Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
+| `parsedCommandLineArguments` | Command line arguments parsed as an object with [minimist](https://www.npmjs.com/package/minimist). |
 
 
 Express middleware and other configurations automatically provided by Roosevelt
@@ -829,6 +830,7 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Logs HTTP requests to the console  using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
 - Includes the [body-parser](https://github.com/expressjs/body-parser) middleware with `bodyParser.json` and `bodyParser.urlencoded({extended: true})`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
+- Parses command line arguments with [minimist](https://www.npmjs.com/package/minimist).
 
 
 
