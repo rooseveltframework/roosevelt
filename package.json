@@ -32,7 +32,8 @@
     "serve-favicon": "~2.4.0",
     "tamper": "~1.0.0",
     "toobusy-js": "~0.5.0",
-    "vnu-jar": "~17.11.0"
+    "vnu-jar": "~17.11.0",
+    "fkill": "~5.3.0"
   },
   "devDependencies": {
     "coveralls": "~3.0.0",
