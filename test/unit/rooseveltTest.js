@@ -613,7 +613,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
         HTTPSServerListeningBool = true
       }
-      console.log(`stdout: ${data}`)
     })
 
     // when the app finishes initialization and starts, kill it
