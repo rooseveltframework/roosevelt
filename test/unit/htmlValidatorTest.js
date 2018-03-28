@@ -9,8 +9,6 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
-  this.timeout(60000)
-
   // location of the test app
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
 
@@ -477,7 +475,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
     })
 
     it('should be able to run the validator even if we change the port number of the validator', function (done) {
-      this.timeout(60000)
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -808,7 +805,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
   describe('Roosevelt killValidator test', function () {
     it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
-      this.timeout(60000)
       // bool var to hold whether or not the request failed status has been given
       let requestFailedLogBool = false
       let finalWarnBool = false
@@ -852,7 +848,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
     })
 
     it('should be able to find the right port if the package.json is missing and the param port is not the default', function (done) {
-      this.timeout(70000)
       // bool var that holds whether or not the validator was found or the validator was closed
       let validatorFoundBool = false
       let validatorClosedBool = false
@@ -897,7 +892,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
     })
 
     it('should be able to grab the htmlValidator params from the package, apply it to the app and use it for the killValidator script', function (done) {
-      this.timeout(70000)
       // bool var to hold whether or not the correct logs came out of killValidator
       let validatorFoundBool = false
       let validatorClosedBool = false
@@ -1317,7 +1311,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
     })
 
     it('should report a error if the problem occurs within the port that we give it or the default 8888 and then scan for the validator', function (done) {
-      this.timeout(80000)
       // bool var to hold whether or not a specific error logs were outputted
       let timeoutErrorLogBool = false
       let scanContinuedLogBool = false
