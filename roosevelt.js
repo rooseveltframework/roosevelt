@@ -215,11 +215,6 @@ module.exports = function (params) {
       for (key in connections) {
         connections[key].destroy()
       }
-
-      setTimeout(function () {
-        logger.error(`${appName} could not close all connections in time; forcefully shutting down.`.red)
-        process.exit(1)
-      }, app.get('params').shutdownTimeout)
     }
 
     let lock = {}
