@@ -222,6 +222,23 @@ module.exports = function (params) {
       }, app.get('params').shutdownTimeout)
     }
 
+    function serverPush (serverFormat, serverPort) {
+      servers.push(serverFormat.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', serverPort)).on('error', (err) => {
+        if (err) {
+          if (err.message.includes('EADDRINUSE')) {
+            logger.error('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port'.red)
+          } else if (err.message.includes('ECONNRESET')) {
+            logger.error('The connection was forcibly closed by a peer, this could be caused by a something in the code that is telling the server to end early, usually a timeout or reboot')
+          } else if (err.message.includes('EPERM')) {
+            logger.error('You do not have the permission to perform making a server on the computer. If you are testing, try running the terminal as the admin')
+          } else if (err.message.includes('EADDRNOTAVAIL')) {
+            logger.error('The address/port you are trying to access is not avaliable, try assigning your server and/or validator to another port')
+          }
+          process.exit()
+        }
+      }))
+    }
+
     let lock = {}
     let startupCallback = function (proto, port) {
       return function () {
@@ -245,36 +262,10 @@ module.exports = function (params) {
       })
     } else {
       if (!app.get('params').https.httpsOnly) {
-        servers.push(httpServer.listen(app.get('port'), (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', app.get('port'))).on('error', (err) => {
-          if (err) {
-            if (err.message.includes('EADDRINUSE')) {
-              logger.error('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port'.red)
-            } else if (err.message.includes('ECONNRESET')) {
-              logger.error('The connection was forcibly closed by a peer, this could be caused by a something in the code that is telling the server to end early, usually a timeout or reboot')
-            } else if (err.message.includes('EPERM')) {
-              logger.error('You do not have the permission to perform making a server on the computer. If you are testing, try running the terminal as the admin')
-            } else if (err.message.includes('EADDRNOTAVAIL')) {
-              logger.error('The address/port you are trying to access is not avaliable, try assigning your server and/or validator to another port')
-            }
-            process.exit()
-          }
-        }))
+        serverPush(httpServer, app.get('port'))
       }
       if (app.get('params').https.enable) {
-        servers.push(httpsServer.listen(app.get('params').https.httpsPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTPS', app.get('params').https.httpsPort)).on('error', (err) => {
-          if (err) {
-            if (err.message.includes('EADDRINUSE')) {
-              logger.error('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port'.red)
-            } else if (err.message.includes('ECONNRESET')) {
-              logger.error('The connection was forcibly closed by a peer, this could be caused by a something in the code that is telling the server to end early, usually a timeout or reboot')
-            } else if (err.message.includes('EPERM')) {
-              logger.error('You do not have the permission to perform making a server on the computer. If you are testing, try running the terminal as the admin')
-            } else if (err.message.includes('EADDRNOTAVAIL')) {
-              logger.error('The address/port you are trying to access is not avaliable, try assigning your server and/or validator to another port')
-            }
-            process.exit()
-          }
-        }))
+        serverPush(httpsServer, app.get('params').https.httpsPort)
       }
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
