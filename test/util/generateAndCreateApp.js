@@ -5,19 +5,32 @@ const path = require('path')
 
 let myEmitter = new EventEmitter()
 
-function startRooseveltServer (rooseveltParams, options, appDir) {
+function getEmitter () {
+  return myEmitter
+}
+
+function deleteAndCreateEventEmitter () {
+  myEmitter = undefined
+  myEmitter = new EventEmitter()
+}
+
+function startRooseveltServer (rooseveltParams, options, appDir, logs, errors) {
   // generate the test app.js file
   generateTestApp(rooseveltParams, options)
 
   let testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-  testApp.stdout.on('data', (data) => {
-    myEmitter.emit('log', data)
-  })
+  if (logs) {
+    testApp.stdout.on('data', (data) => {
+      myEmitter.emit('log', data)
+    })
+  }
 
-  testApp.stderr.on('data', (data) => {
-    myEmitter.emit('error', data)
-  })
+  if (errors) {
+    testApp.stderr.on('data', (data) => {
+      myEmitter.emit('error', data)
+    })
+  }
 
   testApp.on('message', (params) => {
     myEmitter.emit('message', params)
@@ -32,5 +45,6 @@ function startRooseveltServer (rooseveltParams, options, appDir) {
   })
 }
 
-module.exports.myEmitter = myEmitter
 module.exports.startRooseveltServer = startRooseveltServer
+module.exports.getEmitter = getEmitter
+module.exports.deleteAndCreateEventEmitter = deleteAndCreateEventEmitter
