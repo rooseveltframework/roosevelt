@@ -25,4 +25,13 @@ module.exports = (app) => {
     // render broken html to user
     res.render(badPath, model)
   })
+
+  app.route('/brokenObject2Test').get((req, res) => {
+    // Path to broken html
+    const badPath = path.join(__dirname, '../', 'views', 'brokenHTMLTest.html')
+    // create the object that has a value that will stop validation
+    const model = {somethingElse: 2313}
+    // render broken html to user
+    res.render(badPath, model)
+  })
 }
