@@ -671,10 +671,10 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       // look at the errors logs to see if specific log is outputted
-      testApp2.stderr.on('data', (data) => {
+      testApp.stderr.on('data', (data) => {
         if (data.includes('Request Failed.\nStatus Code: 500')) {
           requestFailedLogBool = true
         }
@@ -684,12 +684,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       })
 
       // once app.js finishes initialization, kill it
-      testApp2.on('message', () => {
-        testApp2.kill('SIGINT')
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
       })
 
       // once the server made by app.js is done, kill the dummy server
-      testApp2.on('exit', () => {
+      testApp.on('exit', () => {
         server.close()
       })
 
@@ -724,22 +724,22 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       // check the error logs to see if the correct error log was outputted
-      testApp2.stderr.on('data', (data) => {
+      testApp.stderr.on('data', (data) => {
         if (data.includes('Another process that is not the HTMLValidator is using this port already. Quiting the initialization of your app')) {
           twoProcessToPortsBool = true
         }
       })
 
       // when app.js finishes initialization, kill it
-      testApp2.on('message', () => {
-        testApp2.kill('SIGINT')
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
       })
 
       // as app.js is closing, close the dummy server
-      testApp2.on('exit', () => {
+      testApp.on('exit', () => {
         server.close()
       })
 
@@ -1266,9 +1266,6 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
       // fork the app.js file and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-      testApp.stdout.on('data', (data) => {
-      })
 
       testApp.on('message', () => {
         testApp.kill('SIGINT')
