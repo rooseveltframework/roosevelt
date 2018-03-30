@@ -49,8 +49,7 @@
     "sinon": "~5.0.0",
     "standard": "~11.0.0",
     "supertest": "~3.0.0",
-    "teddy": "~0.4.23",
-    "execa": "~0.10.0"
+    "teddy": "~0.4.23"
   },
   "repository": {
     "type": "git",
