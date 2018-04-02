@@ -842,6 +842,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var that holds whether or not the validator was found or the validator was closed
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -872,11 +873,15 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
         killLine.on('exit', () => {
           assert.equal(validatorClosedBool, true, 'Roosevelt was not able to closed the HTML Validator on its seperate port')
           assert.equal(validatorFoundBool, true, 'Roosevelt was not able to find the HTML Validator on its seperate port')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give the message that it has found and killed all the validators it can at the moment')
           done()
         })
       })
@@ -887,6 +892,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       let validatorFoundBool = false
       let validatorClosedBool = false
       let validatorDefaultNotFoundBool = false
+      let foundAndKilledAllBool = false
       // js source string to hold the data for the package.json file
       let packageJson = {
         rooseveltConfig: {
@@ -927,12 +933,16 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on, which is on the package.json file')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
           assert.equal(validatorDefaultNotFoundBool, false, 'killValidator was not able to find the Validator on the port it was given by package.json and has gone to scan the ports')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it has found and killed all validators it can at the moment')
           done()
         })
       })
@@ -942,6 +952,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the right logs are outputted
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
 
       // generate the app, the port of the html Validator cannot go lower than 1024 as jetty servers, which the htmlValidator is build with, requires root/admin permission to access ports lower than 1024
       generateTestApp({
@@ -972,11 +983,15 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it found and killed all validators it can at the moment')
           done()
         })
       })
@@ -986,6 +1001,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the right logs are outputted
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
 
       // generate the app
       generateTestApp({
@@ -1016,11 +1032,15 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it found and killed al the validators it can at the moment')
           done()
         })
       })
@@ -1030,6 +1050,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the right logs are outputted
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
 
       // generate the app
       generateTestApp({
@@ -1060,11 +1081,15 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it has found and killed all validators it can at the moment')
           done()
         })
       })
@@ -1170,6 +1195,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       let validatorClosedBool = false
       let foundAnotherPageBool = false
       let validatorDefaultNotFoundBool = false
+      let foundAndKilledAllBool = false
       // js source string to hold the data for the package.json file
       let packageJson = {
         rooseveltConfig: {
@@ -1216,6 +1242,9 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
         killLine.stderr.on('data', (data) => {
@@ -1233,6 +1262,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         assert.equal(validatorDefaultNotFoundBool, true, 'killValidator is translating the plainHTML page that it would get back from the roosevelt app as the HTML Validator')
         assert.equal(validatorFoundBool, true, 'killValidator was not able to find the validator')
         assert.equal(foundAnotherPageBool, true, 'The app made by Roosevelt has not given back the plainHTML page that it should')
+        assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it had found and killed all the validators it can at the moment')
         done()
       })
     })
@@ -1242,6 +1272,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       let validatorFoundon8888Bool = false
       let validatorClosedBool = false
       let validatorSearchedBool = false
+      let foundAndKilledAllBool = false
 
       // js source string to hold the data for the package.json file
       let packageJson = {
@@ -1277,11 +1308,14 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
         // look at the output logs and see if specific logs are displayed
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port')) {
+          if (data.includes('Validator successfully found on port: 8888')) {
             validatorFoundon8888Bool = true
           }
-          if (data.includes('Killed process on port')) {
+          if (data.includes('Killed process on port: 8888')) {
             validatorClosedBool = true
+          }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
           }
         })
 
@@ -1297,6 +1331,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           assert.equal(validatorFoundon8888Bool, true, 'Kill Validator was not looking on port 8888, which it should if the package.json htmlValidator does not specify a specific port')
           assert.equal(validatorClosedBool, true, 'Kill Validator did not close the HTML Validator')
           assert.equal(validatorSearchedBool, false, 'KillValidator went to look at other ports other than the default 8888')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying it had found and killed all validators it can at the moment')
           done()
         })
       })
