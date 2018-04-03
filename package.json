@@ -68,10 +68,10 @@
   "gitHead": "",
   "scripts": {
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "coverage": "nyc --reporter=html --reporter=text mocha --timeout 90000 --recursive test/unit",
-    "coveralls": "nyc --reporter=lcov mocha --timeout 90000 --recursive test && cat ./coverage/lcov.info | coveralls",
+    "coverage": "nyc --reporter=html --reporter=text mocha --timeout 125000 --recursive test/unit",
+    "coveralls": "nyc --reporter=lcov mocha --timeout 125000 --recursive test && cat ./coverage/lcov.info | coveralls",
     "standard": "standard",
-    "test": "mocha --timeout 90000 --recursive test/unit && npm run standard",
+    "test": "mocha --timeout 125000 --recursive test/unit && npm run standard",
     "precommit": "lint-staged && eslint test/unit"
   },
   "lint-staged": {
