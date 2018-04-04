@@ -307,7 +307,7 @@ App behavior parameters
 
       ```json
       {
-        "enabled": false,
+        "enable": false,
         "exceptions": {
           "requestHeader": "Partial",
           "modelValue": "_disableValidator"
