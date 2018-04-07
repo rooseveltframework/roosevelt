@@ -8,6 +8,7 @@ const fork = require('child_process').fork
 const fse = require('fs-extra')
 const request = require('supertest')
 const http = require('http')
+const fkill = require('fkill')
 
 describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
   // location of the test app
@@ -62,15 +63,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             let test2 = res.text.includes('<h2>Errors:</h2>')
             assert.equal(test1, true)
             assert.equal(test2, true)
-            testApp.kill('SIGINT')
+            // kill the validator and app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -107,15 +111,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             assert.equal(test2, true)
             assert.equal(test3, true)
             assert.equal(test4, true)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -148,15 +155,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             let test2 = res.text.includes('<h2>Warnings:</h2>')
             assert.equal(test1, true)
             assert.equal(test2, true)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
       })
-      testApp.on('exit', () => {
-        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-        killLine.on('exit', () => {
-          done()
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -175,6 +185,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // on the initialization completing, send a request to a page that has both html errors and warnings
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
@@ -189,15 +200,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             let test2 = res.text.includes('<h2>Warnings:</h2>')
             assert.equal(test1, true)
             assert.equal(test2, false)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -219,6 +233,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // on the initialization completing, request a page that has both html errors and warnings
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
@@ -233,15 +248,17 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             // test the text returned to see if it has the validation error page title in it
             let test2 = res.text.includes('HTML did not pass validation')
             assert.equal(test2, true)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -263,6 +280,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // on initialization completing, request a page that has a unique response header
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/brokenHeaderTest')
@@ -277,15 +295,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             // test the text returned to see if it has the validation error page title in it
             let test2 = res.text.includes('HTML did not pass validation')
             assert.equal(test2, false)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -307,6 +328,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // on initialization completing, request the broken page with a unique request header
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
@@ -323,15 +345,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             // check to see that the page did not validate
             let test2 = res.text.includes('HTML did not pass validation')
             assert.equal(test2, false)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -369,15 +394,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             // check to see that the page did not validate
             let test1 = res.text.includes('HTML did not pass validation')
             assert.equal(test1, false)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -417,15 +445,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             let test2 = res.text.includes('Errors:')
             assert.equal(test1, true)
             assert.equal(test2, true)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -463,15 +494,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             // check to see tha tthe page did not validate
             let test1 = res.text.includes('HTML did not pass validation')
             assert.equal(test1, true)
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:8888`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -504,16 +538,18 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
             // check to see that the page loaded
             let test1 = res.status
             assert.equal(test1, 200)
-
-            testApp.kill('SIGINT')
+            // kill the validator and the app
+            fkill(`:3000`, {force: true}).then(() => {
+              testApp.kill('SIGINT')
+            }, (err) => {
+              console.log(err)
+              testApp.kill('SIGINT')
+            })
           })
-        testApp.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      })
 
-          killLine.on('exit', () => {
-            done()
-          })
-        })
+      testApp.on('exit', () => {
+        done()
       })
     })
 
@@ -567,10 +603,8 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
                 let test2 = res.text.includes('Ready to check  - Nu Html Checker')
                 assert.equal(test2, true)
 
-                // kill the validator with a fork or the killValidator script
-                const killLine = fork('lib/scripts/killValidator', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-                killLine.on('exit', () => {
+                // kill the validator with fkill
+                fkill(`:8888`, {force: true}).then(() => {
                   // see that the validator is no longer listening
                   request(`http://localhost:${params.htmlValidator.port}`)
                     .get('/')
@@ -582,6 +616,9 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
                         done()
                       }
                     })
+                }, (err) => {
+                  console.log(err)
+                  done()
                 })
               })
           }
@@ -610,10 +647,12 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app.js file and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // on initialization completing , kill the app
       testApp.on('message', () => {
         testApp.kill('SIGINT')
       })
 
+      // when the app exits, run another app and see if it grabs onto the validator made by the first app
       testApp.on('exit', () => {
         const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
@@ -629,17 +668,20 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           }
         })
 
+        // on initialization completing, kill the 2nd app
         testApp2.on('message', () => {
           testApp2.kill('SIGINT')
         })
 
+        // on 2nd app exit, kill the validator
         testApp2.on('exit', () => {
-          const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-          killLine.on('exit', () => {
+          fkill(`:2500`, {force: true}).then(() => {
             assert.equal(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
             assert.equal(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
             assert.equal(detachedValidatorListen2Bool, true, 'The second app is not listening to the validator that is currently running')
+            done()
+          }, (err) => {
+            console.log(err)
             done()
           })
         })
@@ -768,10 +810,8 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
       testApp.on('message', (params) => {
         // close the htmlValidator
-        const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.on('exit', () => {
-          // request a bad page
+        fkill(`:45231`, {force: true}).then(() => {
+          // request a bad page and see if the response shows that we cannot connect to the validator
           request(`http://localhost:${params.port}`)
             .get('/Broken')
             .expect(200, (err, res) => {
@@ -785,6 +825,9 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
               assert.equal(test2, true, 'Roosevelt either did not detect an error or did not give back the right page (pageHeader)')
               testApp.kill('SIGINT')
             })
+        }, (err) => {
+          console.log(err)
+          testApp.kill('SIGINT')
         })
       })
 
@@ -830,6 +873,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           }
         })
 
+        // on kill Validator's exit, check to see if the error logs outputted
         killLine.on('exit', () => {
           assert.equal(requestFailedLogBool, true, 'Roosevelt did not throw a message saying that it could not find the validator after we shut it down')
           assert.equal(finalWarnBool, true, 'Roosevelt did not throw the message saying that it will stop looking for the validator')
@@ -842,29 +886,29 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var that holds whether or not the validator was found or the validator was closed
       let validatorFoundBool = false
       let validatorClosedBool = false
-      // generate the app
-      generateTestApp({
-        generateFolderStructure: true,
-        appDir: appDir,
-        htmlValidator: {
-          enable: true,
-          port: 52372,
-          separateProcess: true
-        },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
-      }, options)
+      let foundAndKilledAllBool = false
+
+      // generate a dummy server that will emulate sending back the html Validator
+      let data = `
+      const http = require('http')
+
+      let server = http.createServer((req, res) => {
+        res.write('Nu Html Checker')
+        res.end()
+      }).listen(52372)
+      
+      process.send('something')`
+
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
 
       // fork the app.js file and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      // when the app is starting, kill it
+      // on the dummy app completing its initialization, run the kill Validator
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
-      })
-
-      testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+        // on logs, see if the right one are being outputted
         killLine.stdout.on('data', (data) => {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
@@ -872,11 +916,16 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
+        // when killValidator exits, check if all errors logs that we want are outputted
         killLine.on('exit', () => {
           assert.equal(validatorClosedBool, true, 'Roosevelt was not able to closed the HTML Validator on its seperate port')
           assert.equal(validatorFoundBool, true, 'Roosevelt was not able to find the HTML Validator on its seperate port')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give the message that it has found and killed all the validators it can at the moment')
           done()
         })
       })
@@ -912,6 +961,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // when the app finishes initialization, kill it
       testApp.on('message', () => {
         testApp.kill('SIGINT')
       })
@@ -920,6 +970,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       testApp.on('exit', () => {
         const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
 
+        // on console logs, see if specific logs are being outputted
         killLine.stdout.on('data', (data) => {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
@@ -929,6 +980,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           }
         })
 
+        // when the kill Validator exits, check that all the logs were outputted
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on, which is on the package.json file')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
@@ -942,29 +994,29 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the right logs are outputted
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
 
-      // generate the app, the port of the html Validator cannot go lower than 1024 as jetty servers, which the htmlValidator is build with, requires root/admin permission to access ports lower than 1024
-      generateTestApp({
-        generateFolderStructure: true,
-        appDir: appDir,
-        htmlValidator: {
-          enable: true,
-          port: 1024,
-          separateProcess: true
-        },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
-      }, options)
+      // create a dummy server that will emulate a html Validator
+      let data = `
+      const http = require('http')
 
-      // fork the app and run it as a child process
+      http.createServer((req, res) => {
+        res.write('Nu Html Checker')
+        res.end()
+      }).listen(1024)
+      
+      process.send('something')`
+
+      // create the app.js file and run it as a child process
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
+
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
-      })
-
-      testApp.on('exit', () => {
+        // fork the killValidator.js file to see if it works
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+        // on logs, see if the right logs are being outputted
         killLine.stdout.on('data', (data) => {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
@@ -972,11 +1024,16 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
+        // on exit, see if the correct logs were outputted
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it found and killed all validators it can at the moment')
           done()
         })
       })
@@ -986,29 +1043,28 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the right logs are outputted
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
 
-      // generate the app
-      generateTestApp({
-        generateFolderStructure: true,
-        appDir: appDir,
-        htmlValidator: {
-          enable: true,
-          port: 65535,
-          separateProcess: true
-        },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
-      }, options)
+      // create a dummy server to emulate a html Validator response
+      let data = `
+      const http = require('http')
 
-      // fork the app and run it as a child process
+      http.createServer((req, res) => {
+        res.write('Nu Html Checker')
+        res.end()
+      }).listen(65535)
+      
+      process.send('something')`
+      // create the app.js file and run it as a child process
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
+
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
-      })
-
-      testApp.on('exit', () => {
+        // fork the killValidator.js file to see if it works
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+        // on console.logs, see if specific logs are outputted
         killLine.stdout.on('data', (data) => {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
@@ -1016,11 +1072,16 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
+        // on exit, check whether the logs were outputted
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it found and killed al the validators it can at the moment')
           done()
         })
       })
@@ -1030,29 +1091,27 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the right logs are outputted
       let validatorFoundBool = false
       let validatorClosedBool = false
+      let foundAndKilledAllBool = false
 
-      // generate the app
-      generateTestApp({
-        generateFolderStructure: true,
-        appDir: appDir,
-        htmlValidator: {
-          enable: true,
-          port: 29481,
-          separateProcess: true
-        },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
-      }, options)
+      // create a dummy server that will emulate a html Validator response
+      let data = `
+      const http = require('http')
+      let server = http.createServer((req, res) => {
+        res.write('Nu Html Checker')
+        res.end()
+      }).listen(29481)
+      
+      process.send('something')`
+      // create the app.js file and run it as a child process
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
 
-      // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // fork the killValidator.js file to see if it works
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
-      })
-
-      testApp.on('exit', () => {
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+        // on console.logs, see if a specific log was outputted
         killLine.stdout.on('data', (data) => {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
@@ -1060,11 +1119,16 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
+        // on exit, check if the specific logs were outputted
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it has found and killed all validators it can at the moment')
           done()
         })
       })
@@ -1099,10 +1163,11 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
       // when we get a message from the app, signifying that the app is starting, kill it
       testApp.on('message', () => {
-        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-        killLine.on('exit', () => {
-          testApp.kill('SIGINT')
+        fkill(`:2000`, {force: true}).then(() => {
+          done()
+        }, (err) => {
+          console.log(err)
+          done()
         })
       })
 
@@ -1137,10 +1202,19 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson))
 
       // run a dummy server that can simulate giving back a missing page error
+      let data = `
+      const http = require('http')
+
       let server = http.createServer(function (req, res) {
         res.statusCode = 404
         res.end()
       }).listen(43711)
+      
+      process.send('something')`
+      // create the app.js file and run it as a child process
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
+
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       // fork the kill validator script and run it as a child process
       const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
@@ -1154,11 +1228,11 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
       // on the killHTMLValidator script ending, close the dummy server
       killLine.on('exit', () => {
-        server.close()
+        testApp.kill()
       })
 
       // When the dummy server closes, check to see if the correct error message was outputted
-      server.on('close', () => {
+      testApp.on('close', () => {
         assert.equal(requestFailedBool, true, 'kill Validator does not catch the error that occurs when it tries to access a path on the server that does not exists')
         done()
       })
@@ -1168,8 +1242,8 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // bool var to hold whether or not the correct logs came out of killValidator
       let validatorFoundBool = false
       let validatorClosedBool = false
-      let foundAnotherPageBool = false
       let validatorDefaultNotFoundBool = false
+      let foundAndKilledAllBool = false
       // js source string to hold the data for the package.json file
       let packageJson = {
         rooseveltConfig: {
@@ -1183,32 +1257,34 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // make the package.json file
       fse.ensureDir(appDir)
       fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJson))
-      // copy over a new controller into the mvc of the test App Dir
-      fse.copySync(path.join(appDir, '../', '../', 'util', 'htmlDefaultFile.js'), path.join(appDir, 'mvc', 'controllers', 'htmlDefaultFile.js'))
-      // generate the app
-      generateTestApp({
-        generateFolderStructure: true,
-        appDir: appDir,
-        htmlValidator: {
-          enable: true,
-          port: 2500,
-          separateProcess: true
-        },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
-      }, options)
-      // fork the app.js file and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      testApp.stdout.on('data', (data) => {
-        if (data.includes('200') && data.includes('GET')) {
-          foundAnotherPageBool = true
-        }
-      })
+      // create a dummy server that will simulate giving back a regular html page
+      let server1 = http.createServer((req, res) => {
+        let data = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'htmlDefaultFile.js'))
+        res.setHeader('Content-type', 'text/plain')
+        res.end(data)
+      }).listen(43711)
+
+      // create a dummy server that will simulate giving back a html Validator
+      let data = `
+      const http = require('http')
+
+      let server = http.createServer((req, res) => {
+        res.write('Nu Html Checker')
+        res.end()
+      }).listen(2500)
+      
+      process.send('something')`
+      // create the app.js file and run it as a child process
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
+
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', () => {
         // fork the kill validator script and run it as a child process
         const killLine = fork('../../../lib/scripts/killValidator.js', [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir})
 
+        // on console.logs, see if a specific log was outputted
         killLine.stdout.on('data', (data) => {
           if (data.includes('Validator successfully found on port')) {
             validatorFoundBool = true
@@ -1216,24 +1292,30 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           if (data.includes('Killed process on port')) {
             validatorClosedBool = true
           }
+          if (data.includes('Found and closed all validators at the moment, exiting killValidator')) {
+            foundAndKilledAllBool = true
+          }
         })
 
+        // on error, see if a specifc log was outputted
         killLine.stderr.on('data', (data) => {
           if (data.includes('Could not find validator on port:')) {
             validatorDefaultNotFoundBool = true
           }
         })
-
+        // on kill Validator's exit, close the dummy server
         killLine.on('exit', () => {
-          testApp.kill('SIGINT')
+          server1.close()
         })
-      })
-      testApp.on('exit', () => {
-        assert.equal(validatorClosedBool, true, 'killValidator was not able to close the validator that was opened')
-        assert.equal(validatorDefaultNotFoundBool, true, 'killValidator is translating the plainHTML page that it would get back from the roosevelt app as the HTML Validator')
-        assert.equal(validatorFoundBool, true, 'killValidator was not able to find the validator')
-        assert.equal(foundAnotherPageBool, true, 'The app made by Roosevelt has not given back the plainHTML page that it should')
-        done()
+
+        // on the dummy server's exit, check if all the logs we wanted were outputted
+        server1.on('close', () => {
+          assert.equal(validatorClosedBool, true, 'killValidator was not able to close the validator that was opened')
+          assert.equal(validatorDefaultNotFoundBool, true, 'killValidator is translating the plainHTML page that it would get back from the roosevelt app as the HTML Validator')
+          assert.equal(validatorFoundBool, true, 'killValidator was not able to find the validator')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it had found and killed all the validators it can at the moment')
+          done()
+        })
       })
     })
 
@@ -1267,6 +1349,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app.js file and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // when the app completes initialization, kill it
       testApp.on('message', () => {
         testApp.kill('SIGINT')
       })
@@ -1277,10 +1360,10 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
         // look at the output logs and see if specific logs are displayed
         killLine.stdout.on('data', (data) => {
-          if (data.includes('Validator successfully found on port')) {
+          if (data.includes('Validator successfully found on port: 8888')) {
             validatorFoundon8888Bool = true
           }
-          if (data.includes('Killed process on port')) {
+          if (data.includes('Killed process on port: 8888')) {
             validatorClosedBool = true
           }
         })
@@ -1307,6 +1390,8 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       let timeoutErrorLogBool = false
       let scanContinuedLogBool = false
 
+      let data = `
+      const http = require('http')
       let server = http.createServer(function (req, res) {
         let max = Math.pow(10, 10)
         let y = 0
@@ -1315,26 +1400,35 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         }
         res.end()
       }).listen(8888)
+      
+      process.send('something')`
+      // create the app.js file and run it as a child process
+      fse.writeFileSync(path.join(appDir, 'app.js'), data)
 
-      const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      killLine.stderr.on('data', (data) => {
-        if (data.includes('Error Occurred:')) {
-          timeoutErrorLogBool = true
-        }
-        if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
-          scanContinuedLogBool = true
-        }
-      })
-
-      killLine.on('exit', () => {
-        server.close()
-      })
-
-      server.on('close', () => {
-        assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of timeout')
-        assert.equal(scanContinuedLogBool, true, 'killValidator did not continue scanning the ports for the Validator after the initial scan failed')
-        done()
+      // when the app finishes initilization, run kill Validator
+      testApp.on('message', () => {
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+        // on error logs, see if specific logs are outputted
+        killLine.stderr.on('data', (data) => {
+          if (data.includes('Error Occurred:')) {
+            timeoutErrorLogBool = true
+          }
+          if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
+            scanContinuedLogBool = true
+          }
+        })
+        // kill the roosevelt app when kill Validator exits
+        killLine.on('exit', () => {
+          testApp.kill()
+        })
+        // when the roosevelt app exits, check that all the logs we wanted were outputted
+        testApp.on('exit', () => {
+          assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of timeout')
+          assert.equal(scanContinuedLogBool, true, 'killValidator did not continue scanning the ports for the Validator after the initial scan failed')
+          done()
+        })
       })
     })
   })
