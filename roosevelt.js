@@ -10,6 +10,8 @@ const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
 const spawn = require('child_process').spawn
 
+const fkill = require('fkill')
+
 module.exports = function (params) {
   params = params || {} // ensure params are an object
 
@@ -181,8 +183,15 @@ module.exports = function (params) {
 
   function autoKiller () {
     if (params.htmlValidator.separateProcess && params.htmlValidator.enable) {
-      let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false, env: {title: 'something'}})
-      autokiller.unref()
+      fkill('autoKiller', {force: true}).then(() => {
+        console.log('killed it')
+        let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+        autokiller.unref()
+      }, () => {
+        console.log('was not on')
+        let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+        autokiller.unref()
+      })
     }
   }
 

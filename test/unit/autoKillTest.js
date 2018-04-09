@@ -42,11 +42,15 @@ describe('autokill Test', function () {
       console.log(`stderr: ${data}`)
     })
     testApp.on('message', () => {
-      // testApp.kill('SIGINT')
+      setTimeout(() => {
+        // testApp.kill('SIGINT')
+      }, 1000)
     })
     testApp.on('exit', () => {
-      console.log('ended')
-      done()
+      setTimeout(() => {
+        console.log('ended')
+        done()
+      }, 10000)
     })
   })
 })
