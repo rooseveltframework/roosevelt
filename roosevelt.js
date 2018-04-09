@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
+const spawn = require('child_process').spawn
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -178,6 +179,13 @@ module.exports = function (params) {
     }
   }
 
+  function autoKiller () {
+    if (params.htmlValidator.separateProcess && params.htmlValidator.enable) {
+      let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false, env: {title: 'something'}})
+      autokiller.unref()
+    }
+  }
+
   // start server
   function startHttpServer () {
     // determine number of CPUs to use
@@ -264,6 +272,7 @@ module.exports = function (params) {
       }
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
+      autoKiller()
     }
   }
 
