@@ -194,12 +194,12 @@ module.exports = function (params) {
         logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`.yellow)
       }
     }
-    
-     // shut down the process if both the htmlValidator and the app are trying to use the same port
+
+    // shut down the process if both the htmlValidator and the app are trying to use the same port
     if (app.get('params').port === app.get('params').htmlValidator.port) {
       logger.error('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port'.red)
       process.exit(1)
-      
+    }
     function exitLog () {
       logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
       process.exit()
