@@ -26,10 +26,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should stil compile and run what is on initServer even when we do not pass a param object to roosevelt', function (done) {
-    // create a empty app.js
-    fse.ensureDirSync(appDir)
-    let contents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'emptyParamApp.js')).toString('utf8')
-    fse.writeFileSync(path.join(appDir, 'app.js'), contents)
+    // generate a empty app.js file
+    sOptions.appDir = appDir
+    sOptions.method = 'initServer'
+    sOptions.empty = false
+    sOptions.noFunction = false
+
+    generateTestApp({
+    }, sOptions)
 
     // read the default config file
     let defaults = fse.readFileSync(path.join(appDir, '../', '../', '../', 'lib', 'defaults', 'config.json')).toString('utf8')
@@ -53,15 +57,17 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should allow the user to init Roosevelt without putting in a callback', function (done) {
+    // generate the app.js file (no callback)
+    sOptions.method = 'initServer'
+    sOptions.empty = true
+    sOptions.noFunction = false
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true
+    }, sOptions)
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
-
-    // take the template, place the appDir and write the new appDir
-    let appContents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'noCBApp.txt'))
-    let position = appContents.indexOf('appDir:') + 8
-    let newAppContents = appContents.slice(0, position) + `'${appDir}'` + appContents.slice(position)
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'app.js'), newAppContents)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -88,12 +94,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
-    // take the template, place the appDir and write the new appDir
-    let appContents = fse.readFileSync(path.join(appDir, '../', '../', 'util', 'notFunctionCBApp.txt'))
-    let position = appContents.indexOf('appDir:') + 8
-    let newAppContents = appContents.slice(0, position) + `'${appDir}'` + appContents.slice(position)
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'app.js'), newAppContents)
+    // create the app.js file (cb not a function)
+    sOptions.method = 'initServer'
+    sOptions.noFunction = true
+    sOptions.empty = false
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true
+    }, sOptions)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})

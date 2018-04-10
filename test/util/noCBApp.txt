@@ -1,4 +1,0 @@
-const app = require(`../../../roosevelt`)({ appDir: ,
-  generateFolderStructure: true })
-
-app.initServer()
