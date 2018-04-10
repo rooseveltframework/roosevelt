@@ -185,11 +185,11 @@ module.exports = function (params) {
     if (params.htmlValidator.separateProcess && params.htmlValidator.enable) {
       if (process.platform === 'linux' || process.platform === 'darwin') {
         fkill('autoKiller', {force: true}).then(() => {
-          console.log('killed it')
+          logger.log('Restarting autoKiller')
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
           autokiller.unref()
         }, () => {
-          console.log('was not on')
+          logger.log('There was no autoKiller running, creating a new one')
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
           autokiller.unref()
         })
@@ -199,13 +199,16 @@ module.exports = function (params) {
           let contents = fs.readFileSync(filePath).toString('utf8')
           contents = parseInt(contents)
           fkill(contents, {force: true}).then(() => {
+            logger.log('Restarting autoKiller')
             let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
             autokiller.unref()
           }, () => {
+            logger.log('There was no autoKiller running, creating a new one')
             let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
             autokiller.unref()
           })
         } else {
+          logger.log('There was no autoKiller running, creating a new one')
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
           autokiller.unref()
         }

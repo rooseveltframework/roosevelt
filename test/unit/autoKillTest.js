@@ -43,7 +43,7 @@ describe('autokill Test', function () {
     })
     testApp.on('message', () => {
       setTimeout(() => {
-        // testApp.kill('SIGINT')
+        testApp.kill('SIGINT')
       }, 1000)
     })
     testApp.on('exit', () => {
