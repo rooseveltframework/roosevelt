@@ -25,7 +25,6 @@
     "maxLagPerRequest": 70,
     "lagCheckInterval": 500
   },
-  "shutdownTimeout": 30000,
   "bodyParserUrlencodedParams": {
     "extended": true
   },

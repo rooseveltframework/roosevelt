@@ -307,7 +307,7 @@ App behavior parameters
 
       ```json
       {
-        "enabled": false,
+        "enable": false,
         "exceptions": {
           "requestHeader": "Partial",
           "modelValue": "_disableValidator"
@@ -338,8 +338,6 @@ App behavior parameters
       }
       ```
 
-- `shutdownTimeout`: Maximum amount of time in miliseconds given to Roosevelt to gracefully shut itself down when sent the [kill signal](https://en.wikipedia.org/wiki/Kill_(command)).
-  - Default: *[Number]* `30000` (30 seconds).
 - `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
   - Default: *[Object]*
 
