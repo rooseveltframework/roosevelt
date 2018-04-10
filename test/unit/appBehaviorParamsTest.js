@@ -125,6 +125,10 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     // create a fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
     // when the server starts, send a request with a url that has more params then what is allowed
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)

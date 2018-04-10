@@ -181,38 +181,47 @@ module.exports = function (params) {
     }
   }
 
-  function autoKiller () {
-    if (params.htmlValidator.separateProcess && params.htmlValidator.enable) {
-      if (process.platform === 'linux' || process.platform === 'darwin') {
-        fkill('autoKiller', {force: true}).then(() => {
-          logger.log('Restarting autoKiller')
-          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params'.autoKillerTime)}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
-          autokiller.unref()
-        }, () => {
-          logger.log('There was no autoKiller running, creating a new one')
-          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
-          autokiller.unref()
-        })
-      } else if (process.platform === 'win32') {
-        let filePath = path.join(__dirname, 'lib', 'scripts', 'PID.txt')
-        if (fs.existsSync(filePath)) {
-          let contents = fs.readFileSync(filePath).toString('utf8')
-          contents = parseInt(contents)
-          fkill(contents, {force: true}).then(() => {
+  function autoKillerStart (cb) {
+    if (params.htmlValidator) {
+      if (params.htmlValidator.separateProcess && params.htmlValidator.enable) {
+        if (process.platform === 'linux' || process.platform === 'darwin') {
+          fkill('autoKiller', {force: true}).then(() => {
             logger.log('Restarting autoKiller')
             let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
             autokiller.unref()
+            cb()
           }, () => {
             logger.log('There was no autoKiller running, creating a new one')
             let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
             autokiller.unref()
+            cb()
           })
-        } else {
-          logger.log('There was no autoKiller running, creating a new one')
-          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
-          autokiller.unref()
+        } else if (process.platform === 'win32') {
+          let filePath = path.join(__dirname, 'lib', 'scripts', 'PID.txt')
+          if (fs.existsSync(filePath)) {
+            let contents = fs.readFileSync(filePath).toString('utf8')
+            contents = parseInt(contents)
+            fkill(contents, {force: true}).then(() => {
+              logger.log('Restarting autoKiller')
+              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+              autokiller.unref()
+              cb()
+            }, () => {
+              logger.log('There was no autoKiller running, creating a new one')
+              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+              autokiller.unref()
+              cb()
+            })
+          } else {
+            logger.log('There was no autoKiller running, creating a new one')
+            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+            autokiller.unref()
+            cb()
+          }
         }
       }
+    } else {
+      cb()
     }
   }
 
@@ -280,13 +289,15 @@ module.exports = function (params) {
     let startupCallback = function (proto, port) {
       return function () {
         logger.log('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
-        if (!Object.isFrozen(lock)) {
-          Object.freeze(lock)
-          // fire user-defined onServerStart event
-          if (params.onServerStart && typeof params.onServerStart === 'function') {
-            params.onServerStart(app)
+        autoKillerStart(() => {
+          if (!Object.isFrozen(lock)) {
+            Object.freeze(lock)
+            // fire user-defined onServerStart event
+            if (params.onServerStart && typeof params.onServerStart === 'function') {
+              params.onServerStart(app)
+            }
           }
-        }
+        })
       }
     }
 
@@ -306,7 +317,6 @@ module.exports = function (params) {
       }
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
-      autoKiller()
     }
   }
 
