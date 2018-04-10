@@ -32,8 +32,10 @@ describe('autokill Test', function () {
         port: 42312,
         separateProcess: true
       },
+      autoKillerTime: 10000,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
+
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
     testApp.stdout.on('data', (data) => {
       console.log(`stdout: ${data}`)

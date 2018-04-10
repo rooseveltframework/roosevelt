@@ -69,5 +69,6 @@
     "images"
   ],
   "versionedPublic": false,
-  "alwaysHostPublic": false
+  "alwaysHostPublic": false,
+  "autoKillerTime": 3600000
 }
