@@ -232,8 +232,8 @@ module.exports = function (params) {
       }
     }
 
-    function serverPush (serverFormat, serverPort) {
-      servers.push(serverFormat.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(' HTTP', serverPort)).on('error', (err) => {
+    function serverPush (server, serverPort, serverFormat) {
+      servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
         if (err) {
           if (err.message.includes('ECONNRESET')) {
             logger.error('The connection was forcibly closed by a peer, this could be caused by a something in the code that is telling the server to end early, usually a timeout or reboot')
@@ -278,10 +278,10 @@ module.exports = function (params) {
       process.on('SIGINT', gracefulShutdown)
     } else {
       if (!app.get('params').https.httpsOnly) {
-        serverPush(httpServer, app.get('port'))
+        serverPush(httpServer, app.get('port'), 'HTTP')
       }
       if (app.get('params').https.enable) {
-        serverPush(httpsServer, app.get('params').https.httpsPort)
+        serverPush(httpsServer, app.get('params').https.httpsPort, 'HTTPS')
       }
 
       process.on('SIGTERM', gracefulShutdown)

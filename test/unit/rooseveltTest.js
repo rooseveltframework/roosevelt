@@ -10,7 +10,7 @@ const os = require('os')
 const request = require('supertest')
 
 describe('Roosevelt roosevelt.js Section Tests', function () {
-  const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest')
+  const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
 
   // options that would be put into generateTestApp params
   const sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
