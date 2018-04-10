@@ -13,7 +13,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
 
   // options that would be put into generateTestApp params
-  const sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  let sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
 
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
@@ -126,6 +126,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should allow the user to change the amount of cores that the app will run on', function (done) {
+    // reset sOptions
+    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+
     // Int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
