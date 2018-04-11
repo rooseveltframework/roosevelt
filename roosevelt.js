@@ -182,17 +182,17 @@ module.exports = function (params) {
   }
 
   function autoKillerStart (cb) {
-    if (params.htmlValidator) {
-      if (params.htmlValidator.separateProcess && params.htmlValidator.enable) {
+    if (app.get('params').htmlValidator) {
+      if (app.get('params').htmlValidator.separateProcess && app.get('params').htmlValidator.enable) {
         if (process.platform === 'linux' || process.platform === 'darwin') {
           fkill('autoKiller', {force: true}).then(() => {
             logger.log('Restarting autoKiller')
-            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
             autokiller.unref()
             cb()
           }, () => {
             logger.log('There was no autoKiller running, creating a new one')
-            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
             autokiller.unref()
             cb()
           })
@@ -203,18 +203,18 @@ module.exports = function (params) {
             contents = parseInt(contents)
             fkill(contents, {force: true}).then(() => {
               logger.log('Restarting autoKiller')
-              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
               autokiller.unref()
               cb()
             }, () => {
               logger.log('There was no autoKiller running, creating a new one')
-              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
               autokiller.unref()
               cb()
             })
           } else {
             logger.log('There was no autoKiller running, creating a new one')
-            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowHide: false})
+            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
             autokiller.unref()
             cb()
           }
