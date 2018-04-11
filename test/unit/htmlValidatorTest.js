@@ -10,7 +10,7 @@ const request = require('supertest')
 const http = require('http')
 const fkill = require('fkill')
 
-describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
+describe('Roosevelt HTML Validator/Kill Validator Test', function () {
   // location of the test app
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
 
@@ -1427,7 +1427,21 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         testApp.on('exit', () => {
           assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of timeout')
           assert.equal(scanContinuedLogBool, true, 'killValidator did not continue scanning the ports for the Validator after the initial scan failed')
-          done()
+          // in case there is still an autoTestKiller running
+          let PIDFilePath = path.join(`${__dirname}/../../lib/scripts/PID.txt`)
+          if (fse.existsSync(PIDFilePath)) {
+            let contents = fse.readFileSync(PIDFilePath).toString('utf8')
+            let PID = parseInt(contents)
+            fkill(PID, {force: true}).then(() => {
+              fse.unlinkSync(PIDFilePath)
+              done()
+            }, () => {
+              fse.unlinkSync(PIDFilePath)
+              done()
+            })
+          } else {
+            done()
+          }
         })
       })
     })

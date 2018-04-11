@@ -113,7 +113,7 @@ describe('autokill Test', function () {
         assert.equal(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
         assert.equal(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
         done()
-      }, 100000)
+      }, 110000)
     })
   })
 
@@ -182,7 +182,7 @@ describe('autokill Test', function () {
       setTimeout(() => {
         assert.equal(restartAutoKillerLogBool, true, 'Roosevelt did not restart the autoKiller even though one was open from the test before')
         done()
-      }, 100000)
+      }, 110000)
     })
   })
 })

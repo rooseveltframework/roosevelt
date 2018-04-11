@@ -182,10 +182,25 @@ module.exports = function (params) {
   }
 
   function autoKillerStart (cb) {
-    if (app.get('params').htmlValidator) {
-      if (app.get('params').htmlValidator.separateProcess && app.get('params').htmlValidator.enable) {
-        if (process.platform === 'linux' || process.platform === 'darwin') {
-          fkill('autoKiller', {force: true}).then(() => {
+    if (app.get('params').htmlValidator.separateProcess && app.get('params').htmlValidator.enable) {
+      if (process.platform === 'linux' || process.platform === 'darwin') {
+        fkill('autoKiller', {force: true}).then(() => {
+          logger.log('Restarting autoKiller')
+          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
+          autokiller.unref()
+          cb()
+        }, () => {
+          logger.log('There was no autoKiller running, creating a new one')
+          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
+          autokiller.unref()
+          cb()
+        })
+      } else if (process.platform === 'win32') {
+        let filePath = path.join(__dirname, 'lib', 'scripts', 'PID.txt')
+        if (fs.existsSync(filePath)) {
+          let contents = fs.readFileSync(filePath).toString('utf8')
+          contents = parseInt(contents)
+          fkill(contents, {force: true}).then(() => {
             logger.log('Restarting autoKiller')
             let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
             autokiller.unref()
@@ -196,28 +211,11 @@ module.exports = function (params) {
             autokiller.unref()
             cb()
           })
-        } else if (process.platform === 'win32') {
-          let filePath = path.join(__dirname, 'lib', 'scripts', 'PID.txt')
-          if (fs.existsSync(filePath)) {
-            let contents = fs.readFileSync(filePath).toString('utf8')
-            contents = parseInt(contents)
-            fkill(contents, {force: true}).then(() => {
-              logger.log('Restarting autoKiller')
-              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
-              autokiller.unref()
-              cb()
-            }, () => {
-              logger.log('There was no autoKiller running, creating a new one')
-              let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
-              autokiller.unref()
-              cb()
-            })
-          } else {
-            logger.log('There was no autoKiller running, creating a new one')
-            let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
-            autokiller.unref()
-            cb()
-          }
+        } else {
+          logger.log('There was no autoKiller running, creating a new one')
+          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
+          autokiller.unref()
+          cb()
         }
       }
     } else {
