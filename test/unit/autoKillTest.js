@@ -6,7 +6,7 @@ const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 const assert = require('assert')
 
-describe('autokill Test', function () {
+describe('Roosevelt autokill Test', function () {
   // location of the test app
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
 
