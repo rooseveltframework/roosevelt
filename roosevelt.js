@@ -182,29 +182,36 @@ module.exports = function (params) {
   }
 
   function autoKillerStart (cb) {
+    // make sure that the html Validator is enabled and on a separate process (The no Auto param is for Development Purposes only)
     if (app.get('params').htmlValidator.separateProcess && app.get('params').htmlValidator.enable && !params.noAuto) {
+      // see if a PID Text File exists
       let filePath = path.join(__dirname, 'lib', 'scripts', 'PID.txt')
       if (fs.existsSync(filePath)) {
+        // if there is one, grab the PID number from the file and try to kill it
         let contents = fs.readFileSync(filePath).toString('utf8')
         contents = parseInt(contents)
         fkill(contents, {force: true}).then(() => {
+          // if it finds a process and kills it, state that we are restarting autoKiller and fire autoKillValidator as a child process
           logger.log('Restarting autoKiller')
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()
         }, () => {
+          // if the process was closed alreadly, state that there was no process found and that roosevelt is creating a new autoKiller and fire autoKillValidator as a child process
           logger.log('There was no autoKiller running with the PID given, creating a new one')
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()
         })
       } else {
+        // if a PID text file doesn't exist, state that there was no autoKiller running, that the app is creating a new autoKiller, and then fire autoKillValidator as a child process
         logger.log('There was no autoKiller running, creating a new one')
         let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
         autokiller.unref()
         cb()
       }
     } else {
+      // if htmlValidator is either not enabled, or not on a separate process, fire the callback function given to it
       cb()
     }
   }

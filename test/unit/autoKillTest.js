@@ -31,6 +31,7 @@ describe('Roosevelt autokill Test', function () {
     let autoKillerStartedBool = false
     let cannotConnectBool = false
 
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -43,8 +44,10 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on logs, check if specific logs were outputted
     testApp.stdout.on('data', (data) => {
       if (data.includes('Killed process on port: 42312')) {
         htmlValidatorPortClosedBool = true
@@ -57,10 +60,12 @@ describe('Roosevelt autokill Test', function () {
       }
     })
 
+    // when the app finishes initiailization, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
+    // on exit, give some time for auto Killer to run its course and then check to see if the logs we want were outputted or not
     testApp.on('exit', () => {
       setTimeout(() => {
         assert.equal(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
@@ -72,12 +77,13 @@ describe('Roosevelt autokill Test', function () {
   })
 
   it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed', function (done) {
-    // vars to hold that a specific log was outputted
+    // vars to hold whether or not a specific log was outputted
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
     let cannotConnectBool = false
 
+    // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -90,12 +96,15 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on console logs, check if sepcific logs were outputted
     testApp.stdout.on('data', (data) => {
       if (data.includes('There was no autoKiller running, creating a new one')) {
         autoKillerStartedBool = true
       }
+      // on this specific log, kill the app
       if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true
         testApp.kill('SIGINT')
@@ -108,6 +117,7 @@ describe('Roosevelt autokill Test', function () {
       }
     })
 
+    // on exit, check if the specific logs were outputted
     testApp.on('exit', () => {
       setTimeout(() => {
         assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
@@ -120,8 +130,10 @@ describe('Roosevelt autokill Test', function () {
   })
 
   it('should default the auto Killer time to an hour if a time is not provided in the paramters and a package.json file is not present', function (done) {
+    // bool var to hold whether or not a specific log was outputted
     let hourLongWaitBool = false
 
+    // create the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -133,18 +145,22 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on logs, check whether specific logs were outputted
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting the auto Validator Killer, going to kill the validator in 3600 seconds if the app is not in use anymore')) {
         hourLongWaitBool = true
       }
     })
 
+    // when the app finishes initialization, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
+    // on exit, give auto Killer time to complete and then check to see if specific logs were made
     testApp.on('exit', () => {
       setTimeout(() => {
         assert.equal(hourLongWaitBool, true, 'Roosevelt did not grab the time that is in the default config file')
@@ -154,8 +170,10 @@ describe('Roosevelt autokill Test', function () {
   })
 
   it('should say that its restarting auto Killer if one is running and the app is being initialized again', function (done) {
+    // bool var to hold whether or not a speicific log was made
     let restartAutoKillerLogBool = false
 
+    // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -168,18 +186,22 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
+    // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on console.logs, check to see if specific logs were made
     testApp.stdout.on('data', (data) => {
       if (data.includes('Restarting autoKiller')) {
         restartAutoKillerLogBool = true
       }
     })
 
+    // when the app finishes initialization, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
+    // on exit, give some time for auto kill Validator to finish and then check to see if specific logs were made
     testApp.on('exit', () => {
       setTimeout(() => {
         assert.equal(restartAutoKillerLogBool, true, 'Roosevelt did not restart the autoKiller even though one was open from the test before')
