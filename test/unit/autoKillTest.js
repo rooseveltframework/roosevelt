@@ -5,6 +5,8 @@ const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 const assert = require('assert')
+const fse = require('fs-extra')
+const fkill = require('fkill')
 
 describe('Roosevelt autokill Test', function () {
   // location of the test app
@@ -65,7 +67,7 @@ describe('Roosevelt autokill Test', function () {
         assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
         assert.equal(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
         done()
-      }, 110000)
+      }, 100000)
     })
   })
 
@@ -182,7 +184,65 @@ describe('Roosevelt autokill Test', function () {
       setTimeout(() => {
         assert.equal(restartAutoKillerLogBool, true, 'Roosevelt did not restart the autoKiller even though one was open from the test before')
         done()
-      }, 110000)
+      }, 100000)
+    })
+  })
+
+  it('should be able to say that there is no autoKiller and that it is starting a new one if the PID.txt file exsist, but the process is alreadly dead', function (done) {
+    // bool var to hold whether or not a specific log was outputted
+    let noAutoKillerFromPIDBool = false
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      htmlValidator: {
+        enable: true,
+        separateProcess: true
+      },
+      autoKillerTime: 10000,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // give enough time for the auto Validator to start before exiting the roosevelt app
+    testApp.on('message', () => {
+      setTimeout(() => {
+        testApp.kill('SIGINT')
+      }, 3000)
+    })
+
+    testApp.on('exit', () => {
+      // kill the autoValidator from the first roosevelt app
+      const PIDFilePath = path.join(`${__dirname}/../../lib/scripts/PID.txt`)
+      let content = fse.readFileSync(PIDFilePath).toString('utf8')
+      let PID = parseInt(content)
+      fkill(PID, {force: true}).then(() => {
+        // create a second App
+        const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        // check the console logs to see if our message was outputted
+        testApp2.stdout.on('data', (data) => {
+          if (data.includes('There was no autoKiller running with the PID given, creating a new one')) {
+            noAutoKillerFromPIDBool = true
+          }
+        })
+
+        // when its finish with initialization, kill it
+        testApp2.on('message', () => {
+          testApp2.kill('SIGINT')
+        })
+
+        // when the app is killed, wait for the auto Killer to finish its process before calling done
+        testApp2.on('exit', () => {
+          setTimeout(() => {
+            assert.equal(noAutoKillerFromPIDBool, true, 'The auto Killer was not started after there was no process found with the given PID')
+            done()
+          }, 100000)
+        })
+      })
     })
   })
 })

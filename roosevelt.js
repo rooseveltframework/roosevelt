@@ -193,7 +193,7 @@ module.exports = function (params) {
           autokiller.unref()
           cb()
         }, () => {
-          logger.log('There was no autoKiller running, creating a new one')
+          logger.log('There was no autoKiller running with the PID given, creating a new one')
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()
