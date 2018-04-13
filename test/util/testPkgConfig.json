@@ -12,6 +12,7 @@
     "enable": false,
     "separateProcess": "package",
     "port": "package",
+    "autoKillerTime": 3600000,
     "suppressWarnings": "package",
     "exceptions": {
       "requestHeader": "package",
