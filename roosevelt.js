@@ -197,7 +197,7 @@ module.exports = function (params) {
 
     // shut down the process if both the htmlValidator and the app are trying to use the same port
     if (app.get('params').port === app.get('params').htmlValidator.port) {
-      logger.error('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port'.red)
+      logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`.red)
       process.exit(1)
     }
     function exitLog () {
@@ -236,13 +236,13 @@ module.exports = function (params) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
         if (err) {
           if (err.message.includes('EADDRINUSE')) {
-            logger.error('Something else is using the port that you had assigned for the app. Either close that process or change the port number you use for your roosevelt app'.red)
-          } else if (err.message.includes('ECONNRESET')) {
-            logger.error('The connection was forcibly closed by a peer, this could be caused by a something in the code that is telling the server to end early, usually a timeout or reboot')
+            logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
           } else if (err.message.includes('EPERM')) {
-            logger.error('You do not have the permission to perform making a server on the computer. If you are testing, try running the terminal as the admin')
+            logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')
           } else if (err.message.includes('EADDRNOTAVAIL')) {
-            logger.error('The address/port you are trying to access is not avaliable, try assigning your server and/or validator to another port')
+            logger.error('The address/port you are trying to access is not available. Try assigning your server and/or HTML validator to another port.')
+          } else {
+            throw err
           }
           process.exit(1)
         }

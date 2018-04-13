@@ -896,7 +896,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         res.write('Nu Html Checker')
         res.end()
       }).listen(52372)
-      
+
       process.send('something')`
 
       fse.writeFileSync(path.join(appDir, 'app.js'), data)
@@ -1004,7 +1004,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         res.write('Nu Html Checker')
         res.end()
       }).listen(1024)
-      
+
       process.send('something')`
 
       // create the app.js file and run it as a child process
@@ -1053,7 +1053,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         res.write('Nu Html Checker')
         res.end()
       }).listen(65535)
-      
+
       process.send('something')`
       // create the app.js file and run it as a child process
       fse.writeFileSync(path.join(appDir, 'app.js'), data)
@@ -1100,7 +1100,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         res.write('Nu Html Checker')
         res.end()
       }).listen(29481)
-      
+
       process.send('something')`
       // create the app.js file and run it as a child process
       fse.writeFileSync(path.join(appDir, 'app.js'), data)
@@ -1156,7 +1156,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
 
       // If the test errors, see if it is the specfic one about the two services trying to use the same port
       testApp.stderr.on('data', (data) => {
-        if (data.includes('Both the roosevelt app and the validator are trying to access the same port. Please adjust one of the ports param to go to a different port')) {
+        if (data.includes('HTML validator are both trying to use the same port')) {
           samePortErrorBool = true
         }
       })
@@ -1209,7 +1209,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         res.statusCode = 404
         res.end()
       }).listen(43711)
-      
+
       process.send('something')`
       // create the app.js file and run it as a child process
       fse.writeFileSync(path.join(appDir, 'app.js'), data)
@@ -1273,7 +1273,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         res.write('Nu Html Checker')
         res.end()
       }).listen(2500)
-      
+
       process.send('something')`
       // create the app.js file and run it as a child process
       fse.writeFileSync(path.join(appDir, 'app.js'), data)
@@ -1400,7 +1400,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         }
         res.end()
       }).listen(8888)
-      
+
       process.send('something')`
       // create the app.js file and run it as a child process
       fse.writeFileSync(path.join(appDir, 'app.js'), data)

@@ -738,7 +738,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Something else is using the port that you had assigned for the app. Either close that process or change the port number you use for your roosevelt app')) {
+      if (data.includes('Either kill that process or change this')) {
         samePortWarningBool = true
       }
     })
