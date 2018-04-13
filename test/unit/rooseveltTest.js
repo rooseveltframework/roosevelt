@@ -716,4 +716,29 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it.skip('should be able to call gracefulShutdown if shutdownServer was called', function (done) {
+    sOptions.shutdown = true
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {console.log("server started")}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })

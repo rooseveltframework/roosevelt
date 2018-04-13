@@ -25,6 +25,10 @@ module.exports = function (params, options) {
     appJSContents += defaultMessages
   }
 
+  if (options.shutdown) {
+    appJSContents += `\n\n app.shutdownServer()`
+  }
+
   // generate test app drectory
   fse.ensureDirSync(path.join(appDir))
 
