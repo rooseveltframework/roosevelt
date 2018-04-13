@@ -717,9 +717,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it.skip('should be able to call gracefulShutdown if shutdownServer was called', function (done) {
+  it('should be able to call gracefulShutdown if shutdownServer was called', function (done) {
+    // bool vars to hold whether specific logs were outputted
+    let recievedKillSignalBool = false
+    let closedRooseveltAppBool = false
+
+    // adjusted options sent to generateTestApp so that it will call roosevelt shutdownServer function
     sOptions.shutdown = true
 
+    // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -729,15 +735,20 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on logs, check to see if the specific logs were outputted
     testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
+      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
+        recievedKillSignalBool = true
+      }
+      if (data.includes('Roosevelt Express successfully closed all connections and shut down gracefully.')) {
+        closedRooseveltAppBool = true
+      }
     })
 
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
+    // on exit, see if the logs were outputted
     testApp.on('exit', () => {
+      assert.equal(recievedKillSignalBool, true, 'shutdownServer did not start gracefulShutdown')
+      assert.equal(closedRooseveltAppBool, true, 'shutdownServer did not close everything on the roosevelt app')
       done()
     })
   })
