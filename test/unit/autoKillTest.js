@@ -38,9 +38,9 @@ describe('Roosevelt autokill Test', function () {
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true
+        separateProcess: true,
+        autoKillerTime: 1000
       },
-      autoKillerTime: 1000,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -58,6 +58,11 @@ describe('Roosevelt autokill Test', function () {
       if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
       }
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
     })
 
     // when the app finishes initiailization, kill it
@@ -90,9 +95,9 @@ describe('Roosevelt autokill Test', function () {
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true
+        separateProcess: true,
+        autoKillerTime: 1000
       },
-      autoKillerTime: 1000,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -180,9 +185,9 @@ describe('Roosevelt autokill Test', function () {
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true
+        separateProcess: true,
+        autoKillerTime: 1000
       },
-      autoKillerTime: 1000,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -220,9 +225,9 @@ describe('Roosevelt autokill Test', function () {
       generateFolderStructure: true,
       htmlValidator: {
         enable: true,
-        separateProcess: true
+        separateProcess: true,
+        autoKillerTime: 10000
       },
-      autoKillerTime: 10000,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 

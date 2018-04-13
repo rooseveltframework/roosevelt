@@ -301,6 +301,8 @@ App behavior parameters
     - You can also force the validator on in development mode regardless of app settings with `npm run dev -- --enable-validator`.
   - `exceptions`: *[Object]* Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - `port`: *[Number]* Port to spawn the validator process on.
+  - `autoKillerTime`: *[Number]* Time that the autoKiller waits before it checks whether or not it should kill the htmlValidator.
+    - Note: This feature is only turned on if both the enable and separatePrcoess in htmlValidator are set to true. 
   - `separateProcess`: *[Boolean]* When set to true, the HTML validator will run detached (separate from the node process) by default. You can kill the process by running `npm run kill-validator`.
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
   - Default: *[Object]*

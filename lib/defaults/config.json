@@ -13,6 +13,7 @@
     "separateProcess": false,
     "port": 8888,
     "suppressWarnings": false,
+    "autoKillerTime": 3600000,
     "exceptions": {
       "requestHeader": "Partial",
       "modelValue": "_disableValidator"
@@ -68,6 +69,5 @@
     "images"
   ],
   "versionedPublic": false,
-  "alwaysHostPublic": false,
-  "autoKillerTime": 3600000
+  "alwaysHostPublic": false
 }

@@ -193,20 +193,20 @@ module.exports = function (params) {
         fkill(contents, {force: true}).then(() => {
           // if it finds a process and kills it, state that we are restarting autoKiller and fire autoKillValidator as a child process
           logger.log('Restarting autoKiller')
-          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
+          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').htmlValidator.autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()
         }, () => {
           // if the process was closed alreadly, state that there was no process found and that roosevelt is creating a new autoKiller and fire autoKillValidator as a child process
           logger.log('There was no autoKiller running with the PID given, creating a new one')
-          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
+          let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').htmlValidator.autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()
         })
       } else {
         // if a PID text file doesn't exist, state that there was no autoKiller running, that the app is creating a new autoKiller, and then fire autoKillValidator as a child process
         logger.log('There was no autoKiller running, creating a new one')
-        let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
+        let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').htmlValidator.autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
         autokiller.unref()
         cb()
       }
@@ -270,6 +270,8 @@ module.exports = function (params) {
             logger.error('You do not have the permission to perform making a server on the computer. If you are testing, try running the terminal as the admin')
           } else if (err.message.includes('EADDRNOTAVAIL')) {
             logger.error('The address/port you are trying to access is not avaliable, try assigning your server and/or validator to another port')
+          } else {
+            console.log(err)
           }
           process.exit()
         }
