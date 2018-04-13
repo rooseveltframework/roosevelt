@@ -8,6 +8,7 @@ const fork = require('child_process').fork
 const fse = require('fs-extra')
 const os = require('os')
 const request = require('supertest')
+const http = require('http')
 
 describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
@@ -713,6 +714,44 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
       assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      done()
+    })
+  })
+
+  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
+    // bool var to hold whether or not specific logs were made or if a specific action happened
+    let samePortWarningBool = false
+    let serverStartedBool = false
+
+    // create a dummy server that will give occupy the same port as the app
+    let server = http.createServer(function (req, res) {
+      res.statusCode = 200
+      res.end()
+    }).listen(43711)
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Something else is using the port that you had assigned for the app. Either close that process or change the port number you use for your roosevelt app')) {
+        samePortWarningBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      serverStartedBool = true
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(serverStartedBool, false, 'Roosevelt completely compiled the app and started it even thought we get EADDRINUSE error')
+      assert.equal(samePortWarningBool, true, 'Roosevelt did not report that it could not start because something is using the same port that the app wants to use')
+      server.close()
       done()
     })
   })
