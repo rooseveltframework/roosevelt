@@ -237,14 +237,16 @@ module.exports = function (params) {
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
         if (err) {
-          if (err.message.includes('ECONNRESET')) {
+          if (err.message.includes('EADDRINUSE')) {
+            logger.error('Something else is using the port that you had assigned for the app. Either close that process or change the port number you use for your roosevelt app'.red)
+          } else if (err.message.includes('ECONNRESET')) {
             logger.error('The connection was forcibly closed by a peer, this could be caused by a something in the code that is telling the server to end early, usually a timeout or reboot')
           } else if (err.message.includes('EPERM')) {
             logger.error('You do not have the permission to perform making a server on the computer. If you are testing, try running the terminal as the admin')
           } else if (err.message.includes('EADDRNOTAVAIL')) {
             logger.error('The address/port you are trying to access is not avaliable, try assigning your server and/or validator to another port')
           }
-          process.exit()
+          process.exit(1)
         }
       }))
     }
