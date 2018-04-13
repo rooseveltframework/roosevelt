@@ -8,11 +8,11 @@
     "priority": "error"
   },
   "prod": {
-    "value": "npm run production",
+    "value": "nodemon app.js --production-mode",
     "priority": "ignore"
   },
   "p": {
-    "value": "npm run production",
+    "value": "nodemon app.js --production-mode",
     "priority": "ignore"
   },
   "development": {
@@ -20,11 +20,11 @@
     "priority": "error"
   },
   "dev": {
-    "value": "npm run development",
+    "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
   "d": {
-    "value": "npm run development",
+    "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
   "kill-validator": {
@@ -33,7 +33,7 @@
     "inspect": true
   },
   "kv": {
-    "value": "npm run kill-validator",
+    "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
     "priority": "ignore"
   },
   "clean": {
@@ -42,7 +42,7 @@
     "inspect": true
   },
   "c": {
-    "value": "npm run cleanup",
+    "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
     "priority": "ignore"
   },
   "audit": {
@@ -51,7 +51,7 @@
     "inspect": true
   },
   "a": {
-    "value": "npm run audit",
+    "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "ignore"
   },
   "standard": {
@@ -67,7 +67,7 @@
     "priority": "ignore"
   },
   "l": {
-    "value": "npm run lint",
+    "value": "npm run standard && npm run stylelint",
     "priority": "ignore"
   },
   "precommit": {
