@@ -717,13 +717,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to call gracefulShutdown if shutdownServer was called', function (done) {
+  it('should be able to call gracefulShutdown if stopServer was called', function (done) {
     // bool vars to hold whether specific logs were outputted
     let recievedKillSignalBool = false
     let closedRooseveltAppBool = false
 
     // adjusted options sent to generateTestApp so that it will call roosevelt shutdownServer function
-    sOptions.shutdown = true
+    sOptions.stopServer = true
 
     // generate the app.js file
     generateTestApp({
