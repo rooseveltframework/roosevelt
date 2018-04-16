@@ -753,7 +753,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
-  
+
   it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
     // bool var to hold whether or not specific logs were made or if a specific action happened
     let samePortWarningBool = false
