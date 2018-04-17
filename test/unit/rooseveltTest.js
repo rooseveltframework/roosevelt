@@ -656,6 +656,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
+    // path to key and cert in util
+    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
+    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
+
+    // path to ca file
+    let pathToCA = path.join(`${__dirname}/../util/ca.crt`)
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -664,7 +671,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       https: {
         enable: true,
         httpsPort: 43733,
-        ca: 'test/util/ca.crt'
+        keyPath: {key: pathToKey, cert: pathToCert},
+        ca: pathToCA,
+        cafile: true
       }
     }, sOptions)
 
@@ -676,6 +685,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
         HTTPSServerListeningBool = true
       }
+      console.log(`stdout: ${data}`)
     })
 
     // when the app finishes initialization and starts, kill it
@@ -694,6 +704,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
+    // path to key and cert in util
+    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
+    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
+
+    // path to ca files
+    let pathToCA = path.join(`${__dirname}/../util/ca.crt`)
+    let pathToCA2 = path.join(`${__dirname}/../util/ca-2.crt`)
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -702,7 +720,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       https: {
         enable: true,
         httpsPort: 43733,
-        ca: ['test/util/ca.crt']
+        keyPath: {key: pathToKey, cert: pathToCert},
+        ca: [pathToCA, pathToCA2],
+        cafile: true
       }
     }, sOptions)
 
@@ -714,6 +734,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
         HTTPSServerListeningBool = true
       }
+      console.log(`stdout: ${data}`)
     })
 
     // when the app finishes initialization and starts, kill it
