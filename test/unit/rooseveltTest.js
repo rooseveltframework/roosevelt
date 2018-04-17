@@ -33,8 +33,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     sOptions.empty = false
     sOptions.noFunction = false
 
-    generateTestApp({
-    }, sOptions)
+    generateTestApp(undefined, sOptions)
 
     // read the default config file
     let defaults = fse.readFileSync(path.join(appDir, '../', '../', '../', 'lib', 'defaults', 'config.json')).toString('utf8')

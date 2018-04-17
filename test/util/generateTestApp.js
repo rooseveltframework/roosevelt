@@ -6,7 +6,12 @@ const path = require('path')
 const util = require('util')
 
 module.exports = function (params, options) {
-  const appDir = params.appDir || options.appDir
+  let appDir
+  if (params === undefined) {
+    appDir = options.appDir
+  } else {
+    appDir = params.appDir || options.appDir
+  }
   let appJSContents = `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
   appJSContents = appJSContents.replace(/('\()/g, '(')
