@@ -186,20 +186,23 @@ module.exports = function (params) {
     // make sure that the html Validator is enabled and on a separate process (The no Auto param is for Development Purposes only)
     if (app.get('params').htmlValidator.separateProcess && app.get('params').htmlValidator.enable && !params.noAuto) {
       // see if a PID Text File exists
-      let filePath = path.join(__dirname, 'lib', 'scripts', 'PID.txt')
-      if (fs.existsSync(filePath)) {
-        // if there is one, grab the PID number from the file and try to kill it
-        let contents = fs.readFileSync(filePath).toString('utf8')
-        contents = parseInt(contents)
-        fkill(contents, {force: true}).then(() => {
-          // if it finds a process and kills it, state that we are restarting autoKiller and fire autoKillValidator as a child process
+      let PIDPath = path.join(os.tmpdir(), 'PID.txt')
+      let test = fs.existsSync(PIDPath)
+      if (test === true) {
+        // if there is one, grab the PID number from the process.env and then kill it
+        let contents = fs.readFileSync(PIDPath).toString('utf8')
+        let PID = parseInt(contents)
+        fkill(PID, {force: true}).then(() => {
+          // if it finds a process and kills it, state that we are restarting autoKiller and fire autoKillValidator as a child process, also deletes the temp file
           logger.log('Restarting autoKiller')
+          fs.unlinkSync(PIDPath)
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').htmlValidator.autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()
         }, () => {
-          // if the process was closed alreadly, state that there was no process found and that roosevelt is creating a new autoKiller and fire autoKillValidator as a child process
+          // if the process was closed alreadly, state that there was no process found and that roosevelt is creating a new autoKiller and fire autoKillValidator as a child process, also deletes the temp file
           logger.log('There was no autoKiller running with the PID given, creating a new one')
+          fs.unlinkSync(PIDPath)
           let autokiller = spawn('node', [`${path.join(__dirname, 'lib', 'scripts', 'autoKillValidator.js')}`, `${app.get('params').port}`, `${app.get('params').htmlValidator.autoKillerTime}`], {detached: true, stdio: 'inherit', shell: false, windowsHide: true})
           autokiller.unref()
           cb()

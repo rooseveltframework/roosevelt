@@ -7,6 +7,7 @@ const fork = require('child_process').fork
 const assert = require('assert')
 const fse = require('fs-extra')
 const fkill = require('fkill')
+const os = require('os')
 
 describe('Roosevelt autokill Test', function () {
   // location of the test app
@@ -238,7 +239,7 @@ describe('Roosevelt autokill Test', function () {
 
     testApp.on('exit', () => {
       // kill the autoValidator from the first roosevelt app
-      const PIDFilePath = path.join(`${__dirname}/../../lib/scripts/PID.txt`)
+      const PIDFilePath = path.join(os.tmpdir(), 'PID.txt')
       let content = fse.readFileSync(PIDFilePath).toString('utf8')
       let PID = parseInt(content)
       fkill(PID, {force: true}).then(() => {
