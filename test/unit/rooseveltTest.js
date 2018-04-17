@@ -652,7 +652,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to start the server even if a ca is passed in', function (done) {
+  it('should be able to start the server even if a ca string is passed in', function (done) {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
@@ -685,7 +685,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
         HTTPSServerListeningBool = true
       }
-      console.log(`stdout: ${data}`)
     })
 
     // when the app finishes initialization and starts, kill it
@@ -734,7 +733,50 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
         HTTPSServerListeningBool = true
       }
-      console.log(`stdout: ${data}`)
+    })
+
+    // when the app finishes initialization and starts, kill it
+    testApp.on('message', (params) => {
+      testApp.kill('SIGINT')
+    })
+
+    // on the apps exit, see of the HTTPS server was listening
+    testApp.on('exit', () => {
+      assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      done()
+    })
+  })
+
+  it('should be able to start the server even if a ca passed in is not a string or array and cafile is set to true', function (done) {
+    // bool var to hold that the HTTPS server is listening
+    let HTTPSServerListeningBool = false
+
+    // path to key and cert in util
+    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
+    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      https: {
+        enable: true,
+        httpsPort: 43733,
+        keyPath: {key: pathToKey, cert: pathToCert},
+        ca: 32,
+        cafile: true
+      }
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on logs, check to see if the specific log was outputted
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
+        HTTPSServerListeningBool = true
+      }
     })
 
     // when the app finishes initialization and starts, kill it
