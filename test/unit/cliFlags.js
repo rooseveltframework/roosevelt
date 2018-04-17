@@ -5,6 +5,7 @@ const path = require('path')
 const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
+const fse = require('fs-extra')
 
 describe('Command Line Tests', function () {
   const appDir = path.join(__dirname, '../app/cliFlags')
@@ -133,6 +134,29 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', (params) => {
         assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+
+    it('Should be able to default the params even if I input an unknown flag into the cmd line', function (done) {
+      let defaultConfigPath = path.join(`${__dirname}/../../lib/defaults/config.json`)
+      let contents = fse.readFileSync(defaultConfigPath).toString('utf8')
+      let defaults = JSON.parse(contents)
+
+      const testApp = fork(path.join(appDir, 'app.js'), ['sfnsfnsf'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+      })
+
+      testApp.on('message', (params) => {
+        assert.equal(params.port, defaults.port, 'the params port and the default port and not equal')
+        assert.equal(params.https, defaults.https, 'the params https and the default https are not equal')
+        assert.equal(params.viewEngine, defaults.viewEngine, 'the params viewEngine and the defaults viewEngine are not equal')
         testApp.kill('SIGINT')
       })
 
