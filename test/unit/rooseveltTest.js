@@ -569,6 +569,10 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
+    // path to key and cert in util
+    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
+    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -578,7 +582,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
         enable: true,
         httpsPort: 43733,
         passphrase: undefined,
-        ca: undefined
+        ca: undefined,
+        keyPath: {key: pathToKey, cert: pathToCert}
       }
     }, sOptions)
 
@@ -608,6 +613,10 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
+    // path to key and cert in util
+    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
+    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -616,7 +625,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       https: {
         enable: true,
         httpsPort: 43733,
-        passphrase: 'something'
+        passphrase: 'something',
+        keyPath: {key: pathToKey, cert: pathToCert}
       }
     }, sOptions)
 
