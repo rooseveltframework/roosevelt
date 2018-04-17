@@ -106,6 +106,40 @@ describe('Command Line Tests', function () {
         done()
       })
     })
+
+    it('should change the app to use the amount of cores specified ("-cores")', function (done) {
+      let warningLogBool = false
+
+      const testApp = fork(path.join(appDir, 'app.js'), ['-cores', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.stderr.on('data', (data) => {
+        if (data.includes('Detected use of "-cores" command line argument. This will soon be deprecated in favor of "--cores" / "-c"')) {
+          warningLogBool = true
+        }
+      })
+
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
+        assert.equal(warningLogBool, true, 'The depreciated flag did not give a warning for its use')
+        done()
+      })
+    })
+
+    it('should attach the validator to the app ("attach-validator")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.on('message', (params) => {
+        assert.equal(params.htmlValidator.separateProcess, false)
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
   })
 
   describe('check individual flags', function () {
