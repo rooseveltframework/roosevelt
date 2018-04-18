@@ -237,10 +237,6 @@ module.exports = function (params) {
         if (err) {
           if (err.message.includes('EADDRINUSE')) {
             logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
-          } else if (err.message.includes('EPERM')) {
-            logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')
-          } else if (err.message.includes('EADDRNOTAVAIL')) {
-            logger.error('The address/port you are trying to access is not available. Try assigning your server and/or HTML validator to another port.')
           } else {
             throw err
           }
