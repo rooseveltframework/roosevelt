@@ -837,7 +837,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`,
-      port: 'efsef'
+      port: 100
     }, sOptions)
 
     // fork the app.js file and run it as a child process
@@ -845,7 +845,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // watch error logs for the specific log that we are testing for
     testApp.stderr.on('data', (data) => {
-      if (data.includes('listen EACCES efsef')) {
+      if (data.includes('listen EACCES 0.0.0.0:100')) {
         otherErrorLogBool = true
       }
     })
