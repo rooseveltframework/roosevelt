@@ -857,7 +857,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // on exit, check to see if the specific log was made and finish the test
     testApp.on('exit', () => {
-      assert.equal(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is too high`)
+      assert.equal(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is inaccessible`)
       done()
     })
   })
