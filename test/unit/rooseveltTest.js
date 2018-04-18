@@ -830,14 +830,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
   it('should throw the error message if it has an error code that is not the three codes found in roosevelt.js', function (done) {
     // bool var to hold whether a specific log was outputted
-    let rangeErrorLogBool = false
+    let otherErrorLogBool = false
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`,
-      port: 70000
+      port: 'efsef'
     }, sOptions)
 
     // fork the app.js file and run it as a child process
@@ -845,8 +845,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // watch error logs for the specific log that we are testing for
     testApp.stderr.on('data', (data) => {
-      if (data.includes('RangeError [ERR_SOCKET_BAD_PORT]: Port should be > 0 and < 65536. Received 70000')) {
-        rangeErrorLogBool = true
+      if (data.includes('listen EACCES efsef')) {
+        otherErrorLogBool = true
       }
     })
 
@@ -857,7 +857,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // on exit, check to see if the specific log was made and finish the test
     testApp.on('exit', () => {
-      assert.equal(rangeErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is too high`)
+      assert.equal(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is too high`)
       done()
     })
   })
