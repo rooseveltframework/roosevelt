@@ -30,9 +30,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // generate a empty app.js file
     sOptions.appDir = appDir
     sOptions.method = 'initServer'
-    sOptions.empty = false
-    sOptions.noFunction = false
-
     generateTestApp(undefined, sOptions)
 
     // read the default config file
@@ -56,11 +53,78 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
+  it('should only initialize the app once even though the startServer function is called after initServer function', function (done) {
+    // options to pass to generateTestApp
+    sOptions.initStart = true
+    sOptions.method = 'initServer'
+
+    // counter to see how many times initServer was called
+    let initServedLog = 0
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('HTML validator disabled. Continuing without HTML validation...')) {
+        initServedLog++
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
+      done()
+    })
+  })
+
+  it('should only initialize the app once even though initServer is called twice', function (done) {
+    // options to pass to generateTestApp
+    sOptions.initStart = false
+    sOptions.method = 'initServer'
+    sOptions.initTwice = true
+
+    // counter to see how many times initServer was called
+    let initServedLog = 0
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('HTML validator disabled. Continuing without HTML validation...')) {
+        initServedLog++
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
+      done()
+    })
+  })
+
   it('should allow the user to init Roosevelt without putting in a callback', function (done) {
     // generate the app.js file (no callback)
     sOptions.method = 'initServer'
     sOptions.empty = true
-    sOptions.noFunction = false
+    sOptions.initTwice = false
 
     generateTestApp({
       appDir: appDir,
