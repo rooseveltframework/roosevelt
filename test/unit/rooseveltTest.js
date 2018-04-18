@@ -827,4 +827,38 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it('should throw the error message if it has an error code that is not the three codes found in roosevelt.js', function (done) {
+    // bool var to hold whether a specific log was outputted
+    let rangeErrorLogBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      port: 70000
+    }, sOptions)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // watch error logs for the specific log that we are testing for
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('RangeError [ERR_SOCKET_BAD_PORT]: Port should be > 0 and < 65536. Received 70000')) {
+        rangeErrorLogBool = true
+      }
+    })
+
+    // on startup, if we get there somehow, kill the app
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // on exit, check to see if the specific log was made and finish the test
+    testApp.on('exit', () => {
+      assert.equal(rangeErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is too high`)
+      done()
+    })
+  })
 })
