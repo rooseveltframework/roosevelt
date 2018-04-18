@@ -234,14 +234,12 @@ module.exports = function (params) {
 
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
-        if (err) {
-          if (err.message.includes('EADDRINUSE')) {
-            logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
-          } else {
-            throw err
-          }
-          process.exit(1)
+        if (err.message.includes('EADDRINUSE')) {
+          logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
+        } else {
+          throw err
         }
+        process.exit(1)
       }))
     }
 
