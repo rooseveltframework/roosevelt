@@ -396,4 +396,31 @@ describe('Roosevelt multipart/formidable Section Test', function () {
       done()
     })
   })
+
+  it('should default multipart to an object if the param passed in is not an object and it is not false', function (done) {
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      multipart: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes initialization, check the params of the app that are sent back to check if multipart is an empty object
+    testApp.on('message', (params) => {
+      let test1 = typeof params.multipart
+      let test2 = Object.keys(params.multipart)
+      assert.equal(test1, 'object', 'Roosevelt did not default multipart to an empty object if it was not an object and it is not false')
+      assert.equal(test2.length, 0, 'Roosevelt did not default multipart to an empty object if it was not an object and it is not false')
+      testApp.kill('SIGINT')
+    })
+
+    // on exit, finish the test
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
