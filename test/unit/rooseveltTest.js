@@ -926,52 +926,49 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to make multiple connections and shut them down when the app is closed', function (done) {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  it('should be able to close an active connection when the app is closed', function (done) {
+    // bool var to hold whether or not the request had finished
+    let requestFinishedBool = false
 
+    // copy the mvc folder to the test App
     let pathToMVC = path.join(`${__dirname}/../util/mvc`)
     let pathtoapp = path.join(`${appDir}/mvc`)
     fse.copySync(pathToMVC, pathtoapp)
 
-    // path to key and cert in util
-    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
-    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
-
+    // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 52032,
-        keyPath: {key: pathToKey, cert: pathToCert}
-      }
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, sOptions)
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
-    })
-
     testApp.on('message', (msg) => {
-      console.log(msg)
-      if (msg.https) {
-        console.log(msg.https.httpsPort)
-        request(`https://localhost:${msg.https.httpsPort}`)
+    // when the app finishes initialization, send a request to the server
+      if (msg.port) {
+        request(`http://localhost:${msg.port}`)
           .get('/longConn')
+          .end((err, res) => {
+            // if the connection is ended, see if it was because of an error or if it recieved a res object from the route
+            if (err.message === 'socket hang up') {
+              testApp.kill('SIGINT')
+            } else {
+            // if the app returns a res object, it means that the connection wasn't close when the server closed
+              requestFinishedBool = true
+              testApp.kill('SIGINT')
+            }
+          })
       } else {
-        console.log(msg)
+        // when the request sends back a msg, kill the app
         testApp.kill('SIGINT')
       }
     })
 
+    // on exit, check if the connection was closed because it finished or by the server closing
     testApp.on('exit', () => {
+      assert.equal(requestFinishedBool, false, 'Roosevelt did not destroy the active connection when it shut down')
       done()
     })
   })
