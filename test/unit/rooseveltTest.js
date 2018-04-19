@@ -925,4 +925,54 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it('should be able to make multiple connections and shut them down when the app is closed', function (done) {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+
+    let pathToMVC = path.join(`${__dirname}/../util/mvc`)
+    let pathtoapp = path.join(`${appDir}/mvc`)
+    fse.copySync(pathToMVC, pathtoapp)
+
+    // path to key and cert in util
+    let pathToKey = path.join(`${__dirname}/../util/test.req.key`)
+    let pathToCert = path.join(`${__dirname}/../util/test.req.crt`)
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      https: {
+        enable: true,
+        httpsPort: 52032,
+        keyPath: {key: pathToKey, cert: pathToCert}
+      }
+    }, sOptions)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    testApp.on('message', (msg) => {
+      console.log(msg)
+      if (msg.https) {
+        console.log(msg.https.httpsPort)
+        request(`https://localhost:${msg.https.httpsPort}`)
+          .get('/longConn')
+      } else {
+        console.log(msg)
+        testApp.kill('SIGINT')
+      }
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
