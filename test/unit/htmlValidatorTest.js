@@ -835,9 +835,53 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should report that the validator should timeout if the amount of time given to it passes before it reports its listening to the port given to it', function (done) {
+      // setup options so that it will enable the app to have a timer
+      options.msgEnabled = true
+      // bool var to hold whether a specific error log was outputted
+      let validatorTimeOutBool = false
+
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: true
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.stdout.on('data', (data) => {
+        if (data.includes('Starting HTML validator...')) {
+          testApp.send('something')
+        }
+      })
+
+      testApp.stderr.on('data', (data) => {
+        if (data.includes('Error: HTML validator has timed out.')) {
+          validatorTimeOutBool = true
+        }
+      })
+
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
+        assert.equal(validatorTimeOutBool, true, 'Roosevelt did not report that it would time out if the amount of time given for time out passed')
+        done()
+      })
+    })
   })
 
   describe('Roosevelt killValidator test', function () {
+    // make options msgEnabled back to false so that new app don't have a sinon timer
+    options.msgEnabled = false
+
     it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
       // bool var to hold whether or not the request failed status has been given
       let requestFailedLogBool = false
