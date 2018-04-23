@@ -855,22 +855,26 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       // fork the app and run it as a child process
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+      // when the message of starting the HTML Validator comes, send a response to the app to speed up its clock by 30 secs
       testApp.stdout.on('data', (data) => {
         if (data.includes('Starting HTML validator...')) {
           testApp.send('something')
         }
       })
 
+      // on error logs, check if the error log was outputted
       testApp.stderr.on('data', (data) => {
-        if (data.includes('Error: HTML validator has timed out.')) {
+        if (data.includes('HTML validator has been disabled because it has timed out.')) {
           validatorTimeOutBool = true
         }
       })
 
+      // when the app is finished with initialization, kill it
       testApp.on('message', () => {
         testApp.kill('SIGINT')
       })
 
+      // on exit, check to see if the log of the validator timing out was outputted
       testApp.on('exit', () => {
         assert.equal(validatorTimeOutBool, true, 'Roosevelt did not report that it would time out if the amount of time given for time out passed')
         done()
