@@ -9,6 +9,7 @@
   },
   "verboseLogs": false,
   "noMinify": false,
+  "noAuto": false,
   "htmlValidator": {
     "enable": false,
     "separateProcess": false,

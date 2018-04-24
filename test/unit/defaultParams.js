@@ -21,7 +21,7 @@ describe('Default Params', function () {
   })
 
   params.forEach((param) => {
-    if (param !== 'suppressLogs' && param !== 'generateFolderStructure' && param !== 'verboseLogs') {
+    if (param !== 'suppressLogs' && param !== 'generateFolderStructure') {
       it(`should set correct default for param "${param}"`, function () {
         assert.deepEqual(app.expressApp.get('params')[param], defaults[param])
       })
