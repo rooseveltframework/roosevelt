@@ -744,4 +744,28 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
+  it('can change the nodeEnv to be something that is not development or production', function (done) {
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      nodeEnv: 'something'
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // when the app finishes initialization, check that the nodeEnv of the app stayed the same as the one passed in and that it is not prod or dev
+    testApp.on('message', (params) => {
+      assert.equal(params.nodeEnv, 'something', 'Roosevelt did not keep the node Env string that was passed in as a param')
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exits, finish the test
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
