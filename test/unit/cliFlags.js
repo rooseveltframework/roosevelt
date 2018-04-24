@@ -149,10 +149,6 @@ describe('Command Line Tests', function () {
 
       const testApp = fork(path.join(appDir, 'app.js'), ['sfnsfnsf'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-      testApp.stdout.on('data', (data) => {
-        console.log(`stdout: ${data}`)
-      })
-
       testApp.on('message', (params) => {
         assert.equal(params.port, defaults.port, 'the params port and the default port and not equal')
         assert.equal(params.https, defaults.https, 'the params https and the default https are not equal')

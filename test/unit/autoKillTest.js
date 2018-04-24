@@ -8,6 +8,7 @@ const assert = require('assert')
 const fse = require('fs-extra')
 const fkill = require('fkill')
 const os = require('os')
+const http = require('http')
 
 describe('Roosevelt autokill Test', function () {
   // location of the test app
@@ -36,6 +37,7 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      verboseLogs: true,
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -88,6 +90,7 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      verboseLogs: true,
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -138,6 +141,7 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      verboseLogs: true,
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -178,6 +182,7 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      verboseLogs: true,
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -219,6 +224,7 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      verboseLogs: true,
       htmlValidator: {
         enable: true,
         separateProcess: true,
@@ -239,7 +245,7 @@ describe('Roosevelt autokill Test', function () {
 
     testApp.on('exit', () => {
       // kill the autoValidator from the first roosevelt app
-      const PIDFilePath = path.join(os.tmpdir(), 'PID.txt')
+      const PIDFilePath = path.join(os.tmpdir(), 'roosevelt_validator_pid.txt')
       let content = fse.readFileSync(PIDFilePath).toString('utf8')
       let PID = parseInt(content)
       fkill(PID, {force: true}).then(() => {
@@ -266,6 +272,84 @@ describe('Roosevelt autokill Test', function () {
           }, 100000)
         })
       })
+    })
+  })
+
+  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed, but does not report anything if verbose is false', function (done) {
+    // vars to hold whether or not a specific log was outputted
+    let timerResetBool = false
+    let htmlValidatorPortClosedBool = false
+    let autoKillerStartedBool = false
+    let cannotConnectBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      verboseLogs: false,
+      htmlValidator: {
+        enable: true,
+        port: 42312,
+        separateProcess: true,
+        autoKillerTime: 1000
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, check if sepcific logs were outputted
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('There was no autoKiller running, creating a new one')) {
+        autoKillerStartedBool = true
+      }
+      // on this specific log, kill the app
+      if (data.includes('Roosevelt Express HTTP server listening on port')) {
+        setTimeout(() => {
+          testApp.kill('SIGINT')
+        }, 3000)
+      }
+      if (data.includes('app is still active, resetting timer')) {
+        timerResetBool = true
+      }
+      if (data.includes('cannot connect to app, killing the validator now')) {
+        cannotConnectBool = true
+      }
+      if (data.includes('Killed process on port: 42312')) {
+        htmlValidatorPortClosedBool = true
+      }
+    })
+
+    // on exit, check if the specific logs were outputted and that the validator was closed
+    testApp.on('exit', () => {
+      setTimeout(() => {
+        assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
+        assert.equal(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
+        assert.equal(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+        assert.equal(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
+        // options to pass into the http GET request
+        let options = {
+          url: 'http://localhost',
+          method: 'GET',
+          port: 42312,
+          headers: {
+            'User-Agent': 'request'
+          }
+        }
+        // after the timeout period, send a http request
+        http.get(options, function (res) {
+          const { statusCode } = res
+          // if we get any sort of statusCode, whether it be 404, 200 etc, then that means the app is still active and that the timer should reset
+          if (statusCode) {
+            assert.fail('we got a response from a validator that is suppose to be close')
+            done()
+          }
+          // if we get an error, likely that the connection is close and is safe to try to close the validator
+        }).on('error', () => {
+          done()
+        })
+      }, 110000)
     })
   })
 })
