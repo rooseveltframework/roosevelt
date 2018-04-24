@@ -25,6 +25,10 @@ module.exports = function (params, options) {
     appJSContents += defaultMessages
   }
 
+  if (options.stopServer) {
+    appJSContents += `\n\n app.stopServer()`
+  }
+
   // generate test app drectory
   fse.ensureDirSync(path.join(appDir))
 
