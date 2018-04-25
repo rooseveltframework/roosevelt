@@ -925,7 +925,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should do something if startServer was called twice', function (done) {
+  it('should toss the server already listening error if startServer was called twice', function (done) {
     // adjustments to options to use to call startServer twice
     sOptions.startTwice = true
     // bool var to hold whether or not a specific error log was outputted
@@ -934,16 +934,22 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
-      generateFolderStructure: true
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, sOptions)
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
     testApp.stderr.on('data', (data) => {
       if (data.includes(`throw new errors.Error('ERR_SERVER_ALREADY_LISTEN')`)) {
         alreadyListeningBool = true
       }
+      console.log(`stderr: ${data}`)
     })
 
     testApp.on('message', () => {
