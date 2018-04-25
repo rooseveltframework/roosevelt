@@ -941,15 +941,10 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
     testApp.stderr.on('data', (data) => {
       if (data.includes(`ERR_SERVER_ALREADY_LISTEN`) && data.includes(`throw`)) {
         alreadyListeningBool = true
       }
-      console.log(`stderr: ${data}`)
     })
 
     testApp.on('message', () => {
