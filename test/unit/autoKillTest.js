@@ -129,7 +129,7 @@ describe('Roosevelt autokill Test', function () {
         assert.equal(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
         assert.equal(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
         done()
-      }, 110000)
+      }, 100000)
     })
   })
 
@@ -216,7 +216,7 @@ describe('Roosevelt autokill Test', function () {
     })
   })
 
-  it('should be able to say that there is no autoKiller and that it is starting a new one if the PID.txt file exsist, but the process is alreadly dead', function (done) {
+  it('should be able to say that there is no autoKiller and that it is starting a new one if the roosevelt_validator_pid.txt file exsist, but the process is alreadly dead', function (done) {
     // bool var to hold whether or not a specific log was outputted
     let noAutoKillerFromPIDBool = false
 
@@ -349,7 +349,7 @@ describe('Roosevelt autokill Test', function () {
         }).on('error', () => {
           done()
         })
-      }, 110000)
+      }, 100000)
     })
   })
 })
