@@ -934,8 +934,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
-      generateFolderStructure: true,
-      port: 100
+      generateFolderStructure: true
     }, sOptions)
 
     // fork the app.js file and run it as a child process
