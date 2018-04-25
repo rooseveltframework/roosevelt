@@ -946,7 +946,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
 
     testApp.stderr.on('data', (data) => {
-      if (data.includes(`throw new errors.Error('ERR_SERVER_ALREADY_LISTEN')`)) {
+      if (data.includes(`ERR_SERVER_ALREADY_LISTEN`)) {
         alreadyListeningBool = true
       }
       console.log(`stderr: ${data}`)
