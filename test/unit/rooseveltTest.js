@@ -97,8 +97,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     generateTestApp({
       appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      generateFolderStructure: true
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -892,7 +891,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should throw the error message if it has an error code that is not the three codes found in roosevelt.js', function (done) {
+  it('should throw the error message that is found in EACCESS if it hits that error', function (done) {
     // bool var to hold whether a specific log was outputted
     let otherErrorLogBool = false
 
@@ -909,7 +908,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // watch error logs for the specific log that we are testing for
     testApp.stderr.on('data', (data) => {
-      if (data.includes('listen EACCES 0.0.0.0:100')) {
+      if (data.includes('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')) {
         otherErrorLogBool = true
       }
     })
@@ -922,6 +921,38 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // on exit, check to see if the specific log was made and finish the test
     testApp.on('exit', () => {
       assert.equal(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is inaccessible`)
+      done()
+    })
+  })
+
+  it('should do something if startServer was called twice', function (done) {
+    // adjustments to options to use to call startServer twice
+    sOptions.startTwice = true
+    // bool var to hold whether or not a specific error log was outputted
+    let alreadyListeningBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      port: 100
+    }, sOptions)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes(`throw new errors.Error('ERR_SERVER_ALREADY_LISTEN')`)) {
+        alreadyListeningBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(alreadyListeningBool, true, 'Roosevelt did not throw an error saying that the app is listening alreadly')
       done()
     })
   })

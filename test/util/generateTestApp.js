@@ -18,20 +18,24 @@ module.exports = function (params, options) {
   appJSContents = appJSContents.replace(/(\}')/g, '}')
 
   if (options.method) {
-    if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice) {
+    if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}(() => {\n`
       appJSContents += `  ${defaultMessages}\n})`
-    } else if (options.empty && !options.noFunction && !options.initStart && !options.initTwice) {
+    } else if (options.empty && !options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}()`
-    } else if (!options.empty && options.noFunction && !options.initStart && !options.initTwice) {
+    } else if (!options.empty && options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}('something')`
-    } else if (!options.empty && !options.noFunction && options.initStart && !options.initTwice) {
+    } else if (!options.empty && !options.noFunction && options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.initServer()\n`
       appJSContents += `app.startServer(() => {\n`
       appJSContents += `${defaultMessages}\n})`
-    } else if (!options.empty && !options.noFunction && !options.initStart && options.initTwice) {
+    } else if (!options.empty && !options.noFunction && !options.initStart && options.initTwice && !options.startTwice) {
       appJSContents += `app.initServer()\n`
       appJSContents += `app.initServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
+    } else if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice && options.startTwice) {
+      appJSContents += `app.startServer()\n`
+      appJSContents += `app.startServer(() => {\n`
       appJSContents += `${defaultMessages}\n})`
     }
   } else {
