@@ -835,6 +835,42 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should give instruction to install java if the validator is called without having java installed on the machine', function (done) {
+      // bool var to hold whether or not a specific error was triggered
+      let javaEnonetErrorBool = false
+
+      // generate the app.js file
+      generateTestApp({
+        appDir: appDir,
+        generateFolderStructure: true,
+        onServerStart: `(app) => {process.send(app.get("params"))}`,
+        htmlValidator: {
+          enable: true
+        }
+      }, options)
+
+      // fork the app and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], env: {PATH: 'sfsfsff'}})
+
+      // on error logs, check to see if any of them are the error log that we want
+      testApp.stderr.on('data', (data) => {
+        if (data.includes('Error: The command Java was not recognised. You will have to either install the JRE or set the path of java correctly to run the validator')) {
+          javaEnonetErrorBool = true
+        }
+      })
+
+      // when the app finishes initialization, kill it
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
+      })
+
+      // when the app is exiting, see if the error was hit
+      testApp.on('exit', () => {
+        assert.equal(javaEnonetErrorBool, true, 'The Path does not point to java, so we should get an error saying that the command of java was not recognised')
+        done()
+      })
+    })
   })
 
   describe('Roosevelt killValidator test', function () {
