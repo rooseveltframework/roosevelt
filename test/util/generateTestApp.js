@@ -39,7 +39,7 @@ module.exports = function (params, options) {
     appJSContents += `clock.tick(30000)\n`
     appJSContents += `})`
   }
-  
+
   if (options.stopServer) {
     appJSContents += `\n\n app.stopServer()`
   }
