@@ -39,6 +39,10 @@ module.exports = function (params, options) {
     appJSContents += `clock.tick(30000)\n`
     appJSContents += `})`
   }
+  
+  if (options.stopServer) {
+    appJSContents += `\n\n app.stopServer()`
+  }
 
   // generate test app drectory
   fse.ensureDirSync(path.join(appDir))
