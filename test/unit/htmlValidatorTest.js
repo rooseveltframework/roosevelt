@@ -835,6 +835,36 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should give instruction to install java if the validator is called without having java installed on the machine', function (done) {
+      generateTestApp({
+        appDir: appDir,
+        generateFolderStructure: true,
+        onServerStart: `(app) => {process.send(app.get("params"))}`,
+        htmlValidator: {
+          enable: true
+        }
+      }, options)
+
+      // fork the app and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      testApp.stdout.on('data', (data) => {
+        console.log(`stdout: ${data}`)
+      })
+
+      testApp.stderr.on('data', (data) => {
+        console.log(`stderr: ${data}`)
+      })
+
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
   })
 
   describe('Roosevelt killValidator test', function () {
