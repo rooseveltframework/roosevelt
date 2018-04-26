@@ -5,13 +5,13 @@
   "suppressLogs": {
     "httpLogs": false,
     "rooseveltLogs": false,
+    "verboseLogs": false,
     "rooseveltWarnings": false
   },
-  "verboseLogs": false,
   "noMinify": false,
-  "noAuto": false,
   "htmlValidator": {
     "enable": false,
+    "noAutoKiller": false,
     "separateProcess": false,
     "port": 8888,
     "suppressWarnings": false,

@@ -36,8 +36,10 @@ describe('Roosevelt autokill Test', function () {
     // create the app.js file
     generateTestApp({
       appDir: appDir,
+      suppressLogs: {
+        verboseLogs: true
+      },
       generateFolderStructure: true,
-      verboseLogs: true,
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -90,7 +92,9 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      verboseLogs: true,
+      suppressLogs: {
+        verboseLogs: true
+      },
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -141,7 +145,9 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      verboseLogs: true,
+      suppressLogs: {
+        verboseLogs: true
+      },
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -182,7 +188,9 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      verboseLogs: true,
+      suppressLogs: {
+        verboseLogs: true
+      },
       htmlValidator: {
         enable: true,
         port: 42312,
@@ -224,7 +232,9 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      verboseLogs: true,
+      suppressLogs: {
+        verboseLogs: true
+      },
       htmlValidator: {
         enable: true,
         separateProcess: true,
@@ -286,7 +296,6 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      verboseLogs: false,
       htmlValidator: {
         enable: true,
         port: 42312,

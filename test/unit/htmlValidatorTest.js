@@ -39,9 +39,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
-          enable: true
+          enable: true,
+          noAutoKiller: true
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -84,9 +84,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
-          enable: true
+          enable: true,
+          noAutoKiller: true
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -133,10 +133,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
-          suppressWarnings: false
+          suppressWarnings: false,
+          noAutoKiller: true
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -178,10 +178,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
-          suppressWarnings: true
+          suppressWarnings: true,
+          noAutoKiller: true
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -224,10 +224,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
           suppressWarnings: true,
+          noAutoKiller: true,
           exceptions: {
             requestHeader: 'partialtest'
           }
@@ -272,10 +272,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
           suppressWarnings: true,
+          noAutoKiller: true,
           exceptions: {
             requestHeader: 'partialtest'
           }
@@ -321,10 +321,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
           suppressWarnings: true,
+          noAutoKiller: true,
           exceptions: {
             requestHeader: 'partialtest'
           }
@@ -372,13 +372,13 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         viewEngine: [
           'html: teddy'
         ],
         htmlValidator: {
           enable: true,
           suppressWarnings: true,
+          noAutoKiller: true,
           exceptions: {
             modelValue: '_disableValidatorTest'
           }
@@ -422,12 +422,12 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         viewEngine: [
           'html: teddy'
         ],
         htmlValidator: {
           enable: true,
+          noAutoKiller: true,
           suppressWarnings: true,
           exceptions: {
             modelValue: '_disableValidatorTest'
@@ -474,12 +474,12 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         viewEngine: [
           'html: teddy'
         ],
         htmlValidator: {
           enable: true,
+          noAutoKiller: true,
           suppressWarnings: true,
           exceptions: {
             modelValue: '_disableValidatorTest'
@@ -524,9 +524,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
+          noAutoKiller: true,
           suppressWarnings: true,
           port: 3000
         },
@@ -569,9 +569,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
+          noAutoKiller: true,
           suppressWarnings: true,
           separateProcess: true,
           port: 8888
@@ -648,8 +648,8 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
+          noAutoKiller: true,
           enable: true,
           port: 2500,
           separateProcess: true
@@ -717,8 +717,8 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         generateFolderStructure: true,
         appDir: appDir,
         port: 6729,
-        noAuto: true,
         htmlValidator: {
+          noAutoKiller: true,
           enable: true,
           port: 43711,
           separateProcess: true
@@ -771,9 +771,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
+          noAutoKiller: true,
           port: 43711,
           separateProcess: true
         },
@@ -812,9 +812,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
           enable: true,
+          noAutoKiller: true,
           separateProcess: true,
           port: 45231
         },
@@ -863,9 +863,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         htmlValidator: {
-          enable: false
+          enable: false,
+          noAutoKiller: true
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -959,7 +959,8 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           htmlValidator: {
             enable: true,
             port: 8293,
-            separateProcess: true
+            separateProcess: true,
+            noAutoKiller: true
           }
         }
       }
@@ -971,7 +972,6 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
-        noAuto: true,
         appDir: appDir,
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -1160,11 +1160,11 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         port: 2000,
         htmlValidator: {
           enable: true,
           port: 2000,
+          noAutoKiller: true,
           separateProcess: true
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -1349,7 +1349,8 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         rooseveltConfig: {
           htmlValidator: {
             enable: true,
-            separateProcess: true
+            separateProcess: true,
+            noAutoKiller: true
           }
         }
       }
@@ -1362,7 +1363,6 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
-        noAuto: true,
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
 

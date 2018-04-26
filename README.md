@@ -282,13 +282,15 @@ App behavior parameters
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - `rooseveltWarnings`: *[Boolean]* When set to true, Roosevelt will not log app warnings to the console.
+  - `verboseLogs`: *[Boolean]* When set to true, Roosevelt will output the logs made by the auto Vaildator Killer to the console.
   - Default: *[Object]*
 
       ```json
       {
         "httpLogs": false,
         "rooseveltLogs": false,
-        "rooseveltWarnings": false
+        "rooseveltWarnings": false,
+        "verboseLogs": false
       }
       ```
 
@@ -305,6 +307,7 @@ App behavior parameters
     - Note: This feature is only turned on if both the enable and separatePrcoess in htmlValidator are set to true. 
   - `separateProcess`: *[Boolean]* When set to true, the HTML validator will run detached (separate from the node process) by default. You can kill the process by running `npm run kill-validator`.
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
+  - `noAutoKiller`: *[Boolean]* When set to true, it will disable the auto Validator Killer
   - Default: *[Object]*
 
       ```json
@@ -316,7 +319,8 @@ App behavior parameters
         },
         "port": 8888,
         "separateProcess": false,
-        "suppressWarnings": false
+        "suppressWarnings": false,
+        "noAutoKiller": false
       }
       ```
 
