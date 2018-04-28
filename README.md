@@ -67,7 +67,7 @@ First you will need to install [Node.js](http://nodejs.org). Both the current an
 
 Some important caveats to note:
 
-- nvm is not available on Windows.
+- nvm is not available on Windows. Windows users should try out [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nvs](https://github.com/jasongin/nvs).
 - Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
 The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
