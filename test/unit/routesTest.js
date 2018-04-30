@@ -628,4 +628,45 @@ describe('Roosevelt routes Section Test', function () {
       done()
     })
   })
+
+  it('should complete the request even though the server was closed in the middle of it', function (done) {
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
+    testApp.stderr.on('data', (data) => {
+      console.log(`stderr: ${data}`)
+    })
+
+    testApp.on('message', (params) => {
+      if (params.port) {
+        request(`http://localhost:${params.port}`)
+          .get('/longWait')
+          .expect(200, (err, res) => {
+            if (err) {
+              console.log(err)
+              done()
+            } else {
+              console.log(res.text)
+              done()
+            }
+          })
+      } else {
+        testApp.kill('SIGINT')
+      }
+    })
+
+    testApp.on('exit', () => {
+
+    })
+  })
 })

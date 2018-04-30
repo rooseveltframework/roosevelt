@@ -186,25 +186,27 @@ module.exports = function (params) {
     app.set('roosevelt:state', 'disconnecting')
     logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
-    let keys = Object.keys(cluster.workers)
-    if (keys.length > 1 && keys !== undefined) {
-      for (let x = 0; x < keys.length; x++) {
-        cluster.workers[keys[x]].kill('SIGINT')
-      }
-    } else {
-      servers[0].close(function () {
-        if (servers.length > 1) {
-          servers[1].close(exitLog)
-        } else {
-          exitLog()
+    setTimeout(() => {
+      let keys = Object.keys(cluster.workers)
+      if (keys.length > 1 && keys !== undefined) {
+        for (let x = 0; x < keys.length; x++) {
+          cluster.workers[keys[x]].kill('SIGINT')
         }
-      })
-    }
+      } else {
+        servers[0].close(function () {
+          if (servers.length > 1) {
+            servers[1].close(exitLog)
+          } else {
+            exitLog()
+          }
+        })
+      }
 
-    // destroy connections when server is killed
-    for (key in connections) {
-      connections[key].destroy()
-    }
+      // destroy connections when server is killed
+      for (key in connections) {
+        connections[key].destroy()
+      }
+    }, 10000)
   }
 
   function exitLog () {
