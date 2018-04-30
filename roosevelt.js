@@ -179,6 +179,39 @@ module.exports = function (params) {
     }
   }
 
+  // shut down all servers, connections and threads that the roosevelt app is using
+  function gracefulShutdown () {
+    let key
+
+    app.set('roosevelt:state', 'disconnecting')
+    logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
+
+    let keys = Object.keys(cluster.workers)
+    if (keys.length > 1 && keys !== undefined) {
+      for (let x = 0; x < keys.length; x++) {
+        cluster.workers[keys[x]].kill('SIGINT')
+      }
+    } else {
+      servers[0].close(function () {
+        if (servers.length > 1) {
+          servers[1].close(exitLog)
+        } else {
+          exitLog()
+        }
+      })
+    }
+
+    // destroy connections when server is killed
+    for (key in connections) {
+      connections[key].destroy()
+    }
+  }
+
+  function exitLog () {
+    logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
+    process.exit()
+  }
+
   // start server
   function startHttpServer () {
     // determine number of CPUs to use
@@ -199,37 +232,6 @@ module.exports = function (params) {
     if (app.get('params').port === app.get('params').htmlValidator.port) {
       logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`.red)
       process.exit(1)
-    }
-    function exitLog () {
-      logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
-      process.exit()
-    }
-
-    function gracefulShutdown () {
-      let key
-
-      app.set('roosevelt:state', 'disconnecting')
-      logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
-
-      let keys = Object.keys(cluster.workers)
-      if (keys.length > 1 && keys !== undefined) {
-        for (let x = 0; x < keys.length; x++) {
-          cluster.workers[keys[x]].kill('SIGINT')
-        }
-      } else {
-        servers[0].close(function () {
-          if (servers.length > 1) {
-            servers[1].close(exitLog)
-          } else {
-            exitLog()
-          }
-        })
-      }
-
-      // destroy connections when server is killed
-      for (key in connections) {
-        connections[key].destroy()
-      }
     }
 
     function serverPush (server, serverPort, serverFormat) {
@@ -299,6 +301,7 @@ module.exports = function (params) {
     httpsServer: httpsServer,
     expressApp: app,
     initServer: initServer,
-    startServer: startServer
+    startServer: startServer,
+    stopServer: gracefulShutdown
   }
 }

@@ -7,12 +7,21 @@ const util = require('util')
 
 module.exports = function (params, options) {
   let appDir
+  let appJSContents = ''
+  
   if (params === undefined) {
     appDir = options.appDir
   } else {
     appDir = params.appDir || options.appDir
   }
-  let appJSContents = `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
+
+  if (options.msgEnabled) {
+    appJSContents += `const sinon = require('sinon')\n`
+    appJSContents += `let config = {shouldAdvanceTime: true}\n`
+    appJSContents += `let clock = sinon.useFakeTimers(config)\n\n`
+  }
+
+  appJSContents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
   appJSContents = appJSContents.replace(/('\()/g, '(')
   appJSContents = appJSContents.replace(/(\}')/g, '}')
@@ -40,6 +49,17 @@ module.exports = function (params, options) {
     }
   } else {
     appJSContents += defaultMessages
+  }
+
+  if (options.msgEnabled) {
+    appJSContents += `\n\nprocess.on('message', function (){\n`
+    appJSContents += `console.log('msg recieved')\n`
+    appJSContents += `clock.tick(30000)\n`
+    appJSContents += `})`
+  }
+
+  if (options.stopServer) {
+    appJSContents += `\n\n app.stopServer()`
   }
 
   // generate test app drectory

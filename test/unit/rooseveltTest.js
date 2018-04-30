@@ -188,7 +188,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should allow the user to change the amount of cores that the app will run on', function (done) {
+  it('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
     // reset sOptions
     sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
 
@@ -211,6 +211,51 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
+    testApp.stdout.on('data', (data) => {
+      if (data.includes(`server started`)) {
+        serverStartInt++
+        if (serverStartInt === 2) {
+          testApp.kill('SIGINT')
+          clearTimeout(timeout)
+        }
+      }
+      if (data.includes('thread') && data.includes('died')) {
+        processKilledInt++
+      }
+    })
+
+    // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
+    testApp.on('exit', () => {
+      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
+      done()
+    })
+  })
+
+  it('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
+    // reset sOptions
+    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+
+    // Int vars to hold how many times a server was started and how many times a thread was killed
+    let serverStartInt = 0
+    let processKilledInt = 0
+
+    // set a timeout in case the correct amount of instances are not made or something fails during initialization
+    let timeout = setTimeout(function () {
+      assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
+      done()
+    }, 5000)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {console.log("server started")}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--cores', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -849,6 +894,42 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
       assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      done()
+    })
+  })
+
+  it('should be able to call gracefulShutdown if stopServer was called', function (done) {
+    // bool vars to hold whether specific logs were outputted
+    let recievedKillSignalBool = false
+    let closedRooseveltAppBool = false
+
+    // adjusted options sent to generateTestApp so that it will call roosevelt shutdownServer function
+    sOptions.stopServer = true
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {console.log("server started")}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on logs, check to see if the specific logs were outputted
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
+        recievedKillSignalBool = true
+      }
+      if (data.includes('Roosevelt Express successfully closed all connections and shut down gracefully.')) {
+        closedRooseveltAppBool = true
+      }
+    })
+
+    // on exit, see if the logs were outputted
+    testApp.on('exit', () => {
+      assert.equal(recievedKillSignalBool, true, 'shutdownServer did not start gracefulShutdown')
+      assert.equal(closedRooseveltAppBool, true, 'shutdownServer did not close everything on the roosevelt app')
       done()
     })
   })

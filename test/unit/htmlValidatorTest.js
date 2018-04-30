@@ -835,9 +835,93 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should report that the validator should timeout if the amount of time given to it passes before it reports its listening to the port given to it', function (done) {
+      // setup options so that it will enable the app to have a timer
+      options.msgEnabled = true
+      // bool var to hold whether a specific error log was outputted
+      let validatorTimeOutBool = false
+
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: true
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      // when the message of starting the HTML Validator comes, send a response to the app to speed up its clock by 30 secs
+      testApp.stdout.on('data', (data) => {
+        if (data.includes('Starting HTML validator...')) {
+          testApp.send('something')
+        }
+      })
+
+      // on error logs, check if the error log was outputted
+      testApp.stderr.on('data', (data) => {
+        if (data.includes('HTML validator has been disabled because it has timed out.')) {
+          validatorTimeOutBool = true
+        }
+      })
+
+      // when the app is finished with initialization, kill it
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
+      })
+
+      // on exit, check to see if the log of the validator timing out was outputted
+      testApp.on('exit', () => {
+        assert.equal(validatorTimeOutBool, true, 'Roosevelt did not report that it would time out if the amount of time given for time out passed')
+        done()
+      })
+    })
+
+    it('should give instruction to install java if the validator is called without having java installed on the machine', function (done) {
+      // bool var to hold whether or not a specific error was triggered
+      let javaEnonetErrorBool = false
+
+      // generate the app.js file
+      generateTestApp({
+        appDir: appDir,
+        generateFolderStructure: true,
+        onServerStart: `(app) => {process.send(app.get("params"))}`,
+        htmlValidator: {
+          enable: true
+        }
+      }, options)
+
+      // fork the app and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], env: {PATH: 'sfsfsff'}})
+
+      // on error logs, check to see if any of them are the error log that we want
+      testApp.stderr.on('data', (data) => {
+        if (data.includes('Error: You must install Java to continue. HTML validation disabled, error on initialization (check to make sure Java is installed and in your path)')) {
+          javaEnonetErrorBool = true
+        }
+      })
+
+      // when the app finishes initialization, kill it
+      testApp.on('message', () => {
+        testApp.kill('SIGINT')
+      })
+
+      // when the app is exiting, see if the error was hit
+      testApp.on('exit', () => {
+        assert.equal(javaEnonetErrorBool, true, 'The Path does not point to java, so we should get an error saying that the command of java was not recognised')
+        done()
+      })
+    })
   })
 
   describe('Roosevelt killValidator test', function () {
+    // make options msgEnabled back to false so that new app don't have a sinon timer
+    options.msgEnabled = false
+
     it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
       // bool var to hold whether or not the request failed status has been given
       let requestFailedLogBool = false
