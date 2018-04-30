@@ -975,6 +975,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   it('should throw the error message that is found in EACCESS if it hits that error', function (done) {
     // bool var to hold whether a specific log was outputted
     let otherErrorLogBool = false
+    let EACCESSLogBool = false
 
     // generate the app.js file
     generateTestApp({
@@ -992,6 +993,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')) {
         otherErrorLogBool = true
       }
+      if (data.includes('listen EACCES')) {
+        EACCESSLogBool = true
+      }
     })
 
     // on startup, if we get there somehow, kill the app
@@ -1002,6 +1006,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // on exit, check to see if the specific log was made and finish the test
     testApp.on('exit', () => {
       assert.equal(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is inaccessible`)
+      assert.equal(EACCESSLogBool, true, `Roosevelt did not throw the specifc error log that we were looking for`)
       done()
     })
   })
