@@ -8,7 +8,7 @@ const util = require('util')
 module.exports = function (params, options) {
   let appDir
   let appJSContents = ''
-  
+
   if (params === undefined) {
     appDir = options.appDir
   } else {
