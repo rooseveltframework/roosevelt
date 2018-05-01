@@ -53,7 +53,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         // request the bad html page
         request(`http://localhost:${params.port}`)
           .get('/Broken')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -144,7 +144,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -189,7 +189,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -237,7 +237,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -434,7 +434,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/brokenObject2Test')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -485,7 +485,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/Broken')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -576,7 +576,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
         let testAppError = false
         request(`http://localhost:${params.port}`)
           .get('/Broken')
-          .expect(200, (err, res) => {
+          .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.kill('SIGINT')
@@ -814,7 +814,7 @@ describe('Roosevelt HTML Validator/ Kill Validator Test', function () {
           // request a bad page and see if the response shows that we cannot connect to the validator
           request(`http://localhost:${params.port}`)
             .get('/Broken')
-            .expect(200, (err, res) => {
+            .expect(500, (err, res) => {
               if (err) {
                 assert.fail(err)
                 testApp.kill('SIGINT')
