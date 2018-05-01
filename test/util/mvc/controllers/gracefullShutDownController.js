@@ -1,9 +1,8 @@
 module.exports = (app) => {
   app.route('/longWait').get((req, res) => {
-    console.log('waiting')
+    process.send('waiting')
     setTimeout(() => {
       res.send('longWait done')
-    }, 50000)
-    process.send('waiting')
+    }, 10000)
   })
 }

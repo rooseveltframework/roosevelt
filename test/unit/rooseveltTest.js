@@ -7,7 +7,6 @@ const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
 const fse = require('fs-extra')
 const os = require('os')
-const request = require('supertest')
 const http = require('http')
 
 describe('Roosevelt roosevelt.js Section Tests', function () {
@@ -341,47 +340,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     testApp.on('exit', () => {
       assert.equal(defaultCoresLogBool, true, 'Roosevelt try to set the amount of cores to something that is not possible (too many)')
       assert.equal(serverStartInt, 1, 'Roosevelt started more or less than 1 server for the app')
-      done()
-    })
-  })
-
-  it('should destroy all connections made to server if they still exists when the app is shutting down', function (done) {
-    // global var to hold supertest and bool var to show whether or not a error log was outputted
-    let test
-    let statusUnknownBool = false
-
-    // copy over the mvc over to the test app directory so that we can make http request
-    fse.ensureDir(appDir)
-    fse.copySync(path.join(appDir, '../', '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // on start, make a request to the server before immediately quitting
-    testApp.on('message', (params) => {
-      test = request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err) {
-            if (err.message.includes(`Cannot read property 'status' of undefined`)) {
-              statusUnknownBool = true
-            }
-          }
-        })
-      testApp.kill('SIGINT')
-    })
-
-    // on exit, see if the response can't be finish and that the request's socket was destroyed
-    testApp.on('exit', () => {
-      assert.equal(test.req.socket.destroyed, true, 'Roosevelt did not destory the connection while it was closing down')
-      assert.equal(statusUnknownBool, true, 'Roosevelt was able to complete the HTTP Request, which it should not be able to do')
       done()
     })
   })
@@ -779,7 +737,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on logs, check to see if the specific logs were outputted
     testApp.stdout.on('data', (data) => {
@@ -800,6 +758,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
+    // stop it from calling stopServer
+    sOptions.stopServer = false
     // bool var to hold whether or not specific logs were made or if a specific action happened
     let samePortWarningBool = false
     let serverStartedBool = false

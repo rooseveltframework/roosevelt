@@ -34,6 +34,7 @@ module.exports = function (params) {
   let faviconPath
   let flags
   let clusterKilled = 0
+  let checkConnectionsTimeout
 
   // expose initial vars
   app.set('express', express)
@@ -136,6 +137,9 @@ module.exports = function (params) {
     // once the connection closes, remove
     conn.on('close', function () {
       delete connections[key]
+      if (app.get('roosevelt:state') === 'disconnecting') {
+        connectionCheck()
+      }
     })
   }
 
@@ -186,32 +190,35 @@ module.exports = function (params) {
     app.set('roosevelt:state', 'disconnecting')
     logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
-    setTimeout(() => {
-      let keys = Object.keys(cluster.workers)
-      if (keys.length > 1 && keys !== undefined) {
-        for (let x = 0; x < keys.length; x++) {
-          cluster.workers[keys[x]].kill('SIGINT')
-        }
-      } else {
-        servers[0].close(function () {
-          if (servers.length > 1) {
-            servers[1].close(exitLog)
-          } else {
-            exitLog()
-          }
-        })
+    let keys = Object.keys(cluster.workers)
+    if (keys.length > 1 && keys !== undefined) {
+      for (let x = 0; x < keys.length; x++) {
+        cluster.workers[keys[x]].kill('SIGINT')
       }
-
-      // destroy connections when server is killed
+    } else {
+      connectionCheck()
+    }
+    setTimeout(() => {
+      // force destroy connections if the server takes too long to shut down
+      logger.error(`${appName} could not close all connections in time; forcefully shutting down`.red)
+      clearTimeout(checkConnectionsTimeout)
       for (key in connections) {
         connections[key].destroy()
       }
-    }, 10000)
+      process.exit()
+    }, app.get('params').shutdownTimeout)
   }
 
   function exitLog () {
     logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
     process.exit()
+  }
+
+  function connectionCheck () {
+    let connectionsAmount = Object.keys(connections)
+    if (connectionsAmount.length === 0) {
+      exitLog()
+    }
   }
 
   // start server
