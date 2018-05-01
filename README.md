@@ -349,7 +349,8 @@ App behavior parameters
 
 - `bodyParserJsonParams`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: *[Object]* `{}`.
-
+- `checkDependencies`: Parameter to tell roosevelt whether or not it should go over the installed node packages and make sure that all the packages from package.json are installed and that they are up to date
+  - Default: *[Boolean]* `true`.
 
 
 HTTPS parameters

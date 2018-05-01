@@ -43,6 +43,19 @@ module.exports = function (params) {
   app = require('./lib/sourceParams')(app)
   logger = require('./lib/tools/logger')(app)
 
+  // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
+  if (app.get('params').checkDependencies) {
+    let output = require('check-dependencies').sync({packageDir: params.appDir})
+    if (!output.depsWereOk) {
+      let mainError = output.error[output.error.length - 1]
+      if (mainError.includes('Invoke npm install to install missing packages')) {
+        logger.warn('One or a few of the node packages are missing or out of date, consider running npm i and/or going over your package.json file'.yellow)
+      } else {
+        logger.warn('Package.json is missing from your app Directory, consider making one'.yellow)
+      }
+    }
+  }
+
   appName = app.get('appName')
   appEnv = app.get('env')
   flags = app.get('flags')

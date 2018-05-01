@@ -5,6 +5,7 @@ const path = require('path')
 const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
+const spawn = require('child_process').spawnSync
 const fse = require('fs-extra')
 const os = require('os')
 const request = require('supertest')
@@ -833,6 +834,128 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       assert.equal(serverStartedBool, false, 'Roosevelt completely compiled the app and started it even thought we get EADDRINUSE error')
       assert.equal(samePortWarningBool, true, 'Roosevelt did not report that it could not start because something is using the same port that the app wants to use')
       server.close()
+      done()
+    })
+  })
+
+  it('should report that it can not find a package.json file and that the user should make one', function (done) {
+    // bool var to hold whether a specific warning had been displayed
+    let missingPackageLogBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if the specific one is the missing package one
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Package.json is missing from your app Directory, consider making one')) {
+        missingPackageLogBool = true
+      }
+    })
+
+    // when the app finishes init, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exits, check that the specific warning was outputted
+    testApp.on('exit', () => {
+      assert.equal(missingPackageLogBool, true, 'Roosevelt did not report that there is no Package.json file in the app Directory')
+      done()
+    })
+  })
+
+  it('should report that the node_modules directory is missing some packages or that some are out of date', function (done) {
+    // bool var to hold that whether or not a specific warning was outputted
+    let missingOrOODPackageBool = false
+
+    // command for npm
+    let npmName
+    if (os.platform() === 'win32') {
+      npmName = 'npm.cmd'
+    } else {
+      npmName = 'npm'
+    }
+
+    // set up the node_modules and the package.json file
+    fse.mkdirSync(appDir)
+    let packageJSONSource = {
+      dependencies: {
+        colors: '~1.2.0',
+        express: '~4.16.2'
+      }
+    }
+
+    packageJSONSource = JSON.stringify(packageJSONSource)
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, check if any display the missing or out of date warning log
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('One or a few of the node packages are missing or out of date, consider running npm i and/or going over your package.json file')) {
+        missingOrOODPackageBool = true
+      }
+    })
+
+    // when the app finishes init, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exit, check to see if the warning log was made
+    testApp.on('exit', () => {
+      assert.equal(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
+      done()
+    })
+  })
+
+  it('should not report any warnings about the package.json file if checkDependencies is set to false', function (done) {
+    // bool var to hold whether a specific warning had been displayed
+    let missingPackageLogBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      checkDependencies: false
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, see if the specific one is the missing package one
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Package.json is missing from your app Directory, consider making one')) {
+        missingPackageLogBool = true
+      }
+    })
+
+    // when the app finishes init, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exits, check whether or not any warnings were made
+    testApp.on('exit', () => {
+      assert.equal(missingPackageLogBool, false, 'Roosevelt did report that there is no Package.json file in the app Directory even though checkDependencies is set to false')
       done()
     })
   })

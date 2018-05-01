@@ -68,5 +68,6 @@
     "images"
   ],
   "versionedPublic": false,
-  "alwaysHostPublic": false
+  "alwaysHostPublic": false,
+  "checkDependencies": true
 }
