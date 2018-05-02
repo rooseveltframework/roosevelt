@@ -423,42 +423,6 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it.skip('should give a 503 error page if the app is shutting down and someone is trying to access it', function (done) {
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stdout.on('data', (data) => {
-      console.log(`${data}`)
-    })
-
-    // when the app finishes initialization, kill it and send a request to get a 503 back for it disconnection
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err) {
-            assert.fail(err)
-          }
-          testApp.kill('SIGINT')
-          request(`http://localhost:${params.port}`)
-            .get('/HTMLTest')
-            .expect(200, (err, res) => {
-              console.log(err)
-            })
-        })
-    })
-
-    testApp.on('exit', () => {
-    })
-  })
-
   it('should be able to handle multiple viewEngines and set a name with a value and not change it', function (done) {
     // generate the app.js file
     generateTestApp({
@@ -625,6 +589,128 @@ describe('Roosevelt routes Section Test', function () {
     })
 
     testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should complete the request even though the server was closed in the middle of it and respond 503 to any other request made afterwards', function (done) {
+    // bool var to hold whether or not the correct logs were outputted
+    let shuttingDownLogBool = false
+    let successfulShutdownBool = false
+    // var to hold port number
+    let port = 0
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console.logs, see if the correct ones are being outputted
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
+        shuttingDownLogBool = true
+      }
+      if (data.includes('Roosevelt Express successfully closed all connections and shut down gracefully.')) {
+        successfulShutdownBool = true
+      }
+    })
+
+    // when the app finishes, save the app and send a request to the page that has a long timeout
+    testApp.on('message', (params) => {
+      if (params.port) {
+        port = params.port
+        request(`http://localhost:${params.port}`)
+          .get('/longWait')
+          .expect(200, (err, res) => {
+            // it should still respond with longWait done
+            if (err) {
+              assert.fail(err)
+            } else {
+              assert.equal(res.text, 'longWait done', 'Roosevelt did not finish a response that was made before it was shut down')
+            }
+          })
+      } else {
+        // the controller of /longWait sends back a message, on that msg, kill the app and try to grab a basic page
+        testApp.kill('SIGINT')
+        request(`http://localhost:${port}`)
+          .get('/')
+          // we should get back a 503 from the request
+          .expect(503, (err, res) => {
+            if (err) {
+              assert.fail(err)
+            } else {
+              let test = res.text.includes('503 Service Unavailable')
+              assert.equal(test, true, 'Roosevelt did not respond back with a 503 page when a page was requested as it was shutting down')
+            }
+          })
+      }
+    })
+
+    // on exit, see that the right logs were outputted
+    testApp.on('exit', () => {
+      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      assert.equal(successfulShutdownBool, true, 'Roosevelt did not log that it successfully closed all connections and that its shutting down')
+      done()
+    })
+  })
+
+  it('should force close all active connections if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+    // bool vars to hold whether or not the correct logs were outputted
+    let forceCloseLogBool = false
+    let shuttingDownLogBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      shutdownTimeout: 7000
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, see that the app is shutting down
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
+        shuttingDownLogBool = true
+      }
+    })
+
+    // on error, see that not all connections are finishing and that its force killing them
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
+        forceCloseLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, ask for longWait
+    testApp.on('message', (params) => {
+      if (params.port) {
+        request(`http://localhost:${params.port}`)
+          .get('/longWait')
+          // since we are force closing this connection while its still active, it should not send back a response object or a status number
+          .expect(200, (err, res) => {
+            if (err) {
+              let test = err.message.includes(`Cannot read property 'status' of undefined`)
+              assert.equal(test, true, 'Error did not state that it can not get the status of undefined')
+            }
+            assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
+          })
+      } else {
+        testApp.kill('SIGINT')
+      }
+    })
+
+    // on exit, see if the correct logs were outputted
+    testApp.on('exit', () => {
+      assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
+      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
       done()
     })
   })

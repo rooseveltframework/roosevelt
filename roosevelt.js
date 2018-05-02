@@ -34,6 +34,7 @@ module.exports = function (params) {
   let faviconPath
   let flags
   let clusterKilled = 0
+  let checkConnectionsTimeout
 
   // expose initial vars
   app.set('express', express)
@@ -136,6 +137,9 @@ module.exports = function (params) {
     // once the connection closes, remove
     conn.on('close', function () {
       delete connections[key]
+      if (app.get('roosevelt:state') === 'disconnecting') {
+        connectionCheck()
+      }
     })
   }
 
@@ -192,24 +196,38 @@ module.exports = function (params) {
         cluster.workers[keys[x]].kill('SIGINT')
       }
     } else {
-      servers[0].close(function () {
-        if (servers.length > 1) {
-          servers[1].close(exitLog)
-        } else {
-          exitLog()
+      // if the app is in development mode, kill all connections instantly and exit
+      if (appEnv === 'development') {
+        for (key in connections) {
+          connections[key].destroy()
         }
-      })
+        exitLog()
+      } else {
+        // else do the normal procedure of seeing if there are still connections before closing
+        connectionCheck()
+      }
     }
-
-    // destroy connections when server is killed
-    for (key in connections) {
-      connections[key].destroy()
-    }
+    setTimeout(() => {
+      // force destroy connections if the server takes too long to shut down
+      logger.error(`${appName} could not close all connections in time; forcefully shutting down`.red)
+      clearTimeout(checkConnectionsTimeout)
+      for (key in connections) {
+        connections[key].destroy()
+      }
+      process.exit()
+    }, app.get('params').shutdownTimeout)
   }
 
   function exitLog () {
     logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
     process.exit()
+  }
+
+  function connectionCheck () {
+    let connectionsAmount = Object.keys(connections)
+    if (connectionsAmount.length === 0) {
+      exitLog()
+    }
   }
 
   // start server
