@@ -608,7 +608,7 @@ describe('Roosevelt routes Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on console.logs, see if the correct ones are being outputted
     testApp.stdout.on('data', (data) => {
@@ -673,7 +673,7 @@ describe('Roosevelt routes Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on console logs, see that the app is shutting down
     testApp.stdout.on('data', (data) => {

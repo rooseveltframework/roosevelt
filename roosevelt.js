@@ -196,7 +196,16 @@ module.exports = function (params) {
         cluster.workers[keys[x]].kill('SIGINT')
       }
     } else {
-      connectionCheck()
+      // if the app is in development mode, kill all connections instantly and exit
+      if (appEnv === 'development') {
+        for (key in connections) {
+          connections[key].destroy()
+        }
+        exitLog()
+      } else {
+        // else do the normal procedure of seeing if there are still connections before closing
+        connectionCheck()
+      }
     }
     setTimeout(() => {
       // force destroy connections if the server takes too long to shut down
