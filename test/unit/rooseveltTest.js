@@ -8,6 +8,7 @@ const fork = require('child_process').fork
 const fse = require('fs-extra')
 const os = require('os')
 const http = require('http')
+const request = require('supertest')
 
 describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
