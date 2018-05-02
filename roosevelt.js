@@ -236,18 +236,13 @@ module.exports = function (params) {
 
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
-        if (err) {
-          if (err.message.includes('EADDRINUSE')) {
-            logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
-          } else if (err.message.includes('EPERM')) {
-            logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')
-          } else if (err.message.includes('EADDRNOTAVAIL')) {
-            logger.error('The address/port you are trying to access is not available. Try assigning your server and/or HTML validator to another port.')
-          } else {
-            throw err
-          }
-          process.exit(1)
+        if (err.message.includes('EADDRINUSE')) {
+          logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
+        } else {
+          logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.'.red)
+          logger.error(err)
         }
+        process.exit(1)
       }))
     }
 
