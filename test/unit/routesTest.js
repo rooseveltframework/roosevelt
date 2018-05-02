@@ -714,4 +714,49 @@ describe('Roosevelt routes Section Test', function () {
       done()
     })
   })
+    
+    it('should be able to start the app normally without spitting any controller errors even though there is a non-controller file in the controller folder', function (done) {
+    // bool vars to hold whether or not specifc warnings or logs were made
+    let appCompletedInitLogBool = false
+    let controllerErrorLogBool = false
+
+    // copy the ico file into the mvc controller directory
+    fse.copyFileSync(path.join(__dirname, '../', 'util', 'faviconTest.ico'), path.join(appDir, 'mvc', 'controllers', 'faviconTest.ico'))
+      
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+      
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    
+    // on console logs, see if the app completed its initialization
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express HTTP server listening on port 43711 (development mode)')) {
+        appCompletedInitLogBool = true
+      }
+    })
+
+    // on error logs, see if the app failed to load any controller files
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('failed to load controller file')) {
+        controllerErrorLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exits, see if the initialization complete log happened and the controller error log did not
+    testApp.on('exit', () => {
+      assert.equal(appCompletedInitLogBool, true, 'Roosevelt did not complete its initalization, probably because of the non-controller file in the controller directory')
+      assert.equal(controllerErrorLogBool, false, 'Roosevelt threw an error on a file in the controller directory that it should have passed over')
+      done()
+    })
+  })   
 })
