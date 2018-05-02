@@ -6,23 +6,62 @@ const path = require('path')
 const util = require('util')
 
 module.exports = function (params, options) {
-  const appDir = params.appDir || options.appDir
-  let appJSContents = `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
+  let appDir
+  let appJSContents = ''
+
+  if (params === undefined) {
+    appDir = options.appDir
+  } else {
+    appDir = params.appDir || options.appDir
+  }
+
+  if (options.msgEnabled) {
+    appJSContents += `const sinon = require('sinon')\n`
+    appJSContents += `let config = {shouldAdvanceTime: true}\n`
+    appJSContents += `let clock = sinon.useFakeTimers(config)\n\n`
+  }
+
+  appJSContents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
   appJSContents = appJSContents.replace(/('\()/g, '(')
   appJSContents = appJSContents.replace(/(\}')/g, '}')
 
   if (options.method) {
-    if (!options.empty && !options.noFunction) {
+    if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}(() => {\n`
       appJSContents += `  ${defaultMessages}\n})`
-    } else if (options.empty && !options.noFunction) {
+    } else if (options.empty && !options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}()`
-    } else if (!options.empty && options.noFunction) {
+    } else if (!options.empty && options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}('something')`
+    } else if (!options.empty && !options.noFunction && options.initStart && !options.initTwice && !options.startTwice) {
+      appJSContents += `app.initServer()\n`
+      appJSContents += `app.startServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
+    } else if (!options.empty && !options.noFunction && !options.initStart && options.initTwice && !options.startTwice) {
+      appJSContents += `app.initServer()\n`
+      appJSContents += `app.initServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
+    } else if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice && options.startTwice) {
+      appJSContents += `app.startServer()\n`
+      appJSContents += `app.startServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
     }
   } else {
     appJSContents += defaultMessages
+  }
+
+  if (options.msgEnabled) {
+    appJSContents += `\n\nprocess.on('message', function (){\n`
+    appJSContents += `console.log('msg recieved')\n`
+    appJSContents += `clock.tick(30000)\n`
+    appJSContents += `})`
+  }
+
+  if (options.closing) {
+    appJSContents += `\n\nprocess.on('message', function (){\n`
+    appJSContents += `app.stopServer()\n`
+    appJSContents += `})`
   }
 
   if (options.stopServer) {
