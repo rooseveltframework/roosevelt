@@ -282,7 +282,7 @@ App behavior parameters
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - `rooseveltWarnings`: *[Boolean]* When set to true, Roosevelt will not log app warnings to the console.
-  - `verboseLogs`: *[Boolean]* When set to true, Roosevelt will output the logs made by the auto Vaildator Killer to the console.
+  - `verboseLogs`: *[Boolean]* When set to true, Roosevelt will not output logs made by some of its other processes
   - Default: *[Object]*
 
       ```json

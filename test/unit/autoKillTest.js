@@ -65,11 +65,6 @@ describe('Roosevelt autokill Test', function () {
       if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
       }
-      console.log(`stdout: ${data}`)
-    })
-
-    testApp.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`)
     })
 
     // when the app finishes initiailization, kill it
