@@ -37,14 +37,16 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       suppressLogs: {
-        verboseLogs: true
+        verboseLogs: false
       },
       generateFolderStructure: true,
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true,
-        autoKillerTime: 1000
+        separateProcess: {
+          enable: true,
+          autoKillerTime: 1000
+        }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
@@ -93,13 +95,15 @@ describe('Roosevelt autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       suppressLogs: {
-        verboseLogs: true
+        verboseLogs: false
       },
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true,
-        autoKillerTime: 1000
+        separateProcess: {
+          enable: true,
+          autoKillerTime: 1000
+        }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
@@ -146,12 +150,14 @@ describe('Roosevelt autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       suppressLogs: {
-        verboseLogs: true
+        verboseLogs: false
       },
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true
+        separateProcess: {
+          enable: true
+        }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
@@ -189,13 +195,15 @@ describe('Roosevelt autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       suppressLogs: {
-        verboseLogs: true
+        verboseLogs: false
       },
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true,
-        autoKillerTime: 1000
+        separateProcess: {
+          enable: true,
+          autoKillerTime: 1000
+        }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
@@ -233,12 +241,14 @@ describe('Roosevelt autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       suppressLogs: {
-        verboseLogs: true
+        verboseLogs: false
       },
       htmlValidator: {
         enable: true,
-        separateProcess: true,
-        autoKillerTime: 10000
+        separateProcess: {
+          enable: true,
+          autoKillerTime: 10000
+        }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
@@ -285,7 +295,7 @@ describe('Roosevelt autokill Test', function () {
     })
   })
 
-  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed, but does not report anything if verbose is false', function (done) {
+  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed, but does not report anything if verboseLogs is true', function (done) {
     // vars to hold whether or not a specific log was outputted
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false
@@ -299,8 +309,10 @@ describe('Roosevelt autokill Test', function () {
       htmlValidator: {
         enable: true,
         port: 42312,
-        separateProcess: true,
-        autoKillerTime: 1000
+        separateProcess: {
+          enable: true,
+          autoKillerTime: 1000
+        }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)

@@ -571,9 +571,11 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          noAutoKiller: true,
           suppressWarnings: true,
-          separateProcess: true,
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          },
           port: 8888
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -649,10 +651,12 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         generateFolderStructure: true,
         appDir: appDir,
         htmlValidator: {
-          noAutoKiller: true,
           enable: true,
           port: 2500,
-          separateProcess: true
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          }
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -718,10 +722,12 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         port: 6729,
         htmlValidator: {
-          noAutoKiller: true,
           enable: true,
           port: 43711,
-          separateProcess: true
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          }
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -773,9 +779,11 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          noAutoKiller: true,
           port: 43711,
-          separateProcess: true
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          }
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -814,8 +822,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          noAutoKiller: true,
-          separateProcess: true,
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          },
           port: 45231
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -1043,8 +1053,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           htmlValidator: {
             enable: true,
             port: 8293,
-            separateProcess: true,
-            noAutoKiller: true
+            separateProcess: {
+              enable: true,
+              autoKiller: false
+            }
           }
         }
       }
@@ -1248,8 +1260,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         htmlValidator: {
           enable: true,
           port: 2000,
-          noAutoKiller: true,
-          separateProcess: true
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          }
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -1295,7 +1309,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           htmlValidator: {
             enable: true,
             port: 43711,
-            separateProcess: true
+            separateProcess: {
+              enable: true
+            }
           }
         }
       }
@@ -1353,7 +1369,9 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           htmlValidator: {
             enable: true,
             port: 43711,
-            separateProcess: true
+            separateProcess: {
+              enable: true
+            }
           }
         }
       }
@@ -1433,8 +1451,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         rooseveltConfig: {
           htmlValidator: {
             enable: true,
-            separateProcess: true,
-            noAutoKiller: true
+            separateProcess: {
+              enable: true,
+              autoKiller: false
+            }
           }
         }
       }

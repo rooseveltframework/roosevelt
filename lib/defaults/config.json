@@ -5,17 +5,20 @@
   "suppressLogs": {
     "httpLogs": false,
     "rooseveltLogs": false,
-    "verboseLogs": false,
+    "verboseLogs": true,
     "rooseveltWarnings": false
   },
   "noMinify": false,
   "htmlValidator": {
     "enable": false,
-    "noAutoKiller": false,
-    "separateProcess": false,
+    "separateProcess": {
+      "enable": true,
+      "autoKiller": true,
+      "autoKillerTime": 3600000
+    },
     "port": 8888,
     "suppressWarnings": false,
-    "autoKillerTime": 3600000,
+    
     "exceptions": {
       "requestHeader": "Partial",
       "modelValue": "_disableValidator"
