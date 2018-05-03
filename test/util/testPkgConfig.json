@@ -10,10 +10,12 @@
   "noMinify": "package",
   "htmlValidator": {
     "enable": false,
-    "separateProcess": "package",
+    "separateProcess": {
+      "enable": true,
+      "autoKiller": true,
+      "autoKillerTimeout": 3600000
+    },
     "port": "package",
-    "noAutoKiller": false,
-    "autoKillerTime": 3600000,
     "suppressWarnings": "package",
     "exceptions": {
       "requestHeader": "package",

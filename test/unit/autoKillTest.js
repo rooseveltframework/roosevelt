@@ -45,7 +45,7 @@ describe('Roosevelt autokill Test', function () {
         port: 42312,
         separateProcess: {
           enable: true,
-          autoKillerTime: 1000
+          autoKillerTimeout: 1000
         }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -102,7 +102,7 @@ describe('Roosevelt autokill Test', function () {
         port: 42312,
         separateProcess: {
           enable: true,
-          autoKillerTime: 1000
+          autoKillerTimeout: 1000
         }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -202,7 +202,7 @@ describe('Roosevelt autokill Test', function () {
         port: 42312,
         separateProcess: {
           enable: true,
-          autoKillerTime: 1000
+          autoKillerTimeout: 1000
         }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -247,7 +247,7 @@ describe('Roosevelt autokill Test', function () {
         enable: true,
         separateProcess: {
           enable: true,
-          autoKillerTime: 10000
+          autoKillerTimeout: 10000
         }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -311,7 +311,7 @@ describe('Roosevelt autokill Test', function () {
         port: 42312,
         separateProcess: {
           enable: true,
-          autoKillerTime: 1000
+          autoKillerTimeout: 1000
         }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`

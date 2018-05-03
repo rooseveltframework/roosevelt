@@ -306,7 +306,7 @@ App behavior parameters
   - `separateProcess`: *[Object]* Params that affects whether or not the Validator runs detached from the node process and the behavior of the autoKiller
     - `enable`: *[Boolean]* When set to true, the Validator will run detached from the node process. You can kill the process by running `npm run kill-validator`.
     - `autoKiller`: *[Boolean]* When set to true and the Validator is running detached, Roosevelt will run a separate process that will automatically search and shut down the htmlValidator after a certain time
-    - `autoKillerTime`: *[Number]*  Time that the autoKiller waits before it checks whether or not it should kill the htmlValidator (in milliseconds).
+    - `autoKillerTimeout`: *[Number]*  Time that the autoKiller waits before it checks whether or not it should kill the htmlValidator (in milliseconds).
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
   - Default: *[Object]*
 
@@ -321,7 +321,7 @@ App behavior parameters
         "separateProcess": {
           "enable": true,
           "autoKiller": true,
-          "autoKillerTime": 360000
+          "autoKillerTimeout": 360000
         },
         "suppressWarnings": false,
       }

@@ -14,7 +14,7 @@
     "separateProcess": {
       "enable": true,
       "autoKiller": true,
-      "autoKillerTime": 3600000
+      "autoKillerTimeout": 3600000
     },
     "port": 8888,
     "suppressWarnings": false,
