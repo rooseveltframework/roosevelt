@@ -51,8 +51,6 @@ module.exports = function (params) {
       let mainError = output.error[output.error.length - 1]
       if (mainError.includes('Invoke npm install to install missing packages')) {
         logger.warn('One or a few of the node packages are missing or out of date, consider running npm i and/or going over your package.json file'.yellow)
-      } else {
-        logger.warn('Package.json is missing from your app Directory, consider making one'.yellow)
       }
     }
   }
