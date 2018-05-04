@@ -2,6 +2,10 @@
   "port": 43711,
   "generateFolderStructure": true,
   "localhostOnly": true,
+  "dotEnv": {
+    "enable": false,
+    "path": ".env"
+  },
   "suppressLogs": {
     "httpLogs": false,
     "rooseveltLogs": false,

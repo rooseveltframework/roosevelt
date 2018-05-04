@@ -1050,4 +1050,94 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
+
+  it('should allow a user to put a dotenv file in their app directory and have it load the environment variables on it', function (done) {
+    let testEnvSource = `TEST1=3\nSomethingElse=blah\nrudi=Rod`
+    fse.ensureDirSync(appDir)
+    fse.writeFileSync(path.join(appDir, '.env'), testEnvSource)
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(process.env)}`,
+      dotenv: {
+        enable: true,
+        path: path.join(appDir, '.env')
+      }
+    }, sOptions)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (envVariables) => {
+      assert.equal(envVariables.TEST1, '3', 'Roosevelt did not upload the .env variables to its environment variables')
+      assert.equal(envVariables.SomethingElse, 'blah', 'Roosevelt did not upload the .env variables to its environment variables')
+      assert.equal(envVariables.rudi, 'Rod', 'Roosevelt did not upload the .env variables to its environment variables')
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should allow a user to put a dotenv file in their app directory and have it load the environment variables on it', function (done) {
+    let missingDotEnvFileErrorBool = false
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(process.env)}`,
+      dotenv: {
+        enable: true
+      }
+    }, sOptions)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('There was a problem in loading your dot env file')) {
+        missingDotEnvFileErrorBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(missingDotEnvFileErrorBool, true, 'Roosevelt did not give an error that states that it could not load the user dot env file')
+      done()
+    })
+  })
+
+  it('should not load the environment variables on the app if enable is set to false', function (done) {
+    let testEnvSource = `TEST1=3\nSomethingElse=blah\nrudi=Rod`
+    fse.ensureDirSync(appDir)
+    fse.writeFileSync(path.join(appDir, '.env'), testEnvSource)
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(process.env)}`,
+      dotenv: {
+        enable: false
+      }
+    }, sOptions)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (envVariables) => {
+      assert.equal(envVariables.TEST1, undefined, 'Roosevelt assigned something to the property even though it should not')
+      assert.equal(envVariables.SomethingElse, undefined, 'Roosevelt assigned something to the property even though it should not')
+      assert.equal(envVariables.rudi, undefined, 'Roosevelt assigned something to the property even though it should not')
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })

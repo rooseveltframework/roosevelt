@@ -2,6 +2,10 @@
   "port": "package",
   "generateFolderStructure": false,
   "localhostOnly": "package",
+  "dotenv": {
+    "enable": true,
+    "path": "package"
+  },
   "suppressLogs": {
     "httpLogs": true,
     "rooseveltLogs": true,
