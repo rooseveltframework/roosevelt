@@ -1050,32 +1050,4 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       done()
     })
   })
-
-  it('should allow me to use logger even if the param I pass in is not an object (can not adjust values though)', function (done) {
-    // param that is not an object
-    let paramPass = 5
-    // logger with the param passed in
-    let loggerTest = require('../../lib/tools/logger')(paramPass)
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, sOptions)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // kill the app after it finishes initiailization
-    testApp.on('message', () => {
-      testApp.kill('SIGINT')
-    })
-
-    // on exit, see whether or not logger can be used with what param we passed in
-    testApp.on('exit', () => {
-      loggerTest.log('')
-      done()
-    })
-  })
 })
