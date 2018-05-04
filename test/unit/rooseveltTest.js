@@ -1060,7 +1060,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(process.env)}`,
-      dotenv: {
+      dotEnv: {
         enable: true,
         path: path.join(appDir, '.env')
       }
@@ -1088,7 +1088,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(process.env)}`,
-      dotenv: {
+      dotEnv: {
         enable: true
       }
     }, sOptions)
@@ -1121,7 +1121,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(process.env)}`,
-      dotenv: {
+      dotEnv: {
         enable: false
       }
     }, sOptions)

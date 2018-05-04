@@ -2,7 +2,7 @@
   "port": "package",
   "generateFolderStructure": false,
   "localhostOnly": "package",
-  "dotenv": {
+  "dotEnv": {
     "enable": true,
     "path": "package"
   },
