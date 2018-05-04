@@ -34,6 +34,7 @@ module.exports = function (params) {
   let faviconPath
   let flags
   let clusterKilled = 0
+  let checkConnectionsTimeout
 
   // expose initial vars
   app.set('express', express)
@@ -149,6 +150,9 @@ module.exports = function (params) {
     // once the connection closes, remove
     conn.on('close', function () {
       delete connections[key]
+      if (app.get('roosevelt:state') === 'disconnecting') {
+        connectionCheck()
+      }
     })
   }
 
@@ -205,24 +209,38 @@ module.exports = function (params) {
         cluster.workers[keys[x]].kill('SIGINT')
       }
     } else {
-      servers[0].close(function () {
-        if (servers.length > 1) {
-          servers[1].close(exitLog)
-        } else {
-          exitLog()
+      // if the app is in development mode, kill all connections instantly and exit
+      if (appEnv === 'development') {
+        for (key in connections) {
+          connections[key].destroy()
         }
-      })
+        exitLog()
+      } else {
+        // else do the normal procedure of seeing if there are still connections before closing
+        connectionCheck()
+      }
     }
-
-    // destroy connections when server is killed
-    for (key in connections) {
-      connections[key].destroy()
-    }
+    setTimeout(() => {
+      // force destroy connections if the server takes too long to shut down
+      logger.error(`${appName} could not close all connections in time; forcefully shutting down`.red)
+      clearTimeout(checkConnectionsTimeout)
+      for (key in connections) {
+        connections[key].destroy()
+      }
+      process.exit()
+    }, app.get('params').shutdownTimeout)
   }
 
   function exitLog () {
     logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
     process.exit()
+  }
+
+  function connectionCheck () {
+    let connectionsAmount = Object.keys(connections)
+    if (connectionsAmount.length === 0) {
+      exitLog()
+    }
   }
 
   // start server
@@ -249,18 +267,13 @@ module.exports = function (params) {
 
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
-        if (err) {
-          if (err.message.includes('EADDRINUSE')) {
-            logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
-          } else if (err.message.includes('EPERM')) {
-            logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')
-          } else if (err.message.includes('EADDRNOTAVAIL')) {
-            logger.error('The address/port you are trying to access is not available. Try assigning your server and/or HTML validator to another port.')
-          } else {
-            throw err
-          }
-          process.exit(1)
+        if (err.message.includes('EADDRINUSE')) {
+          logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
+        } else {
+          logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.'.red)
+          logger.error(err)
         }
+        process.exit(1)
       }))
     }
 

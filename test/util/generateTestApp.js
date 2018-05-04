@@ -6,8 +6,14 @@ const path = require('path')
 const util = require('util')
 
 module.exports = function (params, options) {
-  const appDir = params.appDir || options.appDir
+  let appDir
   let appJSContents = ''
+
+  if (params === undefined) {
+    appDir = options.appDir
+  } else {
+    appDir = params.appDir || options.appDir
+  }
 
   if (options.msgEnabled) {
     appJSContents += `const sinon = require('sinon')\n`
@@ -21,13 +27,25 @@ module.exports = function (params, options) {
   appJSContents = appJSContents.replace(/(\}')/g, '}')
 
   if (options.method) {
-    if (!options.empty && !options.noFunction) {
+    if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}(() => {\n`
       appJSContents += `  ${defaultMessages}\n})`
-    } else if (options.empty && !options.noFunction) {
+    } else if (options.empty && !options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}()`
-    } else if (!options.empty && options.noFunction) {
+    } else if (!options.empty && options.noFunction && !options.initStart && !options.initTwice && !options.startTwice) {
       appJSContents += `app.${options.method}('something')`
+    } else if (!options.empty && !options.noFunction && options.initStart && !options.initTwice && !options.startTwice) {
+      appJSContents += `app.initServer()\n`
+      appJSContents += `app.startServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
+    } else if (!options.empty && !options.noFunction && !options.initStart && options.initTwice && !options.startTwice) {
+      appJSContents += `app.initServer()\n`
+      appJSContents += `app.initServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
+    } else if (!options.empty && !options.noFunction && !options.initStart && !options.initTwice && options.startTwice) {
+      appJSContents += `app.startServer()\n`
+      appJSContents += `app.startServer(() => {\n`
+      appJSContents += `${defaultMessages}\n})`
     }
   } else {
     appJSContents += defaultMessages
@@ -37,6 +55,12 @@ module.exports = function (params, options) {
     appJSContents += `\n\nprocess.on('message', function (){\n`
     appJSContents += `console.log('msg recieved')\n`
     appJSContents += `clock.tick(30000)\n`
+    appJSContents += `})`
+  }
+
+  if (options.closing) {
+    appJSContents += `\n\nprocess.on('message', function (){\n`
+    appJSContents += `app.stopServer()\n`
     appJSContents += `})`
   }
 
