@@ -3,7 +3,7 @@
   "generateFolderStructure": false,
   "localhostOnly": "package",
   "dotEnv": {
-    "enable": true,
+    "enable": false,
     "path": "package"
   },
   "suppressLogs": {
