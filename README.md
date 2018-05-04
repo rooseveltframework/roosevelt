@@ -290,7 +290,7 @@ App behavior parameters
         "httpLogs": false,
         "rooseveltLogs": false,
         "rooseveltWarnings": false,
-        "verboseLogs": false
+        "verboseLogs": true
       }
       ```
 
