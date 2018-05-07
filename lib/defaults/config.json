@@ -41,7 +41,9 @@
   "htmlMinify": {
     "override": true,
     "exception_url": false,
-    "htmlMinifier": {}
+    "htmlMinifier": {
+      "html5": true
+    }
   },
   "css": {
     "sourceDir": "css",
