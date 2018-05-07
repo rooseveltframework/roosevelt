@@ -327,7 +327,7 @@ describe('Roosevelt routes Section Test', function () {
       // array to hold all the promises
       let promises = []
       // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 200; x++) {
+      for (let x = 0; x < 150; x++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
             .get('/teddyTest')
@@ -387,12 +387,16 @@ describe('Roosevelt routes Section Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    testApp.stdout.on('data', (data) => {
+      console.log(`stdout: ${data}`)
+    })
+
     // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', (params) => {
       // array to hold all the promises
       let promises = []
       // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 200; x++) {
+      for (let x = 0; x < 150; x++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
             .get('/teddyTest')
