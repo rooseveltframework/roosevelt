@@ -387,10 +387,6 @@ describe('Roosevelt routes Section Test', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`)
-    })
-
     // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', (params) => {
       // array to hold all the promises
