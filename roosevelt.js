@@ -42,7 +42,7 @@ module.exports = function (params) {
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
-  logger = require('./lib/tools/logger')(app)
+  logger = require('./lib/tools/logger')(app.get('params').suppressLogs)
 
   appName = app.get('appName')
   appEnv = app.get('env')
