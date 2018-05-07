@@ -150,8 +150,6 @@ module.exports = function (params) {
     }
     initialized = true
 
-    require('./lib/htmlMinify')(app)
-
     preprocessCss()
 
     function preprocessCss () {
@@ -171,6 +169,9 @@ module.exports = function (params) {
     }
 
     function mapRoutes () {
+      // HTML Minifier
+      require('./lib/htmlMinify')(app)
+
       // map routes
       app = require('./lib/mapRoutes')(app)
 
