@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
+const dotEnv = require('dotenv')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -43,6 +44,15 @@ module.exports = function (params) {
   // source user supplied params
   app = require('./lib/sourceParams')(app)
   logger = require('./lib/tools/logger')(app)
+
+  // load in Environment variables from a dot env file
+  if (app.get('params').dotEnv.enable) {
+    let options = {path: app.get('params').dotEnv.path}
+    const result = dotEnv.config(options)
+    if (result.error) {
+      logger.error(`There was a problem in loading your dot env file: ${result.error.message}`.red)
+    }
+  }
 
   appName = app.get('appName')
   appEnv = app.get('env')

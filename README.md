@@ -258,6 +258,18 @@ App behavior parameters
 
 - `port`: The port your app will run on. Can also be defined using `HTTP_PORT` or `NODE_PORT` environment variable.
   - Default: *[Number]* `43711`.
+- `dotEnv`: Params that are passed to the dotEnv library and to roosevelt which will affect dotEnv behavior.
+  - `enable`: *[Boolean]* Tells roosevelt whether or not it should use dotEnv to load in enviroment variables from a .env file
+  - `path`: *[String]* Path to the .env file in your app
+  - Default *[Object]*
+
+    ```json
+    {
+      "enable": false,
+      "path": ".env"
+    }
+    ```
+
 - `nodeEnv`: *[String]* Param to override the `NODE_ENV` environment variable.
   - Default: `undefined`.
 - `ignoreCLIFlags`: *[Boolean]* Disables parsing of command line flags.
