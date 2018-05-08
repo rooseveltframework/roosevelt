@@ -86,7 +86,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['detach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -99,7 +99,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -133,7 +133,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', (params) => {
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -323,7 +323,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -336,7 +336,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-b'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -349,7 +349,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--attach-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -362,7 +362,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-a'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -379,7 +379,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -394,7 +394,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -409,7 +409,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -424,7 +424,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -439,7 +439,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -454,7 +454,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -469,7 +469,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -484,7 +484,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -515,7 +515,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -530,7 +530,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -545,7 +545,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -560,7 +560,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -575,7 +575,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -590,7 +590,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -605,7 +605,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -620,7 +620,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -635,7 +635,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -650,7 +650,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -717,7 +717,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--background-validator', '--enable-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, true)
+        assert.equal(params.htmlValidator.separateProcess.enable, true)
         testApp.kill('SIGINT')
       })
 
@@ -730,7 +730,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--attach-validator', '--background-validator'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
       testApp.on('message', params => {
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
@@ -745,7 +745,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
-        assert.equal(params.htmlValidator.separateProcess, false)
+        assert.equal(params.htmlValidator.separateProcess.enable, false)
         testApp.kill('SIGINT')
       })
 
