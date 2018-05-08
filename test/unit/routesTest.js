@@ -327,7 +327,7 @@ describe('Roosevelt routes Section Test', function () {
       // array to hold all the promises
       let promises = []
       // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 150; x++) {
+      for (let x = 0; x < 300; x++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
             .get('/teddyTest')
@@ -392,7 +392,7 @@ describe('Roosevelt routes Section Test', function () {
       // array to hold all the promises
       let promises = []
       // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 150; x++) {
+      for (let x = 0; x < 300; x++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
             .get('/teddyTest')
