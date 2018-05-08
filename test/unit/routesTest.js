@@ -327,10 +327,10 @@ describe('Roosevelt routes Section Test', function () {
       // array to hold all the promises
       let promises = []
       // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 300; x++) {
+      for (let x = 0; x < 10; x++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
-            .get('/teddyTest')
+            .get('/HTMLTest')
             .expect(200, (err, res) => {
               if (err && res !== undefined) {
                 const test1 = res.text.includes('503 custom test error page')
@@ -392,14 +392,14 @@ describe('Roosevelt routes Section Test', function () {
       // array to hold all the promises
       let promises = []
       // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 300; x++) {
+      for (let x = 0; x < 10; x++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
-            .get('/teddyTest')
+            .get('/HTMLTest')
             .expect(200, (err, res) => {
               if (err && res !== undefined) {
                 const test1 = res.text.includes('503 Service Unavailable')
-                const test2 = res.text.includes('The requested URL /teddyTest is temporarily unavailable at this time')
+                const test2 = res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
                 // check to make sure that all specific pharses are there
                 assert.equal(test1, true)
                 assert.equal(test2, true)

@@ -168,10 +168,9 @@ module.exports = function (params) {
       require('./lib/htmlValidator')(app, mapRoutes)
     }
 
-    function mapRoutes () {
-      // HTML Minifier
-      require('./lib/htmlMinify')(app)
+    require('./lib/htmlMinify')(app)
 
+    function mapRoutes () {
       // map routes
       app = require('./lib/mapRoutes')(app)
 
