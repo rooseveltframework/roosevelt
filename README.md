@@ -282,13 +282,15 @@ App behavior parameters
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - `rooseveltWarnings`: *[Boolean]* When set to true, Roosevelt will not log app warnings to the console.
+  - `verboseLogs`: *[Boolean]* When set to true, Roosevelt will not output logs made by some of its other processes
   - Default: *[Object]*
 
       ```json
       {
         "httpLogs": false,
         "rooseveltLogs": false,
-        "rooseveltWarnings": false
+        "rooseveltWarnings": false,
+        "verboseLogs": true
       }
       ```
 
@@ -301,7 +303,10 @@ App behavior parameters
     - You can also force the validator on in development mode regardless of app settings with `npm run dev -- --enable-validator`.
   - `exceptions`: *[Object]* Use this to customize the name of the request header or model value that is used to disable the HTML validator.
   - `port`: *[Number]* Port to spawn the validator process on.
-  - `separateProcess`: *[Boolean]* When set to true, the HTML validator will run detached (separate from the node process) by default. You can kill the process by running `npm run kill-validator`.
+  - `separateProcess`: *[Object]* Params that affects whether or not the Validator runs detached from the node process and the behavior of the autoKiller
+    - `enable`: *[Boolean]* When set to true, the Validator will run detached from the node process. You can kill the process by running `npm run kill-validator`.
+    - `autoKiller`: *[Boolean]* When set to true and the Validator is running detached, Roosevelt will run a separate process that will automatically search and shut down the htmlValidator after a certain time
+    - `autoKillerTimeout`: *[Number]*  Time that the autoKiller waits before it checks whether or not it should kill the htmlValidator (in milliseconds).
   - `suppressWarnings`: *[Boolean]* When set to true, validation warnings will be hidden and only errors will be shown.
   - Default: *[Object]*
 
@@ -313,8 +318,12 @@ App behavior parameters
           "modelValue": "_disableValidator"
         },
         "port": 8888,
-        "separateProcess": false,
-        "suppressWarnings": false
+        "separateProcess": {
+          "enable": true,
+          "autoKiller": true,
+          "autoKillerTimeout": 360000
+        },
+        "suppressWarnings": false,
       }
       ```
 
@@ -815,7 +824,7 @@ Additionally the Roosevelt constructor returns the following object:
 | `httpsServer`            | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
 | `initServer`             | Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
 | `startServer`            | Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
-| `stopServer`             | Closes all web server(s) that are started by roosevelt. Note: if the HTMLValidator is on and its separateProcess param is set to true, this will not close down that service and it will need to be closed manually. |
+| `stopServer`             | Closes all web server(s) that are started by roosevelt. Note: if the HTMLValidator is on and its separateProcess param's enable is set to true, this will not close down that service and it will need to be closed manually. |
 
 
 Express middleware and other configurations automatically provided by Roosevelt
