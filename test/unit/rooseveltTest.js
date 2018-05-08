@@ -972,7 +972,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
-      if (data.includes('One or a few of the node packages are missing or out of date, consider running npm i and/or going over your package.json file')) {
+      if (data.includes('Dependencies are out of date! You may need to run npm i')) {
         missingOrOODPackageBool = true
       }
     })
@@ -1028,7 +1028,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
-      if (data.includes('One or a few of the node packages are missing or out of date, consider running npm i and/or going over your package.json file')) {
+      if (data.includes('Dependencies are out of date! You may need to run npm i')) {
         missingOrOODPackageBool = true
       }
     })
