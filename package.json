@@ -49,7 +49,7 @@
     "roosevelt-uglify": "~0.2.2",
     "sinon": "~5.0.0",
     "standard": "~11.0.0",
-    "supertest": "~3.0.0",
+    "supertest": "~3.1.0",
     "teddy": "~0.4.23"
   },
   "repository": {
