@@ -18,7 +18,6 @@
     },
     "port": 8888,
     "suppressWarnings": false,
-    
     "exceptions": {
       "requestHeader": "Partial",
       "modelValue": "_disableValidator"
@@ -45,10 +44,14 @@
   "error503": "503.js",
   "staticsRoot": "statics",
   "htmlMinify": {
-    "override": true,
-    "exception_url": false,
-    "htmlMinifier": {
-      "html5": true
+    "enable": true,
+    "exceptionURL": false,
+    "options": {
+      "removeComments": true,
+      "collapseWhitespace": true,
+      "collapseBooleanAttributes": true,
+      "removeAttributeQuotes": true,
+      "removeEmptyAttributes": true
     }
   },
   "css": {

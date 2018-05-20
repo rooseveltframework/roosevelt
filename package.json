@@ -21,7 +21,6 @@
     "es6-template-strings": "~2.0.1",
     "express": "~4.16.2",
     "html-minifier": "~3.5.15",
-    "lodash.merge": "~4.6.1",
     "formidable": "~1.2.0",
     "fs-extra": "~6.0.0",
     "html-validator": "~3.0.0",
@@ -38,7 +37,7 @@
     "tmp": "~0.0.33"
   },
   "devDependencies": {
-    "coveralls": "~3.0.0",
+    "coveralls": "~3.0.1",
     "eslint": "~4.19.0",
     "eslint-plugin-no-only-tests": "~2.0.0",
     "husky": "~0.14.2",
