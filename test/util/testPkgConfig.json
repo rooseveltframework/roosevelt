@@ -44,9 +44,9 @@
   "error503": "package",
   "staticsRoot": "package",
   "htmlMinify": {
-    "override": "package",
-    "exception_url": "package",
-    "htmlMinifier": "package"
+    "enable": "package",
+    "exceptionURL": "package",
+    "options": "package"
   },
   "css": {
     "sourceDir": "package",

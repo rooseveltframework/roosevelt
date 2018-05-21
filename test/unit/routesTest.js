@@ -300,9 +300,63 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should start the server and display a custom 503 error if the server is unable to handle the requests quick enough and the user changed the param to accomadate their custom page', function (done) {
+  it('should respond with a 503 error when server is too busy', function (done) {
+    let detect503 = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      toobusy: {
+        maxLagPerRequest: 10,
+        lagCheckInterval: 16
+      },
+      viewEngine: [
+        'html: teddy'
+      ]
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', (params) => {
+      let promises = []
+
+      // promisify many busy requests to trigger a 503
+      for (let i = 0; i < 100; i++) {
+        promises.push(new Promise((resolve, reject) => {
+          request(`http://localhost:${params.port}`)
+            .get('/slow')
+            .expect(503, (err, res) => {
+              if (err) {
+                resolve()
+              } else {
+                if (res.text.includes('503 Service Unavailable')) {
+                  detect503 = true
+                  resolve()
+                }
+              }
+            })
+        }))
+      }
+
+      Promise.all(promises).then(() => {
+        testApp.kill('SIGINT')
+      })
+    })
+
+    testApp.on('exit', () => {
+      if (!detect503) {
+        assert.fail('All the request to the server have respond with a 200, meaning either toobusy and/or its setup has an error, or the computer is too good')
+      }
+      done()
+    })
+  })
+
+  it('should respond with user specified 503 error page when server is too busy', function (done) {
     // varible to hold if the app was able to return all test with 200
-    let allRequest200Bool = false
+    let detect503
 
     // generate the app.js file
     generateTestApp({
@@ -320,109 +374,36 @@ describe('Roosevelt routes Section Test', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // on the message that tells us that the server has started, test the path that will run into a server error
     testApp.on('message', (params) => {
-      // array to hold all the promises
       let promises = []
-      // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 10; x++) {
+
+      // promisify many busy requests to trigger a 503
+      for (let i = 0; i < 100; i++) {
         promises.push(new Promise((resolve, reject) => {
           request(`http://localhost:${params.port}`)
-            .get('/HTMLTest')
-            .expect(200, (err, res) => {
-              if (err && res !== undefined) {
-                const test1 = res.text.includes('503 custom test error page')
-                const test2 = res.text.includes('The server is either too busy or is under maintence, please try again later')
-                const test3 = res.text.includes('This is a test to see if we can make custom 503 controllers and pages')
-                // check to make sure that all specific pharses are there
-                assert.equal(test1, true)
-                assert.equal(test2, true)
-                assert.equal(test3, true)
-                reject(Error('one of the test returns a status of 503 and a page with the correct content'))
-              } else {
+            .get('/slow')
+            .expect(503, (err, res) => {
+              if (err) {
                 resolve()
+              } else {
+                if (res.text.includes('503 custom test error page')) {
+                  detect503 = true
+                  resolve()
+                }
               }
             })
         }))
       }
 
       Promise.all(promises).then(() => {
-        // if everything is fine, then the test had failed
-        allRequest200Bool = true
-        testApp.kill('SIGINT')
-      }).catch(() => {
-        // if we had one rejection, it means that we had a response that gave back the custom 503 page
         testApp.kill('SIGINT')
       })
     })
 
     testApp.on('exit', () => {
-      if (allRequest200Bool) {
-        assert.fail('All the request to the server have respond with a 200, meaning either toobusy and/or its setup has an error, or the computer is too good')
-      }
-      done()
-    })
-  })
-
-  it('should start the server and display the default 503 error page if the server is unable to handle the requests quick enough', function (done) {
-    // varible to hold if the app was able to return all test with 200
-    let allRequest200Bool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      toobusy: {
-        maxLagPerRequest: 10,
-        lagCheckInterval: 16
-      },
-      viewEngine: [
-        'html: teddy'
-      ]
-    }, options)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // on the message that tells us that the server has started, test the path that will run into a server error
-    testApp.on('message', (params) => {
-      // array to hold all the promises
-      let promises = []
-      // loop through and shoot a group of promises that will try to go to the server and link
-      for (let x = 0; x < 10; x++) {
-        promises.push(new Promise((resolve, reject) => {
-          request(`http://localhost:${params.port}`)
-            .get('/HTMLTest')
-            .expect(200, (err, res) => {
-              if (err && res !== undefined) {
-                const test1 = res.text.includes('503 Service Unavailable')
-                const test2 = res.text.includes('The requested URL /HTMLTest is temporarily unavailable at this time')
-                // check to make sure that all specific pharses are there
-                assert.equal(test1, true)
-                assert.equal(test2, true)
-                reject(Error('one of the test returns a status of 503 and a page with the correct content'))
-              } else {
-                resolve()
-              }
-            })
-        }))
-      }
-
-      Promise.all(promises).then(() => {
-        // if everything is fine, then the test had failed
-        allRequest200Bool = true
-        testApp.kill('SIGINT')
-      }).catch(() => {
-        // if we had one rejection, it means that we had a response that gave back the custom 503 page
-        testApp.kill('SIGINT')
-      })
-    })
-
-    testApp.on('exit', () => {
-      if (allRequest200Bool) {
+      if (!detect503) {
         assert.fail('All the request to the server have respond with a 200, meaning either toobusy and/or its setup has an error, or the computer is too good')
       }
       done()
