@@ -321,35 +321,34 @@ describe('Roosevelt routes Section Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', (params) => {
-      let promises = []
+      sendRequest()
 
-      // promisify many busy requests to trigger a 503
-      for (let i = 0; i < 100; i++) {
-        promises.push(new Promise((resolve, reject) => {
-          request(`http://localhost:${params.port}`)
-            .get('/slow')
-            .expect(503, (err, res) => {
-              if (err) {
-                resolve()
-              } else {
-                if (res.text.includes('503 Service Unavailable')) {
-                  detect503 = true
-                  resolve()
-                }
+      // Rapidly spam requests until 503 is detected
+      function sendRequest () {
+        request(`http://localhost:${params.port}`)
+          .get('/slow')
+          .expect(503, (err, res) => {
+            if (err) {
+              // do nothing
+            } else {
+              if (res.text.includes('503 Service Unavailable')) {
+                detect503 = true
               }
-            })
-        }))
+            }
+          })
+        if (detect503) {
+          return exit()
+        } else {
+          setTimeout(sendRequest, 0)
+        }
       }
 
-      Promise.all(promises).then(() => {
-        testApp.kill('SIGINT')
-      })
+      function exit () {
+        testApp.kill('SIGKILL')
+      }
     })
 
     testApp.on('exit', () => {
-      if (!detect503) {
-        assert.fail('All the request to the server have respond with a 200, meaning either toobusy and/or its setup has an error, or the computer is too good')
-      }
       done()
     })
   })
@@ -377,35 +376,34 @@ describe('Roosevelt routes Section Test', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (params) => {
-      let promises = []
+      sendRequest()
 
-      // promisify many busy requests to trigger a 503
-      for (let i = 0; i < 100; i++) {
-        promises.push(new Promise((resolve, reject) => {
-          request(`http://localhost:${params.port}`)
-            .get('/slow')
-            .expect(503, (err, res) => {
-              if (err) {
-                resolve()
-              } else {
-                if (res.text.includes('503 custom test error page')) {
-                  detect503 = true
-                  resolve()
-                }
+      // Rapidly spam requests until 503 is detected
+      function sendRequest () {
+        request(`http://localhost:${params.port}`)
+          .get('/slow')
+          .expect(503, (err, res) => {
+            if (err) {
+              // do nothing
+            } else {
+              if (res.text.includes('503 custom test error page')) {
+                detect503 = true
               }
-            })
-        }))
+            }
+          })
+        if (detect503) {
+          return exit()
+        } else {
+          setTimeout(sendRequest, 1)
+        }
       }
 
-      Promise.all(promises).then(() => {
-        testApp.kill('SIGINT')
-      })
+      function exit () {
+        testApp.kill('SIGKILL')
+      }
     })
 
     testApp.on('exit', () => {
-      if (!detect503) {
-        assert.fail('All the request to the server have respond with a 200, meaning either toobusy and/or its setup has an error, or the computer is too good')
-      }
       done()
     })
   })
