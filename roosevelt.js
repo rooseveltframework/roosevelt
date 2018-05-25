@@ -161,6 +161,8 @@ module.exports = function (params) {
     }
     initialized = true
 
+    require('./lib/htmlMinify')(app)
+
     preprocessCss()
 
     function preprocessCss () {
@@ -178,8 +180,6 @@ module.exports = function (params) {
     function validateHTML () {
       require('./lib/htmlValidator')(app, mapRoutes)
     }
-
-    require('./lib/htmlMinify')(app)
 
     function mapRoutes () {
       // map routes
