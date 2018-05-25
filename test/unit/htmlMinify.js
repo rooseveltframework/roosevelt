@@ -55,7 +55,7 @@ describe('htmlMinify', function () {
     })
   })
 
-  it('should minify HTML when enabled', function () {
+  it('should minify HTML when enabled', function (done) {
     // initialize test app
     app = roosevelt({
       ...appConfig,
@@ -75,11 +75,12 @@ describe('htmlMinify', function () {
             const testMinify = minify(res.text, appConfig.htmlMinify.options)
             assert.equal(testMinify, res.text)
           }
+          done()
         })
     }
   })
 
-  it('should minify HTML on routes with callbacks', function () {
+  it('should minify HTML on routes with callbacks', function (done) {
     // initialize test app
     app = roosevelt({
       ...appConfig,
@@ -99,11 +100,12 @@ describe('htmlMinify', function () {
             const testMinify = minify(res.text, appConfig.htmlMinify.options)
             assert.equal(testMinify, res.text)
           }
+          done()
         })
     }
   })
 
-  it('should not minify HTML when "htmlMinify.enable" param is set to false', function () {
+  it('should not minify HTML when "htmlMinify.enable" param is set to false', function (done) {
     // copy root config and disable HTML minifier
     const config = JSON.parse(JSON.stringify(appConfig))
     config.htmlMinify.enable = false
@@ -127,11 +129,12 @@ describe('htmlMinify', function () {
             const testMinify = minify(res.text, config.htmlMinify.options)
             assert.notEqual(testMinify, res.text)
           }
+          done()
         })
     }
   })
 
-  it('should not minify HTML when "noMinify" param is set to true', function () {
+  it('should not minify HTML when "noMinify" param is set to true', function (done) {
     // copy root config and disable HTML minifier
     const config = JSON.parse(JSON.stringify(appConfig))
     config.noMinify = true
@@ -155,11 +158,12 @@ describe('htmlMinify', function () {
             const testMinify = minify(res.text, config.htmlMinify.options)
             assert.notEqual(testMinify, res.text)
           }
+          done()
         })
     }
   })
 
-  it('should not minify HTML when requesting exceptionURL (string format)', function () {
+  it('should not minify HTML when requesting exceptionURL (string format)', function (done) {
     // copy root config and set exceptionURL as string
     const config = JSON.parse(JSON.stringify(appConfig))
     config.htmlMinify.exceptionURL = '/minify'
@@ -195,14 +199,16 @@ describe('htmlMinify', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err.message)
+          } else {
+            const testMinify = minify(res.text, config.htmlMinify.options)
+            assert.equal(testMinify, res.text)
           }
-          const testMinify = minify(res.text, config.htmlMinify.options)
-          assert.equal(testMinify, res.text)
+          done()
         })
     }
   })
 
-  it('should not minify HTML when requesting exceptionURL (array format)', function () {
+  it('should not minify HTML when requesting exceptionURL (array format)', function (done) {
     // copy root config and set exceptionURL as array
     const config = JSON.parse(JSON.stringify(appConfig))
     config.htmlMinify.exceptionURL = ['/minify']
@@ -238,9 +244,11 @@ describe('htmlMinify', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err.message)
+          } else {
+            const testMinify = minify(res.text, config.htmlMinify.options)
+            assert.equal(testMinify, res.text)
           }
-          const testMinify = minify(res.text, config.htmlMinify.options)
-          assert.equal(testMinify, res.text)
+          done()
         })
     }
   })

@@ -311,10 +311,7 @@ describe('Roosevelt routes Section Test', function () {
       toobusy: {
         maxLagPerRequest: 10,
         lagCheckInterval: 16
-      },
-      viewEngine: [
-        'html: teddy'
-      ]
+      }
     }, options)
 
     // fork the app and run it as a child process
@@ -344,7 +341,7 @@ describe('Roosevelt routes Section Test', function () {
       }
 
       function exit () {
-        testApp.kill('SIGKILL')
+        testApp.kill('SIGINT')
       }
     })
 
@@ -366,10 +363,7 @@ describe('Roosevelt routes Section Test', function () {
       toobusy: {
         maxLagPerRequest: 10,
         lagCheckInterval: 16
-      },
-      viewEngine: [
-        'html: teddy'
-      ]
+      }
     }, options)
 
     // fork the app and run it as a child process
@@ -399,7 +393,7 @@ describe('Roosevelt routes Section Test', function () {
       }
 
       function exit () {
-        testApp.kill('SIGKILL')
+        testApp.kill('SIGINT')
       }
     })
 
