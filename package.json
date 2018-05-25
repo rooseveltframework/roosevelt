@@ -47,7 +47,7 @@
     "nyc": "~11.8.0",
     "proxyquire": "~2.0.0",
     "roosevelt-less": "~0.5.0",
-    "roosevelt-uglify": "~0.2.2",
+    "roosevelt-uglify": "~0.3.0",
     "sinon": "~5.0.0",
     "standard": "~11.0.0",
     "supertest": "~3.0.0",
