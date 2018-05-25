@@ -80,5 +80,6 @@
   ],
   "versionedPublic": false,
   "alwaysHostPublic": false,
+  "checkDependencies": true,
   "shutdownTimeout": 30000
 }
