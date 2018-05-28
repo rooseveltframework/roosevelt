@@ -5,6 +5,7 @@ const path = require('path')
 const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
+const spawn = require('child_process').spawnSync
 const fse = require('fs-extra')
 const os = require('os')
 const http = require('http')
@@ -933,6 +934,117 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
+  it('should report that the node_modules directory is missing some packages or that some are out of date', function (done) {
+    // bool var to hold that whether or not a specific warning was outputted
+    let missingOrOODPackageBool = false
+
+    // command for npm
+    let npmName
+    if (os.platform() === 'win32') {
+      npmName = 'npm.cmd'
+    } else {
+      npmName = 'npm'
+    }
+
+    // set up the node_modules and the package.json file
+    fse.mkdirSync(appDir)
+    let packageJSONSource = {
+      dependencies: {
+        colors: '~1.2.0',
+        express: '~4.16.2'
+      }
+    }
+
+    packageJSONSource = JSON.stringify(packageJSONSource)
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, check if any display the missing or out of date warning log
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Dependencies are out of date! You may need to run npm i')) {
+        missingOrOODPackageBool = true
+      }
+    })
+
+    // when the app finishes init, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exit, check to see if the warning log was made
+    testApp.on('exit', () => {
+      assert.equal(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
+      done()
+    })
+  })
+
+  it('should not report that the node_modules directory is missing some packages or that some are out of date if checkDependencies is false', function (done) {
+    // bool var to hold that whether or not a specific warning was outputted
+    let missingOrOODPackageBool = false
+
+    // command for npm
+    let npmName
+    if (os.platform() === 'win32') {
+      npmName = 'npm.cmd'
+    } else {
+      npmName = 'npm'
+    }
+
+    // set up the node_modules and the package.json file
+    fse.mkdirSync(appDir)
+    let packageJSONSource = {
+      dependencies: {
+        colors: '~1.2.0',
+        express: '~4.16.2'
+      }
+    }
+
+    packageJSONSource = JSON.stringify(packageJSONSource)
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      checkDependencies: false
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, check if any display the missing or out of date warning log
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Dependencies are out of date! You may need to run npm i')) {
+        missingOrOODPackageBool = true
+      }
+    })
+
+    // when the app finishes init, kill it
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // when the app exit, check to see if the warning log was made
+    testApp.on('exit', () => {
+      assert.equal(missingOrOODPackageBool, false, 'Roosevelt did report that there are some missing or out of date packages in the app Directory even though checkDependencies is false')
+      done()
+    })
+  })
+
   it('should throw the error message that is found in EACCESS if it hits that error', function (done) {
     // bool var to hold whether a specific log was outputted
     let otherErrorLogBool = false
@@ -994,6 +1106,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       }
     })
 
+    // when the app finishes init, kill it
     testApp.on('message', () => {
       testApp.kill('SIGINT')
     })

@@ -67,7 +67,7 @@ First you will need to install [Node.js](http://nodejs.org). Both the current an
 
 Some important caveats to note:
 
-- nvm is not available on Windows.
+- nvm is not available on Windows. Windows users should try out [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nvs](https://github.com/jasongin/nvs).
 - Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
 The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
@@ -278,7 +278,7 @@ App behavior parameters
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: *[Boolean]* `true`.
-- `suppressLogs`: Accepts an object containing two related parameters:
+- `suppressLogs`: Accepts an object containing four related parameters:
   - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
   - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
   - `rooseveltWarnings`: *[Boolean]* When set to true, Roosevelt will not log app warnings to the console.
@@ -358,7 +358,8 @@ App behavior parameters
 
 - `bodyParserJsonParams`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
   - Default: *[Object]* `{}`.
-
+- `checkDependencies`: Parameter to tell roosevelt whether or not it should go over the installed node packages and make sure that all the packages from package.json are installed and that they are up to date
+  - Default: *[Boolean]* `true`.
 
 
 HTTPS parameters
@@ -437,17 +438,23 @@ Statics parameters
 
 - `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
   - Default: *[String]* `"statics"`.
-- `htmlMinify`: Params to send to [express-minify-html](https://github.com/melonmanchan/express-minify-html), an Express middleware for [html-minifier](https://github.com/kangax/html-minifier):
-  - Set `override` *[Boolean]* to false to disable minification entirely.
-  - For other usage, see [express-minify-html usage](https://github.com/melonmanchan/express-minify-html#usage).
+- `htmlMinify`: Params to send to [html-minifier](https://github.com/kangax/html-minifier):
+  - `enable`: *[Boolean]* Enables or disables HTML minification.
+    - Note: Minification is disabled in development mode.
+  - `exceptionURL`: *[Array]* List of routes that will skip minification entirely. Set to `false` to minify all URLs.
+  - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)
   - Default: *[Object]*
 
       ```json
       {
-        "override": true,
-        "exception_url": false,
-        "htmlMinifier": {
-          "html5": true
+        "enable": true,
+        "exceptionURL": false,
+        "options": {
+          "removeComments": true,
+          "collapseWhitespace": true,
+          "collapseBooleanAttributes": true,
+          "removeAttributeQuotes": true,
+          "removeEmptyAttributes": true
         }
       }
       ```
@@ -796,6 +803,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `express`                            | The [express](http://expressjs.com) module. |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
+| `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. HTTP request logger middleware. |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`. |
 | `appDir`                             | The directory the main module is in.     |

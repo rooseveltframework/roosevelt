@@ -626,7 +626,8 @@ describe('parameter Function Test Section', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      checkDependencies: false
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -638,7 +639,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app is finished with its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill()
+      testApp.kill('SIGINT')
     })
 
     // when the app is going to exit, check to see if an error was thrown thru the entire process
