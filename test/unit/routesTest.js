@@ -675,9 +675,8 @@ describe('Roosevelt routes Section Test', function () {
           .get('/longWait')
           // since we are force closing this connection while its still active, it should not send back a response object or a status number
           .expect(200, (err, res) => {
-            if (err) {
-              let test = err.message.includes(`Cannot read property 'status' of undefined`)
-              assert.equal(test, true, 'Error did not state that it can not get the status of undefined')
+            if (!err) {
+              assert.fail('The server responded without error.')
             }
             assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
           })
