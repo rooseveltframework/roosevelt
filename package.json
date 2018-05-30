@@ -38,9 +38,9 @@
     "vnu-jar": "~18.3.0"
   },
   "devDependencies": {
-    "coveralls": "~3.0.1",
+    "codecov": "~3.0.2",
     "eslint": "~4.19.0",
-    "eslint-plugin-no-only-tests": "~2.0.0",
+    "eslint-plugin-mocha": "~5.0.0",
     "husky": "~0.14.2",
     "lint-staged": "~7.1.0",
     "mocha": "~5.2.0",
@@ -68,13 +68,34 @@
   "preferGlobal": true,
   "_from": "roosevelt@*",
   "gitHead": "",
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 2017,
+      "ecmaFeatures": {
+        "experimentalObjectRestSpread": true
+      }
+    },
+    "plugins": [
+      "mocha"
+    ],
+    "rules": {
+      "mocha/no-exclusive-tests": "error"
+    }
+  },
+  "nyc": {
+    "reporter": [
+      "html",
+      "text",
+      "lcov"
+    ]
+  },
   "scripts": {
+    "codecov": "./node_modules/.bin/codecov",
+    "coverage": "nyc mocha --timeout 125000 test/unit",
+    "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "coverage": "nyc --reporter=html --reporter=text mocha --timeout 125000 --recursive test/unit",
-    "coveralls": "nyc --reporter=lcov mocha --timeout 125000 --recursive test && cat ./coverage/lcov.info | coveralls",
-    "standard": "standard",
-    "test": "mocha --timeout 125000 --recursive test/unit && npm run standard",
-    "precommit": "lint-staged && eslint test/unit"
+    "precommit": "lint-staged",
+    "test": "npm run lint mocha --timeout 125000 test/unit"
   },
   "lint-staged": {
     "*.js": "standard"

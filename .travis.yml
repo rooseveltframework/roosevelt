@@ -1,5 +1,7 @@
 language: node_js
 node_js:
   - "node"
-after_success:
-  - npm run coveralls
+script:
+  - npm run lint
+  - npm run coverage
+  - codecov
