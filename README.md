@@ -198,6 +198,33 @@ npm run audit
 
 See also the [the full list of default scripts](https://github.com/rooseveltframework/roosevelt/blob/master/lib/defaults/scripts.json).
 
+Setting Up Environment Variable
+===
+
+Roosevelt's HTML Validator can be set up to be ran in the detached or attached state by default through use of the environment variable, `IS_DETACHED`.
+There are a few different ways that you can go about setting up this environment variable, depending on what OS your machine is running:
+
+Windows
+---
+1. Open up your Control Panel and navigate to System and Security, and then System.
+2. Click on 'Advanced System Settings' in the side bar and then the 'Environment Variables' button.
+3. Press 'New'. In the 'Variable name' box, type `IS_DETACHED`.
+4. In the 'Variable value' box, type true if you want your validator detached by default, or false for attached by default.
+5. Click 'Ok' until you are back at the System Properties window, then press 'Apply' and 'Ok'
+6. Your environment variable for detaching/attaching the HTML validator is now set up and ready to be used.
+* If you would like to change the value associated with `IS_DETACHED`, in the command prompt, type `set IS_DETACHED=` immediately followed by the desired true/false value.
+* You can check your current value of `IS_DETACHED` at any time by typing `echo %IS_DETACHED%` in the command prompt.
+
+Linux
+---
+1. Open up a shell and make sure you are in your home directory.
+2. Type `vim ~/.bashrc`. This will open a file for editing in the shell.
+3. Press `i` on your keyboard to enter 'Insert mode' and add `export IS_DETACHED='true'` (or false) on a blank line.
+4. SAVE the file by: press the `Escape` key --> type a colon (SHIFT + ;) --> type an `x` next to the colon that appears --> hit enter.
+5. Current user must LOG OUT and log back in for changes to take place.
+6. Open up a shell again and type `echo $IS_DETACHED$` to confirm that the changes have been saved.
+* You can change the value associated with `IS_DETACHED` anytime by repeating steps over again with different value assigned in export statement.
+
 Default directory structure
 ===
 
