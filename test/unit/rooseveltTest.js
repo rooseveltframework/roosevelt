@@ -858,45 +858,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to call gracefulShutdown if stopServer was called', function (done) {
-    // bool vars to hold whether specific logs were outputted
-    let recievedKillSignalBool = false
-    let closedRooseveltAppBool = false
-
-    // adjusted options sent to generateTestApp so that it will call roosevelt shutdownServer function
-    sOptions.stopServer = true
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // on logs, check to see if the specific logs were outputted
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
-        recievedKillSignalBool = true
-      }
-      if (data.includes('Roosevelt Express successfully closed all connections and shut down gracefully.')) {
-        closedRooseveltAppBool = true
-      }
-    })
-
-    // on exit, see if the logs were outputted
-    testApp.on('exit', () => {
-      assert.equal(recievedKillSignalBool, true, 'shutdownServer did not start gracefulShutdown')
-      assert.equal(closedRooseveltAppBool, true, 'shutdownServer did not close everything on the roosevelt app')
-      done()
-    })
-  })
-
   it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
-    // stop it from calling stopServer
-    sOptions.stopServer = false
     // bool var to hold whether or not specific logs were made or if a specific action happened
     let samePortWarningBool = false
     let serverStartedBool = false
