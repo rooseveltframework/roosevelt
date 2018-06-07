@@ -95,7 +95,7 @@
     "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
     "precommit": "lint-staged",
-    "test": "npm run lint mocha --timeout 125000 test/unit"
+    "test": "npm run lint && mocha --timeout 125000 test/unit"
   },
   "lint-staged": {
     "*.js": "standard"
