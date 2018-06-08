@@ -329,7 +329,6 @@ module.exports = function (params) {
     httpsServer: httpsServer,
     expressApp: app,
     initServer: initServer,
-    startServer: startServer,
-    stopServer: gracefulShutdown
+    startServer: startServer
   }
 }
