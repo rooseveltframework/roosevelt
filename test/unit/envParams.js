@@ -17,24 +17,24 @@ describe('ENV Params Test', function () {
   let app
 
   it('should change the enable param to true', function (done) {
-    const temp = process.env.ROOSEVELT_IS_DETACHED
-    process.env.ROOSEVELT_IS_DETACHED = true
+    const temp = process.env.ROOSEVELT_VALIDATOR
+    process.env.ROOSEVELT_VALIDATOR = 'detached'
     app = roosevelt({
       ...appConfig
     })
     assert.equal(app.expressApp.get('params').htmlValidator.separateProcess.enable, true)
-    process.env.ROOSEVELT_IS_DETACHED = temp
+    process.env.ROOSEVELT_VALIDATOR = temp
     done()
   })
 
   it('should change the enable param to false', function (done) {
-    const temp = process.env.ROOSEVELT_IS_DETACHED
-    process.env.ROOSEVELT_IS_DETACHED = false
+    const temp = process.env.ROOSEVELT_VALIDATOR
+    process.env.ROOSEVELT_VALIDATOR = 'attached'
     app = roosevelt({
       ...appConfig
     })
     assert.equal(app.expressApp.get('params').htmlValidator.separateProcess.enable, false)
-    process.env.ROOSEVELT_IS_DETACHED = temp
+    process.env.ROOSEVELT_VALIDATOR = temp
     done()
   })
 })
