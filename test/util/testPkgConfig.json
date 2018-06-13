@@ -2,10 +2,10 @@
   "port": "package",
   "generateFolderStructure": false,
   "localhostOnly": "package",
-  "suppressLogs": {
-    "httpLogs": true,
-    "rooseveltLogs": true,
-    "rooseveltWarnings": true
+  "logging": {
+    "http": false,
+    "appStatus": false,
+    "warnings": false
   },
   "noMinify": "package",
   "htmlValidator": {

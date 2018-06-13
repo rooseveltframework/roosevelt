@@ -2,11 +2,11 @@
   "port": 43711,
   "generateFolderStructure": true,
   "localhostOnly": true,
-  "suppressLogs": {
-    "httpLogs": false,
-    "rooseveltLogs": false,
-    "verboseLogs": true,
-    "rooseveltWarnings": false
+  "logging": {
+    "http": true,
+    "appStatus": true,
+    "warnings": true,
+    "verbose": false
   },
   "noMinify": false,
   "htmlValidator": {
