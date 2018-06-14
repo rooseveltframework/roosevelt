@@ -3,7 +3,7 @@
   "generateFolderStructure": false,
   "logging": {
     "http": false,
-    "appStatus": true,
+    "appStatus": false,
     "warnings": false
   },
   "https": {
