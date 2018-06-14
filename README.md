@@ -177,6 +177,12 @@ npm run dev -- -attach-validator
 ```
 - `-a` can also be used.
 
+Roosevelt makes use of an ENV variable to set the validator to an attached or detached state by default.
+
+(Note that when the ENV variable is set, it overrides the settings in package.json and params.) 
+- Set an environment variable `ROOSEVELT_VALIDATOR` to detached for a detached by default validator.
+- Set an environment variable `ROOSEVELT_VALIDATOR` to attached for an attached by default validator.
+
 Configure how many CPUs your app will run on:
 ```
 npm run dev -- --cores 2
