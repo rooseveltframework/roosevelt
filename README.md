@@ -179,7 +179,7 @@ npm run dev -- -attach-validator
 
 Roosevelt makes use of an ENV variable to set the validator to an attached or detached state by default.
 
-(Note that when the ENV variable is set, it overrides the settings in package.json and params.) 
+(Note that when the ENV variable is set, it overrides the settings in package.json and params.)
 - Set an environment variable `ROOSEVELT_VALIDATOR` to detached for a detached by default validator.
 - Set an environment variable `ROOSEVELT_VALIDATOR` to attached for an attached by default validator.
 
@@ -284,19 +284,19 @@ App behavior parameters
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: *[Boolean]* `true`.
-- `suppressLogs`: Accepts an object containing four related parameters:
-  - `httpLogs`: *[Boolean]* When set to true, Roosevelt will not log HTTP requests to the console.
-  - `rooseveltLogs`: *[Boolean]* When set to true, Roosevelt will not log app status to the console.
-  - `rooseveltWarnings`: *[Boolean]* When set to true, Roosevelt will not log app warnings to the console.
-  - `verboseLogs`: *[Boolean]* When set to true, Roosevelt will not output logs made by some of its other processes
+- `logging`: Accepts an object containing four related parameters:
+  - `http`: *[Boolean]* When set to false, Roosevelt will not log HTTP requests to the console.
+  - `appStatus`: *[Boolean]* When set to false, Roosevelt will not log app status to the console.
+  - `warnings`: *[Boolean]* When set to false, Roosevelt will not log app warnings to the console.
+  - `verbose`: *[Boolean]* When set to false, Roosevelt will not output logs made by some of its other processes
   - Default: *[Object]*
 
       ```json
       {
-        "httpLogs": false,
-        "rooseveltLogs": false,
-        "rooseveltWarnings": false,
-        "verboseLogs": true
+        "http": true,
+        "appStatus": true,
+        "warnings": true,
+        "verbose": false
       }
       ```
 

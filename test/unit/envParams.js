@@ -8,10 +8,10 @@ describe('ENV Params Test', function () {
   const appConfig = {
     appDir: path.join(__dirname, '../app/envParams'),
     ignoreCLIFlags: true,
-    suppressLogs: {
-      httpsLogs: true,
-      rooseveltLogs: true,
-      rooseveltWarnings: true
+    logging: {
+      http: false,
+      appStatus: false,
+      warnings: false
     }
   }
   let app
