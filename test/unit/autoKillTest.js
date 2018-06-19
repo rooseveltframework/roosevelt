@@ -36,8 +36,8 @@ describe('Roosevelt autokill Test', function () {
     // create the app.js file
     generateTestApp({
       appDir: appDir,
-      suppressLogs: {
-        verboseLogs: false
+      logging: {
+        verbose: true
       },
       generateFolderStructure: true,
       htmlValidator: {
@@ -90,8 +90,8 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        verboseLogs: false
+      logging: {
+        verbose: true
       },
       htmlValidator: {
         enable: true,
@@ -141,8 +141,8 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        verboseLogs: false
+      logging: {
+        verbose: true
       },
       htmlValidator: {
         enable: true,
@@ -190,8 +190,8 @@ describe('Roosevelt autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      suppressLogs: {
-        verboseLogs: false
+      logging: {
+        verbose: true
       },
       htmlValidator: {
         enable: true,
@@ -247,7 +247,7 @@ describe('Roosevelt autokill Test', function () {
     }
   })
 
-  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed, but does not report anything if verboseLogs is true', function (done) {
+  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed, but does not report anything if verbose is false', function (done) {
     // vars to hold whether or not a specific log was outputted
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false

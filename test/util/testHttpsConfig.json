@@ -1,10 +1,10 @@
 {
   "port": 1234,
   "generateFolderStructure": false,
-  "suppressLogs": {
-    "httpLogs": true,
-    "rooseveltLogs": true,
-    "rooseveltWarnings": true
+  "logging": {
+    "http": false,
+    "appStatus": false,
+    "warnings": false
   },
   "https": {
     "enable": true,

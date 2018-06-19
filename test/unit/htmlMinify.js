@@ -12,11 +12,11 @@ describe('htmlMinify', function () {
   const appDir = path.join(__dirname, '../app/htmlMinify')
   const appConfig = {
     appDir: appDir,
-    suppressLogs: {
-      httpLogs: true,
-      rooseveltLogs: true,
-      rooseveltWarnings: true,
-      verboseLogs: true
+    logging: {
+      http: false,
+      appStatus: false,
+      warnings: false,
+      verbose: false
     },
     generateFolderStructure: true,
     viewEngine: 'html:teddy',
