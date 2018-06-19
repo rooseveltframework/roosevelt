@@ -45,7 +45,7 @@
     "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
     "priority": "ignore"
   },
-  "audit": {
+  "config-audit": {
     "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "error",
     "inspect": true
