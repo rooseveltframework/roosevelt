@@ -32,9 +32,9 @@ describe('Roosevelt config Auditor Test', function () {
 
   beforeEach(function (done) {
     // grab the contents of the default config file
-    let defaultContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../', '../', 'lib', 'defaults', 'config.json')).toString('utf8'))
+    let defaultContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/config.json')).toString('utf8'))
     // grab the content of the script file
-    let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../', '../', 'lib', 'defaults', 'scripts.json')).toString('utf8'))
+    let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
     packageJSONSource.rooseveltConfig = defaultContent
     // seperate the commands from the rest of the data in the scripts file
@@ -172,7 +172,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -556,7 +556,7 @@ describe('Roosevelt config Auditor Test', function () {
     process.env.INIT_CWD = path.join(appDir, '../', 'util')
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -617,7 +617,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork the app.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -669,7 +669,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // fork the auditor and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', data => {
