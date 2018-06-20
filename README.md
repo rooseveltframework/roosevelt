@@ -199,7 +199,7 @@ npm run cleanup
 Scan current `rooseveltConfig` and `scripts` in `package.json` and warn about any params or npm scripts that don't match the current API:
 
 ```
-npm run audit
+npm run config-audit
 ```
 
 See also the [the full list of default scripts](https://github.com/rooseveltframework/roosevelt/blob/master/lib/defaults/scripts.json).
