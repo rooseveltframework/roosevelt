@@ -31,11 +31,12 @@
     "morgan": "~1.9.0",
     "node-emoji": "~1.8.1",
     "parent-require": "~1.0.0",
+    "portscanner": "^2.2.0",
     "serve-favicon": "~2.5.0",
     "tamper": "~1.0.0",
     "tmp": "~0.0.33",
     "toobusy-js": "~0.5.0",
-    "vnu-jar": "~18.3.0"
+    "vnu-jar": "^18.3.0"
   },
   "devDependencies": {
     "codecov": "3.0.2",
