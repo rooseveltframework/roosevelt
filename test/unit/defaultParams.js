@@ -12,16 +12,16 @@ describe('Default Params', function () {
     app = require('../../roosevelt')({
       appDir: path.join(__dirname, '../app/defaultParams'),
       ignoreCLIFlags: true,
-      suppressLogs: {
-        httpsLogs: true,
-        rooseveltLogs: true,
-        rooseveltWarnings: true
+      logging: {
+        http: false,
+        appStatus: false,
+        warnings: false
       }
     })
   })
 
   params.forEach((param) => {
-    if (param !== 'suppressLogs' && param !== 'generateFolderStructure') {
+    if (param !== 'logging' && param !== 'generateFolderStructure') {
       it(`should set correct default for param "${param}"`, function () {
         assert.deepEqual(app.expressApp.get('params')[param], defaults[param])
       })

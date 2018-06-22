@@ -58,16 +58,6 @@ module.exports = function (params, options) {
     appJSContents += `})`
   }
 
-  if (options.closing) {
-    appJSContents += `\n\nprocess.on('message', function (){\n`
-    appJSContents += `app.stopServer()\n`
-    appJSContents += `})`
-  }
-
-  if (options.stopServer) {
-    appJSContents += `\n\n app.stopServer()`
-  }
-
   // generate test app drectory
   fse.ensureDirSync(path.join(appDir))
 

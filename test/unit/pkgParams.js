@@ -36,7 +36,7 @@ describe('package.json params', function () {
   })
 
   params.forEach((param) => {
-    if (param !== 'suppressLogs' && param !== 'generateFolderStructure') {
+    if (param !== 'logging' && param !== 'generateFolderStructure') {
       it(`should set param "${param}" from package.json`, function () {
         assert.deepEqual(app.expressApp.get('params')[param], pkgConfig[param])
       })
