@@ -1,11 +1,11 @@
 {
   "start": {
     "value": "npm run production",
-    "priority": "error"
+    "priority": "ignore"
   },
   "production": {
     "value": "nodemon app.js --production-mode",
-    "priority": "error"
+    "priority": "ignore"
   },
   "prod": {
     "value": "nodemon app.js --production-mode",
@@ -17,7 +17,7 @@
   },
   "development": {
     "value": "nodemon app.js --development-mode",
-    "priority": "error"
+    "priority": "ignore"
   },
   "dev": {
     "value": "nodemon app.js --development-mode",
@@ -45,7 +45,7 @@
     "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
     "priority": "ignore"
   },
-  "audit": {
+  "config-audit": {
     "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "error",
     "inspect": true

@@ -5,8 +5,10 @@ const path = require('path')
 const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
+const spawn = require('child_process').spawnSync
 const fse = require('fs-extra')
 const configAuditor = require('../../lib/scripts/configAuditor')
+const os = require('os')
 
 describe('Roosevelt config Auditor Test', function () {
   // path to the Test App Directory
@@ -30,9 +32,9 @@ describe('Roosevelt config Auditor Test', function () {
 
   beforeEach(function (done) {
     // grab the contents of the default config file
-    let defaultContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../', '../', 'lib', 'defaults', 'config.json')).toString('utf8'))
+    let defaultContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/config.json')).toString('utf8'))
     // grab the content of the script file
-    let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../', '../', 'lib', 'defaults', 'scripts.json')).toString('utf8'))
+    let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
     packageJSONSource.rooseveltConfig = defaultContent
     // seperate the commands from the rest of the data in the scripts file
@@ -170,7 +172,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -554,7 +556,7 @@ describe('Roosevelt config Auditor Test', function () {
     process.env.INIT_CWD = path.join(appDir, '../', 'util')
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -615,7 +617,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork the app.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
@@ -629,6 +631,56 @@ describe('Roosevelt config Auditor Test', function () {
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
       assert.equal(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
+      done()
+    })
+  })
+
+  it('should report that the node_modules directory is missing some packages or that some are out of date', function (done) {
+    // bool var to hold that whether or not a specific warning was outputted
+    let missingOrOODPackageBool = false
+
+    // set env.INIT_CWD to the correct location
+    process.env.INIT_CWD = appDir
+
+    // command for npm
+    let npmName
+    if (os.platform() === 'win32') {
+      npmName = 'npm.cmd'
+    } else {
+      npmName = 'npm'
+    }
+
+    // set up the node_modules and the package.json file
+    fse.ensureDirSync(appDir)
+
+    // Add dependencies to the packageJSONSource
+    packageJSONSource.dependencies = {}
+    packageJSONSource.dependencies.express = '~4.16.2'
+    packageJSONSource.dependencies.colors = `~1.2.0`
+    packageJSONSource = JSON.stringify(packageJSONSource)
+
+    // Create the package.json file in the app test dir
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+
+    // Install an old version of express
+    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+
+    // Rewrite the package.json file reflecting the newer version of express
+    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+
+    // fork the auditor and run it as a child process
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on error logs, check if any display the missing or out of date warning log
+    testApp.stderr.on('data', data => {
+      if (data.includes('Missing Dependency')) {
+        missingOrOODPackageBool = true
+      }
+    })
+
+    // when the app exit, check to see if the warning log was made
+    testApp.on('exit', () => {
+      assert.equal(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
       done()
     })
   })
