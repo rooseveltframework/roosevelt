@@ -134,7 +134,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should allow warnigns to show up if "suppressWarnings" is false', function (done) {
+    it('should allow warnings to show up if "suppressWarnings" is false', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -182,7 +182,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should not allow warnigns to show up if "suppressWarnings" is true', function (done) {
+    it('should not allow warnings to show up if "suppressWarnings" is true', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -441,7 +441,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should still validate the HTML page if the model in the response does not holds a value that is set in the exception param', function (done) {
+    it('should still validate the HTML page if the model in the response does not hold a value that is set in the exception param', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -496,7 +496,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should try to validate the HTML page because the model in the response does not holds a value that is set in the exception param', function (done) {
+    it('should try to validate the HTML page because the model in the response does not hold a value that is set in the exception param', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -549,7 +549,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should be able to run the validator even if we change the port number of the validator', function (done) {
+    it('should be able to run the validator even if we change the validator\'s port number', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -673,7 +673,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should not be starting another htmlValidator if one is alreadly running on the same port', function (done) {
+    it('should not start another htmlValidator if one is already running on the same port', function (done) {
       // bool vars to hold whether or not specific logs have been outputted
       let startingHTMLValidator2Bool = false
       let detachedValidatorFound2Bool = false
@@ -985,7 +985,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
     // make options msgEnabled back to false so that new app don't have a sinon timer
     options.msgEnabled = false
 
-    it('should output an error messages if the kill Validator script is used when the validator is not being used', function (done) {
+    it('should output an error message if the kill Validator script is used when the validator is not being used', function (done) {
       // bool var to hold whether or not the request failed status has been given
       let requestFailedLogBool = false
       let finalWarnBool = false
@@ -1074,7 +1074,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
         // when killValidator exits, check if all errors logs that we want are outputted
         killLine.on('exit', () => {
-          assert.equal(validatorClosedBool, true, 'Roosevelt was not able to closed the HTML Validator on its seperate port')
+          assert.equal(validatorClosedBool, true, 'Roosevelt was not able to close the HTML Validator on its seperate port')
           assert.equal(validatorFoundBool, true, 'Roosevelt was not able to find the HTML Validator on its seperate port')
           assert.equal(foundAndKilledAllBool, true, 'killValidator did not give the message that it has found and killed all the validators it can at the moment')
           done()
@@ -1235,7 +1235,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         killLine.on('exit', () => {
           assert.equal(validatorFoundBool, true, 'killValidator was not able to find the port that the Validator is on')
           assert.equal(validatorClosedBool, true, 'killValidator did not close the Validator')
-          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it found and killed al the validators it can at the moment')
+          assert.equal(foundAndKilledAllBool, true, 'killValidator did not give a message saying that it found and killed all the validators it can at the moment')
           done()
         })
       })
@@ -1339,7 +1339,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should be able to catch the 404 error that is given back if the path requested from the server does not exists', function (done) {
+    it('should be able to catch the 404 error that is given back if the path requested from the server does not exist', function (done) {
       // bool vars to hold whether or not a log was outputted
       let requestFailedBool = false
 
@@ -1549,7 +1549,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should report a error if the problem occurs within the port that we give it or the default 8888 and then scan for the validator', function (done) {
+    it('should report an error if the problem occurs within the port that we give it or the default 8888 and then scan for the validator', function (done) {
       // bool var to hold whether or not a specific error logs were outputted
       let timeoutErrorLogBool = false
       let scanContinuedLogBool = false
@@ -1589,7 +1589,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         })
         // when the roosevelt app exits, check that all the logs we wanted were outputted
         testApp.on('exit', () => {
-          assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of timeout')
+          assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of a timeout')
           assert.equal(scanContinuedLogBool, true, 'killValidator did not continue scanning the ports for the Validator after the initial scan failed')
           done()
         })
