@@ -197,12 +197,16 @@ module.exports = function (params) {
   // shut down all servers, connections and threads that the roosevelt app is using
   function gracefulShutdown () {
     let key
+    let keys
 
     app.set('roosevelt:state', 'disconnecting')
     logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
-    let keys = Object.keys(cluster.workers)
-    if (keys.length > 1 && keys !== undefined) {
+    if (cluster.isMaster) {
+      keys = Object.keys(cluster.workers)
+    }
+
+    if (keys !== undefined && keys.length > 1) {
       for (let x = 0; x < keys.length; x++) {
         cluster.workers[keys[x]].kill('SIGINT')
       }
