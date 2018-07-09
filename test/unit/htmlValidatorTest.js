@@ -1551,7 +1551,6 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
     it('should report an error if the problem occurs within the port that we give it or the default 8888 and then scan for the validator', function (done) {
       // bool var to hold whether or not a specific error logs were outputted
-      // let timeoutErrorLogBool = false
       let scanContinuedLogBool = false
 
       let data = `
@@ -1576,9 +1575,6 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
         // on error logs, see if specific logs are outputted
         killLine.stderr.on('data', (data) => {
-          // if (data.includes('Error Occurred:')) {
-          //   timeoutErrorLogBool = true
-          // }
           if (data.includes('Could not find the validator at this time, please make sure that the validator is running.')) {
             scanContinuedLogBool = true
           }
@@ -1589,7 +1585,6 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         })
         // when the roosevelt app exits, check that all the logs we wanted were outputted
         testApp.on('exit', () => {
-          // assert.equal(timeoutErrorLogBool, true, 'killValidator did not report that the initial scan was stopped because of a timeout')
           assert.equal(scanContinuedLogBool, true, 'killValidator did not continue scanning the ports for the Validator after the initial scan failed')
           done()
         })
