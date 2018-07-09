@@ -981,7 +981,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
     })
   })
 
-  describe.only('Roosevelt killValidator test', function () {
+  describe('Roosevelt killValidator test', function () {
     // make options msgEnabled back to false so that new app don't have a sinon timer
     options.msgEnabled = false
 
