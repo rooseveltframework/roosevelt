@@ -1040,7 +1040,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
       let killedValidatorBool = false
 
       generateTestApp({
-        generateFolderStructure: false,
+        generateFolderStructure: true,
         appDir: appDir,
         htmlValidator: {
           enable: true,

@@ -56,7 +56,7 @@ describe('Roosevelt autokill Test', function () {
 
     // on logs, check if specific logs were outputted
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Killed process on port')) {
+      if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
         exit()
       } else if (data.includes('There was no autoKiller running, creating a new one')) {
@@ -118,7 +118,7 @@ describe('Roosevelt autokill Test', function () {
         testApp.kill('SIGINT')
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
-      } else if (data.includes('Killed process on port')) {
+      } else if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
         exit()
       }
@@ -165,7 +165,7 @@ describe('Roosevelt autokill Test', function () {
     testApp.stdout.on('data', (data) => {
       if (data.includes('Restarting autoKiller')) {
         restartAutoKillerLogBool = true
-      } else if (data.includes('Killed process')) {
+      } else if (data.includes('Killed process with PID')) {
         // wait for autoKiller to be finished before exiting test
         exit()
       }
@@ -286,7 +286,7 @@ describe('Roosevelt autokill Test', function () {
         timerResetBool = true
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
-      } else if (data.includes('Killed process on port: 8888')) {
+      } else if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
       }
     })
