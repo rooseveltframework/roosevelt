@@ -1068,11 +1068,15 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           })
 
           killLine.on('exit', () => {
-            assert.equal(foundValidatorBool, true, 'killValidator was not able to find the validator')
-            assert.equal(killedValidatorBool, true, 'killValidator was unable to kill the validator')
-            done()
+            testApp.kill('SIGINT')
           })
         }
+      })
+
+      testApp.on('exit', () => {
+        assert.equal(foundValidatorBool, true, 'killValidator was not able to find the validator')
+        assert.equal(killedValidatorBool, true, 'killValidator was unable to kill the validator')
+        done()
       })
     })
   })
