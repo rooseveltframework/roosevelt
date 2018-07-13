@@ -979,6 +979,57 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should report that both the validator and the app are trying to use the same port and that the user should change one of them', function (done) {
+      // bool var to hold whether or not the correct error message was outputted
+      let samePortErrorBool = false
+
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        port: 2000,
+        htmlValidator: {
+          enable: true,
+          port: 2000,
+          separateProcess: {
+            enable: true,
+            autoKiller: false
+          }
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app.js file and run it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+      // If the test errors, see if it is the specfic one about the two services trying to use the same port
+      testApp.stderr.on('data', (data) => {
+        if (data.includes('HTML validator are both trying to use the same port')) {
+          samePortErrorBool = true
+        }
+      })
+
+      // when we get a message from the app, signifying that the app is starting, kill it
+      testApp.on('message', () => {
+        fkill(`:2000`, {force: true}).then(() => {
+          done()
+        }, (err) => {
+          console.log(err)
+          done()
+        })
+      })
+
+      // when the app is about to exit, see if the specifc error was outputted
+      testApp.on('exit', () => {
+        assert.equal(samePortErrorBool, true, 'Roosevelt is not catching the error that describes 2 or more servers using a single port and giving a specific message to the programmer')
+        const killLine = fork('lib/scripts/killValidator.js', {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+        killLine.on('exit', () => {
+          done()
+        })
+      })
+    })
   })
 
   describe('Roosevelt killValidator test', function () {
