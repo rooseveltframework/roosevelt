@@ -59,6 +59,7 @@
     "compiler": "none",
     "whitelist": null,
     "output": ".build/css",
+    "symlinkToPublic": true,
     "versionFile": null
   },
   "js": {
@@ -67,6 +68,7 @@
     "whitelist": null,
     "blacklist": null,
     "output": ".build/js",
+    "symlinkToPublic": true,
     "bundler": {
       "bundles": [],
       "output": ".bundled",

@@ -53,6 +53,7 @@
     "compiler": "package",
     "whitelist": "package",
     "output": "package",
+    "symlinkToPublic": "constructor",
     "versionFile": "package"
   },
   "js": {
@@ -61,6 +62,7 @@
     "whitelist": "package",
     "blacklist": "package",
     "output": "package",
+    "symlinkToPublic": "constructor",
     "bundler": {
       "bundles": "package",
       "output": "package",
@@ -69,7 +71,6 @@
   },
   "publicFolder": "package",
   "favicon": "package",
-  "staticsSymlinksToPublic": "package",
   "versionedPublic": "package",
   "alwaysHostPublic": "package"
 }
