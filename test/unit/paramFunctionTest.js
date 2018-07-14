@@ -65,6 +65,7 @@ describe('parameter Function Test Section', function () {
       done()
     })
   })
+
   it('should execute what is in onReqStart', function (done) {
     // bool var to hold whether or not the app had used its body parser middleware yet
     let bodyParserNotUsedBool = false
