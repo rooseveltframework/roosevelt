@@ -47,7 +47,7 @@ describe('symlinkToPublic', function () {
     assert(params.staticsSymlinksToPublic.includes(params.js.sourceDir))
 
     // ensure js output is not included
-    assert(!params.staticsSymlinksToPublic.includes(params.js.output))
+    assert(!params.staticsSymlinksToPublic.includes(`js: ${params.js.output}`))
   })
 
   it('should populate staticsSymlinksToPublic with js output dir when compiler is enabled', function () {
@@ -68,7 +68,7 @@ describe('symlinkToPublic', function () {
     let params = app.expressApp.get('params')
 
     // ensure js output is included
-    assert(params.staticsSymlinksToPublic.includes(params.js.output))
+    assert(params.staticsSymlinksToPublic.includes(`js: ${params.js.output}`))
 
     // ensure js sourceDir is not included
     assert(!params.staticsSymlinksToPublic.includes(params.js.sourceDir))
@@ -92,7 +92,7 @@ describe('symlinkToPublic', function () {
     assert(params.staticsSymlinksToPublic.includes(params.css.sourceDir))
 
     // ensure css output is not included
-    assert(!params.staticsSymlinksToPublic.includes(params.css.output))
+    assert(!params.staticsSymlinksToPublic.includes(`css: ${params.css.output}`))
   })
 
   it('should populate staticsSymlinksToPublic with css output dir when compiler is enabled', function () {
@@ -113,7 +113,7 @@ describe('symlinkToPublic', function () {
     let params = app.expressApp.get('params')
 
     // ensure css output is included
-    assert(params.staticsSymlinksToPublic.includes(params.css.output))
+    assert(params.staticsSymlinksToPublic.includes(`css: ${params.css.output}`))
 
     // ensure css sourceDir is not included
     assert(!params.staticsSymlinksToPublic.includes(params.css.sourceDir))
@@ -129,7 +129,7 @@ describe('symlinkToPublic', function () {
         symlinkToPublic: false
       },
       css: {
-        sourceDir: 'csss',
+        sourceDir: 'css',
         output: '.build/css',
         symlinkToPublic: false
       },
@@ -185,13 +185,13 @@ describe('symlinkToPublic', function () {
         output: '.build/css',
         symlinkToPublic: true
       },
-      staticsSymlinksToPublic: ['.build/js', '.build/css']
+      staticsSymlinksToPublic: ['js: .build/js', 'css: .build/css']
     })
 
     let params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
-    assert.deepEqual(params.staticsSymlinksToPublic, ['.build/js', '.build/css'])
+    assert.deepEqual(params.staticsSymlinksToPublic, ['js: .build/js', 'css: .build/css'])
   })
 
   it('should not populate staticsSymlinksToPublic with js/css output dir when it already contains a js/css directory', function () {
