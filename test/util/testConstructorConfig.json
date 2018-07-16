@@ -49,6 +49,7 @@
     "compiler": "constructor",
     "whitelist": "constructor",
     "output": "constructor",
+    "symlinkToPublic": "constructor",
     "versionFile": "constructor"
   },
   "js": {
@@ -57,6 +58,7 @@
     "whitelist": "constructor",
     "blacklist": "constructor",
     "output": "constructor",
+    "symlinkToPublic": "constructor",
     "bundler": {
       "bundles": "constructor",
       "output": "constructor",
@@ -65,7 +67,6 @@
   },
   "publicFolder": "constructor",
   "favicon": "constructor",
-  "staticsSymlinksToPublic": "constructor",
   "versionedPublic": "constructor",
   "alwaysHostPublic": "constructor"
 }

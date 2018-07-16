@@ -38,7 +38,7 @@ describe('Constructor params', function () {
   })
 
   params.forEach((param) => {
-    if (param !== 'logging' && param !== 'generateFolderStructure') {
+    if (param !== 'logging' && param !== 'generateFolderStructure' && param !== 'staticsSymlinksToPublic') {
       it(`should set param "${param}" from constructor`, function () {
         assert.deepEqual(app.expressApp.get('params')[param], config[param])
       })

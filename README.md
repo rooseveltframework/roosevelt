@@ -490,6 +490,9 @@ Statics parameters
   - `whitelist`: Array of CSS files to whitelist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
     - Example array member: *[String]* `less/example.less:.build/css/example.min.css` (compiles `less/example.less` into `.build/css/example.min.css`).
   - `output`: Where to place compiled CSS files. This folder will be symlinked into `public` by default.
+  - `symlinkToPublic`: *[Boolean]* When enabled Roosevelt will automatically populate `staticsSymlinksToPublic` with your css directory.
+    - `output` will be symlinked if the compiler is enabled or `sourceDir` if it is disabled.
+    - Note: If `staticsSymlinksToPublic` already contains either of these directories this will not add either of them.
   - `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`.
     - Default: `null`.
     - Example usage (with roosevelt-less): *[Object]*
@@ -526,6 +529,7 @@ Statics parameters
         },
         "whitelist": null,
         "output": ".build/css",
+        "symlinkToPublic": true,
         "versionFile": null
       }
       ```
@@ -557,6 +561,9 @@ Statics parameters
     - Example: *[String]* `example.js`.
   - `output`: Where to place compiled JS files. This folder will be symlinked into `public` by default.
     - Default: *[String]* `".build/js"`.
+  - `symlinkToPublic`: *[Boolean]* When enabled Roosevelt will automatically populate `staticsSymlinksToPublic` with your js directory.
+    - `output` will be symlinked if the compiler is enabled or `sourceDir` if it is disabled.
+    - Note: If `staticsSymlinksToPublic` already contains either of these directories this will not add either of them.
   - `bundler`: Params related to bundling JS with [browserify](http://browserify.org).
     - `bundles`: *[Array]* Declare one or more files in your `sourceDir` to be browserify bundles via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts). Use of browserify in Roosevelt is optional. If no bundles are defined here, the browserify step will be skipped.
       - `env` param: *[String]* bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
@@ -635,18 +642,18 @@ Statics parameters
       - Default: *[Boolean]* `true`.
   - Default: *[Object]*
 
-    ```json
+      ```json
       {
         "sourceDir": "js",
         "compiler": {
           "nodeModule": "roosevelt-uglify",
           "showWarnings": false,
           "params": {}
-        }
         },
         "whitelist": null,
-        "blacklist": null
+        "blacklist": null,
         "output": ".build/js",
+        "symlinkToPublic": true,
         "bundler": {
           "bundles": [],
           "output": ".bundled",

@@ -21,7 +21,7 @@ describe('Default Params', function () {
   })
 
   params.forEach((param) => {
-    if (param !== 'logging' && param !== 'generateFolderStructure') {
+    if (param !== 'logging' && param !== 'generateFolderStructure' && param !== 'staticsSymlinksToPublic') {
       it(`should set correct default for param "${param}"`, function () {
         assert.deepEqual(app.expressApp.get('params')[param], defaults[param])
       })
