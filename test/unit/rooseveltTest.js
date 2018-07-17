@@ -54,44 +54,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
-
-    let serverStartInt = 0
-    let processKilledInt = 0
-
-    let timeout = setTimeout(function () {
-      assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line argument')
-      done()
-    }, 5000)
-
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
-    }, sOptions)
-
-    const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stdout.on('data', data => {
-      if (data.includes(`server started`)) {
-        serverStartInt++
-        if (serverStartInt === 2) {
-          testApp.kill('SIGINT')
-          clearTimeout(timeout)
-        }
-      }
-      if (data.includes('thread') && data.includes('died')) {
-        processKilledInt++
-      }
-    })
-
-    testApp.on('exit', () => {
-      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all of the cluster workers that it generated')
-      done()
-    })
-  })
-
   it('should only initialize the app once even though the startServer function is called after initServer function', function (done) {
     // options to pass to generateTestApp
     sOptions.initStart = true
