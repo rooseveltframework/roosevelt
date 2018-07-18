@@ -17,6 +17,21 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   // options that would be put into generateTestApp params
   let sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
 
+  // SIGINT worker processes
+  function killProcess (pids) {
+    let processKilledInt = 0
+    for (let i = pids.length - 1; i >= 0; i--) {
+      try {
+        process.kill(pids[i], 'SIGINT')
+      } catch (err) {
+        console.log('Error: ' + err)
+      }
+      pids.splice(i, 1)
+      processKilledInt++
+    }
+    return processKilledInt
+  }
+
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -196,18 +211,22 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // Int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
+    let pids = []
 
     // set a timeout in case the correct amount of instances are not made or something fails during initialization
     let timeout = setTimeout(function () {
       assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
       done()
-    }, 5000)
+    }, 10000)
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      logging: {
+        appStatus: false
+      },
+      onServerStart: `(app) => {console.log("server started " + process.pid)}`
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -216,14 +235,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
+        // Adding the PID for this process to an array of PIDs
+        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
-        if (serverStartInt === 2) {
-          testApp.kill('SIGINT')
-          clearTimeout(timeout)
-        }
       }
-      if (data.includes('thread') && data.includes('died')) {
-        processKilledInt++
+      if (serverStartInt === 2 && pids.length === 2) {
+        // kill processes
+        processKilledInt = killProcess(pids)
+        clearTimeout(timeout)
       }
     })
 
@@ -241,18 +260,22 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // Int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
+    let pids = []
 
     // set a timeout in case the correct amount of instances are not made or something fails during initialization
     let timeout = setTimeout(function () {
       assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
       done()
-    }, 5000)
+    }, 10000)
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      logging: {
+        appStatus: false
+      },
+      onServerStart: `(app) => {console.log("server started " + process.pid)}`
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -261,14 +284,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
+        // Adding the PID for this process to an array of PIDs
+        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
-        if (serverStartInt === 2) {
-          testApp.kill('SIGINT')
-          clearTimeout(timeout)
-        }
       }
-      if (data.includes('thread') && data.includes('died')) {
-        processKilledInt++
+      if (serverStartInt === 2 && pids.length === 2) {
+        // kill processes
+        processKilledInt = killProcess(pids)
+        clearTimeout(timeout)
       }
     })
 
@@ -284,18 +307,22 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let timeout = setTimeout(function () {
       assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
       done()
-    }, 5000)
+    }, 10000)
 
     // Int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
     let processKilledInt = 0
+    let pids = []
     const maxCores = os.cpus().length
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      logging: {
+        appStatus: false
+      },
+      onServerStart: `(app) => {console.log("server started " + process.pid)}`
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -303,15 +330,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     // check output logs to kill the app when the server instances reach the max and keep track of all the thread that are killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes('server started')) {
+      if (data.includes(`server started`)) {
+        // Adding the PID for this process to an array of PIDs
+        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
-        if (serverStartInt === maxCores) {
-          testApp.kill('SIGINT')
-          clearTimeout(timeout)
-        }
       }
-      if (data.includes('thread') && data.includes('died')) {
-        processKilledInt++
+      if (serverStartInt === maxCores && pids.length === maxCores) {
+        // kill processes
+        processKilledInt = killProcess(pids)
+        clearTimeout(timeout)
       }
     })
 
@@ -546,7 +573,9 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // when the app starts, check that localhostOnly was set correctly and then kill it
     testApp.on('message', (params) => {
       assert.equal(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
-      testApp.kill('SIGINT')
+      if (productionModeBool) {
+        testApp.kill('SIGINT')
+      }
     })
 
     // on exit, see if the app started in production mode
@@ -595,7 +624,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // on exit, see if the app started in production mode
     testApp.on('exit', () => {
       assert.equal(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
-      assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make a HTTPS server even thought it is enabled')
+      assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make a HTTPS server even though it is enabled')
       done()
     })
   })
@@ -755,7 +784,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
 
     // when the app finishes initialization and starts, kill it
-    testApp.on('message', (params) => {
+    testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
@@ -803,7 +832,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
 
     // when the app finishes initialization and starts, kill it
-    testApp.on('message', (params) => {
+    testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
@@ -847,7 +876,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
 
     // when the app finishes initialization and starts, kill it
-    testApp.on('message', (params) => {
+    testApp.on('message', () => {
       testApp.kill('SIGINT')
     })
 
@@ -1012,6 +1041,12 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let otherErrorLogBool = false
     let EACCESSLogBool = false
 
+    // Windows does not throw an EACCESS error. Auto passing test.
+    if (process.platform === 'win32') {
+      otherErrorLogBool = true
+      EACCESSLogBool = true
+    }
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -1099,13 +1134,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', (msg) => {
-    // when the app finishes initialization, send a request to the server
+      // when the app finishes initialization, send a request to the server
       if (msg.port) {
         request(`http://localhost:${msg.port}`)
           .get('/longConn')
-          .end((err, res) => {
+          .end((err) => {
             // if the connection is ended, see if it was because of an error or if it recieved a res object from the route
-            if (err.message === 'socket hang up') {
+            if (err.code === 'ECONNRESET') {
               testApp.kill('SIGINT')
             } else {
             // if the app returns a res object, it means that the connection wasn't close when the server closed
