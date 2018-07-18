@@ -744,6 +744,7 @@ describe('JavaScript Section Test', function () {
   it('should throw an error if the node module passed in js compiler is not compatible or out of date with Roosevelt', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
+    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
 
     // generate the app.js file
     generateTestApp({
@@ -751,7 +752,7 @@ describe('JavaScript Section Test', function () {
       generateFolderStructure: true,
       js: {
         compiler: {
-          nodeModule: 'which',
+          nodeModule: 'test_module_1',
           showWarnings: false,
           params: {}
         }
@@ -776,6 +777,7 @@ describe('JavaScript Section Test', function () {
 
     // when the app is about to end, check that the error was hit
     testApp.on('exit', () => {
+      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
       }
@@ -786,13 +788,15 @@ describe('JavaScript Section Test', function () {
   it('should throw an error if the node module provided to the js compiler has a parse function but does not provide the functionality that is required from a js compiler', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
+    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
+
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
       js: {
         compiler: {
-          nodeModule: 'path',
+          nodeModule: 'test_module_2',
           showWarnings: false,
           params: {}
         }
@@ -817,6 +821,7 @@ describe('JavaScript Section Test', function () {
 
     // when the app is about to end, check that the error was hit
     testApp.on('exit', () => {
+      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
       }

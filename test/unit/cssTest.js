@@ -409,13 +409,14 @@ describe('CSS Section Tests', function () {
   it('should throw an error if the css processor passed in is not compatible with Roosevelt (does not have parse function)', function (done) {
     // bool var to hold whether or not a specific error was thrown by Roosevelt
     let IncompatibleProcessorErrorBool = false
+    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
 
     // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
         compiler: {
-          nodeModule: 'camel-case',
+          nodeModule: 'test_module_1',
           params: {
             cleanCSS: {
               advanced: true,
@@ -446,6 +447,7 @@ describe('CSS Section Tests', function () {
 
     // on exit, see if the error was given
     testApp.on('exit', () => {
+      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
       if (IncompatibleProcessorErrorBool === false) {
         assert.fail('Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
       }
@@ -456,13 +458,14 @@ describe('CSS Section Tests', function () {
   it('should throw an error if the css processor passed in is not compatible with Roosevelt (it has the parse method, but it does not have the correct arguments)', function (done) {
     // bool var to hold whether or not a specific error was thrown by Roosevelt
     let IncompatibleProcessorErrorBool = false
+    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
 
     // create the app.js file
     generateTestApp({
       appDir: appDir,
       css: {
         compiler: {
-          nodeModule: 'path',
+          nodeModule: 'test_module_2',
           params: {
             cleanCSS: {
               advanced: true,
@@ -494,6 +497,7 @@ describe('CSS Section Tests', function () {
 
     // on exit, see if the error was given
     testApp.on('exit', () => {
+      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
       if (IncompatibleProcessorErrorBool === false) {
         assert.fail('Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
       }
