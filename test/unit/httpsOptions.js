@@ -125,11 +125,4 @@ describe('HTTPS server options', function () {
     config.https.ca = 'test/util/certs/ca.crt'
     config.https.cafile = true
   })
-
-  // the following test requires starting the https server
-  //   it('should start the https server with the correct options', function () {
-  //     app({appDir: appDir, ...config})
-  //     assert.equal(stubHttpsListen.args[0][0], config.https.httpsPort, 'httpsServer.listen port did not match supplied port')
-  //     assert.equal(stubHttpsListen.args[0][1], 'localhost', 'httpsServer.listen domain did not match localhost')
-  //   })
 })
