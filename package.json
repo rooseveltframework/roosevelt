@@ -25,6 +25,7 @@
     "formidable": "~1.2.0",
     "fs-extra": "~7.0.0",
     "html-minifier": "~3.5.15",
+    "klaw": "~2.1.1",
     "html-validator": "~3.0.0",
     "klaw-sync": "~4.0.0",
     "method-override": "~3.0.0",

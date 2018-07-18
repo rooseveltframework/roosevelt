@@ -4,9 +4,9 @@ const assert = require('assert')
 const path = require('path')
 const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
+const { fork } = require('child_process')
 const fse = require('fs-extra')
-const klawSync = require('klaw-sync')
+const klaw = require('klaw')
 const request = require('supertest')
 
 describe('Public folder section tests', function () {
@@ -176,7 +176,7 @@ describe('Public folder section tests', function () {
     })
   })
 
-  it('change the name of the public folder to what version number the app is on in the package.json file', function (done) {
+  it('should set the name of folder inside of public to the version inside of package.json', function (done) {
     // write the package json file with the source code from above
     fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
 
@@ -196,18 +196,29 @@ describe('Public folder section tests', function () {
       // var to keep track of whether or not the public folder name was changed to the version number
       let publicNameChange = false
       // get the what is in the app folder
-      const dirs = klawSync(path.join(appDir, 'public'), {nofile: true})
-      dirs.forEach((dir) => {
-        if (dir.path.includes('0.5.1')) {
-          publicNameChange = true
-        }
-      })
-      if (publicNameChange) {
-        testApp.kill('SIGINT')
-      } else {
-        assert.fail('public folder name was not changed to version number')
-        testApp.kill('SIGINT')
-      }
+      const dirs = []
+      klaw(path.join(appDir, 'public'), { nofile: true })
+        .on('readable', function () {
+          let item
+          while ((item = this.read())) {
+            dirs.push(item.path)
+          }
+        })
+        .on('end', () => {
+          // Loop through dirs
+          dirs.forEach((dir) => {
+            // Check if dir exists
+            if (dir === path.join(appDir, 'public/0.5.1')) {
+              publicNameChange = true
+            }
+          })
+          if (publicNameChange) {
+            testApp.kill('SIGINT')
+          } else {
+            assert.fail('public folder name was not changed to version number')
+            testApp.kill('SIGINT')
+          }
+        })
     })
 
     testApp.on('exit', () => {
