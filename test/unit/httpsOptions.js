@@ -73,7 +73,7 @@ describe('HTTPS server options', function () {
   })
 
   it('should use given pfx file if pfx option is true', function () {
-    let keytext = fs.readFileSync(path.join(__dirname, '../util/test.p12'))
+    let keytext = fs.readFileSync(path.join(__dirname, '../util/certs/test.p12'))
 
     config.https.pfx = true
 
@@ -86,8 +86,8 @@ describe('HTTPS server options', function () {
   })
 
   it('should use key/cert if pfx option is false', function () {
-    let keytext = fs.readFileSync(path.join(__dirname, '../util/test.req.key'))
-    let certext = fs.readFileSync(path.join(__dirname, '../util/test.req.crt'))
+    let keytext = fs.readFileSync(path.join(__dirname, '../util/certs/test.req.key'))
+    let certext = fs.readFileSync(path.join(__dirname, '../util/certs/test.req.crt'))
 
     app({appDir: appDir, ...config})
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
@@ -96,23 +96,23 @@ describe('HTTPS server options', function () {
   })
 
   it('should read certificate authority from file if cafile is true', function () {
-    let catext = fs.readFileSync(path.join(__dirname, '../util/ca.crt'))
+    let catext = fs.readFileSync(path.join(__dirname, '../util/certs/ca.crt'))
 
     app({appDir: appDir, ...config})
     assert(stubHttpsServer.args[0][0].ca.equals(catext), 'https.Server CA did not match supplied CA')
   })
 
   it('should be able to read array of certificates', function () {
-    let ca1 = fs.readFileSync(path.join(__dirname, '../util/ca.crt'))
-    let ca2 = fs.readFileSync(path.join(__dirname, '../util/ca-2.crt'))
+    let ca1 = fs.readFileSync(path.join(__dirname, '../util/certs/ca.crt'))
+    let ca2 = fs.readFileSync(path.join(__dirname, '../util/certs/ca-2.crt'))
 
-    config.https.ca = ['test/util/ca.crt', 'test/util/ca-2.crt']
+    config.https.ca = ['test/util/certs/ca.crt', 'test/util/certs/ca-2.crt']
 
     app({appDir: appDir, ...config})
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
     assert(stubHttpsServer.args[0][0].ca[1].equals(ca2), 'https.Server CA (2) did not match supplied CA')
 
-    config.https.ca = 'test/util/ca.crt'
+    config.https.ca = 'test/util/certs/ca.crt'
   })
 
   it('should pass certificate authority directly to httpsServer if cafile is false', function () {
@@ -122,7 +122,7 @@ describe('HTTPS server options', function () {
     app({appDir: appDir, ...config})
     assert.equal(stubHttpsServer.args[0][0].ca, config.https.ca, 'https.Server CA did not match supplied CA')
 
-    config.https.ca = 'test/util/ca.crt'
+    config.https.ca = 'test/util/certs/ca.crt'
     config.https.cafile = true
   })
 
