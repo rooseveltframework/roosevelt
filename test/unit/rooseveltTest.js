@@ -11,7 +11,7 @@ const os = require('os')
 const http = require('http')
 const request = require('supertest')
 
-describe.only('Roosevelt roosevelt.js Section Tests', function () {
+describe('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
 
   // options that would be put into generateTestApp params
