@@ -11,7 +11,7 @@ const os = require('os')
 const http = require('http')
 const request = require('supertest')
 
-describe('Roosevelt roosevelt.js Section Tests', function () {
+describe.only('Roosevelt roosevelt.js Section Tests', function () {
   const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
 
   // options that would be put into generateTestApp params
@@ -315,30 +315,32 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     let serverStartInt = 0
     let processKilledInt = 0
+    let pids = []
 
     let timeout = setTimeout(function () {
       assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line argument')
       done()
-    }, 5000)
+    }, 10000)
 
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: `(app) => {console.log("server started " + process.pid)}`
     }, sOptions)
 
     const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', data => {
+    // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
+    testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
+        // Adding the PID for this process to an array of PIDs
+        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
-        if (serverStartInt === 2) {
-          testApp.kill('SIGINT')
-          clearTimeout(timeout)
-        }
       }
-      if (data.includes('thread') && data.includes('died')) {
-        processKilledInt++
+      if (serverStartInt === 2 && pids.length === 2) {
+        // kill processes
+        processKilledInt = killProcess(pids)
+        clearTimeout(timeout)
       }
     })
 
