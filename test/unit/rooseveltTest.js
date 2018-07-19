@@ -221,12 +221,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let processKilledInt = 0
     let pids = []
 
-    // set a timeout in case the correct amount of instances are not made or something fails during initialization
-    let timeout = setTimeout(function () {
-      assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
-      done()
-    }, 10000)
-
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -250,7 +244,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (serverStartInt === 2 && pids.length === 2) {
         // kill processes
         processKilledInt = killProcess(pids)
-        clearTimeout(timeout)
+        testApp.kill('SIGINT')
       }
     })
 
@@ -269,12 +263,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let serverStartInt = 0
     let processKilledInt = 0
     let pids = []
-
-    // set a timeout in case the correct amount of instances are not made or something fails during initialization
-    let timeout = setTimeout(function () {
-      assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
-      done()
-    }, 10000)
 
     // generate the app.js file
     generateTestApp({
@@ -299,7 +287,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (serverStartInt === 2 && pids.length === 2) {
         // kill processes
         processKilledInt = killProcess(pids)
-        clearTimeout(timeout)
+        testApp.kill('SIGINT')
       }
     })
 
@@ -317,14 +305,12 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let processKilledInt = 0
     let pids = []
 
-    let timeout = setTimeout(function () {
-      assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line argument')
-      done()
-    }, 10000)
-
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      logging: {
+        appStatus: false
+      },
       onServerStart: `(app) => {console.log("server started " + process.pid)}`
     }, sOptions)
 
@@ -340,7 +326,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (serverStartInt === 2 && pids.length === 2) {
         // kill processes
         processKilledInt = killProcess(pids)
-        clearTimeout(timeout)
+        testApp.kill('SIGINT')
       }
     })
 
@@ -351,12 +337,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should make the app use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
-    // set a timeout in case the correct amount of instances are not made or something fails during initialization
-    let timeout = setTimeout(function () {
-      assert.fail('An error occurred during initiailization or the app did not start enough instances of the app based on the command line arguement')
-      done()
-    }, 10000)
-
     // Int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
     let processKilledInt = 0
@@ -386,13 +366,49 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (serverStartInt === maxCores && pids.length === maxCores) {
         // kill processes
         processKilledInt = killProcess(pids)
-        clearTimeout(timeout)
+        testApp.kill('SIGINT')
       }
     })
 
     // on exit, check if the app had killed the cluster that the app had created
     testApp.on('exit', () => {
       assert.equal(processKilledInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
+      done()
+    })
+  })
+
+  it('should test for workers being killed if another process is using the same port', function (done) {
+    // reset sOptions
+    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+
+    // Int vars to hold how many times a server was started and how many times a thread was killed
+    let processKilledInt = 0
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {console.log("server started " + process.pid)}`
+    }, sOptions)
+
+    // fork the app and run it as a child process
+    const dummyApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('thread') && data.includes('died')) {
+        processKilledInt++
+        if (processKilledInt === 2) {
+          dummyApp.kill('SIGINT')
+          testApp.kill('SIGINT')
+        }
+      }
+    })
+
+    // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
+    testApp.on('exit', () => {
+      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     })
   })
@@ -661,12 +677,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
         httpsServerMadeBool = true
       }
+      if (httpsServerMadeBool) {
+        testApp.kill('SIGINT')
+      }
     })
 
-    // when the app starts, check that localhostOnly was set correctly and then kill it
+    // when the app starts, check that localhostOnly was set correctly
     testApp.on('message', (params) => {
       assert.equal(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
-      testApp.kill('SIGINT')
     })
 
     // on exit, see if the app started in production mode
