@@ -57,6 +57,14 @@ module.exports = function (params, options) {
         contents += `clock.tick(30000)\n`
         contents += `})\n`
         break
+      case options.stopServer:
+        contents += `app.${options.method}(() => {\n`
+        contents += `  ${defaultMessages}\n})\n`
+        contents += `process.on('message', (msg) => {\n`
+        contents += `  if (msg === 'stop') {\n`
+        contents += `    app.stopServer()\n`
+        contents += `  }\n})\n`
+        break
       default:
         contents += `app.${options.method}(() => {\n`
         contents += `  ${defaultMessages}\n})\n`

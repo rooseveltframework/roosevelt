@@ -25,21 +25,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     ca2: path.join(`${__dirname}/../util/certs/ca-2.crt`)
   }
 
-  // SIGINT worker processes
-  function killProcess (pids) {
-    let processKilledInt = 0
-    for (let i = pids.length - 1; i >= 0; i--) {
-      try {
-        process.kill(pids[i], 'SIGINT')
-      } catch (err) {
-        console.log('Error: ' + err)
-      }
-      pids.splice(i, 1)
-      processKilledInt++
-    }
-    return processKilledInt
-  }
-
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -214,21 +199,17 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
   it('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
     // reset sOptions
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
     // Int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
-    let pids = []
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      logging: {
-        appStatus: false
-      },
-      onServerStart: `(app) => {console.log("server started " + process.pid)}`
+      onServerStart: `(app) => {console.log("server started")}`
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -237,14 +218,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
-        // Adding the PID for this process to an array of PIDs
-        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
+        if (serverStartInt === 2) {
+          testApp.send('stop')
+        }
       }
-      if (serverStartInt === 2 && pids.length === 2) {
-        // kill processes
-        processKilledInt = killProcess(pids)
-        testApp.kill('SIGINT')
+      if (data.includes(`thread`) && data.includes(`died`)) {
+        processKilledInt++
       }
     })
 
@@ -256,22 +236,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
-    // reset sOptions
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
-
     // Int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
-    let pids = []
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      logging: {
-        appStatus: false
-      },
-      onServerStart: `(app) => {console.log("server started " + process.pid)}`
+      onServerStart: `(app) => {console.log("server started")}`
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -280,14 +253,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
-        // Adding the PID for this process to an array of PIDs
-        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
+        if (serverStartInt === 2) {
+          testApp.send('stop')
+        }
       }
-      if (serverStartInt === 2 && pids.length === 2) {
-        // kill processes
-        processKilledInt = killProcess(pids)
-        testApp.kill('SIGINT')
+      if (data.includes(`thread`) && data.includes(`died`)) {
+        processKilledInt++
       }
     })
 
@@ -299,19 +271,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
-
     let serverStartInt = 0
     let processKilledInt = 0
-    let pids = []
 
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      logging: {
-        appStatus: false
-      },
-      onServerStart: `(app) => {console.log("server started " + process.pid)}`
+      onServerStart: `(app) => {console.log("server started")}`
     }, sOptions)
 
     const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -319,14 +285,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
-        // Adding the PID for this process to an array of PIDs
-        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
+        if (serverStartInt === 2) {
+          testApp.send('stop')
+        }
       }
-      if (serverStartInt === 2 && pids.length === 2) {
-        // kill processes
-        processKilledInt = killProcess(pids)
-        testApp.kill('SIGINT')
+      if (data.includes(`thread`) && data.includes(`died`)) {
+        processKilledInt++
       }
     })
 
@@ -340,16 +305,12 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // Int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
     let processKilledInt = 0
-    let pids = []
     const maxCores = os.cpus().length
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      logging: {
-        appStatus: false
-      },
       onServerStart: `(app) => {console.log("server started " + process.pid)}`
     }, sOptions)
 
@@ -359,61 +320,28 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // check output logs to kill the app when the server instances reach the max and keep track of all the thread that are killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
-        // Adding the PID for this process to an array of PIDs
-        pids.push(data.toString().replace(/^\D+|\r?\n|\r|\s/g, ''))
         serverStartInt++
+        if (serverStartInt === maxCores) {
+          testApp.send('stop')
+        }
       }
-      if (serverStartInt === maxCores && pids.length === maxCores) {
-        // kill processes
-        processKilledInt = killProcess(pids)
-        testApp.kill('SIGINT')
+      if (data.includes(`thread`) && data.includes(`died`)) {
+        processKilledInt++
       }
     })
 
     // on exit, check if the app had killed the cluster that the app had created
     testApp.on('exit', () => {
       assert.equal(processKilledInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
-      done()
-    })
-  })
-
-  it('should test for workers being killed if another process is using the same port', function (done) {
-    // reset sOptions
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
-
-    // Int vars to hold how many times a server was started and how many times a thread was killed
-    let processKilledInt = 0
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started " + process.pid)}`
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const dummyApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('thread') && data.includes('died')) {
-        processKilledInt++
-        if (processKilledInt === 2) {
-          dummyApp.kill('SIGINT')
-          testApp.kill('SIGINT')
-        }
-      }
-    })
-
-    // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
-    testApp.on('exit', () => {
-      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
+      delete sOptions.stopServer
       done()
     })
   })
 
   it('should make the app default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
+    // reset sOptions
+    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+
     // bool var to hold whether a specific error was logged, how many cpu cores this enviroment has, and a var to hold what one above the amount of cores that exists
     let defaultCoresLogBool = false
     let serverStartInt = 0
