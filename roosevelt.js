@@ -35,6 +35,7 @@ module.exports = function (params) {
   let flags
   let clusterKilled = 0
   let checkConnectionsTimeout
+  let shutdownType
 
   // expose initial vars
   app.set('express', express)
@@ -199,6 +200,24 @@ module.exports = function (params) {
     let key
     let keys
 
+    // force destroy connections if the server takes too long to shut down
+    checkConnectionsTimeout = setTimeout(() => {
+      logger.error(`${appName} could not close all connections in time; forcefully shutting down`.red)
+      for (key in connections) {
+        connections[key].destroy()
+      }
+      if (shutdownType === 'close') {
+        if (httpServer) {
+          httpServer.close()
+        }
+        if (httpsServer) {
+          httpsServer.close()
+        }
+      } else {
+        process.exit()
+      }
+    }, app.get('params').shutdownTimeout)
+
     app.set('roosevelt:state', 'disconnecting')
     logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
@@ -222,20 +241,21 @@ module.exports = function (params) {
         connectionCheck()
       }
     }
-    setTimeout(() => {
-      // force destroy connections if the server takes too long to shut down
-      logger.error(`${appName} could not close all connections in time; forcefully shutting down`.red)
-      clearTimeout(checkConnectionsTimeout)
-      for (key in connections) {
-        connections[key].destroy()
-      }
-      process.exit()
-    }, app.get('params').shutdownTimeout)
   }
 
   function exitLog () {
+    clearTimeout(checkConnectionsTimeout)
     logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
-    process.exit()
+    if (shutdownType === 'close') {
+      if (httpServer) {
+        httpServer.close()
+      }
+      if (httpsServer) {
+        httpsServer.close()
+      }
+    } else {
+      process.exit()
+    }
   }
 
   function connectionCheck () {
@@ -328,11 +348,21 @@ module.exports = function (params) {
     startHttpServer()
   }
 
+  function stopServer (closeServer) {
+    if (closeServer === 'close') {
+      shutdownType = 'close'
+    } else {
+      shutdownType = 'exit'
+    }
+    gracefulShutdown()
+  }
+
   return {
     httpServer: httpServer,
     httpsServer: httpsServer,
     expressApp: app,
     initServer: initServer,
-    startServer: startServer
+    startServer: startServer,
+    stopServer: stopServer
   }
 }
