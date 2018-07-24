@@ -9,11 +9,11 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt multipart/formidable Section Test', function () {
-  const appDir = path.join(__dirname, '../', 'app', 'multipartFormidableTest')
+  const appDir = path.join(__dirname, '../app/multipartFormidableTest')
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -47,7 +47,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/multipartTest')
-        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .attach('test1', path.join(__dirname, '../util/multipartText1.txt'))
         .on('error', (err) => {
           assert.fail(err)
           testApp.send('stop')
@@ -91,7 +91,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
       request(`http://localhost:${params.port}`)
         .post('/multipartUploadDir')
         .field('uploadDir', appDir)
-        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .attach('test1', path.join(__dirname, '../util/multipartText1.txt'))
         .on('error', (err) => {
           assert.fail(err)
           testApp.send('stop')
@@ -223,7 +223,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
       // send multiple fields to exceed the max field size
       request(`http://localhost:${params.port}`)
         .post('/multipartTest')
-        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .attach('test1', path.join(__dirname, '../util/multipartText1.txt'))
         .field('testing1', 6)
         .field('testing2', 4)
         .field('testing3', 1)
@@ -274,7 +274,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/multipartDelete')
-        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .attach('test1', path.join(__dirname, '../util/multipartText1.txt'))
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
@@ -327,7 +327,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/multipartChangePath')
-        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .attach('test1', path.join(__dirname, '../util/multipartText1.txt'))
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
@@ -376,7 +376,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/multipartDirSwitch')
-        .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
+        .attach('test1', path.join(__dirname, '../util/multipartText1.txt'))
         .expect(200)
         .end((err, res) => {
           if (err) {

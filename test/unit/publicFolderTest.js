@@ -11,7 +11,7 @@ const request = require('supertest')
 
 describe('Public folder section tests', function () {
   // path to the directory where the test app is located
-  const appDir = path.join(__dirname, '../', 'app', 'publicFolderTest')
+  const appDir = path.join(__dirname, '../app/publicFolderTest')
   // options to pass into generateTestApp
   let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
@@ -20,7 +20,7 @@ describe('Public folder section tests', function () {
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -36,7 +36,7 @@ describe('Public folder section tests', function () {
 
   it('should allow the user to set up a custom favicon and have the favicon that comes back from http request be the same as the one they load in', function (done) {
     // copy the favicon to the images folder within the static folder
-    fse.copySync(path.join(__dirname, '../', 'util', 'faviconTest.ico'), path.join(appDir, 'statics', 'images', 'faviconTest.ico'))
+    fse.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
 
     // generate the app
     generateTestApp({
@@ -71,7 +71,7 @@ describe('Public folder section tests', function () {
               // convert buffer to base64
               let faviconData = res.body.toString('base64')
               // get the base64 buffer of the favicon that we should be using in util
-              let data = fse.readFileSync(path.join(__dirname, '../', 'util', 'faviconTest.ico'))
+              let data = fse.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
               let encodedImageData = Buffer.from(data, 'binary').toString('base64')
               // check if both buffers are the same(They should be)
               let test = faviconData === encodedImageData

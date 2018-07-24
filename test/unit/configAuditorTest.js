@@ -12,7 +12,7 @@ const os = require('os')
 
 describe('Roosevelt config Auditor Test', function () {
   // path to the Test App Directory
-  const appDir = path.join(__dirname, '../', '/app', '/configAuditorTest')
+  const appDir = path.join(__dirname, '../app/configAuditorTest')
 
   // options to add to the generateTestApp function
   const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
@@ -553,7 +553,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.mkdirSync(path.join(appDir, 'node_modules'))
 
     // set env.INIT_CWD to a location that does not have a node_module folder
-    process.env.INIT_CWD = path.join(appDir, '../', 'util')
+    process.env.INIT_CWD = path.join(appDir, '../util')
 
     // fork the configAuditor.js file and run it as a child process
     let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
@@ -586,7 +586,7 @@ describe('Roosevelt config Auditor Test', function () {
     fse.ensureDirSync(path.join(appDir, 'node_modules'))
 
     // fork the app.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {

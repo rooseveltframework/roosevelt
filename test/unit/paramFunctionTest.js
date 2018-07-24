@@ -10,14 +10,14 @@ const request = require('supertest')
 
 describe('parameter Function Test Section', function () {
   // path to the app Directory
-  const appDir = path.join(__dirname, '../', 'app', 'paramFunctionTest')
+  const appDir = path.join(__dirname, '../app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
   let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -292,7 +292,7 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/simpleMultipart')
-        .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
+        .attach('test1', path.join(appDir, '../../util/text1.txt'))
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
@@ -371,14 +371,14 @@ describe('parameter Function Test Section', function () {
 
     // when the app console logs, see if the specific creation log was made
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'public', '0.5.1')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'public/0.5.1')}`)) {
         versionPublicCreationLogBool = true
       }
     })
 
     // when the app finishes initialization, see if a folder like that exists
     testApp.on('message', () => {
-      let test = fse.existsSync(path.join(appDir, 'public', '0.5.1'))
+      let test = fse.existsSync(path.join(appDir, 'public/0.5.1'))
       assert.equal(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
       testApp.send('stop')
     })
@@ -405,7 +405,7 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc', 'models')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'mvc/models')}`)) {
         modelDirectoryCreationLogBool = true
       }
     })
@@ -436,7 +436,7 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc', 'views')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'mvc/views')}`)) {
         viewsDirectoryCreationLogBool = true
       }
     })
@@ -467,7 +467,7 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc', 'controllers')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'mvc/controllers')}`)) {
         controllersDirectoryCreationLogBool = true
       }
     })
@@ -541,7 +541,7 @@ describe('parameter Function Test Section', function () {
     let controllerErrorLogBool2 = false
 
     // put the err Controller into the mvc
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController.js'), path.join(appDir, 'mvc', 'controllers', 'errController.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
 
     // create the app.js file
     generateTestApp({
@@ -581,7 +581,7 @@ describe('parameter Function Test Section', function () {
     let error404LoadLogBool = false
 
     // copy the 404 error page to the mvc
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', '404errController.js'), path.join(appDir, 'mvc', 'controllers', '404errController.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/404errController.js'), path.join(appDir, 'mvc/controllers/404errController.js'))
 
     // create the app.js file
     generateTestApp({
@@ -618,10 +618,10 @@ describe('parameter Function Test Section', function () {
     let errorLoggedBool = false
 
     // copy the mvc over to the app
-    fse.copySync(path.join(appDir, '../', '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
 
     // make a directory in the mvc
-    fse.mkdirSync(path.join(appDir, 'mvc', 'controllers', 'test'))
+    fse.mkdirSync(path.join(appDir, 'mvc/controllers/test'))
 
     // create the app.js file
     generateTestApp({
@@ -677,8 +677,8 @@ describe('parameter Function Test Section', function () {
 
   it('should only give the quirky error log back once if there are more then one broken controllers', function (done) {
     // put in the two syntax error controllers
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController.js'), path.join(appDir, 'mvc', 'controllers', 'errController.js'))
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController2.js'), path.join(appDir, 'mvc', 'controllers', 'errController2.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/errController2.js'), path.join(appDir, 'mvc/controllers/errController2.js'))
 
     // num var to hold how many times the quirky error is outputted
     let gameOfThronesErrorNum = 0
@@ -718,7 +718,7 @@ describe('parameter Function Test Section', function () {
 
     // copy over an existing file over to the test app directory
     fse.ensureDirSync(appDir)
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'faviconTest.ico'), path.join(appDir, 'mvc', 'faviconTest.ico'))
+    fse.copyFileSync(path.join(appDir, '../../util/faviconTest.ico'), path.join(appDir, 'mvc/faviconTest.ico'))
 
     // create the app.js file
     generateTestApp({

@@ -12,14 +12,14 @@ const fkill = require('fkill')
 
 describe('Roosevelt HTML Validator/Kill Validator Test', function () {
   // location of the test app
-  const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
+  const appDir = path.join(__dirname, '../app/htmlValidatorTest')
 
   // options that would be put into generateTestApp params
   const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // copy the mvc dir from util to the test app
-    fse.copySync(path.join(appDir, '../', '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 

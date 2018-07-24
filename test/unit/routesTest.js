@@ -9,14 +9,14 @@ const fse = require('fs-extra')
 const request = require('supertest')
 
 describe('Roosevelt routes Section Test', function () {
-  const appDir = path.join(__dirname, '../', 'app', 'routesTest')
+  const appDir = path.join(__dirname, '../app/routesTest')
 
   // options to pass into generateTestApp
   let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -188,7 +188,7 @@ describe('Roosevelt routes Section Test', function () {
 
   it('should start the server and display a custom 404 error page if the user is requesting a page that does not exists and the user had adjusted the params to accomadate their custom page', function (done) {
     // copy over the custom 404 controller over to the mvc folder
-    fse.copyFileSync(path.join(__dirname, '../', 'util', '404test.js'), path.join(appDir, 'mvc', 'controllers', '404test.js'))
+    fse.copyFileSync(path.join(__dirname, '../util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
 
     // generate the app.js file
     generateTestApp({
@@ -826,7 +826,7 @@ describe('Roosevelt routes Section Test', function () {
     let controllerErrorLogBool = false
 
     // copy the ico file into the mvc controller directory
-    fse.copyFileSync(path.join(__dirname, '../', 'util', 'faviconTest.ico'), path.join(appDir, 'mvc', 'controllers', 'faviconTest.ico'))
+    fse.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
 
     // generate the app.js file
     generateTestApp({

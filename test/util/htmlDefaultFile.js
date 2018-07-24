@@ -3,7 +3,7 @@ module.exports = (app) => {
   // route to request the plain HTML page and return the HTML page
   app.route('/').get((req, res) => {
     // save the path of the plain HTML page
-    let htmlPath = path.join(__dirname, '../', 'views', 'plainHTMLTest.html')
+    let htmlPath = path.join(__dirname, '../views/plainHTMLTest.html')
     // send the plain HTML page back
     res.sendFile(htmlPath)
   })

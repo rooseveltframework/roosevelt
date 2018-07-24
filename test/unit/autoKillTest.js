@@ -13,7 +13,7 @@ const http = require('http')
 
 describe('Roosevelt autokill Test', function () {
   // location of the test app
-  const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
+  const appDir = path.join(__dirname, '../app/htmlValidatorTest')
 
   // options that would be put into generateTestApp params
   const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}

@@ -12,7 +12,7 @@ const http = require('http')
 const request = require('supertest')
 
 describe('Roosevelt roosevelt.js Section Tests', function () {
-  const appDir = path.join(__dirname, '../', 'app', 'rooseveltTest').replace('/\\/g', '/')
+  const appDir = path.join(__dirname, '../app/rooseveltTest').replace('/\\/g', '/')
 
   // options that would be put into generateTestApp params
   let sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
@@ -42,7 +42,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     generateTestApp(undefined, sOptions)
 
     // read the default config file
-    let defaults = fse.readFileSync(path.join(appDir, '../', '../', '../', 'lib', 'defaults', 'config.json')).toString('utf8')
+    let defaults = fse.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
     let defaultsJSON = JSON.parse(defaults)
 
     // fork the app and run it as a child process

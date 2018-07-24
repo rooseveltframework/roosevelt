@@ -19,15 +19,15 @@ describe('JavaScript Section Test', function () {
 
   // array of paths to generated static js test files
   let pathsOfStaticJS = [
-    path.join(appDir, 'statics', 'js', 'a.js'),
-    path.join(appDir, 'statics', 'js', 'b.js'),
-    path.join(appDir, 'statics', 'js', 'c.js')
+    path.join(appDir, 'statics/js/a.js'),
+    path.join(appDir, 'statics/js/b.js'),
+    path.join(appDir, 'statics/js/c.js')
   ]
   // array of paths to generated compiled js test files
   let pathsOfCompiledJS = [
-    path.join(appDir, 'statics', '.build', 'js', 'a.js'),
-    path.join(appDir, 'statics', '.build', 'js', 'b.js'),
-    path.join(appDir, 'statics', '.build', 'js', 'c.js')
+    path.join(appDir, 'statics/.build/js/a.js'),
+    path.join(appDir, 'statics/.build/js/b.js'),
+    path.join(appDir, 'statics/.build/js/c.js')
   ]
   // array to hold sample JS string data that will be written to a file
   let staticJSFiles = [
@@ -41,7 +41,7 @@ describe('JavaScript Section Test', function () {
 
   beforeEach(function () {
     // start by generating a statics folder in the roosevelt test app directory
-    fse.ensureDirSync(path.join(appDir, 'statics', 'js'))
+    fse.ensureDirSync(path.join(appDir, 'statics/js'))
     // generate sample js files in statics by looping through smaple JS source strings
     for (let x = 0; x < pathsOfStaticJS.length; x++) {
       fse.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
@@ -78,7 +78,7 @@ describe('JavaScript Section Test', function () {
 
     testApp.on('message', () => {
       // look into the .build folder to see if all the files were compiled and if there is any extras
-      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
+      const compiledJS = path.join(path.join(appDir, 'statics/.build/js'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathsOfCompiledJS.includes(file.path)
@@ -95,8 +95,8 @@ describe('JavaScript Section Test', function () {
   it('should only compile files that are whitelisted', function (done) {
     //  array that holds the paths for the generated whitelist compiled files
     let pathOfWhiteListedFiles = [
-      path.join(appDir, 'statics', '.build', 'js', 'a.js'),
-      path.join(appDir, 'statics', '.build', 'js', 'c.js')
+      path.join(appDir, 'statics/.build/js/a.js'),
+      path.join(appDir, 'statics/.build/js/c.js')
     ]
     // create the app.js file
     generateTestApp({
@@ -116,7 +116,7 @@ describe('JavaScript Section Test', function () {
 
     testApp.on('message', () => {
       // test to see that only the whitelisted file was compiled
-      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
+      const compiledJS = path.join(path.join(appDir, 'statics/.build/js'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathOfWhiteListedFiles.includes(file.path)
@@ -176,9 +176,9 @@ describe('JavaScript Section Test', function () {
   it('should make the output compiled folder with the new name and put all the compiled JS in it', function (done) {
     // array of paths to generated compile js files inside the altered output directory
     let pathsOfAlteredCompiledJS = [
-      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'a.js'),
-      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'b.js'),
-      path.join(appDir, 'statics', '.build', 'jsCompiledTest', 'c.js')
+      path.join(appDir, 'statics/.build/jsCompiledTest/a.js'),
+      path.join(appDir, 'statics/.build/jsCompiledTest/b.js'),
+      path.join(appDir, 'statics/.build/jsCompiledTest/c.js')
     ]
 
     // create the app.js file
@@ -200,7 +200,7 @@ describe('JavaScript Section Test', function () {
 
     testApp.on('message', () => {
       // test to see if the folder exist and if the compiled files are there with no extras
-      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'jsCompiledTest'))
+      const compiledJS = path.join(path.join(appDir, 'statics/.build/jsCompiledTest'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
         let test = pathsOfAlteredCompiledJS.includes(file.path)
@@ -217,7 +217,7 @@ describe('JavaScript Section Test', function () {
   it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
     // array that holds the path of the delimiter file
     let delimiterOutputArray = [
-      path.join(appDir, 'statics', '.build', 'js', 'test', 'something.js')
+      path.join(appDir, 'statics/.build/js/test/something.js')
     ]
     // create the app.js file
     generateTestApp({
@@ -238,7 +238,7 @@ describe('JavaScript Section Test', function () {
 
     testApp.on('message', () => {
       // grab the folder of where the output should be and check inside it to see if only the whitelist file was compiled and named appropriately
-      let pathOfCompiledDLJS = path.join(appDir, 'statics', '.build', 'js', 'test')
+      let pathOfCompiledDLJS = path.join(appDir, 'statics/.build/js/test')
       let CompiledDLJSArray = klawSync(pathOfCompiledDLJS)
       CompiledDLJSArray.forEach((file) => {
         let test = delimiterOutputArray.includes(file.path)
@@ -457,7 +457,7 @@ describe('JavaScript Section Test', function () {
 
   it('should skip compiling a file if the path is a directory', function (done) {
     // make a directory inside the static js folder
-    let filePathName = path.join(appDir, 'statics', 'js', 'testDir')
+    let filePathName = path.join(appDir, 'statics/js/testDir')
     fse.mkdirSync(filePathName)
     // generate the app.js file
     generateTestApp({
@@ -477,7 +477,7 @@ describe('JavaScript Section Test', function () {
 
     // when server starts, see if a file or directory of testDir was made on the build
     testApp.on('message', () => {
-      let testFilePath = path.join(appDir, 'statics', '.build', 'js', 'testDir')
+      let testFilePath = path.join(appDir, 'statics/.build/js/testDir')
       let test = fse.existsSync(testFilePath)
       assert.equal(test, false)
       testApp.send('stop')
@@ -491,7 +491,7 @@ describe('JavaScript Section Test', function () {
   it('should throw an error stating that a file is not coded correctly', function (done) {
     // create a file that has js errors in it
     let fileContent = `console.log('blah'`
-    let filePath = path.join(appDir, 'statics', 'js', 'error.js')
+    let filePath = path.join(appDir, 'statics/js/error.js')
     fse.writeFileSync(filePath, fileContent)
     // bool var that holds whether or not Roosevelt will give a warning for a js file not coded correctly
     let fileCodedIncorrectlyBool = false
@@ -536,7 +536,7 @@ describe('JavaScript Section Test', function () {
 
   it('should create the statics js directory if it does not exist at the point of compiling', function (done) {
     // get rid of the js folder that was copied over
-    fse.removeSync(path.join(appDir, 'statics', 'js'))
+    fse.removeSync(path.join(appDir, 'statics/js'))
 
     // bool var to check that a static js dir is being made
     let staticJSDirMadeBool = false
@@ -560,7 +560,7 @@ describe('JavaScript Section Test', function () {
 
     // check the output logs to see if the source dir was made
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'statics', 'jsTestA')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'statics/jsTestA')}`)) {
         staticJSDirMadeBool = true
       }
     })
@@ -581,7 +581,7 @@ describe('JavaScript Section Test', function () {
 
   it('should not try to make the js static folder if generatefolderstructure is false', function (done) {
     // get rid of the js folder that was copied over
-    fse.removeSync(path.join(appDir, 'statics', 'js'))
+    fse.removeSync(path.join(appDir, 'statics/js'))
 
     // generate the app.js file
     generateTestApp({
@@ -607,7 +607,7 @@ describe('JavaScript Section Test', function () {
     // when the app is about to end, check to see if the js static file was made or not
     testApp.on('exit', () => {
       // js static folder
-      let test = fse.existsSync(path.join(appDir, 'statics', 'js'))
+      let test = fse.existsSync(path.join(appDir, 'statics/js'))
       assert.equal(test, false)
       done()
     })
@@ -638,10 +638,10 @@ describe('JavaScript Section Test', function () {
     // when the app is about to end, check to see if the build or js output folder were made
     testApp.on('exit', () => {
       // build folder
-      let test = fse.existsSync(path.join(appDir, 'statics', '.build'))
+      let test = fse.existsSync(path.join(appDir, 'statics/.build'))
       assert.equal(test, false)
       // output folder
-      let test2 = fse.existsSync(path.join(appDir, 'statics', '.build', 'js'))
+      let test2 = fse.existsSync(path.join(appDir, 'statics/.build/js'))
       assert.equal(test2, false)
       done()
     })
@@ -651,8 +651,8 @@ describe('JavaScript Section Test', function () {
     // bool var to see if the js compiled output directory was made or not
     let jsOutputDirCreateBool = false
     // create the js compiled output directory
-    let compiledpath = path.join(appDir, 'statics', '.build')
-    let compiledpath2 = path.join(appDir, 'statics', '.build', 'jsBuildTest')
+    let compiledpath = path.join(appDir, 'statics/.build')
+    let compiledpath2 = path.join(appDir, 'statics/.build/jsBuildTest')
     fse.mkdirSync(compiledpath)
     fse.mkdirSync(compiledpath2)
 
@@ -675,7 +675,7 @@ describe('JavaScript Section Test', function () {
 
     // check the logs to see if the js compiled output directory gets made or not
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'statics', '.build', 'jsBuildTest')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'statics/.build/jsBuildTest')}`)) {
         jsOutputDirCreateBool = true
       }
     })
@@ -701,8 +701,8 @@ describe('JavaScript Section Test', function () {
     let result = uglify.minify(test1, {})
     let newJs = result.code
     // write it to the compile file
-    fse.ensureDirSync(path.join(appDir, 'statics', '.build', 'js'))
-    fse.writeFileSync(path.join(appDir, 'statics', '.build', 'js', 'a.js'), newJs)
+    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
 
     // generate the app.js file
     generateTestApp({
@@ -722,7 +722,7 @@ describe('JavaScript Section Test', function () {
 
     // on log output, check that Roosevelt does not log out that it had make a new a.js file in the js output folder
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`Roosevelt Express writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'a.js')}`)) {
+      if (data.includes(`Roosevelt Express writing new JS file ${path.join(appDir, 'statics/.build/js/a.js')}`)) {
         compiledFileMadeBool = true
       }
     })
@@ -834,9 +834,9 @@ describe('JavaScript Section Test', function () {
     let compiledJSCreatedBool = false
 
     // create the three files
-    fse.ensureFileSync(path.join(appDir, 'statics', '.build', 'js', 'a.js'))
-    fse.ensureFileSync(path.join(appDir, 'statics', '.build', 'js', 'b.js'))
-    fse.ensureFileSync(path.join(appDir, 'statics', '.build', 'js', 'c.js'))
+    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/a.js'))
+    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/b.js'))
+    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/c.js'))
 
     // generate the app.js file
     generateTestApp({
@@ -856,7 +856,7 @@ describe('JavaScript Section Test', function () {
 
     // check the logs to see if any of the compiled files were made
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'a.js')}`) || data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'b.js')}`) || data.includes(`writing new JS file ${path.join(appDir, 'statics', '.build', 'js', 'c.js')}`)) {
+      if (data.includes(`writing new JS file ${path.join(appDir, 'statics/.build/js/a.js')}`) || data.includes(`writing new JS file ${path.join(appDir, 'statics/.build/js/b.js')}`) || data.includes(`writing new JS file ${path.join(appDir, 'statics/.build/js/c.js')}`)) {
         compiledJSCreatedBool = true
       }
     })
