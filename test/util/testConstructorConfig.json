@@ -68,5 +68,6 @@
   "publicFolder": "constructor",
   "favicon": "constructor",
   "versionedPublic": "constructor",
-  "alwaysHostPublic": "constructor"
+  "alwaysHostPublic": "constructor",
+  "cores": 1
 }
