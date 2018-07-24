@@ -869,4 +869,95 @@ describe('JavaScript Section Test', function () {
       done()
     })
   })
+
+  it('should read files for compiler to ignore from .gitignore', function (done) {
+    let readFromGitignoreBool = false
+    // sample gitignore pattern for test app to ignore
+    let gitignoreData = '*.dat'
+    let pathOfGitignore = path.join(appDir, '.gitignore')
+
+    // generate .dat file to be ignored by compiler
+    let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
+    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'gitignoreTest.dat')
+
+    // write data to .gitignore file created in test app directory
+    fse.ensureDirSync(path.join(appDir))
+    fse.writeFileSync(pathOfGitignore, gitignoreData)
+    fse.writeFileSync(pathOfDataFile, randomData)
+
+    // generate a test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: true,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // look for message from app saying that it found the gitignore file
+    testApp.stdout.on('data', data => {
+      if (data.includes('read from .gitignore')) {
+        readFromGitignoreBool = true
+      }
+    })
+
+    // kill the app when it starts
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    // on the app's exit, check for bool value
+    testApp.on('exit', () => {
+      assert.equal(readFromGitignoreBool, true, 'Roosevelt did not report that it skipped a file')
+      done()
+    })
+  })
+
+  it('should warn the user when there is no .gitignore file and read from list of defaults', function (done) {
+    let warningShownBool = false
+
+    // generate .dat file to be ignored
+    let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
+    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'gitignoreTest.dat')
+
+    // write data to dat file created to be ignored by compiler
+    fse.ensureDirSync(path.join(appDir))
+    fse.writeFileSync(pathOfDataFile, randomData)
+
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: true,
+          params: {}
+        }
+      }
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.stdout.on('data', data => {
+      if (data.includes('No .gitignore file found')) {
+        warningShownBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.kill('SIGINT')
+    })
+
+    testApp.on('exit', () => {
+      assert.equal(warningShownBool, true)
+      done()
+    })
+  })
 })
