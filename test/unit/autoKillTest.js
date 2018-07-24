@@ -16,7 +16,7 @@ describe('Roosevelt autokill Test', function () {
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
 
   // options that would be put into generateTestApp params
-  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
@@ -68,7 +68,7 @@ describe('Roosevelt autokill Test', function () {
 
     // when the app finishes initiailization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     function exit () {
@@ -115,7 +115,7 @@ describe('Roosevelt autokill Test', function () {
       // on this specific log, kill the app
       if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
       } else if (data.includes('Killed process with PID')) {
@@ -173,7 +173,7 @@ describe('Roosevelt autokill Test', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     function exit () {
@@ -209,7 +209,7 @@ describe('Roosevelt autokill Test', function () {
     testApp.stdout.on('data', data => {
       // kill the app after the auto killer runs
       if (data.includes('Starting the auto Validator Killer')) {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
 
         // start a second test app
         startSecondApp()
@@ -236,7 +236,7 @@ describe('Roosevelt autokill Test', function () {
 
         // when its finish with initialization, kill it
         testApp2.on('message', () => {
-          testApp2.kill('SIGINT')
+          testApp2.send('stop')
         })
 
         function exit () {
@@ -280,7 +280,7 @@ describe('Roosevelt autokill Test', function () {
       // on this specific log, kill the app
       if (data.includes('Roosevelt Express HTTP server listening on port')) {
         setTimeout(() => {
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         }, 3000)
       } else if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true

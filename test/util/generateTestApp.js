@@ -16,13 +16,13 @@ module.exports = function (params, options) {
     appDir = params.appDir || options.appDir
   }
 
-  // Require roosevelt at the top of every test app
+  // require roosevelt at the top of every test app
   contents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
   contents = contents.replace(/('\()/g, '(')
   contents = contents.replace(/(\}')/g, '}')
 
-  // Setting up configuration for app
+  // setting up configuration for app
   if (options.method) {
     switch (true) {
       case options.empty:
@@ -57,17 +57,24 @@ module.exports = function (params, options) {
         contents += `clock.tick(30000)\n`
         contents += `})\n`
         break
-      case options.stopServer:
+      case options.exitProcess:
         contents += `app.${options.method}(() => {\n`
         contents += `  ${defaultMessages}\n})\n`
-        contents += `process.on('message', (msg) => {\n`
-        contents += `  if (msg === 'stop') {\n`
-        contents += `    app.stopServer()\n`
-        contents += `  }\n})\n`
+        contents += `app.${options.serverType}.on('close', function () {\n`
+        contents += `  process.exit()\n`
+        contents += `})\n`
         break
       default:
         contents += `app.${options.method}(() => {\n`
         contents += `  ${defaultMessages}\n})\n`
+    }
+    // server can be stopped by passing a message to the child process
+    if (options.stopServer) {
+      options.close = options.close || ''
+      contents += `\nprocess.on('message', (msg) => {\n`
+      contents += `  if (msg === 'stop') {\n`
+      contents += `    app.stopServer('${options.close}')\n`
+      contents += `  }\n})\n`
     }
   } else {
     contents += defaultMessages

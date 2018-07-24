@@ -37,7 +37,7 @@ describe('JavaScript Section Test', function () {
   ]
 
   // options to pass into generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true}
 
   beforeEach(function () {
     // start by generating a statics folder in the roosevelt test app directory
@@ -84,7 +84,7 @@ describe('JavaScript Section Test', function () {
         let test = pathsOfCompiledJS.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -122,7 +122,7 @@ describe('JavaScript Section Test', function () {
         let test = pathOfWhiteListedFiles.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -165,7 +165,7 @@ describe('JavaScript Section Test', function () {
       assert.equal(test1, false)
       assert.equal(test2, false)
       assert.equal(test3, true)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -206,7 +206,7 @@ describe('JavaScript Section Test', function () {
         let test = pathsOfAlteredCompiledJS.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -244,7 +244,7 @@ describe('JavaScript Section Test', function () {
         let test = delimiterOutputArray.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -288,7 +288,7 @@ describe('JavaScript Section Test', function () {
       assert.equal(test1, true)
       assert.equal(test2, true)
       assert.equal(test3, true)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -323,7 +323,7 @@ describe('JavaScript Section Test', function () {
 
     // exit the app when the app finishes initilization
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -362,7 +362,7 @@ describe('JavaScript Section Test', function () {
 
     // exit the app when the app finishes initilization
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -403,7 +403,7 @@ describe('JavaScript Section Test', function () {
     // the app should not be able to initialize if it has this specific whitelist error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -443,7 +443,7 @@ describe('JavaScript Section Test', function () {
 
     // exit the app when it finished its initialization
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // on exit, check if the error was logged
@@ -480,7 +480,7 @@ describe('JavaScript Section Test', function () {
       let testFilePath = path.join(appDir, 'statics', '.build', 'js', 'testDir')
       let test = fse.existsSync(testFilePath)
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -522,7 +522,7 @@ describe('JavaScript Section Test', function () {
     // the app should not be able to initialize if this specific error was thrown
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the error was logged
@@ -567,7 +567,7 @@ describe('JavaScript Section Test', function () {
 
     // when app starts, end it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app ends, check to see if it created the static js folder
@@ -601,7 +601,7 @@ describe('JavaScript Section Test', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, check to see if the js static file was made or not
@@ -632,7 +632,7 @@ describe('JavaScript Section Test', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, check to see if the build or js output folder were made
@@ -682,7 +682,7 @@ describe('JavaScript Section Test', function () {
 
     // when app is done with its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when app is killed, check if the js compiled output directory was made by roosevelt
@@ -729,7 +729,7 @@ describe('JavaScript Section Test', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is on the verge of exiting, check that the app had not written the file that alreadly exists
@@ -772,7 +772,7 @@ describe('JavaScript Section Test', function () {
     // the app should not be able to initailize with this specific error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, check that the error was hit
@@ -816,7 +816,7 @@ describe('JavaScript Section Test', function () {
     // app should not be able to initialize with this specific error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, check that the error was hit
@@ -863,7 +863,7 @@ describe('JavaScript Section Test', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, see that the files were not made

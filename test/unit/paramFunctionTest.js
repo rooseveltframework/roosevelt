@@ -13,7 +13,7 @@ describe('parameter Function Test Section', function () {
   const appDir = path.join(__dirname, '../', 'app', 'paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
@@ -56,7 +56,7 @@ describe('parameter Function Test Section', function () {
         serverInitLogBool = true
       }
       if (messageCounter === 2) {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       }
     })
 
@@ -101,9 +101,9 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -145,9 +145,9 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -190,10 +190,10 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           setTimeout(() => {
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }, 1000)
         })
     })
@@ -233,7 +233,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was outputted
@@ -266,7 +266,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was outputted
@@ -296,9 +296,9 @@ describe('parameter Function Test Section', function () {
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -340,7 +340,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the version public folder log was outputted
@@ -380,7 +380,7 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'public', '0.5.1'))
       assert.equal(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was made
@@ -412,7 +412,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -443,7 +443,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -474,7 +474,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -525,7 +525,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, see if the log was outputted
@@ -565,7 +565,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the two error logs were outputted
@@ -603,7 +603,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the 404 load errors were logged
@@ -640,7 +640,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app is finished with its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is going to exit, check to see if an error was thrown thru the entire process
@@ -667,7 +667,7 @@ describe('parameter Function Test Section', function () {
       let firstElement = params.staticsSymlinksToPublic[0]
       let test = firstElement === 'css'
       assert.equal(test, false, 'Roosevelt made a css value in the symlink array even though it alreadly has ')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -702,7 +702,7 @@ describe('parameter Function Test Section', function () {
 
     // once the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // once the app is about to finish, check the amount of times the quote has been used
@@ -738,7 +738,7 @@ describe('parameter Function Test Section', function () {
     })
 
     testApp.on('message', (params) => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -762,7 +762,7 @@ describe('parameter Function Test Section', function () {
     // when the app finishes initialization, check that the nodeEnv of the app stayed the same as the one passed in and that it is not prod or dev
     testApp.on('message', (params) => {
       assert.equal(params.nodeEnv, 'something', 'Roosevelt did not keep the node Env string that was passed in as a param')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app exits, finish the test

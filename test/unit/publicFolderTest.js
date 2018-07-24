@@ -13,7 +13,7 @@ describe('Public folder section tests', function () {
   // path to the directory where the test app is located
   const appDir = path.join(__dirname, '../', 'app', 'publicFolderTest')
   // options to pass into generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   // package.json source code
   let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
@@ -57,7 +57,7 @@ describe('Public folder section tests', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
 
           // if it had worked, grab favicon from the server
@@ -66,7 +66,7 @@ describe('Public folder section tests', function () {
             .expect(200, (err, res) => {
               if (err) {
                 assert.fail(err)
-                testApp.kill('SIGINT')
+                testApp.send('stop')
               }
               // convert buffer to base64
               let faviconData = res.body.toString('base64')
@@ -76,7 +76,7 @@ describe('Public folder section tests', function () {
               // check if both buffers are the same(They should be)
               let test = faviconData === encodedImageData
               assert.equal(test, true)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
         })
     })
@@ -104,7 +104,7 @@ describe('Public folder section tests', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // if we can get the page, send a request to get the favicon
           request('http://localhost:43711')
@@ -112,9 +112,9 @@ describe('Public folder section tests', function () {
             .expect(404, (err, res) => {
               if (err) {
                 assert.fail(`able to get the favicon.ico, even when there isn't one`)
-                testApp.kill('SIGINT')
+                testApp.send('stop')
               } else {
-                testApp.kill('SIGINT')
+                testApp.send('stop')
               }
             })
         })
@@ -152,7 +152,7 @@ describe('Public folder section tests', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // if we can get the page, send a request to get the favicon
           request('http://localhost:43711')
@@ -160,9 +160,9 @@ describe('Public folder section tests', function () {
             .expect(404, (err, res) => {
               if (err) {
                 assert.fail(`able to get the favicon.ico, even when there isn't one`)
-                testApp.kill('SIGINT')
+                testApp.send('stop')
               } else {
-                testApp.kill('SIGINT')
+                testApp.send('stop')
               }
             })
         })
@@ -213,10 +213,10 @@ describe('Public folder section tests', function () {
             }
           })
           if (publicNameChange) {
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           } else {
             assert.fail('public folder name was not changed to version number')
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
         })
     })

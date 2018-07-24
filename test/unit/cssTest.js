@@ -38,7 +38,7 @@ h1 {
 ]
 
 // options to pass into generateTestApp
-let options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+let options = {rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true}
 
 // array of paths to generated static less test files
 let pathOfCSSStaticFilesArray = [
@@ -108,7 +108,7 @@ describe('CSS Section Tests', function () {
         assert.equal(test, true)
       })
       // kill the app and say the test is done afterwards
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -156,7 +156,7 @@ describe('CSS Section Tests', function () {
         assert.equal(test, true)
       })
       // kill the app and say the test is done afterwards
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
     testApp.on('exit', () => {
       done()
@@ -203,7 +203,7 @@ describe('CSS Section Tests', function () {
         assert.equal(test, true)
       })
       // kill and finish the test
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -258,7 +258,7 @@ describe('CSS Section Tests', function () {
       let versionFileNum = versionFileString.split(`'`)
       let test2 = packageJSON.version === versionFileNum[1]
       assert.equal(test2, true)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -302,7 +302,7 @@ describe('CSS Section Tests', function () {
         let test = pathOfCustomDirCompiledCSSArray.includes(file.path)
         assert.equal(test, true)
       })
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -353,7 +353,7 @@ describe('CSS Section Tests', function () {
       assert.equal(test2, true)
       assert.equal(test3, true)
       // kill the app and finish test
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -394,7 +394,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes its initalization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the specific error was given
@@ -442,7 +442,7 @@ describe('CSS Section Tests', function () {
     // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // on exit, see if the error was given
@@ -492,7 +492,7 @@ describe('CSS Section Tests', function () {
     // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // on exit, see if the error was given
@@ -543,7 +543,7 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics', 'css'))
       assert.equal(test, true)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check whether or not the specific log was given
@@ -593,7 +593,7 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics', 'css'))
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check whether or not the specific log was given
@@ -640,7 +640,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to finish, check that the error was given
@@ -692,7 +692,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check that the specific log was given
@@ -743,7 +743,7 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(cssBuildDirPath)
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check that the specific log was given
@@ -802,7 +802,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, check to see if the specific error was logged out
@@ -862,7 +862,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, check to see if the specific error was logged out
@@ -921,7 +921,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, check to see if the specific error was logged out
@@ -981,7 +981,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, check to see if the specific error was logged out
@@ -1046,7 +1046,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is going to exit, see if the creation versionFile log was made
@@ -1111,7 +1111,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is going to exit, see if the creation versionFile log was made
@@ -1160,7 +1160,7 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'css', 'd.less'))
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, see if the error was thrown
@@ -1213,7 +1213,7 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'css', 'dir'))
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, see if the log was given
@@ -1267,7 +1267,7 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics', '.build', 'css', 'Thumbs.db'))
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, see if the log was given
@@ -1323,7 +1323,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initailization. kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, see if the file compiled log was made

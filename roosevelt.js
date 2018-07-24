@@ -196,9 +196,10 @@ module.exports = function (params) {
   }
 
   // shut down all servers, connections and threads that the roosevelt app is using
-  function gracefulShutdown () {
+  function gracefulShutdown (close) {
     let key
     let keys
+    shutdownType = close
 
     // force destroy connections if the server takes too long to shut down
     checkConnectionsTimeout = setTimeout(() => {
@@ -348,21 +349,12 @@ module.exports = function (params) {
     startHttpServer()
   }
 
-  function stopServer (closeServer) {
-    if (closeServer === 'close') {
-      shutdownType = 'close'
-    } else {
-      shutdownType = 'exit'
-    }
-    gracefulShutdown()
-  }
-
   return {
     httpServer: httpServer,
     httpsServer: httpsServer,
     expressApp: app,
     initServer: initServer,
     startServer: startServer,
-    stopServer: stopServer
+    stopServer: (closeServer) => gracefulShutdown(closeServer)
   }
 }

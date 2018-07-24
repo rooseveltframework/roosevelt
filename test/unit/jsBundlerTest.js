@@ -16,7 +16,7 @@ describe('js Bundler Section Test', function () {
   y = 6
   z = x + y`
   let fileB = `function sayingHello(name) {
-    console.log('Hello ' + name)   
+    console.log('Hello ' + name)
   }`
   let fileC = `function calculateSalary(weeks) {
     return weeks * 40 * 18
@@ -43,7 +43,7 @@ describe('js Bundler Section Test', function () {
   let pathOfBundleJSFolder = path.join(appDir, 'statics', 'js', '.bundled')
 
   // options to pass into generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true}
 
   beforeEach(function () {
     // start by generating the directory to hold the static js files
@@ -490,6 +490,8 @@ describe('js Bundler Section Test', function () {
   })
 
   it('should be able to pass an array of paths that will help broswerify with linking required modules to where they are', function (done) {
+    // Seperate test app options for this test
+    let options2 = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
     // bool var to hold whether a Hello was given from one of the scripts
     let consolLogHelloBool = false
     // create 2 more files, one that is a module, and one that uses the module
@@ -526,7 +528,7 @@ describe('js Bundler Section Test', function () {
           ]
         }
       }
-    }, options)
+    }, options2)
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})

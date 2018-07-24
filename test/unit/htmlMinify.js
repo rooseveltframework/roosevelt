@@ -44,7 +44,7 @@ describe('htmlMinify', function () {
 
   // wipe out test app after each test
   afterEach(function (done) {
-    app.httpServer.close()
+    app.stopServer('close')
 
     cleanupTestApp(appDir, (err) => {
       if (err) {

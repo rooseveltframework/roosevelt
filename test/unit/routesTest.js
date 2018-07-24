@@ -12,7 +12,7 @@ describe('Roosevelt routes Section Test', function () {
   const appDir = path.join(__dirname, '../', 'app', 'routesTest')
 
   // options to pass into generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
@@ -51,7 +51,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // test that the four values that I put into the model and have in the view are being put into the page
           let test1 = res.text.includes('Teddy Test')
@@ -62,7 +62,7 @@ describe('Roosevelt routes Section Test', function () {
           assert.equal(test2, true)
           assert.equal(test3, true)
           assert.equal(test4, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -89,7 +89,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // test that the four values that I put into the model and have in the view are being put into the page
           let test1 = res.text.includes('TitleX')
@@ -100,7 +100,7 @@ describe('Roosevelt routes Section Test', function () {
           assert.equal(test2, true)
           assert.equal(test3, true)
           assert.equal(test4, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -128,7 +128,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // test that the four values that I put into the model and have in the view are being put into the page
           let test1 = res.text.includes('TitleX')
@@ -139,7 +139,7 @@ describe('Roosevelt routes Section Test', function () {
           assert.equal(test2, true)
           assert.equal(test3, true)
           assert.equal(test4, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -169,7 +169,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(404, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // sample the text from the response
           const test1 = res.text.includes('404 Not Found')
@@ -177,7 +177,7 @@ describe('Roosevelt routes Section Test', function () {
           // test to see if the samples have the expected text from the default 404 error page
           assert.equal(test1, true)
           assert.equal(test2, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -208,7 +208,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(404, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // see if the page has these 3 unique lines of text in it
           let test1 = res.text.includes('404 custom test error page')
@@ -218,7 +218,7 @@ describe('Roosevelt routes Section Test', function () {
           assert.equal(test1, true)
           assert.equal(test2, true)
           assert.equal(test3, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -246,7 +246,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // see if the page has these 3 unique lines of text in it
           let test1 = res.text.includes('500 custom test error page')
@@ -256,7 +256,7 @@ describe('Roosevelt routes Section Test', function () {
           assert.equal(test1, true)
           assert.equal(test2, true)
           assert.equal(test3, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -283,7 +283,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // see if the page has these 3 default lines of text in it
           const test1 = res.text.includes('500 Internal Server Error')
@@ -291,7 +291,7 @@ describe('Roosevelt routes Section Test', function () {
           // test the includes (should be true)
           assert.equal(test1, true)
           assert.equal(test2, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
 
       testApp.on('exit', () => {
@@ -341,7 +341,7 @@ describe('Roosevelt routes Section Test', function () {
       }
 
       function exit () {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       }
     })
 
@@ -393,7 +393,7 @@ describe('Roosevelt routes Section Test', function () {
       }
 
       function exit () {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       }
     })
 
@@ -419,7 +419,7 @@ describe('Roosevelt routes Section Test', function () {
 
     testApp.on('message', (viewEngine) => {
       assert.equal(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -447,12 +447,12 @@ describe('Roosevelt routes Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           assert.equal(res.text.includes('jcs Test'), true)
           assert.equal(res.text.includes('jcsHeader'), true)
           assert.equal(res.text.includes('jcsParagraph'), true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -487,7 +487,7 @@ describe('Roosevelt routes Section Test', function () {
 
     // when the app is starting, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, check to see if the error log was outputted
@@ -523,7 +523,7 @@ describe('Roosevelt routes Section Test', function () {
 
     // when the app is starting, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to end, check to see if the error log was outputted
@@ -552,7 +552,7 @@ describe('Roosevelt routes Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // test that the four values that I put into the model and have in the view are being put into the page
           let test1 = res.text.includes('Teddy Test')
@@ -563,7 +563,7 @@ describe('Roosevelt routes Section Test', function () {
           assert.equal(test2, true)
           assert.equal(test3, true)
           assert.equal(test4, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -615,7 +615,7 @@ describe('Roosevelt routes Section Test', function () {
           })
       } else {
         // the controller of /longWait sends back a message, on that msg, kill the app and try to grab a basic page
-        testApp.kill('SIGINT')
+        testApp.send('stop')
         request(`http://localhost:${port}`)
           .get('/')
           // we should get back a 503 from the request
@@ -638,7 +638,7 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should force close all active connections if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
     // bool vars to hold whether or not the correct logs were outputted
     let forceCloseLogBool = false
     let shuttingDownLogBool = false
@@ -681,7 +681,7 @@ describe('Roosevelt routes Section Test', function () {
             assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
           })
       } else {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       }
     })
 
@@ -689,6 +689,133 @@ describe('Roosevelt routes Section Test', function () {
     testApp.on('exit', () => {
       assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
       assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      done()
+    })
+  })
+
+  it('should force close all active connections and close the HTTP server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+    // add test app features to use server close and then exit process
+    options.close = 'close'
+    options.exitProcess = true
+    options.serverType = 'httpServer'
+
+    // bool vars to hold whether or not the correct logs were outputted
+    let forceCloseLogBool = false
+    let shuttingDownLogBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      shutdownTimeout: 7000
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, see that the app is shutting down
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
+        shuttingDownLogBool = true
+      }
+    })
+
+    // on error, see that not all connections are finishing and that its force killing them
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
+        forceCloseLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, ask for longWait
+    testApp.on('message', (params) => {
+      if (params.port) {
+        request(`http://localhost:${params.port}`)
+          .get('/longWait')
+          // since we are force closing this connection while its still active, it should not send back a response object or a status number
+          .expect(200, (err, res) => {
+            if (!err) {
+              assert.fail('The server responded without error.')
+            }
+            assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
+          })
+      } else {
+        testApp.send('stop')
+      }
+    })
+
+    // on exit, see if the correct logs were outputted
+    testApp.on('exit', () => {
+      assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
+      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      done()
+    })
+  })
+
+  it('should force close all active connections and close the HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+    // add test app features to use server close and then exit process
+    options.close = 'close'
+    options.exitProcess = true
+    options.serverType = 'httpsServer'
+
+    // bool vars to hold whether or not the correct logs were outputted
+    let forceCloseLogBool = false
+    let shuttingDownLogBool = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      https: {
+        enable: true,
+        httpsPort: 43203
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      shutdownTimeout: 7000
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // on console logs, see that the app is shutting down
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
+        shuttingDownLogBool = true
+      }
+    })
+
+    // on error, see that not all connections are finishing and that its force killing them
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
+        forceCloseLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, ask for longWait
+    testApp.on('message', (params) => {
+      if (params.port) {
+        request(`http://localhost:${params.port}`)
+          .get('/longWait')
+          // since we are force closing this connection while its still active, it should not send back a response object or a status number
+          .expect(200, (err, res) => {
+            if (!err) {
+              assert.fail('The server responded without error.')
+            }
+            assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
+          })
+      } else {
+        testApp.send('stop')
+      }
+    })
+
+    // on exit, see if the correct logs were outputted
+    testApp.on('exit', () => {
+      assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
+      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      delete options.close
+      delete options.exitProcess
+      delete options.serverType
       done()
     })
   })
@@ -727,7 +854,7 @@ describe('Roosevelt routes Section Test', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app exits, see if the initialization complete log happened and the controller error log did not

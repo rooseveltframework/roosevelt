@@ -15,7 +15,7 @@ describe('Roosevelt config Auditor Test', function () {
   const appDir = path.join(__dirname, '../', '/app', '/configAuditorTest')
 
   // options to add to the generateTestApp function
-  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   // variable to hold the data that will be written to the package.json file for each test
   let packageJSONSource = {}
@@ -98,7 +98,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -241,7 +241,7 @@ describe('Roosevelt config Auditor Test', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -271,7 +271,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -311,7 +311,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -380,7 +380,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -441,7 +441,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -494,7 +494,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -534,7 +534,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {

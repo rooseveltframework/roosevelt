@@ -15,7 +15,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
   const appDir = path.join(__dirname, '../', 'app', '/htmlValidatorTest')
 
   // options that would be put into generateTestApp params
-  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // copy the mvc dir from util to the test app
@@ -60,7 +60,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
             // test the text returned to see if it has the validation error page title in it
             let test1 = res.text.includes('HTML did not pass validation')
@@ -69,10 +69,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, true)
             // kill the validator and app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -108,7 +108,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
             // test if the elements added into the plain HTML show in the response
             let test1 = res.text.includes('TitleX')
@@ -121,10 +121,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test4, true)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -159,7 +159,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // test the text returned to see if it has the validation error page title in it
@@ -169,10 +169,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, true)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -208,7 +208,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // test the text returned to see if it has the validation error page title in it
@@ -218,10 +218,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, false)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -260,7 +260,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
             // test the header exception in the app param is false or not there
             let test1 = typeof res.header.partialtest === 'undefined'
@@ -270,10 +270,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, true)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -311,7 +311,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
             // test the header exception in the app param is false or not there
             let test1 = typeof res.header.partialtest === 'undefined'
@@ -321,10 +321,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, false)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -364,7 +364,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // test the header exception in the app param is false or not there
@@ -375,10 +375,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, false)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -420,7 +420,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // check to see that the page did not validate
@@ -428,10 +428,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test1, false)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -473,7 +473,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // check to see that the page did not validate
@@ -483,10 +483,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test2, true)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -528,7 +528,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // check to see tha tthe page did not validate
@@ -536,10 +536,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test1, true)
             // kill the validator and the app
             fkill(`:8888`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -576,7 +576,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }
 
             // check to see that the page loaded
@@ -584,10 +584,10 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             assert.equal(test1, 200)
             // kill the validator and the app
             fkill(`:3000`, {force: true}).then(() => {
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             }, (err) => {
               console.log(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
           })
       })
@@ -626,13 +626,13 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           .expect(500, (err, res) => {
             if (err) {
               assert.fail(err)
-              testApp.kill('SIGINT')
+              testApp.send('stop')
               testAppError = true
             }
             // check to see that the page did validate and failed
             let test1 = res.text.includes('HTML did not pass validation')
             assert.equal(test1, true)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           })
 
         testApp.on('exit', () => {
@@ -699,7 +699,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
       // on initialization completing , kill the app
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       // when the app exits, run another app and see if it grabs onto the validator made by the first app
@@ -720,7 +720,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
         // on initialization completing, kill the 2nd app
         testApp2.on('message', () => {
-          testApp2.kill('SIGINT')
+          testApp2.send('stop')
         })
 
         // on 2nd app exit, kill the validator
@@ -780,7 +780,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
       // once app.js finishes initialization, kill it
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       // once the server made by app.js is done, kill the dummy server
@@ -833,7 +833,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
       // when app.js finishes initialization, kill it
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       // as app.js is closing, close the dummy server
@@ -876,17 +876,17 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
             .expect(500, (err, res) => {
               if (err) {
                 assert.fail(err)
-                testApp.kill('SIGINT')
+                testApp.send('stop')
               }
               let test1 = res.text.includes('Cannot connect to validator')
               let test2 = res.text.includes('Unable to connect to HTML validator')
               assert.equal(test1, true, 'Roosevelt either did not detect an error or did not give back the right page (pageTitle)')
               assert.equal(test2, true, 'Roosevelt either did not detect an error or did not give back the right page (pageHeader)')
-              testApp.kill('SIGINT')
+              testApp.send('stop')
             })
         }, (err) => {
           console.log(err)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
       })
 
@@ -934,7 +934,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
       // when the app is finished with initialization, kill it
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       // on exit, check to see if the log of the validator timing out was outputted
@@ -970,7 +970,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
       // when the app finishes initialization, kill it
       testApp.on('message', () => {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       // when the app is exiting, see if the error was hit
@@ -1060,7 +1060,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
 
       // when the app starts, kill the app
       testApp.on('message', (params) => {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       // when the app is about to finish, fork the kill Validator
@@ -1119,7 +1119,7 @@ describe('Roosevelt HTML Validator/Kill Validator Test', function () {
           })
 
           killLine.on('exit', () => {
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           })
         }
       })

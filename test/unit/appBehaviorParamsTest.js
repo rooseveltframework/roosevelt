@@ -28,7 +28,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
   })
 
   // options to pass to the generateTestApp param
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   it('should allow me to post multiple files to the server, move them, and read their content', function (done) {
     // generate the app.js
@@ -50,7 +50,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
         .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
         .on('error', (err) => {
           assert.fail(err)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
         .then((res) => {
           // test to see if the two files were uploaded
@@ -65,7 +65,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
           let test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
           assert.equal(test2, true)
 
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
     testApp.on('exit', () => {
@@ -94,12 +94,12 @@ describe('Roosevelt multipart/formidable Section Test', function () {
         .attach('test1', path.join(__dirname, '../', 'util', 'multipartText1.txt'))
         .on('error', (err) => {
           assert.fail(err)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
         .then((res) => {
           // test to see that the changed parameter had changed where the file was uploaded to on the server
           assert.equal(res.body.existsTest, true)
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
     testApp.on('exit', () => {
@@ -136,9 +136,9 @@ describe('Roosevelt multipart/formidable Section Test', function () {
             if (res.body.type === 'parameters.too.many') {
               tooManyParamErrorBool = true
             }
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
     testApp.on('exit', () => {
@@ -180,9 +180,9 @@ describe('Roosevelt multipart/formidable Section Test', function () {
             if (res.body.type === 'entity.too.large') {
               entityTooLargeBool = true
             }
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -229,12 +229,12 @@ describe('Roosevelt multipart/formidable Section Test', function () {
         .field('testing3', 1)
         .on('error', () => {
           // roosevelt should throw an error, meaning the app passed the test
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         }).then((res) => {
           if (res.status === 200) {
             // if we get a 200, an error was not thrown and something is wrong
             assert.fail('Roosevelt somehow was able to parse this form even though the setup of the test should make it fail')
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
         })
     })
@@ -278,7 +278,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           // see if the controller deleted all the files
           for (let x = 0; x < res.body.existenceTest.length; x++) {
@@ -286,7 +286,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
               assert.fail('Something was not deleted')
             }
           }
-          setTimeout(() => { testApp.kill('SIGINT') }, 3000)
+          setTimeout(() => { testApp.send('stop') }, 3000)
         })
     })
 
@@ -331,10 +331,10 @@ describe('Roosevelt multipart/formidable Section Test', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           oPath = res.body.originalPath
-          setTimeout(() => { testApp.kill('SIGINT') }, 3000)
+          setTimeout(() => { testApp.send('stop') }, 3000)
         })
     })
     // when the app is about to exit, check to see if the app logged a certain error and test to see if the file is still there
@@ -381,10 +381,10 @@ describe('Roosevelt multipart/formidable Section Test', function () {
         .end((err, res) => {
           if (err) {
             assert.fail(res.err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           Opath = res.body.path
-          setTimeout(() => { testApp.kill('SIGINT') }, 3000)
+          setTimeout(() => { testApp.send('stop') }, 3000)
         })
     })
 
@@ -415,7 +415,7 @@ describe('Roosevelt multipart/formidable Section Test', function () {
       let test2 = Object.keys(params.multipart)
       assert.equal(test1, 'object', 'Roosevelt did not default multipart to an empty object if it was not an object and it is not false')
       assert.equal(test2.length, 0, 'Roosevelt did not default multipart to an empty object if it was not an object and it is not false')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // on exit, finish the test
