@@ -871,7 +871,6 @@ describe('JavaScript Section Test', function () {
   })
 
   it('should read files for compiler to ignore from .gitignore', function (done) {
-    let readFromGitignoreBool = false
     // sample gitignore pattern for test app to ignore
     let gitignoreData = '*.dat'
     let pathOfGitignore = path.join(appDir, '.gitignore')
@@ -901,28 +900,27 @@ describe('JavaScript Section Test', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look for message from app saying that it found the gitignore file
-    testApp.stdout.on('data', data => {
-      if (data.includes('read from .gitignore')) {
-        readFromGitignoreBool = true
-      }
-    })
-
-    // kill the app when it starts
     testApp.on('message', () => {
+      // test to see if the folder exists and that the dat file is not in it
+      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
+      const compiledJSArray = klawSync(compiledJS)
+      compiledJSArray.forEach((file) => {
+        let test = false
+        if (pathOfDataFile === file) {
+          test = true
+        }
+        assert.equal(test, false)
+      })
       testApp.kill('SIGINT')
     })
 
     // on the app's exit, check for bool value
     testApp.on('exit', () => {
-      assert.equal(readFromGitignoreBool, true, 'Roosevelt did not report that it skipped a file')
       done()
     })
   })
 
   it('should warn the user when there is no .gitignore file and read from list of defaults', function (done) {
-    let warningShownBool = false
-
     // generate .dat file to be ignored
     let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
     let pathOfDataFile = path.join(appDir, 'statics', 'js', 'gitignoreTest.dat')
@@ -945,18 +943,21 @@ describe('JavaScript Section Test', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    testApp.stdout.on('data', data => {
-      if (data.includes('No .gitignore file found')) {
-        warningShownBool = true
-      }
-    })
-
     testApp.on('message', () => {
+      // test to see if the folder exists and that the dat file is not in it
+      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
+      const compiledJSArray = klawSync(compiledJS)
+      compiledJSArray.forEach((file) => {
+        let test = false
+        if (pathOfDataFile === file) {
+          test = true
+        }
+        assert.equal(test, false)
+      })
       testApp.kill('SIGINT')
     })
 
     testApp.on('exit', () => {
-      assert.equal(warningShownBool, true)
       done()
     })
   })
