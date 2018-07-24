@@ -69,5 +69,5 @@
   "favicon": "constructor",
   "versionedPublic": "constructor",
   "alwaysHostPublic": "constructor",
-  "cores": 1
+  "cores": "constructor"
 }

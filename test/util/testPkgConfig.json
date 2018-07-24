@@ -73,5 +73,5 @@
   "favicon": "package",
   "versionedPublic": "package",
   "alwaysHostPublic": "package",
-  "cores": 1
+  "cores": "package"
 }
