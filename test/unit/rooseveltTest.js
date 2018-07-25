@@ -1049,40 +1049,6 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should toss the server already listening error if startServer was called twice', function (done) {
-    // adjustments to options to use to call startServer twice
-    sOptions.startTwice = true
-    // bool var to hold whether or not a specific error log was outputted
-    let alreadyListeningBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, sOptions)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.stderr.on('data', (data) => {
-      if (data.includes(`ERR_SERVER_ALREADY_LISTEN`) && data.includes(`throw`)) {
-        alreadyListeningBool = true
-      }
-    })
-
-    // when the app finishes init, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    testApp.on('exit', () => {
-      assert.equal(alreadyListeningBool, true, 'Roosevelt did not throw an error saying that the app is listening alreadly')
-      delete sOptions.startTwice
-      done()
-    })
-  })
-
   it('should be able to close an active connection when the app is closed', function (done) {
     // bool var to hold whether or not the request had finished
     let requestFinishedBool = false

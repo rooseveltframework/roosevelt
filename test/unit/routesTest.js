@@ -693,67 +693,7 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should force close all active connections and close the HTTP server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
-    // add test app features to use server close and then exit process
-    options.close = 'close'
-    options.exitProcess = true
-    options.serverType = 'httpServer'
-
-    // bool vars to hold whether or not the correct logs were outputted
-    let forceCloseLogBool = false
-    let shuttingDownLogBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      shutdownTimeout: 7000
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    // on console logs, see that the app is shutting down
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
-        shuttingDownLogBool = true
-      }
-    })
-
-    // on error, see that not all connections are finishing and that its force killing them
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
-        forceCloseLogBool = true
-      }
-    })
-
-    // when the app finishes initialization, ask for longWait
-    testApp.on('message', (params) => {
-      if (params.port) {
-        request(`http://localhost:${params.port}`)
-          .get('/longWait')
-          // since we are force closing this connection while its still active, it should not send back a response object or a status number
-          .expect(200, (err, res) => {
-            if (!err) {
-              assert.fail('The server responded without error.')
-            }
-            assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
-          })
-      } else {
-        testApp.send('stop')
-      }
-    })
-
-    // on exit, see if the correct logs were outputted
-    testApp.on('exit', () => {
-      assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
-      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
-      done()
-    })
-  })
-
-  it('should force close all active connections and close the HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
     // add test app features to use server close and then exit process
     options.close = 'close'
     options.exitProcess = true
