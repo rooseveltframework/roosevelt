@@ -1,26 +1,27 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
+const { fork } = require('child_process')
 const fse = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
+const path = require('path')
 const request = require('supertest')
 
-describe('Roosevelt routes Section Test', function () {
+describe('Roosevelt Routes Tests', function () {
   const appDir = path.join(__dirname, '../app/routesTest')
 
-  // options to pass into generateTestApp
+  // options to pass into test app generator
   let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
-    // start by copying the alreadly made mvc directory into the app directory
+    // copy the mvc directory into the test app directory for each test
     fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
   afterEach(function (done) {
+    // clean up the test app directory after each test
     cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
@@ -30,8 +31,8 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should start the server and be able to send back the test Teddy page on request', function (done) {
-    // generate the app.js file
+  it('should render the teddy test page', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -41,10 +42,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // create a fork of the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message sent by the app completing the start method, send a http request for the teddy page to the server and see if it sends back a response
+    // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/teddyTest')
@@ -53,7 +54,7 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // test that the four values that I put into the model and have in the view are being put into the page
+          // test that the values rendered on the page are correct
           let test1 = res.text.includes('Teddy Test')
           let test2 = res.text.includes('Heading Test')
           let test3 = res.text.includes('This is the first sentence that I am grabbing from my teddy model')
@@ -65,24 +66,25 @@ describe('Roosevelt routes Section Test', function () {
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should start the server and be able to send back a plain HTML file on request', function (done) {
-    // generate the app
+  it('should render a basic HTML page on request', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // create a fork of the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message sent by the app completing the start method, send a http request for the plain html page to the server and see if it sends back a response
+    // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/HTMLTest')
@@ -91,7 +93,7 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // test that the four values that I put into the model and have in the view are being put into the page
+          // test that the values rendered on the page are correct
           let test1 = res.text.includes('TitleX')
           let test2 = res.text.includes('headingX')
           let test3 = res.text.includes('sentence1X')
@@ -103,14 +105,15 @@ describe('Roosevelt routes Section Test', function () {
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should start the server on a differnt port and be able to send back a plain HTML file on request', function (done) {
-    // generate the app
+  it('should use a custom port and render a basic HTML page on request', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       port: 9000,
@@ -118,10 +121,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // create a fork of the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message sent by the app completing the start method, send a http request for the plain html page to the server and see if it sends back a response
+    // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/HTMLTest')
@@ -130,7 +133,7 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // test that the four values that I put into the model and have in the view are being put into the page
+          // test that the values rendered on the page are correct
           let test1 = res.text.includes('TitleX')
           let test2 = res.text.includes('headingX')
           let test3 = res.text.includes('sentence1X')
@@ -142,14 +145,15 @@ describe('Roosevelt routes Section Test', function () {
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should start the server and send back the default 404 error page if a request is sent for non-existent page', function (done) {
-    // generate the app.js file
+  it('should render the default 404 page if there is a request for an invalid route', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -159,10 +163,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // create a fork of the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message sent by the app completing the start method, send a http request for the teddy page to the server and see if it sends back a response
+    // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', () => {
       request('http://localhost:43711')
         .get('/randomURL')
@@ -171,26 +175,26 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // sample the text from the response
+          // data included on the 404 page
           const test1 = res.text.includes('404 Not Found')
           const test2 = res.text.includes('The requested URL /randomURL was not found on this server')
-          // test to see if the samples have the expected text from the default 404 error page
           assert.equal(test1, true)
           assert.equal(test2, true)
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should start the server and display a custom 404 error page if the user is requesting a page that does not exists and the user had adjusted the params to accomadate their custom page', function (done) {
-    // copy over the custom 404 controller over to the mvc folder
+  it('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', function (done) {
+    // copy the custom 404 controller into to the mvc folder
     fse.copyFileSync(path.join(__dirname, '../util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -198,10 +202,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // create a fork of the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message that proves that the server has started, look up a random url and see if the custom 404 page is given back
+    // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/randomURL')
@@ -210,25 +214,25 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // see if the page has these 3 unique lines of text in it
+          // data included on the custom 404 page
           let test1 = res.text.includes('404 custom test error page')
           let test2 = res.text.includes('The page you are looking for is not found')
           let test3 = res.text.includes('This is a test to see if we can make custom 404 controllers and pages')
-          // test the includes (should be true)
           assert.equal(test1, true)
           assert.equal(test2, true)
           assert.equal(test3, true)
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should start the server and display a custom 500 error page if an error has occured on the server and the user had changed the param to accomadate their custom page', function (done) {
-    // generate the app.js file
+  it('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -236,10 +240,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message that tells us that the server has started, test the path that will run into a server error
+    // when the app starts and sends a message back to the parent try and request the server error route
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/serverError')
@@ -248,35 +252,35 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // see if the page has these 3 unique lines of text in it
+          // data included on the custom 500 page
           let test1 = res.text.includes('500 custom test error page')
           let test2 = res.text.includes('An error had occurred on the server')
           let test3 = res.text.includes('This is a test to see if we can make custom 500 controllers and pages')
-          // test the includes (should be true)
           assert.equal(test1, true)
           assert.equal(test2, true)
           assert.equal(test3, true)
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should start the server and display the default 500 error page if an error has occured on the server', function (done) {
-    // generate the app.js file
+  it('should render the default 500 error page if an error has occured on the server', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on the message that tells us that the server has started, test the path that will run into a server error
+    // when the app starts and sends a message back to the parent try and request the server error route
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/serverError')
@@ -285,25 +289,25 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // see if the page has these 3 default lines of text in it
+          // data included on the default 500 page
           const test1 = res.text.includes('500 Internal Server Error')
           const test2 = res.text.includes('The requested URL /serverError is temporarily unavailable at this time.')
-          // test the includes (should be true)
           assert.equal(test1, true)
           assert.equal(test2, true)
           testApp.send('stop')
         })
 
+      // when the child process exits, finish the test
       testApp.on('exit', () => {
         done()
       })
     })
   })
 
-  it('should respond with a 503 error when server is too busy', function (done) {
+  it('should respond with a 503 status when the server is busy', function (done) {
     let detect503 = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -314,13 +318,13 @@ describe('Roosevelt routes Section Test', function () {
       }
     }, options)
 
-    // fork the app and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.on('message', (params) => {
       sendRequest()
 
-      // Rapidly spam requests until 503 is detected
+      // spam requests until 503 is detected
       function sendRequest () {
         request(`http://localhost:${params.port}`)
           .get('/slow')
@@ -334,27 +338,23 @@ describe('Roosevelt routes Section Test', function () {
             }
           })
         if (detect503) {
-          return exit()
+          testApp.send('stop')
         } else {
           setTimeout(sendRequest, 0)
         }
       }
-
-      function exit () {
-        testApp.send('stop')
-      }
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
   })
 
-  it('should respond with user specified 503 error page when server is too busy', function (done) {
-    // varible to hold if the app was able to return all test with 200
+  it('should respond with a custom 503 error page when the server is busy', function (done) {
     let detect503
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -366,13 +366,13 @@ describe('Roosevelt routes Section Test', function () {
       }
     }, options)
 
-    // fork the app and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (params) => {
       sendRequest()
 
-      // Rapidly spam requests until 503 is detected
+      // spam requests until a 503 status is detected
       function sendRequest () {
         request(`http://localhost:${params.port}`)
           .get('/slow')
@@ -386,24 +386,21 @@ describe('Roosevelt routes Section Test', function () {
             }
           })
         if (detect503) {
-          return exit()
+          testApp.send('stop')
         } else {
           setTimeout(sendRequest, 1)
         }
       }
-
-      function exit () {
-        testApp.send('stop')
-      }
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
   })
 
-  it('should be able to handle multiple viewEngines and set a name with a value and not change it', function (done) {
-    // generate the app.js file
+  it('should be able to handle multiple viewEngines', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -414,21 +411,23 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("view engine"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // checks to see if the view engine returned is the first element
     testApp.on('message', (viewEngine) => {
       assert.equal(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
       testApp.send('stop')
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
   })
 
-  it('should be able to use templating languages that are just functions and that do not have __express function', function (done) {
-    // generate the app.js file
+  it('should be able to use view engines that are functions and do not have an __express function', function (done) {
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -438,9 +437,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // when the app starts test the custom view engine
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/jcsTest')
@@ -456,16 +456,17 @@ describe('Roosevelt routes Section Test', function () {
         })
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
   })
 
-  it('should throw an Error if the ViewEngine param contains strings that, if split with :, has a length of 2', function (done) {
+  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', function (done) {
     // bool var to hold whether or not the error of the viewEngine param being formatted incorrectly was thrown
     let viewEngineFormattedIncorrectlyBool = false
 
-    // generate the app
+    // generate the test app
     generateTestApp({
       generateFolderStructure: true,
       appDir: appDir,
@@ -475,22 +476,22 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look at the error log and see if the error shows up
+    // listen to the stream errors for the view engine error
     testApp.stderr.on('data', (data) => {
       if (data.includes('fatal error: viewEngine param must be formatted')) {
         viewEngineFormattedIncorrectlyBool = true
       }
     })
 
-    // when the app is starting, kill it
+    // when the app starts, kill it
     testApp.on('message', () => {
       testApp.send('stop')
     })
 
-    // when the app is about to end, check to see if the error log was outputted
+    // when the child process exits, test the assertion and finish the test
     testApp.on('exit', () => {
       assert.equal(viewEngineFormattedIncorrectlyBool, true, 'Roosevelt did not throw an error when the way viewEngine was formatted incorrectly')
       done()
@@ -498,10 +499,9 @@ describe('Roosevelt routes Section Test', function () {
   })
 
   it('should throw an Error if the module passed into viewEngine is nonExistent', function (done) {
-    // bool var to hold whether or not the error of the viewEngine needing to be configured properlt
     let viewEngineConfiguredIncorrectlyBool = false
 
-    // generate the app
+    // generate the test app
     generateTestApp({
       generateFolderStructure: true,
       appDir: appDir,
@@ -511,7 +511,7 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // look at the error log and see if the error shows up
@@ -526,7 +526,7 @@ describe('Roosevelt routes Section Test', function () {
       testApp.send('stop')
     })
 
-    // when the app is about to end, check to see if the error log was outputted
+    // when the child process exits, test the assertion and finish the test
     testApp.on('exit', () => {
       assert.equal(viewEngineConfiguredIncorrectlyBool, true, 'Roosevelt did not throw an error when the ViewEngine contains a node module that does not exists')
       done()
@@ -534,7 +534,7 @@ describe('Roosevelt routes Section Test', function () {
   })
 
   it('should be able to set the viewEngine if it was just a string', function (done) {
-    // generate the app.js
+    // generate the test app
     generateTestApp({
       generateFolderStructure: true,
       appDir: appDir,
@@ -542,10 +542,10 @@ describe('Roosevelt routes Section Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // when the app finishes its initialization and is about to start, send a request to the teddy page
+    // when the app finishes its initialization, send a request to the teddy page
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .get('/teddyTest')
@@ -554,7 +554,7 @@ describe('Roosevelt routes Section Test', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          // test that the four values that I put into the model and have in the view are being put into the page
+          // test the data rendered on the default teddy page
           let test1 = res.text.includes('Teddy Test')
           let test2 = res.text.includes('Heading Test')
           let test3 = res.text.includes('This is the first sentence that I am grabbing from my teddy model')
@@ -567,29 +567,28 @@ describe('Roosevelt routes Section Test', function () {
         })
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
   })
 
   it('should complete the request even though the server was closed in the middle of it and respond 503 to any other request made afterwards', function (done) {
-    // bool var to hold whether or not the correct logs were outputted
     let shuttingDownLogBool = false
     let successfulShutdownBool = false
-    // var to hold port number
     let port = 0
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on console.logs, see if the correct ones are being outputted
+    // on console.logs, check for correct output
     testApp.stdout.on('data', (data) => {
       if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
         shuttingDownLogBool = true
@@ -630,7 +629,7 @@ describe('Roosevelt routes Section Test', function () {
       }
     })
 
-    // on exit, see that the right logs were outputted
+    // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
       assert.equal(successfulShutdownBool, true, 'Roosevelt did not log that it successfully closed all connections and that its shutting down')
@@ -639,11 +638,10 @@ describe('Roosevelt routes Section Test', function () {
   })
 
   it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
-    // bool vars to hold whether or not the correct logs were outputted
     let forceCloseLogBool = false
     let shuttingDownLogBool = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -651,7 +649,7 @@ describe('Roosevelt routes Section Test', function () {
       shutdownTimeout: 7000
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on console logs, see that the app is shutting down
@@ -685,7 +683,7 @@ describe('Roosevelt routes Section Test', function () {
       }
     })
 
-    // on exit, see if the correct logs were outputted
+    // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
       assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
@@ -703,7 +701,7 @@ describe('Roosevelt routes Section Test', function () {
     let forceCloseLogBool = false
     let shuttingDownLogBool = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -715,7 +713,7 @@ describe('Roosevelt routes Section Test', function () {
       shutdownTimeout: 7000
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on console logs, see that the app is shutting down
@@ -749,7 +747,7 @@ describe('Roosevelt routes Section Test', function () {
       }
     })
 
-    // on exit, see if the correct logs were outputted
+    // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
       assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
@@ -760,22 +758,21 @@ describe('Roosevelt routes Section Test', function () {
     })
   })
 
-  it('should be able to start the app normally without spitting any controller errors even though there is a non-controller file in the controller folder', function (done) {
-    // bool vars to hold whether or not specifc warnings or logs were made
+  it('should be able to start the app normally without any controller errors, even though there is a non-controller file in the controller folder', function (done) {
     let appCompletedInitLogBool = false
     let controllerErrorLogBool = false
 
-    // copy the ico file into the mvc controller directory
+    // copy the ico file into the controller directory
     fse.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // on console logs, see if the app completed its initialization
@@ -797,7 +794,7 @@ describe('Roosevelt routes Section Test', function () {
       testApp.send('stop')
     })
 
-    // when the app exits, see if the initialization complete log happened and the controller error log did not
+    // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(appCompletedInitLogBool, true, 'Roosevelt did not complete its initalization, probably because of the non-controller file in the controller directory')
       assert.equal(controllerErrorLogBool, false, 'Roosevelt threw an error on a file in the controller directory that it should have passed over')

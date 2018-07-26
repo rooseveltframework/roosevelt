@@ -1,23 +1,23 @@
 /* eslint-env mocha */
 
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
-const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
-const spawn = require('child_process').spawn
 const assert = require('assert')
-const fse = require('fs-extra')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const fkill = require('fkill')
+const fork = require('child_process').fork
+const fse = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
 const os = require('os')
-const http = require('http')
+const path = require('path')
+const { spawn } = require('child_process')
 
-describe('Roosevelt autokill Test', function () {
-  // location of the test app
+describe('Roosevelt Autokill Test', function () {
+  // directory for the test app
   const appDir = path.join(__dirname, '../app/htmlValidatorTest')
 
-  // options that would be put into generateTestApp params
+  // options to pass into test app generator
   const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
+  // clean up the test app directory after each test
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -28,12 +28,12 @@ describe('Roosevelt autokill Test', function () {
     })
   })
 
-  it('should kill the htmlValidator if it is seperate, enabled and the app closed down', function (done) {
+  it('should kill the validator after the app has gracefully shutdown if the validator is a seperate process', function (done) {
     let cannotConnectBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
 
-    // create the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       logging: {
@@ -51,10 +51,10 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on logs, check if specific logs were outputted
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
       if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
@@ -67,10 +67,11 @@ describe('Roosevelt autokill Test', function () {
     })
 
     // when the app finishes initiailization, kill it
-    testApp.on('message', () => {
+    testApp.on('message', (msg) => {
       testApp.send('stop')
     })
 
+    // when the autokiller has confirmed it has killed the process, check assertions and finish this test
     function exit () {
       assert.equal(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
       assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
@@ -79,14 +80,13 @@ describe('Roosevelt autokill Test', function () {
     }
   })
 
-  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed', function (done) {
-    // vars to hold whether or not a specific log was outputted
+  it('should restart the autokill timer if the app is still active, then once the app has gracefully shutdown it should kill the validator.', function (done) {
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
     let cannotConnectBool = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -98,16 +98,16 @@ describe('Roosevelt autokill Test', function () {
         port: 8888,
         separateProcess: {
           enable: true,
-          autoKillerTimeout: 1000
+          autoKillerTimeout: 10000
         }
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on console logs, check if sepcific logs were outputted
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
       if (data.includes('There was no autoKiller running, creating a new one')) {
         autoKillerStartedBool = true
@@ -124,6 +124,7 @@ describe('Roosevelt autokill Test', function () {
       }
     })
 
+    // when the autokiller has confirmed it has killed the process, check assertions and finish this test
     function exit () {
       assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
       assert.equal(timerResetBool, true, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
@@ -134,10 +135,9 @@ describe('Roosevelt autokill Test', function () {
   })
 
   it('should say that its restarting auto Killer if one is running and the app is being initialized again', function (done) {
-    // bool var to hold whether or not a speicific log was made
     let restartAutoKillerLogBool = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -158,15 +158,14 @@ describe('Roosevelt autokill Test', function () {
     // spawn an autoKiller instance
     spawn('node', [`${path.join(__dirname, '../../lib/scripts/autoKillValidator.js')}`, 8888, 10000, true], { detached: true, stdio: 'inherit', shell: false, windowsHide: true })
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on console.logs, check to see if specific logs were made
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
       if (data.includes('Restarting autoKiller')) {
         restartAutoKillerLogBool = true
       } else if (data.includes('Killed process with PID')) {
-        // wait for autoKiller to be finished before exiting test
         exit()
       }
     })
@@ -176,6 +175,7 @@ describe('Roosevelt autokill Test', function () {
       testApp.send('stop')
     })
 
+    // when the autokiller has confirmed it has killed the process, check assertions and finish this test
     function exit () {
       assert.equal(restartAutoKillerLogBool, true, 'Roosevelt did not restart the autoKiller')
       done()
@@ -183,10 +183,9 @@ describe('Roosevelt autokill Test', function () {
   })
 
   it('should be able to say that there is no autoKiller and that it is starting a new one if the roosevelt_validator_pid.txt file exists, but the process is already dead', function (done) {
-    // bool var to hold whether or not a specific log was outputted
     let noAutoKillerFromPIDBool = false
 
-    // create the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -203,9 +202,10 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', data => {
       // kill the app after the auto killer runs
       if (data.includes('Starting the auto Validator Killer')) {
@@ -247,14 +247,13 @@ describe('Roosevelt autokill Test', function () {
     }
   })
 
-  it('should restart the timer if the app is still active when autoKiller goes to check if the app was closed and try to kill the Validator when the app is closed, but does not report anything if verbose is false', function (done) {
-    // vars to hold whether or not a specific log was outputted
+  it('should log that a validator will be created if one isn\'t running but all other logs are hidden due to verbose logs being set false.', function (done) {
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
     let cannotConnectBool = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -269,20 +268,22 @@ describe('Roosevelt autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on console logs, check if sepcific logs were outputted
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
       if (data.includes('There was no autoKiller running, creating a new one')) {
         autoKillerStartedBool = true
       }
-      // on this specific log, kill the app
-      if (data.includes('Roosevelt Express HTTP server listening on port')) {
-        setTimeout(() => {
-          testApp.send('stop')
-        }, 3000)
-      } else if (data.includes('app is still active, resetting timer')) {
+
+      // don't kill the app until a GET request for the autokiller has been requested
+      if (data.includes('GET /sfesfsefisoeo')) {
+        testApp.send('stop')
+      }
+
+      // logs we should not see because verbose logs are shut off
+      if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
@@ -293,33 +294,11 @@ describe('Roosevelt autokill Test', function () {
 
     // on exit, check if the specific logs were outputted and that the validator was closed
     testApp.on('exit', () => {
-      setTimeout(() => {
-        assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-        assert.equal(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
-        assert.equal(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
-        assert.equal(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
-        // options to pass into the http GET request
-        let options = {
-          url: 'http://localhost',
-          method: 'GET',
-          port: 42312,
-          headers: {
-            'User-Agent': 'request'
-          }
-        }
-        // after the timeout period, send a http request
-        http.get(options, function (res) {
-          const { statusCode } = res
-          // if we get any sort of statusCode, whether it be 404, 200 etc, then that means the app is still active and that the timer should reset
-          if (statusCode) {
-            assert.fail('we got a response from a validator that is suppose to be close')
-            done()
-          }
-          // if we get an error, likely that the connection is close and is safe to try to close the validator
-        }).on('error', () => {
-          done()
-        })
-      }, 10000)
+      assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
+      assert.equal(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
+      assert.equal(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+      assert.equal(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
+      done()
     })
   })
 })

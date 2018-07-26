@@ -1,17 +1,18 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
 const fse = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
 const klaw = require('klaw')
+const path = require('path')
 const request = require('supertest')
 
-describe('Public folder section tests', function () {
+describe('Public Folder Tests', function () {
   // path to the directory where the test app is located
   const appDir = path.join(__dirname, '../app/publicFolderTest')
+
   // options to pass into generateTestApp
   let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
@@ -19,11 +20,12 @@ describe('Public folder section tests', function () {
   let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
 
   beforeEach(function (done) {
-    // start by copying the alreadly made mvc directory into the app directory
+    // start by copying the premade mvc directory into the app directory
     fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
+  // clean up the test app directory after each test
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -34,11 +36,11 @@ describe('Public folder section tests', function () {
     })
   })
 
-  it('should allow the user to set up a custom favicon and have the favicon that comes back from http request be the same as the one they load in', function (done) {
+  it('should allow for a custom favicon and GET that favicon on request', function (done) {
     // copy the favicon to the images folder within the static folder
     fse.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
 
-    // generate the app
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -49,9 +51,9 @@ describe('Public folder section tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // when we get back the message that the server has started, send a request to the server
+    // when the server starts,
     testApp.on('message', () => {
-      // see if we could get a html page from the server
+      // see if we can get an html page from the server
       request('http://localhost:43711')
         .get('/HTMLTest')
         .expect(200, (err, res) => {
@@ -60,7 +62,7 @@ describe('Public folder section tests', function () {
             testApp.send('stop')
           }
 
-          // if it had worked, grab favicon from the server
+          // if a 200 status, grab the favicon from the server
           request('http://localhost:43711')
             .get('/favicon.ico')
             .expect(200, (err, res) => {
@@ -73,19 +75,21 @@ describe('Public folder section tests', function () {
               // get the base64 buffer of the favicon that we should be using in util
               let data = fse.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
               let encodedImageData = Buffer.from(data, 'binary').toString('base64')
-              // check if both buffers are the same(They should be)
+              // check if both buffers are the same (they should be)
               let test = faviconData === encodedImageData
               assert.equal(test, true)
               testApp.send('stop')
             })
         })
     })
+
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
   })
 
-  it('should allow the user to set favicon to null and have no favicon show up', function (done) {
+  it('should allow for no favicon with a null paramter', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -120,6 +124,7 @@ describe('Public folder section tests', function () {
         })
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
@@ -139,6 +144,7 @@ describe('Public folder section tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the error stream, check for an incorrect favicon log
     testApp.stderr.on('data', (data) => {
       if (data.includes('Please ensure the "favicon" param is configured correctly')) {
         nonExistentWarningBool = true
@@ -168,10 +174,9 @@ describe('Public folder section tests', function () {
         })
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      if (nonExistentWarningBool === false) {
-        assert.fail('There was no warning saying that the favicon warning was set improperly')
-      }
+      assert.equal(nonExistentWarningBool, false, 'There was no warning saying that the favicon warning was set improperly')
       done()
     })
   })
@@ -221,6 +226,7 @@ describe('Public folder section tests', function () {
         })
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })

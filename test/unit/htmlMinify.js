@@ -4,11 +4,11 @@ const assert = require('assert')
 const path = require('path')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fs = require('fs-extra')
-const minify = require('html-minifier').minify
+const { minify } = require('html-minifier')
 const request = require('supertest')
 const roosevelt = require('../../roosevelt')
 
-describe('htmlMinify', function () {
+describe('HTML Minification Tests', function () {
   const appDir = path.join(__dirname, '../app/htmlMinify')
   const appConfig = {
     appDir: appDir,

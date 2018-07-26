@@ -1,17 +1,19 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const fs = require('fs')
 const fse = require('fs-extra')
-const path = require('path')
-const cleanupTestApp = require('../util/cleanupTestApp')
 const klaw = require('klaw')
+const path = require('path')
 
-describe('Folder Tests', function () {
+describe('Folder Structure Tests', function () {
+  // set the test app directory
   const appDir = path.join(__dirname, '../app/folderStructureTest')
   let app
   let expectedFolders
 
+  // initialize the test-app
   before(function () {
     fse.ensureDirSync(path.join(appDir))
 
@@ -62,6 +64,7 @@ describe('Folder Tests', function () {
     app.initServer(function () {})
   })
 
+  // clean up the test app directory after the tests
   after(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -218,9 +221,9 @@ describe('Folder Tests', function () {
 
   it('should not generate extra directories or files into the appDir', function (done) {
     const dirs = []
+    let item
     klaw(appDir, { depthLimit: 1 })
       .on('readable', function () {
-        let item
         while ((item = this.read())) {
           dirs.push(item)
         }

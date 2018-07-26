@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
+const generateTestApp = require('../util/generateTestApp')
+const path = require('path')
 
 describe('Command Line Tests', function () {
   const appDir = path.join(__dirname, '../app/cliFlags')

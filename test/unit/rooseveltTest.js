@@ -1,30 +1,32 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
-const spawn = require('child_process').spawnSync
+const { fork } = require('child_process')
 const fse = require('fs-extra')
-const os = require('os')
+const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
+const os = require('os')
+const path = require('path')
 const request = require('supertest')
+const { spawnSync } = require('child_process')
 
-describe('Roosevelt roosevelt.js Section Tests', function () {
+describe('Roosevelt.js Tests', function () {
+  // directory for the test app
   const appDir = path.join(__dirname, '../app/rooseveltTest').replace('/\\/g', '/')
 
-  // options that would be put into generateTestApp params
+  // options to pass into test app generator
   let sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   // paths to key and cert & ca files
   let certs = {
-    key: path.join(`${__dirname}/../util/certs/test.req.key`),
-    cert: path.join(`${__dirname}/../util/certs/test.req.crt`),
-    ca: path.join(`${__dirname}/../util/certs/ca.crt`),
-    ca2: path.join(`${__dirname}/../util/certs/ca-2.crt`)
+    key: path.join(__dirname, '/../util/certs/test.req.key'),
+    cert: path.join(__dirname, '/../util/certs/test.req.crt'),
+    ca: path.join(__dirname, '/../util/certs/ca.crt'),
+    ca2: path.join(__dirname, '/../util/certs/ca-2.crt')
   }
 
+  // clean up the test app directory after each test
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -35,8 +37,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should stil compile and run what is on initServer even when we do not pass a param object to roosevelt', function (done) {
-    // generate a empty app.js file
+  it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
+    // generate the test app
     sOptions.appDir = appDir
     sOptions.method = 'initServer'
     generateTestApp(undefined, sOptions)
@@ -62,7 +64,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should only initialize the app once even though the startServer function is called after initServer function', function (done) {
+  it('should only initialize the app once even though the startServer function is called after the initServer function', function (done) {
     // options to pass to generateTestApp
     sOptions.initStart = true
     sOptions.method = 'initServer'
@@ -70,6 +72,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // counter to see how many times initServer was called
     let initServedLog = 0
 
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -79,16 +82,19 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the error stream check to see how many times it logs that the validator is disabled
     testApp.stderr.on('data', (data) => {
       if (data.includes('HTML validator disabled. Continuing without HTML validation...')) {
         initServedLog++
       }
     })
 
+    // on server start kill that app
     testApp.on('message', () => {
       testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
       done()
@@ -104,6 +110,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // counter to see how many times initServer was called
     let initServedLog = 0
 
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true
@@ -112,16 +119,19 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the error stream, check to see how many times the validator disabled log has output
     testApp.stderr.on('data', (data) => {
       if (data.includes('HTML validator disabled. Continuing without HTML validation...')) {
         initServedLog++
       }
     })
 
+    // when the server starts kill the app
     testApp.on('message', () => {
       testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
       done()
@@ -135,10 +145,12 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     sOptions.initTwice = false
     sOptions.stopServer = false
 
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true
     }, sOptions)
+
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
@@ -173,6 +185,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     sOptions.empty = false
     sOptions.stopServer = false
 
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true
@@ -203,7 +216,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     // reset sOptions
     sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
-    // Int vars to hold how many times a server was started and how many times a thread was killed
+    // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
 
@@ -238,7 +251,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
-    // Int vars to hold how many times a server was started and how many times a thread was killed
+    // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
 
@@ -273,9 +286,11 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
   })
 
   it('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
+    // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let processKilledInt = 0
 
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -297,14 +312,15 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       }
     })
 
+    // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
     testApp.on('exit', () => {
       assert.equal(processKilledInt, 2, 'Roosevelt did not kill all of the cluster workers that it generated')
       done()
     })
   })
 
-  it('should make the app use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
-    // Int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
+  it('should use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
+    // int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
     let processKilledInt = 0
     const maxCores = os.cpus().length
@@ -339,7 +355,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should make the app default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
+  it('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
     // reset sOptions
     sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
@@ -428,7 +444,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to make a https server if it is enabled', function (done) {
+  it('should be able to start an HTTPS server if it is enabled', function (done) {
     // bool var to see if a specific log was outputted
     let httpsServerMadeBool = false
 
@@ -458,14 +474,14 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       testApp.send('stop')
     })
 
-    // on exit, check if roosevelt made a https server or not
+    // on exit, check if roosevelt an https server started or not
     testApp.on('exit', () => {
       assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
       done()
     })
   })
 
-  it('should only make a https server if it is enabled and httpsOnly param is true', function (done) {
+  it('should start an HTTPS server if it is enabled and httpsOnly param is true', function (done) {
     // bool var to see if specifics log was outputted
     let httpsServerMadeBool = false
     let httpServerMadeBool = false
@@ -500,7 +516,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       testApp.send('stop')
     })
 
-    // on exit, see if the app made a https server and not a http server
+    // on exit, see if the app started an https server and not an http server
     testApp.on('exit', () => {
       assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
       assert.equal(httpServerMadeBool, false, 'Roosevelt made a http Server even though the httpsOnly param is true')
@@ -541,7 +557,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to run the app even with the localhostOnly param set to true and in production mode', function (done) {
+  it('should be able to run the app with the localhostOnly param set to true and in production mode', function (done) {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
 
@@ -578,7 +594,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to run the app even with the localhostOnly param set to true, in production mode and run a https server', function (done) {
+  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
     let httpsServerMadeBool = false
@@ -624,7 +640,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should not execute whatever is in onServerStart if the param passed to it is not a function', function (done) {
+  it('should not execute onServerStart if the value is not a function', function (done) {
     // bool var that will hold whether or not a message is recieved based on if a function was passed to onServerStart
     let serverStartFunctionBool = false
 
@@ -656,7 +672,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to start the app as a https server without the passphrase or ca', function (done) {
+  it('should be able to start the app as an HTTPS server without the passphrase or ca', function (done) {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
@@ -696,7 +712,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to start the app as a https server with a passphrase', function (done) {
+  it('should be able to start the app as an HTTPS server with a passphrase', function (done) {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
@@ -735,7 +751,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to start the server even if a ca string is passed in', function (done) {
+  it('should be able to start an HTTPS server if a ca string is passed in', function (done) {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
@@ -775,7 +791,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to start the server even if a ca array is passed in', function (done) {
+  it('should be able to start an HTTPS server if a ca array is passed in', function (done) {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
@@ -815,7 +831,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should be able to start the server even if a ca passed in is not a string or array and cafile is set to true', function (done) {
+  it('should be able to start an HTTPS server if a ca passed in is not a string or array and cafile is set to true', function (done) {
     // bool var to hold that the HTTPS server is listening
     let HTTPSServerListeningBool = false
 
@@ -866,6 +882,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       res.end()
     }).listen(43711)
 
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
@@ -880,11 +897,13 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
       }
     })
 
+    // when the app starts, set the bool and kill the app
     testApp.on('message', () => {
       serverStartedBool = true
       testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(serverStartedBool, false, 'Roosevelt completely compiled the app and started it even thought we get EADDRINUSE error')
       assert.equal(samePortWarningBool, true, 'Roosevelt did not report that it could not start because something is using the same port that the app wants to use')
@@ -916,7 +935,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     packageJSONSource = JSON.stringify(packageJSONSource)
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    spawnSync(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
@@ -971,7 +990,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
 
     packageJSONSource = JSON.stringify(packageJSONSource)
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    spawnSync(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
@@ -1004,7 +1023,7 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     })
   })
 
-  it('should throw the error message that is found in EACCESS if it hits that error', function (done) {
+  it('should throw an EACCESS error when trying to start on port 100', function (done) {
     // bool var to hold whether a specific log was outputted
     let otherErrorLogBool = false
     let EACCESSLogBool = false
@@ -1054,8 +1073,8 @@ describe('Roosevelt roosevelt.js Section Tests', function () {
     let requestFinishedBool = false
 
     // copy the mvc folder to the test App
-    let pathToMVC = path.join(`${__dirname}/../util/mvc`)
-    let pathtoapp = path.join(`${appDir}/mvc`)
+    let pathToMVC = path.join(__dirname, '/../util/mvc')
+    let pathtoapp = path.join(appDir, '/mvc')
     fse.copySync(pathToMVC, pathtoapp)
 
     // generate the app.js file

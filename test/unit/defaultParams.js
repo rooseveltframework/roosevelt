@@ -3,7 +3,7 @@
 const assert = require('assert')
 const path = require('path')
 
-describe('Default Params', function () {
+describe('Default Parameter Tests', function () {
   const defaults = require('../../lib/defaults/config.json')
   let params = Object.keys(defaults)
   let app

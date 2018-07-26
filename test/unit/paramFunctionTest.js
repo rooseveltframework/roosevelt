@@ -1,14 +1,14 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
+const { fork } = require('child_process')
 const fse = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
+const path = require('path')
 const request = require('supertest')
 
-describe('parameter Function Test Section', function () {
+describe('Parameter Function Tests', function () {
   // path to the app Directory
   const appDir = path.join(__dirname, '../app/paramFunctionTest')
 
@@ -60,6 +60,7 @@ describe('parameter Function Test Section', function () {
       }
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(serverInitLogBool, true, 'Roosevelt did not execute what is in onServerInit')
       done()
@@ -151,6 +152,7 @@ describe('parameter Function Test Section', function () {
         })
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(bodyParserUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was not used before it was hit')
       done()
@@ -302,6 +304,7 @@ describe('parameter Function Test Section', function () {
         })
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
@@ -415,6 +418,7 @@ describe('parameter Function Test Section', function () {
       testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(modelDirectoryCreationLogBool, false, 'Roosevelt created a models folder even though generateFolderStrucutre is false')
       done()
@@ -477,6 +481,7 @@ describe('parameter Function Test Section', function () {
       testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(controllersDirectoryCreationLogBool, false, 'Roosevelt created a controllers folder even though generateFolderStrucutre is false')
       done()
@@ -670,6 +675,7 @@ describe('parameter Function Test Section', function () {
       testApp.send('stop')
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
@@ -741,6 +747,7 @@ describe('parameter Function Test Section', function () {
       testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
       done()

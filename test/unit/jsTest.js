@@ -1,15 +1,15 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const fse = require('fs-extra')
-const path = require('path')
 const cleanupTestApp = require('../util/cleanupTestApp')
+const { fork } = require('child_process')
+const fse = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
-const fork = require('child_process').fork
+const path = require('path')
 const uglify = require('uglify-js')
 
-describe('JavaScript Section Test', function () {
+describe('JavaScript Tests', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
 
   // sample JS source string to test the compiler with
