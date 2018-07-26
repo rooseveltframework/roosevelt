@@ -176,7 +176,7 @@ describe('Public Folder Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(nonExistentWarningBool, false, 'There was no warning saying that the favicon warning was set improperly')
+      assert.equal(nonExistentWarningBool, true, 'There was no warning saying that the favicon warning was set improperly')
       done()
     })
   })

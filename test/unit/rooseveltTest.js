@@ -1152,6 +1152,7 @@ describe('Roosevelt.js Tests', function () {
 
   it('should be able to use server close instead of exiting process with an HTTPS server', function (done) {
     // set the server type
+    sOptions.close = 'close'
     sOptions.serverType = 'httpsServer'
 
     // bool variable to check if the server closed but the process is still runinng
