@@ -8,6 +8,7 @@ const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
 const fork = require('child_process').fork
 const uglify = require('uglify-js')
+const gitignoreScanner = require('../../lib/tools/gitignoreScanner')
 
 describe('JavaScript Section Test', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
@@ -960,5 +961,27 @@ describe('JavaScript Section Test', function () {
     testApp.on('exit', () => {
       done()
     })
+  })
+
+  it('should read the correct files from the .gitignore', function (done) {
+    // generate a sample .gitignore
+    let ignoredCorrectBool = true
+    let gitignoreData = `# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass`
+    let pathOfGitignore = path.join(appDir, '.gitignore')
+    let gitignoreFiles = []
+
+    // write to gitignore
+    fse.ensureDirSync(path.join(appDir))
+    fse.writeFileSync(pathOfGitignore, gitignoreData)
+
+    gitignoreFiles = gitignoreScanner(pathOfGitignore)
+
+    gitignoreFiles.forEach((file) => {
+      if (file.endsWith('.js') || file.endsWith('.css') || file.endsWith('.less') || file.endsWith('.sass') || file === '') {
+        ignoredCorrectBool = false
+      }
+    })
+    assert.equal(ignoredCorrectBool, true, 'gitignoreScanner module did not ignore correct files')
+    done()
   })
 })
