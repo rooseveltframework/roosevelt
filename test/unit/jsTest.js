@@ -875,6 +875,7 @@ describe('JavaScript Section Test', function () {
     // sample gitignore pattern for test app to ignore
     let gitignoreData = '*.dat'
     let pathOfGitignore = path.join(appDir, '.gitignore')
+    let test = false
 
     // generate .dat file to be ignored by compiler
     let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
@@ -905,13 +906,10 @@ describe('JavaScript Section Test', function () {
       // test to see if the folder exists and that the dat file is not in it
       const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
       const compiledJSArray = klawSync(compiledJS)
-      compiledJSArray.forEach((file) => {
-        let test = false
-        if (pathOfDataFile === file) {
-          test = true
-        }
-        assert.equal(test, false)
-      })
+      if (compiledJSArray.includes(pathOfDataFile)) {
+        test = true
+      }
+      assert.equal(test, false)
       testApp.kill('SIGINT')
     })
 
