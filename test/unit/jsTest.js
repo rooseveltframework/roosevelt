@@ -921,52 +921,11 @@ describe('JavaScript Section Test', function () {
     })
   })
 
-  it('should warn the user when there is no .gitignore file and read from list of defaults', function (done) {
-    // generate .dat file to be ignored
-    let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
-    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'gitignoreTest.dat')
-
-    // write data to dat file created to be ignored by compiler
-    fse.ensureDirSync(path.join(appDir))
-    fse.writeFileSync(pathOfDataFile, randomData)
-
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      js: {
-        compiler: {
-          nodeModule: 'roosevelt-uglify',
-          showWarnings: true,
-          params: {}
-        }
-      }
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
-
-    testApp.on('message', () => {
-      // test to see if the folder exists and that the dat file is not in it
-      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
-      const compiledJSArray = klawSync(compiledJS)
-      compiledJSArray.forEach((file) => {
-        let test = false
-        if (pathOfDataFile === file) {
-          test = true
-        }
-        assert.equal(test, false)
-      })
-      testApp.kill('SIGINT')
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should read the correct files from the .gitignore', function (done) {
+  it('should read the correct files from the .gitignore and add to list', function (done) {
     // generate a sample .gitignore
+    let addedCorrectBool = false
     let ignoredCorrectBool = true
-    let gitignoreData = `# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass`
+    let gitignoreData = `# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass\ncoverage`
     let pathOfGitignore = path.join(appDir, '.gitignore')
     let gitignoreFiles = []
 
@@ -981,7 +940,11 @@ describe('JavaScript Section Test', function () {
         ignoredCorrectBool = false
       }
     })
+    if (gitignoreFiles.includes('coverage')) {
+      addedCorrectBool = true
+    }
     assert.equal(ignoredCorrectBool, true, 'gitignoreScanner module did not ignore correct files')
+    assert.equal(addedCorrectBool, true, 'gitignoreScanner did not add correct files')
     done()
   })
 })
