@@ -70,7 +70,7 @@ module.exports = function (params, options) {
     }
     // server can be stopped by passing a message to the child process
     if (options.stopServer) {
-      options.close = options.close ? `'${options.close}'` : ''
+      options.close = options.close === true ? `'close'` : ''
       contents += `\nprocess.on('message', (msg) => {\n`
       contents += `  if (msg === 'stop') {\n`
       contents += `    app.stopServer(${options.close})\n`

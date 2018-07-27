@@ -228,13 +228,13 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '1.1'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
       if (data.includes(`server started`)) {
         serverStartInt++
-        if (serverStartInt === 2) {
+        if (serverStartInt === 1) {
           testApp.send('stop')
         }
       }
@@ -245,7 +245,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
     testApp.on('exit', () => {
-      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
+      assert.equal(processKilledInt, 1, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     })
   })
@@ -253,7 +253,6 @@ describe('Roosevelt.js Tests', function () {
   it('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
-    let processKilledInt = 0
 
     // generate the app.js file
     generateTestApp({
@@ -273,22 +272,22 @@ describe('Roosevelt.js Tests', function () {
           testApp.send('stop')
         }
       }
-      if (data.includes(`thread`) && data.includes(`died`)) {
-        processKilledInt++
+      if (data.includes('Roosevelt Express successfully closed all connections')) {
+        exit()
       }
     })
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
-    testApp.on('exit', () => {
-      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
+    function exit () {
+      assert.equal(serverStartInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
-    })
+    }
   })
 
   it('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
-    let processKilledInt = 0
+    let devModeBool = false
 
     // generate the test app
     generateTestApp({
@@ -301,28 +300,31 @@ describe('Roosevelt.js Tests', function () {
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
+      if (data.includes('development mode')) {
+        devModeBool = true
+      }
       if (data.includes(`server started`)) {
         serverStartInt++
         if (serverStartInt === 2) {
           testApp.send('stop')
         }
       }
-      if (data.includes(`thread`) && data.includes(`died`)) {
-        processKilledInt++
+      if (data.includes('Roosevelt Express successfully closed all connections')) {
+        exit()
       }
     })
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
-    testApp.on('exit', () => {
-      assert.equal(processKilledInt, 2, 'Roosevelt did not kill all of the cluster workers that it generated')
+    function exit () {
+      assert.equal(devModeBool, true, 'Roosevelt did not start in dev mode')
+      assert.equal(serverStartInt, 2, 'Roosevelt did not kill all of the cluster workers that it generated')
       done()
-    })
+    }
   })
 
   it('should use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
     // int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
-    let processKilledInt = 0
     const maxCores = os.cpus().length
 
     // generate the app.js file
@@ -343,16 +345,16 @@ describe('Roosevelt.js Tests', function () {
           testApp.send('stop')
         }
       }
-      if (data.includes(`thread`) && data.includes(`died`)) {
-        processKilledInt++
+      if (data.includes('Roosevelt Express successfully closed all connections')) {
+        exit()
       }
     })
 
     // on exit, check if the app had killed the cluster that the app had created
-    testApp.on('exit', () => {
-      assert.equal(processKilledInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
+    function exit () {
+      assert.equal(serverStartInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
-    })
+    }
   })
 
   it('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
@@ -1118,7 +1120,7 @@ describe('Roosevelt.js Tests', function () {
   it('should be able to use server close instead of exiting process with an HTTP server', function (done) {
     // set test app features
     sOptions.exitProcess = true
-    sOptions.close = 'close'
+    sOptions.close = true
     sOptions.serverType = 'httpServer'
 
     // bool variable to check if the server closed but the process is still runinng
@@ -1152,7 +1154,7 @@ describe('Roosevelt.js Tests', function () {
 
   it('should be able to use server close instead of exiting process with an HTTPS server', function (done) {
     // set the server type
-    sOptions.close = 'close'
+    sOptions.close = true
     sOptions.serverType = 'httpsServer'
 
     // bool variable to check if the server closed but the process is still runinng

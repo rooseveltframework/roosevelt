@@ -693,7 +693,7 @@ describe('Roosevelt Routes Tests', function () {
 
   it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
     // add test app features to use server close and then exit process
-    options.close = 'close'
+    options.close = true
     options.exitProcess = true
     options.serverType = 'httpsServer'
 
