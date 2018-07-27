@@ -2,7 +2,7 @@
 Roosevelt MVC web framework
 ===
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/rooseveltframework/roosevelt.svg)](https://greenkeeper.io/) [![Build Status](https://travis-ci.org/rooseveltframework/roosevelt.svg?branch=master)](https://travis-ci.org/rooseveltframework/roosevelt) [![codecov](https://codecov.io/gh/rooseveltframework/roosevelt/branch/master/graph/badge.svg)](https://codecov.io/gh/rooseveltframework/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
+[![Build Status](https://travis-ci.org/rooseveltframework/roosevelt.svg?branch=master)](https://travis-ci.org/rooseveltframework/roosevelt) [![codecov](https://codecov.io/gh/rooseveltframework/roosevelt/branch/master/graph/badge.svg)](https://codecov.io/gh/rooseveltframework/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
 Roosevelt is a web application development framework based on [Express](http://expressjs.com). Roosevelt abstracts all the crusty boilerplate necessary to build a typical web application using Express and provides a uniform [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) structure for your app.
 
@@ -367,6 +367,8 @@ App behavior parameters
 - `checkDependencies`: Parameter to tell roosevelt whether or not it should go over the installed node packages and make sure that all the packages from package.json are installed and that they are up to date
   - Default: *[Boolean]* `true`.
 
+- `cores`: Parameter to activate multi threading support on roosevelt. By default, roosevelt will run on 1 core, but you can change the number of cores that the app will run on with this param. To use all available cores, set this value to `max`.
+  - Default: *[Number]* `1`
 
 HTTPS parameters
 ---
