@@ -6,6 +6,7 @@ const fkill = require('fkill')
 const fork = require('child_process').fork
 const fse = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
+const http = require('http')
 const os = require('os')
 const path = require('path')
 const { spawn } = require('child_process')
@@ -278,12 +279,11 @@ describe('Roosevelt Autokill Test', function () {
       }
 
       // don't kill the app until a GET request for the autokiller has been requested
-      if (data.includes('GET /sfesfsefisoeo')) {
-        testApp.send('stop')
-      }
-
-      // logs we should not see because verbose logs are shut off
-      if (data.includes('app is still active, resetting timer')) {
+      if (data.includes('Roosevelt Express HTTP server listening on port')) {
+        setTimeout(() => {
+          testApp.send('stop')
+        }, 3000)
+      } else if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
@@ -294,11 +294,33 @@ describe('Roosevelt Autokill Test', function () {
 
     // on exit, check if the specific logs were outputted and that the validator was closed
     testApp.on('exit', () => {
-      assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-      assert.equal(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
-      assert.equal(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
-      assert.equal(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
-      done()
+      setTimeout(() => {
+        assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
+        assert.equal(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
+        assert.equal(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+        assert.equal(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
+        // options to pass into the http GET request
+        let options = {
+          url: 'http://localhost',
+          method: 'GET',
+          port: 42312,
+          headers: {
+            'User-Agent': 'request'
+          }
+        }
+        // after the timeout period, send a http request
+        http.get(options, function (res) {
+          const { statusCode } = res
+          // if we get any sort of statusCode, whether it be 404, 200 etc, then that means the app is still active and that the timer should reset
+          if (statusCode) {
+            assert.fail('we got a response from a validator that is suppose to be close')
+            done()
+          }
+          // if we get an error, likely that the connection is close and is safe to try to close the validator
+        }).on('error', () => {
+          done()
+        })
+      }, 10000)
     })
   })
 })
