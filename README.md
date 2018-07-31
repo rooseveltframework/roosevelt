@@ -367,6 +367,8 @@ App behavior parameters
 - `checkDependencies`: Parameter to tell roosevelt whether or not it should go over the installed node packages and make sure that all the packages from package.json are installed and that they are up to date
   - Default: *[Boolean]* `true`.
 
+- `cores`: Parameter to activate multi threading support on roosevelt. By default, roosevelt will run on 1 core, but you can change the number of cores that the app will run on with this param. To use all available cores, set this value to `max`.
+  - Default: *[Number]* `1`
 
 HTTPS parameters
 ---
