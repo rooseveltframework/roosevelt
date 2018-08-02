@@ -39,6 +39,7 @@ module.exports = function (params) {
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
+  app.use('/scripts', express.static(params.appDir + '/node_modules/prismjs/'))
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)

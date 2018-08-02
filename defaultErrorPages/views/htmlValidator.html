@@ -5,6 +5,8 @@
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <meta name='format-detection' content='telephone=no'>
   <title>${pageTitle}</title>
+  <link href='/scripts/themes/prism.css' rel='stylesheet'>
+  <link href='/scripts/plugins/line-numbers/prism-line-numbers.css' rel='stylesheet'>
 </head>
 <body>
   <main>
@@ -28,33 +30,23 @@
           white-space: pre-wrap;
         }
 
-        .markup {
-          font-family: monospace;
-          counter-reset: line;
-          white-space: pre-wrap;
-        }
-
-        .markup span {
-          display: block;
-          line-height: 1.2rem;
-        }
-
-        .markup span::before {
-          counter-increment: line;
-          content: counter(line);
-          display: inline-block;
-          border-right: 1px solid #ddd;
-          padding: 0 .5em;
-          margin-right: .5em;
-          width: ${preWidth}px;
-        }
-
       </style>
       <h1>${pageHeader}</h1>
       ${errors}
       ${warnings}
       ${markup}
     </article>
+    <script src='/scripts/prism.js' data-manual></script>
+    <script src='/scripts/components/prism-markup.js' data-manual></script>
+    <script src='/scripts/plugins/line-numbers/prism-line-numbers.js' data-manual></script>
+    <script>
+      elems = document.getElementsByTagName("*")
+      for (i = 0; i < elems.length; i++) {
+          if (elems[i].className == "language-html") {
+              Prism.highlightElement(elems[i])
+          }
+      }
+  </script>
   </main>
 </body>
 </html>
