@@ -915,7 +915,9 @@ describe('JavaScript Tests', function () {
     })
 
     testApp.on('exit', () => {
-      assert.equal(staleLoggedBool, true, 'Roosevelt did not report that there was a stale file in .build')
+      if (staleLoggedBool === false) {
+        assert.fail('Roosevelt did not report that there was a stale file in .build')
+      }
       done()
     })
   })
