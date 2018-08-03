@@ -8,6 +8,7 @@ const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
 const path = require('path')
 const uglify = require('uglify-js')
+const buildScanner = require('../../lib/tools/buildScanner')
 
 describe('JavaScript Tests', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
@@ -920,5 +921,18 @@ describe('JavaScript Tests', function () {
       }
       done()
     })
+  })
+
+  it('should report that buildScanner could not access directory', function (done) {
+    let dirAccessedBool = false
+    let dirAccessed
+    let pathToNoAccess = path.join(appDir, 'statics/.noExist/')
+    dirAccessed = buildScanner(pathToNoAccess)
+
+    if (dirAccessed !== undefined) {
+      dirAccessedBool = true
+    }
+    assert.equal(dirAccessedBool, false, 'Roosevelt found a nonexistant directory')
+    done()
   })
 })
