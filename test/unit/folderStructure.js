@@ -1,17 +1,19 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const fs = require('fs')
 const fse = require('fs-extra')
+const klaw = require('klaw')
 const path = require('path')
-const cleanupTestApp = require('../util/cleanupTestApp')
-const klawSync = require('klaw-sync')
 
-describe('Folder Tests', function () {
-  const appDir = path.join(__dirname, '../app/folderStructure')
+describe('Folder Structure Tests', function () {
+  // set the test app directory
+  const appDir = path.join(__dirname, '../app/folderStructureTest')
   let app
   let expectedFolders
 
+  // initialize the test-app
   before(function () {
     fse.ensureDirSync(path.join(appDir))
 
@@ -41,6 +43,7 @@ describe('Folder Tests', function () {
     })
 
     expectedFolders = [
+      appDir,
       path.join(appDir, '/mvc'),
       path.join(appDir, '/mvc/viewsTest'),
       path.join(appDir, '/mvc/modelsTest'),
@@ -61,6 +64,7 @@ describe('Folder Tests', function () {
     app.initServer(function () {})
   })
 
+  // clean up the test app directory after the tests
   after(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
@@ -215,13 +219,26 @@ describe('Folder Tests', function () {
     assert.equal(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
   })
 
-  it('should not generate extra directories or files into the appDir', function () {
-    const dirs = klawSync(appDir)
-    dirs.forEach((dir) => {
-      if (!dir.path.includes('.DS_Store')) {
-        let test = expectedFolders.includes(dir.path)
-        assert.equal(test, true, `There is an extra directory or file at ${dir.path}`)
-      }
-    })
+  it('should not generate extra directories or files into the appDir', function (done) {
+    const dirs = []
+    let item
+    klaw(appDir, { depthLimit: 1 })
+      .on('readable', function () {
+        while ((item = this.read())) {
+          dirs.push(item)
+        }
+      })
+      .on('end', () => {
+        dirs.forEach((dir) => {
+          if (!dir.path.includes('.DS_Store')) {
+            let test = expectedFolders.includes(dir.path)
+            assert.equal(test, true, `There is an extra directory or file at ${dir.path}`)
+          }
+        })
+        done()
+      })
+      .on('error', (err) => {
+        console.error(err)
+      })
   })
 })

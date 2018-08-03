@@ -1,34 +1,24 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
-const spawn = require('child_process').spawnSync
-const fse = require('fs-extra')
 const configAuditor = require('../../lib/scripts/configAuditor')
+const { fork } = require('child_process')
+const fse = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
 const os = require('os')
+const path = require('path')
+const { spawnSync } = require('child_process')
 
-describe('Roosevelt config Auditor Test', function () {
-  // path to the Test App Directory
-  const appDir = path.join(__dirname, '../', '/app', '/configAuditorTest')
+describe('Roosevelt Config Auditor Test', function () {
+  // path to the test app Directory
+  const appDir = path.join(__dirname, '../app/configAuditorTest')
 
-  // options to add to the generateTestApp function
-  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  // options to pass into test app generator
+  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   // variable to hold the data that will be written to the package.json file for each test
   let packageJSONSource = {}
-
-  afterEach(function (done) {
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
-  })
 
   beforeEach(function (done) {
     // grab the contents of the default config file
@@ -46,7 +36,18 @@ describe('Roosevelt config Auditor Test', function () {
     done()
   })
 
-  it('should be able to scan the package.json file in the test App Directory and tell me which params are missing from it', function (done) {
+  // clean up the test app directory after each test
+  afterEach(function (done) {
+    cleanupTestApp(appDir, (err) => {
+      if (err) {
+        throw err
+      } else {
+        done()
+      }
+    })
+  })
+
+  it('should be able to scan the package.json file in the test App Directory and find which parameters are missing from it', function (done) {
     // bool vars to hold whether or not the right logs and errors are being outputted
     let startingConfigAuditBool = false
     let modelsPathMissingBool = false
@@ -62,23 +63,23 @@ describe('Roosevelt config Auditor Test', function () {
     delete packageJSONSource.rooseveltConfig.controllersPath
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look at the logs
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
       }
     })
 
-    // look at the errors
+    // on the error stream, check for error specific logs
     testApp.stderr.on('data', (data) => {
       if (data.includes('Missing param "modelsPath"!')) {
         modelsPathMissingBool = true
@@ -98,9 +99,10 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the configAuditor')
       assert.equal(modelsPathMissingBool, true, 'configAuditor did not report that the package.json file is missing a models path value')
@@ -198,6 +200,7 @@ describe('Roosevelt config Auditor Test', function () {
       }
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'configAuditor did not start')
       assert.equal(modelsPathMissingBool, true, 'configAuditor did not report that the package.json file is missing a models path value')
@@ -223,16 +226,16 @@ describe('Roosevelt config Auditor Test', function () {
     // create a public folder inside the app Directory
     fse.ensureDir(path.join(appDir, 'public'))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look at the logs
+    // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
@@ -241,9 +244,10 @@ describe('Roosevelt config Auditor Test', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check for assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, false, 'Roosevelt ')
       done()
@@ -254,16 +258,16 @@ describe('Roosevelt config Auditor Test', function () {
     // bool var to hold whether or not the audit looked at the files
     let rooseveltAuditStartedBool = false
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look at the logs to see if it would log out that the config audtior is starting
+    // on the output stream, check for specific logs to see if it would log out that the config audtior is starting
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         rooseveltAuditStartedBool = true
@@ -271,9 +275,10 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check for assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(rooseveltAuditStartedBool, false, 'the config Auditor was still started even though there is no package.json file in the app Directory')
       done()
@@ -294,16 +299,16 @@ describe('Roosevelt config Auditor Test', function () {
     fse.ensureDirSync(appDir)
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // look at the logs to see if it would log out that the config audtior is starting
+    // on the output stream, check for specific logs to see if it would log out that the config audtior is starting
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         rooseveltAuditStartedBool = true
@@ -311,7 +316,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -320,7 +325,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should report that there are some properties that are missing or extra for some of the object params in the package.json file', function (done) {
+  it('should report that there are some missing or extra params in the package.json file', function (done) {
     // bool var to hold whether the right logs were given
     let startingConfigAuditBool = false
     let error1Bool = false
@@ -340,15 +345,16 @@ describe('Roosevelt config Auditor Test', function () {
     delete packageJSONSource.rooseveltConfig.js.whitelist
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the error strean, check the console output for missing parameters
     testApp.stderr.on('data', (data) => {
       if (data.includes('Missing param "enable" in "htmlValidator"!')) {
         missingEnableBool = true
@@ -373,6 +379,7 @@ describe('Roosevelt config Auditor Test', function () {
       }
     })
 
+    // on the output stream check to see if the config auditor has started
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
@@ -380,9 +387,10 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the configAuditor')
       assert.equal(missingEnableBool, true, 'The config Auditor did not report that enable is missing from the htmlValidator param')
@@ -396,7 +404,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should report that there are extra params in the whole rooseveltConfig object', function (done) {
+  it('should report that there are extra params in the rooseveltConfig object', function (done) {
     // bool var to hold whether or not the correct logs are being outputted
     let extraTurboParamBool = false
     let extraMaxServersBool = false
@@ -410,21 +418,23 @@ describe('Roosevelt config Auditor Test', function () {
     packageJSONSource.rooseveltConfig.maxServers = 4
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the output stream, check
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
       }
     })
 
+    // on the error stream, check config auditor output
     testApp.stderr.on('data', (data) => {
       if (data.includes('Extra param "turbo" found, this can be removed.')) {
         extraTurboParamBool = true
@@ -441,9 +451,10 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
       assert.equal(extraTurboParamBool, true, 'config Auditor did not spot the extra turbo param in the rooseveltConfig')
@@ -454,7 +465,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should report if the package.json contains script that run files from roosevelt and do not hold the up to date command', function (done) {
+  it('should report that package.json contains a roosevelt script that has been incorrectly placed', function (done) {
     // bool var to hold whether or not a specific log was outputted
     let cleanNotUpToDateBool = false
     let startingConfigAuditBool = false
@@ -463,24 +474,26 @@ describe('Roosevelt config Auditor Test', function () {
 
     // generate the package.json file
     fse.ensureDirSync(appDir)
-    packageJSONSource.scripts.clean = 'node ./node_modules/roosevelt/lib/scripts/appsCleanup.js'
+    packageJSONSource.scripts.clean = 'node ./node_modules/roosevelt/is_not_correct.js'
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the output stream, check to see if the config auditor is running
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
       }
     })
 
+    // on the error stream check to see
     testApp.stderr.on('data', (data) => {
       if (data.includes('Detected outdated script "clean". Update contents to "node ./node_modules/roosevelt/lib/scripts/appCleanup.js" to restore functionality.')) {
         cleanNotUpToDateBool = true
@@ -494,9 +507,10 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check for assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(error1Bool, true, 'configAuditor did not report that we had issues with the roosevelt config')
       assert.equal(error2Bool, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
@@ -506,7 +520,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should report that there are no errors found if there are no errors', function (done) {
+  it('should report that no errors have been found after running the config auditor', function (done) {
     // bool var to hold whether or not the right logs were outputted
     let startingConfigAuditBool = false
     let noErrorsBool = false
@@ -515,15 +529,16 @@ describe('Roosevelt config Auditor Test', function () {
     fse.ensureDirSync(appDir)
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // generate the app.js file
+    // generate the test app
     generateTestApp({
       appDir: appDir,
       onServerStart: `(app) => {process.send("something")}`
     }, options)
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the output stream, check for config auditor data
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
@@ -534,9 +549,10 @@ describe('Roosevelt config Auditor Test', function () {
     })
 
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
       assert.equal(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
@@ -544,33 +560,35 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should not run the config Auditor if the file was forked and the wrong enviroment was passed to it', function (done) {
+  it('should not run the config Auditor if it has a cwd without a node_modules folder', function (done) {
     // bool var to hold whether or not a specific log was outputted
     let startingConfigAuditBool = false
 
-    // put a node_module in the test app directory
+    // create a node_modules directory in the test app
     fse.ensureDirSync(appDir)
     fse.mkdirSync(path.join(appDir, 'node_modules'))
 
-    // set env.INIT_CWD to a location that does not have a node_module folder
-    process.env.INIT_CWD = path.join(appDir, '../', 'util')
+    // set env.INIT_CWD to a location that does not have a node_modules folder
+    process.env.INIT_CWD = path.join(appDir, '../util')
 
     // fork the configAuditor.js file and run it as a child process
     let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // check the output stream to see if the config auditor is running
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
       }
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, false, 'Roosevelt started its config Auditor even when it was not suppose to')
       done()
     })
   })
 
-  it('should be able to run even if a node modules folder is located in the test App Directory', function (done) {
+  it('should be able to run the auditor if a node modules folder is located in the cwd', function (done) {
     // bool var to hold whether or not the right logs were outputted
     let startingConfigAuditBool = false
     let noErrorsBool = false
@@ -585,9 +603,10 @@ describe('Roosevelt config Auditor Test', function () {
     // create a node_modules folder
     fse.ensureDirSync(path.join(appDir, 'node_modules'))
 
-    // fork the app.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../', '../', '../', '/lib', '/scripts', '/configAuditor.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    // fork and run app.js as a child process
+    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the output stream
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
@@ -597,6 +616,7 @@ describe('Roosevelt config Auditor Test', function () {
       }
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
       assert.equal(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
@@ -604,7 +624,7 @@ describe('Roosevelt config Auditor Test', function () {
     })
   })
 
-  it('should choose one of the enviroment vars if both of the ones that we are looking at are the same', function (done) {
+  it('should use the env var cwd if it matches the processes cwd', function (done) {
     // bool var to see if the right logs are being logged
     let startingConfigAuditBool = false
     let noErrorsBool = false
@@ -616,9 +636,10 @@ describe('Roosevelt config Auditor Test', function () {
     fse.ensureDirSync(appDir)
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
-    // fork the app.js file and run it as a child process
+    // fork and run app.js as a child process
     let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
+    // on the output stream
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting roosevelt user configuration audit...')) {
         startingConfigAuditBool = true
@@ -628,6 +649,7 @@ describe('Roosevelt config Auditor Test', function () {
       }
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
       assert.equal(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
@@ -663,22 +685,22 @@ describe('Roosevelt config Auditor Test', function () {
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // Install an old version of express
-    spawn(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    spawnSync(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
 
-    // Rewrite the package.json file reflecting the newer version of express
+    // rewrite the package.json file reflecting the newer version of express
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // fork the auditor and run it as a child process
     let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], {'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
-    // on error logs, check if any display the missing or out of date warning log
+    // on the error stream, check for missing dependency output
     testApp.stderr.on('data', data => {
       if (data.includes('Missing Dependency')) {
         missingOrOODPackageBool = true
       }
     })
 
-    // when the app exit, check to see if the warning log was made
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
       done()

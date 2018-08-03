@@ -14,7 +14,7 @@ module.exports = (app) => {
 
     // copy the files to another location located inside the app itself
     // copy file 1
-    fse.copyFileSync(req.files[keys[0]].path, path.join(__dirname, '../', '../', 'test1.txt'))
+    fse.copyFileSync(req.files[keys[0]].path, path.join(__dirname, '../../test1.txt'))
 
     // send back the test Object
     res.send(test)
