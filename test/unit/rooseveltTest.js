@@ -10,6 +10,7 @@ const os = require('os')
 const path = require('path')
 const request = require('supertest')
 const { spawnSync } = require('child_process')
+const buildScanner = require('../../lib/tools/buildScanner')
 
 describe('Roosevelt.js Tests', function () {
   // directory for the test app
@@ -1189,5 +1190,18 @@ describe('Roosevelt.js Tests', function () {
       assert.equal(processRunningBool, true, 'The HTTPS server did not close and keep the process running')
       done()
     })
+  })
+
+  it('should report that buildScanner could not access directory', function (done) {
+    let dirAccessedBool = false
+    let dirAccessed
+    let pathToNoAccess = path.join(appDir, 'statics/.noExist/')
+    dirAccessed = buildScanner(pathToNoAccess)
+
+    if (dirAccessed !== undefined) {
+      dirAccessedBool = true
+    }
+    assert.equal(dirAccessedBool, false, 'Roosevelt found a nonexistant directory')
+    done()
   })
 })
