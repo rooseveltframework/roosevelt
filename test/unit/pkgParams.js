@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-const cleanupTestApp = require('../util/cleanupTestApp')
 
-describe('package.json params', function () {
+describe('package.json Parameter Tests', function () {
   const appDir = path.join(__dirname, '../app/pkgParams')
   const pkgConfig = require('../util/testPkgConfig.json')
   let params = Object.keys(pkgConfig)

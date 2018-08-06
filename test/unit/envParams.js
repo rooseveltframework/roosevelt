@@ -4,7 +4,7 @@ const assert = require('assert')
 const path = require('path')
 const roosevelt = require('../../roosevelt')
 
-describe('ENV Params Test', function () {
+describe('ENV Parameter Tests', function () {
   const appConfig = {
     appDir: path.join(__dirname, '../app/envParams'),
     ignoreCLIFlags: true,

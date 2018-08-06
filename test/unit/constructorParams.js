@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
+const cleanupTestApp = require('../util/cleanupTestApp')
 const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
-const cleanupTestApp = require('../util/cleanupTestApp')
 
-describe('Constructor params', function () {
+describe('Constructor Parameter Tests', function () {
   const appDir = path.join(__dirname, '../app/constructorParams')
   const config = require('../util/testConstructorConfig.json')
   const pkgConfig = require('../util/testPkgConfig.json')
