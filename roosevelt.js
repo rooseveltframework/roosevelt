@@ -37,7 +37,6 @@ module.exports = function (params) {
   let clusterKilled = 0
   let checkConnectionsTimeout
   let shutdownType
-  let haveStale
 
   // expose initial vars
   app.set('express', express)
@@ -64,11 +63,8 @@ module.exports = function (params) {
 
   logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
-  haveStale = staleCheck()
-  if (haveStale) {
-    logger.warn('You have stale file(s) in your .build. You may want to run npm run clean.')
-  }
-  // let's try setting up the servers with user-supplied params
+  buildScanner(app)
+
   if (!app.get('params').https.httpsOnly) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
@@ -362,16 +358,5 @@ module.exports = function (params) {
     initServer: initServer,
     startServer: startServer,
     stopServer: gracefulShutdown
-  }
-
-  function staleCheck () {
-    let anyStale
-    try {
-      fs.accessSync(path.join(path.join(params.appDir, app.get('params').staticsRoot), app.get('params').js.output.split('/')[0]))
-    } catch (e) {
-      return
-    }
-    anyStale = buildScanner(path.join(path.join(params.appDir, app.get('params').staticsRoot), app.get('params').js.output.split('/')[0]))
-    return anyStale
   }
 }
