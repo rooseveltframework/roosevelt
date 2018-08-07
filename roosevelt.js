@@ -43,7 +43,10 @@ module.exports = function (params) {
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
+
+  // get and expose logger
   logger = require('./lib/tools/logger')(app.get('params').logging)
+  app.set('logger', logger)
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
   if (app.get('params').checkDependencies) {
