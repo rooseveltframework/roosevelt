@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
+const winston = require('winston')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -40,6 +41,7 @@ module.exports = function (params) {
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
+  app.set('winston', winston)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
