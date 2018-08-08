@@ -222,7 +222,7 @@ describe('Folder Structure Tests', function () {
   it('should not generate extra directories or files into the appDir', function (done) {
     const dirs = []
     let item
-    klaw(appDir, { depthLimit: 1 })
+    klaw(appDir, { depthLimit: 1, preserveSymlinks: true })
       .on('readable', function () {
         while ((item = this.read())) {
           dirs.push(item)
