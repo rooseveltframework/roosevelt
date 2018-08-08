@@ -878,13 +878,13 @@ describe('JavaScript Tests', function () {
 
   it('should read files for compiler to ignore from .gitignore', function (done) {
     // sample gitignore pattern for test app to ignore
-    let gitignoreData = '*.dat'
+    let gitignoreData = 'Thumbs.db'
     let pathOfGitignore = path.join(appDir, '.gitignore')
     let test = false
 
     // generate .dat file to be ignored by compiler
     let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
-    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'gitignoreTest.dat')
+    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'Thumbs.db')
 
     // write data to .gitignore file created in test app directory
     fse.ensureDirSync(path.join(appDir))
