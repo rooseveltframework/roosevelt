@@ -202,7 +202,7 @@ describe('Public Folder Tests', function () {
       let publicNameChange = false
       // get the what is in the app folder
       const dirs = []
-      klaw(path.join(appDir, 'public'), { nofile: true })
+      klaw(path.join(appDir, 'public'), { nofile: true, preserveSymlinks: true })
         .on('readable', function () {
           let item
           while ((item = this.read())) {
