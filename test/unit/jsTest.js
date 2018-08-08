@@ -915,7 +915,7 @@ describe('JavaScript Tests', function () {
         test = true
       }
       assert.equal(test, false)
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // on the app's exit, check for bool value
