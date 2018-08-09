@@ -8,6 +8,7 @@ const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
 const path = require('path')
 const uglify = require('uglify-js')
+const gitignoreScanner = require('../../lib/tools/gitignoreScanner')
 
 describe('JavaScript Tests', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
@@ -873,6 +874,81 @@ describe('JavaScript Tests', function () {
       }
       done()
     })
+  })
+
+  it('should read files for compiler to ignore from .gitignore', function (done) {
+    // sample gitignore pattern for test app to ignore
+    let gitignoreData = 'Thumbs.db'
+    let pathOfGitignore = path.join(appDir, '.gitignore')
+    let test = false
+
+    // generate .dat file to be ignored by compiler
+    let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
+    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'Thumbs.db')
+
+    // write data to .gitignore file created in test app directory
+    fse.ensureDirSync(path.join(appDir))
+    fse.writeFileSync(pathOfGitignore, gitignoreData)
+    fse.writeFileSync(pathOfDataFile, randomData)
+
+    // generate a test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: true,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    testApp.on('message', () => {
+      // test to see if the folder exists and that the dat file is not in it
+      const compiledJS = path.join(path.join(appDir, 'statics', '.build', 'js'))
+      const compiledJSArray = klawSync(compiledJS)
+      if (compiledJSArray.includes(pathOfDataFile)) {
+        test = true
+      }
+      assert.equal(test, false)
+      testApp.send('stop')
+    })
+    // on the app's exit, check for bool value
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should read the correct files from the .gitignore and add to list', function (done) {
+    // generate a sample .gitignore
+    let addedCorrectBool = false
+    let ignoredCorrectBool = true
+    let gitignoreData = `# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass\ncoverage`
+    let pathOfGitignore = path.join(appDir, '.gitignore')
+    let gitignoreFiles = []
+
+    // write to gitignore
+    fse.ensureDirSync(path.join(appDir))
+    fse.writeFileSync(pathOfGitignore, gitignoreData)
+    gitignoreFiles = gitignoreScanner(pathOfGitignore)
+
+    gitignoreFiles.forEach((file) => {
+      if (file.endsWith('.js') || file.endsWith('.css') || file.endsWith('.less') || file.endsWith('.sass') || file === '') {
+        ignoredCorrectBool = false
+      }
+    })
+
+    if (gitignoreFiles.includes('coverage')) {
+      addedCorrectBool = true
+    }
+
+    assert.equal(ignoredCorrectBool, true, 'gitignoreScanner module did not ignore correct files')
+    assert.equal(addedCorrectBool, true, 'gitignoreScanner did not add correct files')
+    done()
   })
 
   it('should report to the user that there is a stale file in their .build directory', function (done) {
