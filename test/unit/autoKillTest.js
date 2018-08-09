@@ -9,7 +9,6 @@ const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const os = require('os')
 const path = require('path')
-const { spawn } = require('child_process')
 
 describe('Roosevelt Autokill Test', function () {
   // directory for the test app
@@ -156,8 +155,8 @@ describe('Roosevelt Autokill Test', function () {
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
-    // spawn an autoKiller instance
-    spawn('node', [`${path.join(__dirname, '../../lib/scripts/autoKillValidator.js')}`, 8888, 10000, true], { detached: true, stdio: 'inherit', shell: false, windowsHide: true })
+    // fork an autoKiller instance
+    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [8888, 10000, 'true'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
