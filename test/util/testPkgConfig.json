@@ -5,7 +5,19 @@
   "logging": {
     "http": false,
     "appStatus": false,
-    "warnings": false
+    "warnings": false,
+    "verbose": false,
+    "custom1": true,
+    "custom2": {
+      "type": "info"
+    },
+    "custom3": {
+      "enabled": true
+    },
+    "custom4": {
+      "enabled": true,
+      "type": "error"
+    }
   },
   "noMinify": "package",
   "htmlValidator": {
