@@ -3,7 +3,7 @@
 const assert = require('assert')
 const util = require('util')
 
-describe.only('Logger Tests', function () {
+describe('Logger Tests', function () {
   // test package.json file
   const pkgConfig = require('../util/testPkgConfig.json')
   pkgConfig.logging.appStatus = true
