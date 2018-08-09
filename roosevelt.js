@@ -225,7 +225,7 @@ module.exports = function (params) {
     }, app.get('params').shutdownTimeout)
 
     app.set('roosevelt:state', 'disconnecting')
-    logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
+    logger.log('💭', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
     if (cluster.isMaster) {
       keys = Object.keys(cluster.workers)
