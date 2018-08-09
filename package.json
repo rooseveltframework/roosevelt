@@ -50,7 +50,7 @@
     "proxyquire": "2.0.1",
     "roosevelt-less": "0.5.0",
     "roosevelt-uglify": "0.3.0",
-    "sinon": "6.1.4",
+    "sinon": "6.1.5",
     "standard": "11.0.1",
     "supertest": "3.1.0",
     "teddy": "0.4.25"
