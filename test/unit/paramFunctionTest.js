@@ -1,23 +1,23 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fork = require('child_process').fork
+const { fork } = require('child_process')
 const fse = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
+const path = require('path')
 const request = require('supertest')
 
-describe('parameter Function Test Section', function () {
+describe('Parameter Function Tests', function () {
   // path to the app Directory
-  const appDir = path.join(__dirname, '../', 'app', 'paramFunctionTest')
+  const appDir = path.join(__dirname, '../app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer'}
+  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -56,10 +56,11 @@ describe('parameter Function Test Section', function () {
         serverInitLogBool = true
       }
       if (messageCounter === 2) {
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       }
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(serverInitLogBool, true, 'Roosevelt did not execute what is in onServerInit')
       done()
@@ -101,9 +102,9 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
@@ -145,12 +146,13 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(bodyParserUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was not used before it was hit')
       done()
@@ -190,10 +192,10 @@ describe('parameter Function Test Section', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
           setTimeout(() => {
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }, 1000)
         })
     })
@@ -233,7 +235,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was outputted
@@ -266,7 +268,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was outputted
@@ -292,16 +294,17 @@ describe('parameter Function Test Section', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/simpleMultipart')
-        .attach('test1', path.join(appDir, '../', '../', 'util', 'text1.txt'))
+        .attach('test1', path.join(appDir, '../../util/text1.txt'))
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.kill('SIGINT')
+            testApp.send('stop')
           }
-          testApp.kill('SIGINT')
+          testApp.send('stop')
         })
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
@@ -340,7 +343,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the version public folder log was outputted
@@ -371,16 +374,16 @@ describe('parameter Function Test Section', function () {
 
     // when the app console logs, see if the specific creation log was made
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'public', '0.5.1')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'public/0.5.1')}`)) {
         versionPublicCreationLogBool = true
       }
     })
 
     // when the app finishes initialization, see if a folder like that exists
     testApp.on('message', () => {
-      let test = fse.existsSync(path.join(appDir, 'public', '0.5.1'))
+      let test = fse.existsSync(path.join(appDir, 'public/0.5.1'))
       assert.equal(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was made
@@ -405,16 +408,17 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc', 'models')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'mvc/models')}`)) {
         modelDirectoryCreationLogBool = true
       }
     })
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(modelDirectoryCreationLogBool, false, 'Roosevelt created a models folder even though generateFolderStrucutre is false')
       done()
@@ -436,14 +440,14 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc', 'views')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'mvc/views')}`)) {
         viewsDirectoryCreationLogBool = true
       }
     })
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -467,16 +471,17 @@ describe('parameter Function Test Section', function () {
     const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc', 'controllers')}`)) {
+      if (data.includes(`making new directory ${path.join(appDir, 'mvc/controllers')}`)) {
         controllersDirectoryCreationLogBool = true
       }
     })
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(controllersDirectoryCreationLogBool, false, 'Roosevelt created a controllers folder even though generateFolderStrucutre is false')
       done()
@@ -525,7 +530,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is exiting, see if the log was outputted
@@ -541,7 +546,7 @@ describe('parameter Function Test Section', function () {
     let controllerErrorLogBool2 = false
 
     // put the err Controller into the mvc
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController.js'), path.join(appDir, 'mvc', 'controllers', 'errController.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
 
     // create the app.js file
     generateTestApp({
@@ -565,7 +570,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the two error logs were outputted
@@ -581,7 +586,7 @@ describe('parameter Function Test Section', function () {
     let error404LoadLogBool = false
 
     // copy the 404 error page to the mvc
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', '404errController.js'), path.join(appDir, 'mvc', 'controllers', '404errController.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/404errController.js'), path.join(appDir, 'mvc/controllers/404errController.js'))
 
     // create the app.js file
     generateTestApp({
@@ -603,7 +608,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is about to exit, check to see if the 404 load errors were logged
@@ -618,10 +623,10 @@ describe('parameter Function Test Section', function () {
     let errorLoggedBool = false
 
     // copy the mvc over to the app
-    fse.copySync(path.join(appDir, '../', '../', 'util', 'mvc'), path.join(appDir, 'mvc'))
+    fse.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
 
     // make a directory in the mvc
-    fse.mkdirSync(path.join(appDir, 'mvc', 'controllers', 'test'))
+    fse.mkdirSync(path.join(appDir, 'mvc/controllers/test'))
 
     // create the app.js file
     generateTestApp({
@@ -640,7 +645,7 @@ describe('parameter Function Test Section', function () {
 
     // when the app is finished with its initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app is going to exit, check to see if an error was thrown thru the entire process
@@ -667,9 +672,10 @@ describe('parameter Function Test Section', function () {
       let firstElement = params.staticsSymlinksToPublic[0]
       let test = firstElement === 'css'
       assert.equal(test, false, 'Roosevelt made a css value in the symlink array even though it alreadly has ')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
       done()
     })
@@ -677,8 +683,8 @@ describe('parameter Function Test Section', function () {
 
   it('should only give the quirky error log back once if there are more then one broken controllers', function (done) {
     // put in the two syntax error controllers
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController.js'), path.join(appDir, 'mvc', 'controllers', 'errController.js'))
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'errController2.js'), path.join(appDir, 'mvc', 'controllers', 'errController2.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
+    fse.copyFileSync(path.join(appDir, '../../util/errController2.js'), path.join(appDir, 'mvc/controllers/errController2.js'))
 
     // num var to hold how many times the quirky error is outputted
     let gameOfThronesErrorNum = 0
@@ -702,7 +708,7 @@ describe('parameter Function Test Section', function () {
 
     // once the app finishes initialization, kill it
     testApp.on('message', () => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // once the app is about to finish, check the amount of times the quote has been used
@@ -718,7 +724,7 @@ describe('parameter Function Test Section', function () {
 
     // copy over an existing file over to the test app directory
     fse.ensureDirSync(appDir)
-    fse.copyFileSync(path.join(appDir, '../', '../', 'util', 'faviconTest.ico'), path.join(appDir, 'mvc', 'faviconTest.ico'))
+    fse.copyFileSync(path.join(appDir, '../../util/faviconTest.ico'), path.join(appDir, 'mvc/faviconTest.ico'))
 
     // create the app.js file
     generateTestApp({
@@ -738,9 +744,10 @@ describe('parameter Function Test Section', function () {
     })
 
     testApp.on('message', (params) => {
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
+    // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.equal(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
       done()
@@ -762,7 +769,7 @@ describe('parameter Function Test Section', function () {
     // when the app finishes initialization, check that the nodeEnv of the app stayed the same as the one passed in and that it is not prod or dev
     testApp.on('message', (params) => {
       assert.equal(params.nodeEnv, 'something', 'Roosevelt did not keep the node Env string that was passed in as a param')
-      testApp.kill('SIGINT')
+      testApp.send('stop')
     })
 
     // when the app exits, finish the test

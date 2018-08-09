@@ -12,13 +12,13 @@
     "httpsPort": 1234,
     "pfx": false,
     "keyPath": {
-      "pfx": "test/util/test.p12",
-      "key": "test/util/test.req.key",
-      "cert": "test/util/test.req.crt"
+      "pfx": "test/util/certs/test.p12",
+      "key": "test/util/certs/test.req.key",
+      "cert": "test/util/certs/test.req.crt"
     },
     "passphrase": "testpass",
     "cafile": true,
-    "ca": "test/util/ca.crt",
+    "ca": "test/util/certs/ca.crt",
     "requestCert": false,
     "rejectUnauthorized": false
   }

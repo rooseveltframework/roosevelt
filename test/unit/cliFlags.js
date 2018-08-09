@@ -1,15 +1,15 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
+const generateTestApp = require('../util/generateTestApp')
+const path = require('path')
 
 describe('Command Line Tests', function () {
   const appDir = path.join(__dirname, '../app/cliFlags')
 
-  let options = {rooseveltPath: '../../../roosevelt'}
+  let options = {rooseveltPath: '../../../roosevelt', stopServer: true}
 
   before(function (done) {
     generateTestApp({
@@ -34,7 +34,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -47,7 +47,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -60,7 +60,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -73,7 +73,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -86,7 +86,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -99,7 +99,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -112,7 +112,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -125,7 +125,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -138,7 +138,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -151,7 +151,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -164,7 +164,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -177,7 +177,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -190,7 +190,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -203,7 +203,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -216,7 +216,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -229,7 +229,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -246,7 +246,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -261,7 +261,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -276,7 +276,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -291,7 +291,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -306,7 +306,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -321,7 +321,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -336,7 +336,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -351,7 +351,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -365,7 +365,7 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -382,7 +382,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -397,7 +397,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -412,7 +412,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -427,7 +427,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -442,7 +442,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -457,7 +457,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -472,7 +472,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -487,7 +487,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -502,7 +502,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -517,7 +517,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'production')
         assert.equal(params.htmlValidator.enable, false)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -532,7 +532,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'development')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -545,7 +545,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -558,7 +558,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -571,7 +571,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -584,7 +584,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess.enable, true)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -597,7 +597,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -612,7 +612,7 @@ describe('Command Line Tests', function () {
         assert.equal(params.nodeEnv, 'development')
         assert.equal(params.htmlValidator.enable, true)
         assert.equal(params.htmlValidator.separateProcess.enable, false)
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -623,7 +623,7 @@ describe('Command Line Tests', function () {
 
   describe('CLI special cases', function () {
     const appDir = path.join(__dirname, '../app/cliSpecial')
-    let options = { rooseveltPath: '../../../roosevelt' }
+    let options = { rooseveltPath: '../../../roosevelt', stopServer: true }
 
     afterEach(function (done) {
       cleanupTestApp(appDir, (err) => {
@@ -645,7 +645,7 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.equal(params.nodeEnv, 'production')
-        testApp.kill('SIGINT')
+        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
