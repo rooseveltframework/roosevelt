@@ -2,10 +2,19 @@
 
 const assert = require('assert')
 const util = require('util')
+const generateTestApp = require('../util/generateTestApp')
+const cleanupTestApp = require('../util/cleanupTestApp')
+const { fork } = require('child_process')
+const fs = require('fs-extra')
+const path = require('path')
 
-describe('Logger Tests', function () {
+describe.only('Logger Tests', function () {
   // test package.json file
   const pkgConfig = require('../util/testPkgConfig.json')
+
+  // test app directory
+  const appDir = path.join(__dirname, '../app/loggerTest').replace('/\\/g', '/')
+
   pkgConfig.logging.appStatus = true
   pkgConfig.logging.warnings = true
   pkgConfig.logging.verbose = true
@@ -22,6 +31,17 @@ describe('Logger Tests', function () {
       _stream.write = oldWrite
     }
   }
+
+  // clean up the test app directory after all tests are finished
+  after(function (done) {
+    cleanupTestApp(appDir, (err) => {
+      if (err) {
+        throw err
+      } else {
+        done()
+      }
+    })
+  })
 
   it('should initialize a logger and test many different logs', function (done) {
     // require the logger for this test
@@ -115,5 +135,47 @@ describe('Logger Tests', function () {
 
     // exit test
     done()
+  })
+
+  it('should not log if an app is in production mode is disable has \'production\' as an item in the array', function (done) {
+    //
+    let logBool = false
+
+    // adding disable as a parameter to disable logs on the test production app
+    pkgConfig.logging.disable = ['production']
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      logging: { disable: ['production'] },
+      onServerStart: `(app) => {console.log("server started")}`
+    }, {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true})
+
+    // create package.json
+    fs.writeJsonSync(path.join(appDir, 'package.json'), pkgConfig)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+
+    // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting Roosevelt Express in production mode')) {
+        logBool = true
+      }
+      if (data.includes('server started')) {
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (err) => {
+      console.log(err.toString())
+    })
+
+    // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
+    testApp.on('exit', () => {
+      assert.equal(logBool, false, 'Logs were output when they should have been suppressed')
+      done()
+    })
   })
 })
