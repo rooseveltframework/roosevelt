@@ -32,7 +32,7 @@
         .markup {
           font-family: monospace;
           background-color: #fff;
-          /* margin: 4em auto; */
+          overflow: hidden;
           padding: 0.5em;
           border-radius: .25em;
           box-shadow: .1em .1em .5em rgba(0,0,0,.45);
@@ -42,7 +42,7 @@
 
         .markup .line-numbers {
           display: block;
-          line-height: 1.2rem;
+          line-height: 1.5rem;
         }
 
         .markup .line-numbers::before {
@@ -53,6 +53,10 @@
           padding: 0 .5em;
           margin-right: .5em;
           width: ${preWidth}px;
+        }
+
+        .markup .error::before {
+          background-color: #ffb2b2;
         }
       </style>
       <h1>${pageHeader}</h1>
