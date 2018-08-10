@@ -1,20 +1,21 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const util = require('util')
-const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
+const generateTestApp = require('../util/generateTestApp')
 const path = require('path')
+const util = require('util')
 
-describe.only('Logger Tests', function () {
+describe('Logger Tests', function () {
   // test package.json file
   const pkgConfig = require('../util/testPkgConfig.json')
 
   // test app directory
   const appDir = path.join(__dirname, '../app/loggerTest').replace('/\\/g', '/')
 
+  // set the correct values for the package.json file
   pkgConfig.logging.appStatus = true
   pkgConfig.logging.warnings = true
   pkgConfig.logging.verbose = true
@@ -137,7 +138,7 @@ describe.only('Logger Tests', function () {
     done()
   })
 
-  it('should not log if an app is in production mode is disable has \'production\' as an item in the array', function (done) {
+  it('should not have console output in production if disable has an array item \'production\' in the logging parameters', function (done) {
     //
     let logBool = false
 
@@ -166,10 +167,6 @@ describe.only('Logger Tests', function () {
       if (data.includes('server started')) {
         testApp.send('stop')
       }
-    })
-
-    testApp.stderr.on('data', (err) => {
-      console.log(err.toString())
     })
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
