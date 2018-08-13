@@ -63,8 +63,6 @@ module.exports = function (params) {
 
   logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
-  buildScanner(app)
-
   if (!app.get('params').https.httpsOnly) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
@@ -183,6 +181,8 @@ module.exports = function (params) {
     function validateHTML () {
       require('./lib/htmlValidator')(app, mapRoutes)
     }
+
+    buildScanner(app)
 
     function mapRoutes () {
       // map routes
