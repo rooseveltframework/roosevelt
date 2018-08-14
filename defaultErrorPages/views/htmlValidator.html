@@ -10,6 +10,7 @@
   <main>
     <article>
       <style>
+        ${prismStyle}
         h1 {
           color: #000;
         }
@@ -30,16 +31,21 @@
 
         .markup {
           font-family: monospace;
+          background-color: #fff;
+          overflow: hidden;
+          padding: 0.5em;
+          border-radius: .25em;
+          box-shadow: .1em .1em .5em rgba(0,0,0,.45);
+          line-height: 0;
           counter-reset: line;
-          white-space: pre-wrap;
         }
 
-        .markup span {
+        .markup .line-numbers {
           display: block;
-          line-height: 1.2rem;
+          line-height: 1.5rem;
         }
 
-        .markup span::before {
+        .markup .line-numbers::before {
           counter-increment: line;
           content: counter(line);
           display: inline-block;
@@ -49,6 +55,9 @@
           width: ${preWidth}px;
         }
 
+        .markup .error::before {
+          background-color: #ffb2b2;
+        }
       </style>
       <h1>${pageHeader}</h1>
       ${errors}
