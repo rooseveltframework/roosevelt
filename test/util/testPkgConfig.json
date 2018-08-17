@@ -12,10 +12,10 @@
       "type": "info"
     },
     "custom3": {
-      "enabled": true
+      "enable": true
     },
     "custom4": {
-      "enabled": true,
+      "enable": true,
       "type": "error"
     }
   },
