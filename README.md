@@ -304,8 +304,8 @@ App behavior parameters
       ```json
       {
         "debug": {
-          // enabled is optional (defaults to true if omitted)
-          "enabled": true,
+          // enable is optional (defaults to true if omitted)
+          "enable": true,
           // types can be set (ex: info, warn, error) but defaults to 'info' if omitted
           "type": "error"
         }
