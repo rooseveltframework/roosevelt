@@ -370,6 +370,13 @@ App behavior parameters
 - `cores`: Parameter to activate multi threading support on roosevelt. By default, roosevelt will run on 1 core, but you can change the number of cores that the app will run on with this param. To use all available cores, set this value to `max`.
   - Default: *[Number]* `1`
 
+- `staleTimer`: Parameter to set time (in `milliseconds`) a file must reside in the user's compiled JS directory before the `buildScanner` tool reports that it is stale.
+  - Default: *[Number]* `604800000` (1 week)
+  - Useful time conversions to `milliseconds` to configure this param with:
+    - `1 day`: `86400000`
+    - `1 week`: `604800000`
+    - `1 month`: `2419200000`
+
 HTTPS parameters
 ---
 
