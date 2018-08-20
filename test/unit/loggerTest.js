@@ -75,6 +75,10 @@ describe('Logger Tests', function () {
     logger.error('❤️', 'This should not add a prefix because one is already there')
     logger.custom4('This log is custom', '⚠️', 'with an emoji in the middle')
 
+    // disabled logs
+    logger.custom5('Should not have an output 1')
+    logger.custom6('Should not have an output 2')
+
     // unhook stdout
     unhookStdout()
     unhookStderr()
@@ -93,6 +97,14 @@ describe('Logger Tests', function () {
     assert.equal(errors[1].includes('⚠️  This should also have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
     assert.equal(errors[2].includes('❤️  This should not add a prefix because one is already there'), true, 'The logger added an emoji prefix')
     assert.equal(errors[3].includes('This log is custom ⚠️  with an emoji in the middle'), true, 'The logger did not output a custom log')
+
+    // disabled log assertions
+    if (typeof logs[7] !== 'undefined') {
+      assert.fail('logger.custom5 output a log even though the log type is disabled')
+    }
+    if (typeof logs[8] !== 'undefined') {
+      assert.fail('logger.custom6 output a log even though the log type is disabled')
+    }
 
     // exit test
     done()

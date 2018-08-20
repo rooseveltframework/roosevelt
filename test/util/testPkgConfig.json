@@ -17,7 +17,11 @@
     "custom4": {
       "enable": true,
       "type": "error"
-    }
+    },
+    "custom5": {
+      "enable": false
+    },
+    "custom6": false
   },
   "noMinify": "package",
   "htmlValidator": {
