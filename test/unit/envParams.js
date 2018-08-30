@@ -22,7 +22,7 @@ describe('ENV Parameter Tests', function () {
     app = roosevelt({
       ...appConfig
     })
-    assert.equal(app.expressApp.get('params').htmlValidator.separateProcess.enable, true)
+    assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.enable, true)
     process.env.ROOSEVELT_VALIDATOR = temp
     done()
   })
@@ -33,7 +33,7 @@ describe('ENV Parameter Tests', function () {
     app = roosevelt({
       ...appConfig
     })
-    assert.equal(app.expressApp.get('params').htmlValidator.separateProcess.enable, false)
+    assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.enable, false)
     process.env.ROOSEVELT_VALIDATOR = temp
     done()
   })

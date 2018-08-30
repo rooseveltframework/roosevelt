@@ -73,7 +73,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, appConfig.htmlMinify.options)
-            assert.equal(testMinify, res.text)
+            assert.strictEqual(testMinify, res.text)
           }
           done()
         })
@@ -98,7 +98,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, appConfig.htmlMinify.options)
-            assert.equal(testMinify, res.text)
+            assert.strictEqual(testMinify, res.text)
           }
           done()
         })
@@ -127,7 +127,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, config.htmlMinify.options)
-            assert.notEqual(testMinify, res.text)
+            assert.notStrictEqual(testMinify, res.text)
           }
           done()
         })
@@ -156,7 +156,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, config.htmlMinify.options)
-            assert.notEqual(testMinify, res.text)
+            assert.notStrictEqual(testMinify, res.text)
           }
           done()
         })
@@ -185,7 +185,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, config.htmlMinify.options)
-            assert.notEqual(testMinify, res.text)
+            assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionURL by testing another URL
             checkSecondURL(app)
@@ -201,7 +201,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, config.htmlMinify.options)
-            assert.equal(testMinify, res.text)
+            assert.strictEqual(testMinify, res.text)
           }
           done()
         })
@@ -230,7 +230,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, config.htmlMinify.options)
-            assert.notEqual(testMinify, res.text)
+            assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionURL by testing another URL
             checkSecondURL(app)
@@ -246,7 +246,7 @@ describe('HTML Minification Tests', function () {
             assert.fail(err.message)
           } else {
             const testMinify = minify(res.text, config.htmlMinify.options)
-            assert.equal(testMinify, res.text)
+            assert.strictEqual(testMinify, res.text)
           }
           done()
         })

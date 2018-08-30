@@ -139,7 +139,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     let params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
-    assert.deepEqual(params.staticsSymlinksToPublic, [])
+    assert.deepStrictEqual(params.staticsSymlinksToPublic, [])
   })
 
   it('should not populate staticsSymlinksToPublic with js/css output dir when symlinkToPublic is disabled', function () {
@@ -168,7 +168,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     let params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
-    assert.deepEqual(params.staticsSymlinksToPublic, [])
+    assert.deepStrictEqual(params.staticsSymlinksToPublic, [])
   })
 
   it('should not populate staticsSymlinksToPublic with js/css sourceDir when it already contains a js/css directory ', function () {
@@ -191,7 +191,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     let params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
-    assert.deepEqual(params.staticsSymlinksToPublic, ['js: .build/js', 'css: .build/css'])
+    assert.deepStrictEqual(params.staticsSymlinksToPublic, ['js: .build/js', 'css: .build/css'])
   })
 
   it('should not populate staticsSymlinksToPublic with js/css output dir when it already contains a js/css directory', function () {
@@ -220,6 +220,6 @@ describe('symlinkToPublic Parameter Tests', function () {
     let params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
-    assert.deepEqual(params.staticsSymlinksToPublic, ['js', 'css'])
+    assert.deepStrictEqual(params.staticsSymlinksToPublic, ['js', 'css'])
   })
 })

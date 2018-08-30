@@ -17,7 +17,7 @@ module.exports = function (params, options) {
   }
 
   // require roosevelt at the top of every test app
-  contents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, {depth: null})})\n\n`
+  contents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, { depth: null })})\n\n`
   let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
   contents = contents.replace(/('\()/g, '(')
   contents = contents.replace(/(\}')/g, '}')
