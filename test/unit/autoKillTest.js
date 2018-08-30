@@ -16,7 +16,7 @@ describe('Roosevelt Autokill Test', function () {
   const appDir = path.join(__dirname, '../app/htmlValidatorTest')
 
   // options to pass into test app generator
-  const options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // clean up the test app directory after each test
   afterEach(function (done) {
@@ -53,7 +53,7 @@ describe('Roosevelt Autokill Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -74,9 +74,9 @@ describe('Roosevelt Autokill Test', function () {
 
     // when the autokiller has confirmed it has killed the process, check assertions and finish this test
     function exit () {
-      assert.equal(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
-      assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-      assert.equal(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+      assert.strictEqual(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
+      assert.strictEqual(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
+      assert.strictEqual(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
       done()
     }
   })
@@ -106,7 +106,7 @@ describe('Roosevelt Autokill Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -127,10 +127,10 @@ describe('Roosevelt Autokill Test', function () {
 
     // when the autokiller has confirmed it has killed the process, check assertions and finish this test
     function exit () {
-      assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-      assert.equal(timerResetBool, true, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
-      assert.equal(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
-      assert.equal(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
+      assert.strictEqual(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
+      assert.strictEqual(timerResetBool, true, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
+      assert.strictEqual(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+      assert.strictEqual(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
       done()
     }
   })
@@ -160,7 +160,7 @@ describe('Roosevelt Autokill Test', function () {
     spawn('node', [`${path.join(__dirname, '../../lib/scripts/autoKillValidator.js')}`, 8888, 10000, true], { detached: true, stdio: 'inherit', shell: false, windowsHide: true })
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -178,7 +178,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // when the autokiller has confirmed it has killed the process, check assertions and finish this test
     function exit () {
-      assert.equal(restartAutoKillerLogBool, true, 'Roosevelt did not restart the autoKiller')
+      assert.strictEqual(restartAutoKillerLogBool, true, 'Roosevelt did not restart the autoKiller')
       done()
     }
   })
@@ -204,7 +204,7 @@ describe('Roosevelt Autokill Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', data => {
@@ -241,7 +241,7 @@ describe('Roosevelt Autokill Test', function () {
         })
 
         function exit () {
-          assert.equal(noAutoKillerFromPIDBool, true, 'The auto Killer was not started after there was no process found with the given PID')
+          assert.strictEqual(noAutoKillerFromPIDBool, true, 'The auto Killer was not started after there was no process found with the given PID')
           done()
         }
       })
@@ -270,7 +270,7 @@ describe('Roosevelt Autokill Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -295,10 +295,10 @@ describe('Roosevelt Autokill Test', function () {
     // on exit, check if the specific logs were outputted and that the validator was closed
     testApp.on('exit', () => {
       setTimeout(() => {
-        assert.equal(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-        assert.equal(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
-        assert.equal(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
-        assert.equal(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
+        assert.strictEqual(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
+        assert.strictEqual(timerResetBool, false, 'auto Killer did not reset its timer when it checked if the app was closed while it was still opened')
+        assert.strictEqual(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+        assert.strictEqual(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
         // options to pass into the http GET request
         let options = {
           url: 'http://localhost',

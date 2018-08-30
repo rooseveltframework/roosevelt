@@ -14,7 +14,7 @@ describe('Public Folder Tests', function () {
   const appDir = path.join(__dirname, '../app/publicFolderTest')
 
   // options to pass into generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // package.json source code
   let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
@@ -49,7 +49,7 @@ describe('Public Folder Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts,
     testApp.on('message', () => {
@@ -77,7 +77,7 @@ describe('Public Folder Tests', function () {
               let encodedImageData = Buffer.from(data, 'binary').toString('base64')
               // check if both buffers are the same (they should be)
               let test = faviconData === encodedImageData
-              assert.equal(test, true)
+              assert.strictEqual(test, true)
               testApp.send('stop')
             })
         })
@@ -99,7 +99,7 @@ describe('Public Folder Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts, send a request to the server
     testApp.on('message', () => {
@@ -142,7 +142,7 @@ describe('Public Folder Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error stream, check for an incorrect favicon log
     testApp.stderr.on('data', (data) => {
@@ -176,7 +176,7 @@ describe('Public Folder Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(nonExistentWarningBool, true, 'There was no warning saying that the favicon warning was set improperly')
+      assert.strictEqual(nonExistentWarningBool, true, 'There was no warning saying that the favicon warning was set improperly')
       done()
     })
   })
@@ -194,7 +194,7 @@ describe('Public Folder Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the server message back on start up, look for if the public file was changed to the version number
     testApp.on('message', () => {

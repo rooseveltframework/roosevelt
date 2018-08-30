@@ -43,7 +43,7 @@ describe('JS Bundler Tests', function () {
   let pathOfBundleJSFolder = path.join(appDir, 'statics/js/.bundled')
 
   // options to pass into generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true}
+  let options = { rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true }
 
   beforeEach(function () {
     // start by generating the directory to hold the static js files
@@ -87,7 +87,7 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // create a fork of the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test that the folder for bundled js exist, is in the right place, and has a outputfile of bundle.js
     testApp.on('message', () => {
@@ -95,7 +95,7 @@ describe('JS Bundler Tests', function () {
       let arrayOfFiles = klawsync(pathOfBundleJSFolder)
       arrayOfFiles.forEach((file) => {
         let test = arrayOfBundleJSFilesPaths.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       testApp.kill('SIGINT')
     })
@@ -129,14 +129,14 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // create a fork of the app.js file and run it as a child process in development mode
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test that the folder for bundled js exist, is in the right place, and has a outputfile of bundle.js
     testApp.on('message', () => {
       let arrayOfFiles = klawsync(pathOfBundleJSFolder)
       arrayOfFiles.forEach((file) => {
         let test = arrayOfBundleJSFilesPaths.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       testApp.kill('SIGINT')
     })
@@ -170,13 +170,13 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // create a fork of the app.js file and run it as a child process in production
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test the path of the bundle JS folder and check if there are any files there. (should be zero)
     testApp.on('message', () => {
       let arrayOfFiles = klawsync(pathOfBundleJSFolder)
       let test = arrayOfFiles.length
-      assert.equal(test, 0)
+      assert.strictEqual(test, 0)
       testApp.kill('SIGINT')
     })
 
@@ -225,21 +225,21 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (params) => {
       // check to see that the output directory was changed to what was put into the directory and that the bundle file is there
       let arrayOfFiles = klawsync(arrayOfalteredBundleJSFolder[0])
       arrayOfFiles.forEach((file) => {
         let test = arrayOfAlteredSDBundleJSFilesPaths.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
 
       // check to see that the output directory was also made in the build folder and also has the bundle file there as well
       let arrayOfFiles2 = klawsync(arrayOfalteredBundleJSFolder[1])
       arrayOfFiles2.forEach((file) => {
         let test = arrayOfAlteredBuildBundleJSFilesPaths.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       testApp.kill('SIGINT')
     })
@@ -277,13 +277,13 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is done with its initialization, test to see if the js bundle output directory is there or not
     testApp.on('message', (params) => {
       // check to see that the js bundle output is in the build directory or not
       let test = fse.existsSync(pathToBuildBundleDir)
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
 
@@ -327,7 +327,7 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app logs output, see if it makes the js bundle output directory in the builds folder
     testApp.stdout.on('data', (data) => {
@@ -343,7 +343,7 @@ describe('JS Bundler Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(jsbundleBuildDirCreatedBool, false, 'Roosevelt made a js bundle output directory in the build folder even though one exists there alreadly')
+      assert.strictEqual(jsbundleBuildDirCreatedBool, false, 'Roosevelt made a js bundle output directory in the build folder even though one exists there alreadly')
       done()
     })
   })
@@ -371,12 +371,12 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is done its initialization, see if the folder was made
     testApp.on('message', () => {
       let test = fse.existsSync(pathOfBundleJSFolder)
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
 
@@ -417,7 +417,7 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the log output, check to see if the directory was made
     testApp.stdout.on('data', (data) => {
@@ -433,7 +433,7 @@ describe('JS Bundler Tests', function () {
 
     // when the app is finished, check to see if the js bundle was made or not
     testApp.on('exit', () => {
-      assert.equal(jsbundleDirCreatedBool, false, `Roosevelt made a js bundle output directory when it shouldn't as generateFolderStructure is false`)
+      assert.strictEqual(jsbundleDirCreatedBool, false, `Roosevelt made a js bundle output directory when it shouldn't as generateFolderStructure is false`)
       done()
     })
   })
@@ -468,7 +468,7 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error logs, see if the app logs the syntax error
     testApp.stderr.on('data', (data) => {
@@ -485,14 +485,14 @@ describe('JS Bundler Tests', function () {
 
     // test that the file was not generated by Roosevelt
     testApp.on('exit', () => {
-      assert.equal(incorrectSyntaxErrorBool, true, 'Roosevelt did not catch that the js source file has a syntax error with it')
+      assert.strictEqual(incorrectSyntaxErrorBool, true, 'Roosevelt did not catch that the js source file has a syntax error with it')
       done()
     })
   })
 
   it('should be able to pass an array of paths that will help broswerify with linking required modules to where they are', function (done) {
     // Seperate test app options for this test
-    let options2 = {rooseveltPath: '../../../roosevelt', method: 'initServer'}
+    let options2 = { rooseveltPath: '../../../roosevelt', method: 'initServer' }
     // bool var to hold whether a Hello was given from one of the scripts
     let consolLogHelloBool = false
     // create 2 more files, one that is a module, and one that uses the module
@@ -532,11 +532,11 @@ describe('JS Bundler Tests', function () {
     }, options2)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts, run the bundle script which should say hello based on its module requirements and how it uses it
     testApp.on('message', () => {
-      const testApp2 = fork(path.join(appDir, 'statics/js/.bundled/bundle.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+      const testApp2 = fork(path.join(appDir, 'statics/js/.bundled/bundle.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // check console logs for the 'Hello'
       testApp2.stdout.on('data', (data) => {
@@ -547,7 +547,7 @@ describe('JS Bundler Tests', function () {
 
       // on exit of the 2nd app, see if the hello was given
       testApp2.on('exit', () => {
-        assert.equal(consolLogHelloBool, true, 'the paths param could not find the module script')
+        assert.strictEqual(consolLogHelloBool, true, 'the paths param could not find the module script')
         done()
       })
     })
@@ -578,7 +578,7 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console log, check to see if the outputfile was written
     testApp.stdout.on('data', (data) => {
@@ -590,13 +590,13 @@ describe('JS Bundler Tests', function () {
     // when the app finishes initailization, make sure that the file is not made
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/js/.bundled/bundle.js'))
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
 
     // when the app is about to end, check whether or not the file was made by roosevelt
     testApp.on('exit', () => {
-      assert.equal(jsBundledOutputFileBool, false, 'Roosevelt made the js output bundled file even though generateFolderStructure is false')
+      assert.strictEqual(jsBundledOutputFileBool, false, 'Roosevelt made the js output bundled file even though generateFolderStructure is false')
       done()
     })
   })
@@ -627,7 +627,7 @@ describe('JS Bundler Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console log, check to see if the outputfile was written
     testApp.stdout.on('data', (data) => {
@@ -639,13 +639,13 @@ describe('JS Bundler Tests', function () {
     // when the app finishes initailization, check to make sure that the file was not made
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/.build/js/.bundled/bundle.js'))
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
 
     // when the app is about to end, check whether or not the file was made by roosevelt
     testApp.on('exit', () => {
-      assert.equal(jsBundledOutputFileBool, false, 'Roosevelt made the js output bundled file even though generateFolderStructure is false')
+      assert.strictEqual(jsBundledOutputFileBool, false, 'Roosevelt made the js output bundled file even though generateFolderStructure is false')
       done()
     })
   })

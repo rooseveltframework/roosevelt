@@ -38,7 +38,7 @@ describe('package.json Parameter Tests', function () {
   params.forEach((param) => {
     if (param !== 'logging' && param !== 'generateFolderStructure' && param !== 'staticsSymlinksToPublic') {
       it(`should set param "${param}" from package.json`, function () {
-        assert.deepEqual(app.expressApp.get('params')[param], pkgConfig[param])
+        assert.deepStrictEqual(app.expressApp.get('params')[param], pkgConfig[param])
       })
     }
   })
