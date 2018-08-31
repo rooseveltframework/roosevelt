@@ -74,5 +74,5 @@
   "versionedPublic": "package",
   "alwaysHostPublic": "package",
   "cores": "package",
-  "staleTimer": "package"
+  "cleanTimer": "package"
 }

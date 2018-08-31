@@ -70,5 +70,5 @@
   "versionedPublic": "constructor",
   "alwaysHostPublic": "constructor",
   "cores": "constructor",
-  "staleTimer": "constructor"
+  "cleanTimer": "constructor"
 }
