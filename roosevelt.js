@@ -8,7 +8,6 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
-const buildScanner = require('./lib/tools/buildScanner')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -179,10 +178,12 @@ module.exports = function (params) {
     }
 
     function validateHTML () {
-      require('./lib/htmlValidator')(app, mapRoutes)
+      require('./lib/htmlValidator')(app, scanBuiltFiles)
     }
 
-    buildScanner(app)
+    function scanBuiltFiles () {
+      require('./lib/tools/buildScanner')(app, mapRoutes)
+    }
 
     function mapRoutes () {
       // map routes
