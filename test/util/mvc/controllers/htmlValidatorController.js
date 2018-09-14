@@ -21,7 +21,7 @@ module.exports = (app) => {
     // Path to broken html
     const badPath = path.join(__dirname, '../views/brokenHTMLTest.html')
     // create the object that has a value that will stop validation
-    const model = {_disableValidatorTest: 4342}
+    const model = { _disableValidatorTest: 4342 }
     // render broken html to user
     res.render(badPath, model)
   })
@@ -30,7 +30,7 @@ module.exports = (app) => {
     // Path to broken html
     const badPath = path.join(__dirname, '../views/brokenHTMLTest.html')
     // create the object that has a value that will stop validation
-    const model = {somethingElse: 2313}
+    const model = { somethingElse: 2313 }
     // render broken html to user
     res.render(badPath, model)
   })

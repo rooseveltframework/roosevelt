@@ -13,7 +13,7 @@ describe('Parameter Function Tests', function () {
   const appDir = path.join(__dirname, '../app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
@@ -47,7 +47,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server has finished initialization, try to access the server or see if the message is the word that is suppose to be given back
     testApp.on('message', (message) => {
@@ -62,7 +62,7 @@ describe('Parameter Function Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(serverInitLogBool, true, 'Roosevelt did not execute what is in onServerInit')
+      assert.strictEqual(serverInitLogBool, true, 'Roosevelt did not execute what is in onServerInit')
       done()
     })
   })
@@ -83,7 +83,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the console logs to see if the req body that will be logged out has a value or if its undefined
     testApp.stdout.on('data', (data) => {
@@ -97,8 +97,8 @@ describe('Parameter Function Tests', function () {
       // send a http request
       request(`http://localhost:${params.port}`)
         .post('/paramPost')
-        .send({name: 'Bob'})
-        .send({age: '3'})
+        .send({ name: 'Bob' })
+        .send({ age: '3' })
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
@@ -110,7 +110,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check if the bool is true
     testApp.on('exit', () => {
-      assert.equal(bodyParserNotUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was used before it was hit')
+      assert.strictEqual(bodyParserNotUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was used before it was hit')
       done()
     })
   })
@@ -128,7 +128,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the console logs to see if the req body that will be logged out has a value or if its undefined
     testApp.stdout.on('data', (data) => {
@@ -141,8 +141,8 @@ describe('Parameter Function Tests', function () {
       // send a http request
       request(`http://localhost:${params.port}`)
         .post('/paramPost')
-        .send({name: 'Bob'})
-        .send({age: '3'})
+        .send({ name: 'Bob' })
+        .send({ age: '3' })
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
@@ -154,7 +154,7 @@ describe('Parameter Function Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(bodyParserUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was not used before it was hit')
+      assert.strictEqual(bodyParserUsedBool, true, 'The Response that we got back from onReqStart shows that middleware was not used before it was hit')
       done()
     })
   })
@@ -173,7 +173,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Testing before: undefined')) {
@@ -202,8 +202,8 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check if both bool values are true
     testApp.on('exit', () => {
-      assert.equal(resHeaderUndefinedBool, true, 'response header should have no value as it was not assigned yet')
-      assert.equal(resHeaderValueBool, true, 'response heade should have a value since it was assigned in route')
+      assert.strictEqual(resHeaderUndefinedBool, true, 'response header should have no value as it was not assigned yet')
+      assert.strictEqual(resHeaderValueBool, true, 'response heade should have a value since it was assigned in route')
       done()
     })
   })
@@ -224,7 +224,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app logs, see if the specific log is outputted
     testApp.stdout.on('data', (data) => {
@@ -240,7 +240,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check if the specific log was outputted
     testApp.on('exit', () => {
-      assert.equal(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
+      assert.strictEqual(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
       done()
     })
   })
@@ -257,7 +257,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app logs, see if the specific log is outputted
     testApp.stdout.on('data', (data) => {
@@ -273,7 +273,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check if the specific log was outputted
     testApp.on('exit', () => {
-      assert.equal(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
+      assert.strictEqual(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
       done()
     })
   })
@@ -288,7 +288,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is finished initialization, post a request with some files, should get back a 500
     testApp.on('message', (params) => {
@@ -332,7 +332,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app console logs, see if the specific creation log was made
     testApp.stdout.on('data', (data) => {
@@ -348,7 +348,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check to see if the version public folder log was outputted
     testApp.on('exit', () => {
-      assert.equal(versionPublicCreationLogBool, false, 'Roosevelt create a new version public folder even thought one existed')
+      assert.strictEqual(versionPublicCreationLogBool, false, 'Roosevelt create a new version public folder even thought one existed')
       done()
     })
   })
@@ -370,7 +370,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app console logs, see if the specific creation log was made
     testApp.stdout.on('data', (data) => {
@@ -382,13 +382,13 @@ describe('Parameter Function Tests', function () {
     // when the app finishes initialization, see if a folder like that exists
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'public/0.5.1'))
-      assert.equal(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
+      assert.strictEqual(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
       testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was made
     testApp.on('exit', () => {
-      assert.equal(versionPublicCreationLogBool, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
+      assert.strictEqual(versionPublicCreationLogBool, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
       done()
     })
   })
@@ -405,7 +405,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/models')}`)) {
@@ -420,7 +420,7 @@ describe('Parameter Function Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(modelDirectoryCreationLogBool, false, 'Roosevelt created a models folder even though generateFolderStrucutre is false')
+      assert.strictEqual(modelDirectoryCreationLogBool, false, 'Roosevelt created a models folder even though generateFolderStrucutre is false')
       done()
     })
   })
@@ -437,7 +437,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/views')}`)) {
@@ -451,7 +451,7 @@ describe('Parameter Function Tests', function () {
     })
 
     testApp.on('exit', () => {
-      assert.equal(viewsDirectoryCreationLogBool, false, 'Roosevelt created a views folder even though generateFolderStrucutre is false')
+      assert.strictEqual(viewsDirectoryCreationLogBool, false, 'Roosevelt created a views folder even though generateFolderStrucutre is false')
       done()
     })
   })
@@ -468,7 +468,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/controllers')}`)) {
@@ -483,7 +483,7 @@ describe('Parameter Function Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(controllersDirectoryCreationLogBool, false, 'Roosevelt created a controllers folder even though generateFolderStrucutre is false')
+      assert.strictEqual(controllersDirectoryCreationLogBool, false, 'Roosevelt created a controllers folder even though generateFolderStrucutre is false')
       done()
     })
   })
@@ -519,7 +519,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen to the logs and see if any of the symlinks creations were logged
     testApp.stdout.on('data', (data) => {
@@ -535,7 +535,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is exiting, see if the log was outputted
     testApp.on('exit', () => {
-      assert.equal(symlinkCreationLogBool, false, 'Roosevelt made symlinks even though they already exists in the app Directory')
+      assert.strictEqual(symlinkCreationLogBool, false, 'Roosevelt made symlinks even though they already exists in the app Directory')
       done()
     })
   })
@@ -556,7 +556,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen to the error logs and see if one about the night being dark and full of error pops up
     testApp.stderr.on('data', (data) => {
@@ -575,8 +575,8 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check to see if the two error logs were outputted
     testApp.on('exit', () => {
-      assert.equal(controllerErrorLogBool1, true, 'Roosevelt did not toss custom Error to mark that a controller has syntax errors with it')
-      assert.equal(controllerErrorLogBool2, true, 'Roosevelt did not toss a comment to show which controller is wrong')
+      assert.strictEqual(controllerErrorLogBool1, true, 'Roosevelt did not toss custom Error to mark that a controller has syntax errors with it')
+      assert.strictEqual(controllerErrorLogBool2, true, 'Roosevelt did not toss a comment to show which controller is wrong')
       done()
     })
   })
@@ -597,7 +597,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the 404 load error was outputted
     testApp.stderr.on('data', (data) => {
@@ -613,7 +613,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check to see if the 404 load errors were logged
     testApp.on('exit', () => {
-      assert.equal(error404LoadLogBool, true, 'Roosevelt did not toss an error when there is a syntax error with the custom 404 controller file')
+      assert.strictEqual(error404LoadLogBool, true, 'Roosevelt did not toss an error when there is a syntax error with the custom 404 controller file')
       done()
     })
   })
@@ -637,7 +637,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', (data) => {
       errorLoggedBool = true
@@ -650,7 +650,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is going to exit, check to see if an error was thrown thru the entire process
     testApp.on('exit', () => {
-      assert.equal(errorLoggedBool, false, 'An error has occur with the feature of skipping over files in the controllers directory that are not files')
+      assert.strictEqual(errorLoggedBool, false, 'An error has occur with the feature of skipping over files in the controllers directory that are not files')
       done()
     })
   })
@@ -665,13 +665,13 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app finishes initialization, test that there isn't a value of css as the first element in the symlink array
     testApp.on('message', (params) => {
       let firstElement = params.staticsSymlinksToPublic[0]
       let test = firstElement === 'css'
-      assert.equal(test, false, 'Roosevelt made a css value in the symlink array even though it alreadly has ')
+      assert.strictEqual(test, false, 'Roosevelt made a css value in the symlink array even though it alreadly has ')
       testApp.send('stop')
     })
 
@@ -697,7 +697,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app logs, see if the quirky error is given and keep count
     testApp.stderr.on('data', (data) => {
@@ -713,7 +713,7 @@ describe('Parameter Function Tests', function () {
 
     // once the app is about to finish, check the amount of times the quote has been used
     testApp.on('exit', () => {
-      assert.equal(gameOfThronesErrorNum, 1, 'Roosevelt had thrown the Game of Thrones error more than once')
+      assert.strictEqual(gameOfThronesErrorNum, 1, 'Roosevelt had thrown the Game of Thrones error more than once')
       done()
     })
   })
@@ -735,7 +735,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', (data) => {
       if (data.includes('Roosevelt Express fatal error: could not load controller files from')) {
@@ -749,7 +749,7 @@ describe('Parameter Function Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
+      assert.strictEqual(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
       done()
     })
   })
@@ -764,11 +764,11 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app finishes initialization, check that the nodeEnv of the app stayed the same as the one passed in and that it is not prod or dev
     testApp.on('message', (params) => {
-      assert.equal(params.nodeEnv, 'something', 'Roosevelt did not keep the node Env string that was passed in as a param')
+      assert.strictEqual(params.nodeEnv, 'something', 'Roosevelt did not keep the node Env string that was passed in as a param')
       testApp.send('stop')
     })
 

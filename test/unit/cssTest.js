@@ -38,7 +38,7 @@ h1 {
 ]
 
 // options to pass into test app generator
-let options = {rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true}
+let options = { rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true }
 
 // array of paths for generated static less test files
 let pathOfCSSStaticFilesArray = [
@@ -95,7 +95,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the message being sent back from the initialized app, test to see that they are there
     testApp.on('message', () => {
@@ -105,7 +105,7 @@ describe('CSS Section Tests', function () {
       // look at each file and see that it checks out with the test array
       cssCompiledArray.forEach((file) => {
         let test = pathOfCSSCompiledfilesArray.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       // kill the app
       testApp.send('stop')
@@ -144,7 +144,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the message being sent back from the initialized app, test to see that the whitelist files were compiled
     testApp.on('message', () => {
@@ -154,7 +154,7 @@ describe('CSS Section Tests', function () {
       // look at each file and see that it checks out with the test array
       cssCompiledArray.forEach((file) => {
         let test = pathOfWhiteListedArray.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       // kill the app
       testApp.send('stop')
@@ -194,7 +194,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server is initialized, look to see if the folder exist and if the files are there
     testApp.on('message', () => {
@@ -203,7 +203,7 @@ describe('CSS Section Tests', function () {
       // go through each file to see if their pathname matches with the changed array above and that there are no extras
       cssCompiledArray.forEach((file) => {
         let test = pathOfCSSCustomDirCompiledfilesArray.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       // kill the app
       testApp.send('stop')
@@ -249,19 +249,19 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // wait for the app to be finished initialized
     testApp.on('message', () => {
       // see if the file exist inside the css folder
       let versionFilePath = path.join(appDir, 'statics/css/_version.less')
       let test1 = fs.existsSync(versionFilePath)
-      assert.equal(test1, true)
+      assert.strictEqual(test1, true)
       // see that the value in the css version file is correct
       let versionFileString = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
       let versionFileNum = versionFileString.split(`'`)
       let test2 = packageJSON.version === versionFileNum[1]
-      assert.equal(test2, true)
+      assert.strictEqual(test2, true)
       testApp.send('stop')
     })
 
@@ -297,7 +297,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // wait for a message to test if the file is in the right position
     testApp.on('message', () => {
@@ -305,7 +305,7 @@ describe('CSS Section Tests', function () {
       let CompiledDLCSSArray = klawsync(pathOfCompiledDLCSS)
       CompiledDLCSSArray.forEach((file) => {
         let test = pathOfCustomDirCompiledCSSArray.includes(file.path)
-        assert.equal(test, true)
+        assert.strictEqual(test, true)
       })
       testApp.send('stop')
     })
@@ -342,7 +342,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen to the message and check that the build files are the same as there static counterpart
     testApp.on('message', () => {
@@ -355,9 +355,9 @@ describe('CSS Section Tests', function () {
       let test2 = bufferOfStaticFileB === bufferOfCompiledFileB
       let test3 = bufferOfStaticFileC === bufferOfCompiledFileC
       // test these compairsion
-      assert.equal(test1, true)
-      assert.equal(test2, true)
-      assert.equal(test3, true)
+      assert.strictEqual(test1, true)
+      assert.strictEqual(test2, true)
+      assert.strictEqual(test3, true)
       // kill the app and finish test
       testApp.send('stop')
     })
@@ -390,7 +390,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error logs, see if the specific error is given
     testApp.stderr.on('data', (data) => {
@@ -406,7 +406,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is about to exit, check to see if the specific error was given
     testApp.on('exit', () => {
-      assert.equal(missingCSSPreprocessorBool, true, 'Roosevelt did not throw an error on the fact that there is no css preprocessor given to the css nodeModule param')
+      assert.strictEqual(missingCSSPreprocessorBool, true, 'Roosevelt did not throw an error on the fact that there is no css preprocessor given to the css nodeModule param')
       done()
     })
   })
@@ -435,7 +435,7 @@ describe('CSS Section Tests', function () {
       noMinify: true
     }, options)
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, see if any one of them are the specific error
     testApp.stderr.on('data', (data) => {
@@ -453,7 +453,7 @@ describe('CSS Section Tests', function () {
     // on exit, see if the error was given
     testApp.on('exit', () => {
       fse.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
-      assert.equal(incompatibleProcessorErrorBool, true, 'Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
+      assert.strictEqual(incompatibleProcessorErrorBool, true, 'Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
       done()
     })
   })
@@ -483,7 +483,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, see if any one of them are the specific error
     testApp.stderr.on('data', (data) => {
@@ -501,7 +501,7 @@ describe('CSS Section Tests', function () {
     // on exit, see if the error was given
     testApp.on('exit', () => {
       fse.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
-      assert.equal(incompatibleProcessorErrorBool, true, 'Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
+      assert.strictEqual(incompatibleProcessorErrorBool, true, 'Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
       done()
     })
   })
@@ -531,7 +531,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see if any one of them are the specific log we want
     testApp.stdout.on('data', (data) => {
@@ -543,13 +543,13 @@ describe('CSS Section Tests', function () {
     // when the app finishes initialization, check that the directory is ther
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/css'))
-      assert.equal(test, true)
+      assert.strictEqual(test, true)
       testApp.send('stop')
     })
 
     // when the app is about to exit, check whether or not the specific log was given
     testApp.on('exit', () => {
-      assert.equal(madeCSSDirectoryBool, true, 'Roosevelt did not make a css Directory when one is not present')
+      assert.strictEqual(madeCSSDirectoryBool, true, 'Roosevelt did not make a css Directory when one is not present')
       done()
     })
   })
@@ -579,7 +579,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see if any one of them are the specific log we want
     testApp.stdout.on('data', (data) => {
@@ -591,13 +591,13 @@ describe('CSS Section Tests', function () {
     // when the app finishes initialization, check that the directory is not there
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/css'))
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.send('stop')
     })
 
     // when the app is about to exit, check whether or not the specific log was given
     testApp.on('exit', () => {
-      assert.equal(madeCSSDirectoryBool, false, 'Roosevelt did make a css Directory when generateFolderStructure is false')
+      assert.strictEqual(madeCSSDirectoryBool, false, 'Roosevelt did make a css Directory when generateFolderStructure is false')
       done()
     })
   })
@@ -626,7 +626,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // look into the error logs and see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -642,7 +642,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is about to finish, check that the error was given
     testApp.on('exit', () => {
-      assert.equal(whitelistNotCorrectErrorBool, true, 'Roosevelt did not throw an error when the whitelist param is not an array')
+      assert.strictEqual(whitelistNotCorrectErrorBool, true, 'Roosevelt did not throw an error when the whitelist param is not an array')
       done()
     })
   })
@@ -676,7 +676,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see if the specific log was given
     testApp.stdout.on('data', (data) => {
@@ -692,7 +692,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is about to exit, check that the specific log was given
     testApp.on('exit', () => {
-      assert.equal(cssCompiledDirMadeBool, false, 'Roosevelt made a css compiled directory even though one is alreadly present')
+      assert.strictEqual(cssCompiledDirMadeBool, false, 'Roosevelt made a css compiled directory even though one is alreadly present')
       done()
     })
   })
@@ -723,7 +723,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see if the specific log was given
     testApp.stdout.on('data', (data) => {
@@ -735,13 +735,13 @@ describe('CSS Section Tests', function () {
     // when the app finishes initialization, check that the folder was not made
     testApp.on('message', () => {
       let test = fse.existsSync(cssBuildDirPath)
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.send('stop')
     })
 
     // when the app is about to exit, check that the specific log was given
     testApp.on('exit', () => {
-      assert.equal(cssCompiledDirMadeBool, false, 'Roosevelt made a css compiled directory even though GenerateTestApp is false')
+      assert.strictEqual(cssCompiledDirMadeBool, false, 'Roosevelt made a css compiled directory even though GenerateTestApp is false')
       done()
     })
   })
@@ -782,7 +782,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -798,7 +798,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is exiting, check to see if the specific error was logged out
     testApp.on('exit', () => {
-      assert.equal(filenameMissingErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param being undefined')
+      assert.strictEqual(filenameMissingErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param being undefined')
       done()
     })
   })
@@ -840,7 +840,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -856,7 +856,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is exiting, check to see if the specific error was logged out
     testApp.on('exit', () => {
-      assert.equal(filenameInvalidErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param not being a string')
+      assert.strictEqual(filenameInvalidErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the file name param not being a string')
       done()
     })
   })
@@ -897,7 +897,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -913,7 +913,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is exiting, check to see if the specific error was logged out
     testApp.on('exit', () => {
-      assert.equal(varnameMissingErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the var name param being undefined')
+      assert.strictEqual(varnameMissingErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the var name param being undefined')
       done()
     })
   })
@@ -955,7 +955,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -971,7 +971,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is exiting, check to see if the specific error was logged out
     testApp.on('exit', () => {
-      assert.equal(varnameInvalidErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the var name param not being a string')
+      assert.strictEqual(varnameInvalidErrorBool, true, 'Roosevelt did not throw an error when the user is trying to make a versionFile with the var name param not being a string')
       done()
     })
   })
@@ -1018,7 +1018,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, check to see if the creation versionFile log was made
     testApp.stdout.on('data', (data) => {
@@ -1034,7 +1034,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is going to exit, see if the creation versionFile log was made
     testApp.on('exit', () => {
-      assert.equal(versionFileCreationLogBool, false, 'Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
+      assert.strictEqual(versionFileCreationLogBool, false, 'Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
       done()
     })
   })
@@ -1081,7 +1081,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, check to see if the creation versionFile log was made
     testApp.stdout.on('data', (data) => {
@@ -1097,7 +1097,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is going to exit, see if the creation versionFile log was made
     testApp.on('exit', () => {
-      assert.equal(versionFileCreationLogBool, false, 'Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
+      assert.strictEqual(versionFileCreationLogBool, false, 'Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
       done()
     })
   })
@@ -1126,7 +1126,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the specifc whitelist error was thrown
     testApp.stderr.on('data', (data) => {
@@ -1138,13 +1138,13 @@ describe('CSS Section Tests', function () {
     // when the app is finished initialization, check to see if the file is there
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/.build/css/d.less'))
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.send('stop')
     })
 
     // when the app is about to exit, see if the error was thrown
     testApp.on('exit', () => {
-      assert.equal(whitelistNotSpecificedError, true, 'Roosevelt did not throw an error when a non-existent file is placed in the whitelist array param')
+      assert.strictEqual(whitelistNotSpecificedError, true, 'Roosevelt did not throw an error when a non-existent file is placed in the whitelist array param')
       done()
     })
   })
@@ -1177,7 +1177,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see if Roosevelt made a compiled file out of the directory
     testApp.stdout.on('data', (data) => {
@@ -1189,13 +1189,13 @@ describe('CSS Section Tests', function () {
     // when the app finishes initialization, check to see that a file of the directory was not made
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/.build/css/dir'))
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.send('stop')
     })
 
     // when the app is about to exit, see if the log was given
     testApp.on('exit', () => {
-      assert.equal(cssFileMadeLogBool, false, 'Roosevelt made a compiled file for a directory')
+      assert.strictEqual(cssFileMadeLogBool, false, 'Roosevelt made a compiled file for a directory')
       done()
     })
   })
@@ -1229,7 +1229,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see if Roosevelt made a compiled file out of the directory
     testApp.stdout.on('data', (data) => {
@@ -1241,13 +1241,13 @@ describe('CSS Section Tests', function () {
     // when the app finishes initialization, check to see that a file of the directory was not made
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/.build/css/Thumbs.db'))
-      assert.equal(test, false)
+      assert.strictEqual(test, false)
       testApp.send('stop')
     })
 
     // when the app is about to exit, see if the log was given
     testApp.on('exit', () => {
-      assert.equal(cssFileMadeLogBool, false, 'Roosevelt made a compiled file for a directory')
+      assert.strictEqual(cssFileMadeLogBool, false, 'Roosevelt made a compiled file for a directory')
       done()
     })
   })
@@ -1285,7 +1285,7 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see if the file compiled log was made
     testApp.stdout.on('data', (data) => {
@@ -1301,7 +1301,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is exiting, see if the file compiled log was made
     testApp.on('exit', () => {
-      assert.equal(cssCompiledCreationBool, false, 'Roosevelt compiled the file in the whitelist array even though generateFolderStructure is false')
+      assert.strictEqual(cssCompiledCreationBool, false, 'Roosevelt compiled the file in the whitelist array even though generateFolderStructure is false')
       done()
     })
   })
