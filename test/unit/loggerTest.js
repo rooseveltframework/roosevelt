@@ -67,7 +67,7 @@ describe('Logger Tests', function () {
     logger.custom1('Should be of type info')
     logger.custom2('Single object key type param')
     logger.custom3('Single object key enabled param')
-    logger.log({'this': 'is an object'})
+    logger.log({ 'this': 'is an object' })
 
     // error logs
     logger.error('This should have an emoji prefix')
@@ -84,19 +84,19 @@ describe('Logger Tests', function () {
     unhookStderr()
 
     // standard log assertions
-    assert.equal(logs[0].includes('First Test'), true, 'The logger failed to output "First Test"')
-    assert.equal(logs[1].includes('🍕  Pizza Emoji'), true, 'The logger failed to output a prefixed pizza emoji')
-    assert.equal(logs[2].includes('Verbose log'), true, 'The logger did not output a verbose log')
-    assert.equal(logs[3].includes('Should be of type info'), true, 'The logger did not output a custom log')
-    assert.equal(logs[4].includes('Single object key type param'), true, 'The logger did not output a custom log')
-    assert.equal(logs[5].includes('Single object key enabled param'), true, 'The logger did not output a custom log')
-    assert.equal(logs[6].includes(util.inspect({'this': 'is an object'}, false, null, true)), true, 'The logger did not output an object')
+    assert.strictEqual(logs[0].includes('First Test'), true, 'The logger failed to output "First Test"')
+    assert.strictEqual(logs[1].includes('🍕  Pizza Emoji'), true, 'The logger failed to output a prefixed pizza emoji')
+    assert.strictEqual(logs[2].includes('Verbose log'), true, 'The logger did not output a verbose log')
+    assert.strictEqual(logs[3].includes('Should be of type info'), true, 'The logger did not output a custom log')
+    assert.strictEqual(logs[4].includes('Single object key type param'), true, 'The logger did not output a custom log')
+    assert.strictEqual(logs[5].includes('Single object key enabled param'), true, 'The logger did not output a custom log')
+    assert.strictEqual(logs[6].includes(util.inspect({ 'this': 'is an object' }, false, null, true)), true, 'The logger did not output an object')
 
     // error log assertions
-    assert.equal(errors[0].includes('❌  This should have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
-    assert.equal(errors[1].includes('⚠️  This should also have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
-    assert.equal(errors[2].includes('❤️  This should not add a prefix because one is already there'), true, 'The logger added an emoji prefix')
-    assert.equal(errors[3].includes('This log is custom ⚠️  with an emoji in the middle'), true, 'The logger did not output a custom log')
+    assert.strictEqual(errors[0].includes('❌  This should have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
+    assert.strictEqual(errors[1].includes('⚠️  This should also have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
+    assert.strictEqual(errors[2].includes('❤️  This should not add a prefix because one is already there'), true, 'The logger added an emoji prefix')
+    assert.strictEqual(errors[3].includes('This log is custom ⚠️  with an emoji in the middle'), true, 'The logger did not output a custom log')
 
     // disabled log assertions
     if (typeof logs[7] !== 'undefined') {
@@ -139,12 +139,12 @@ describe('Logger Tests', function () {
     unhookStderr()
 
     // standard log assertions
-    assert.equal(logs[0].includes('First Test'), true, 'The logger failed to output a log')
-    assert.equal(logs.length === 1, true, 'The logger output a verbose log')
+    assert.strictEqual(logs[0].includes('First Test'), true, 'The logger failed to output a log')
+    assert.strictEqual(logs.length === 1, true, 'The logger output a verbose log')
 
     // error log assertions
-    assert.equal(errors[0].includes('❌  Error Log'), true, 'The logger did not output an error log')
-    assert.equal(errors[1].includes('⚠️  Warning Log'), true, 'The logger did not output a warning log')
+    assert.strictEqual(errors[0].includes('❌  Error Log'), true, 'The logger did not output an error log')
+    assert.strictEqual(errors[1].includes('⚠️  Warning Log'), true, 'The logger did not output a warning log')
 
     // exit test
     done()
@@ -163,13 +163,13 @@ describe('Logger Tests', function () {
       generateFolderStructure: true,
       logging: { disable: ['production'] },
       onServerStart: `(app) => {console.log("server started")}`
-    }, {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true})
+    }, { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true })
 
     // create package.json
     fs.writeJsonSync(path.join(appDir, 'package.json'), pkgConfig)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -183,7 +183,7 @@ describe('Logger Tests', function () {
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
     testApp.on('exit', () => {
-      assert.equal(logBool, false, 'Logs were output when they should have been suppressed')
+      assert.strictEqual(logBool, false, 'Logs were output when they should have been suppressed')
       done()
     })
   })
