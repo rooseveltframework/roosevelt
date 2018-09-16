@@ -118,16 +118,27 @@ describe('Roosevelt Config Auditor Test', function () {
     // arrays to hold the responses that we would get from configAuditor
     let logs = []
     let errors = []
-    // variable to hold what console.log originally did
-    const logHolder = console.log
-    const errorHolder = console.error
-    // change console.log and console.error so that it does not print onto the screen and instead gives the data to the arrays
-    console.log = function () {
-      logs.push(arguments[1].toString('utf8'))
+
+    // hook for stdout and stderr streams
+    let hookStream = function (_stream, fn) {
+      // reference default write method
+      let oldWrite = _stream.write
+      // _stream now write with our shiny function
+      _stream.write = fn
+
+      return function () {
+        // reset to the default write method
+        _stream.write = oldWrite
+      }
     }
-    console.error = function () {
-      errors.push(arguments[1].toString('utf8'))
-    }
+
+    // hook up standard output
+    let unhookStdout = hookStream(process.stdout, function (string, encoding, fd) {
+      logs.push(string)
+    })
+    let unhookStderr = hookStream(process.stderr, function (string, encoding, fd) {
+      errors.push(string)
+    })
 
     // make the appDir folder
     fse.ensureDirSync(appDir)
@@ -140,8 +151,10 @@ describe('Roosevelt Config Auditor Test', function () {
     // use the configAuditor's audit method
     configAuditor.audit(appDir)
 
-    console.error = errorHolder
-    console.log = logHolder
+    // unhook stdout/stderr
+    unhookStdout()
+    unhookStderr()
+
     let test1 = logs[0].includes('Starting roosevelt user configuration audit...')
     let test2 = errors[0].includes('Missing param "modelsPath"!')
     let test3 = errors[1].includes('Missing param "viewsPath"!')

@@ -54,7 +54,8 @@
     "sinon": "6.3.3",
     "standard": "12.0.1",
     "supertest": "3.2.0",
-    "teddy": "0.4.26"
+    "teddy": "0.4.26",
+    "winston": "3.1.0"
   },
   "repository": {
     "type": "git",

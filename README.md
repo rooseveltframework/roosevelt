@@ -284,11 +284,12 @@ App behavior parameters
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
   - Default: *[Boolean]* `true`.
-- `logging`: Accepts an object containing four related parameters:
+- `logging`: Accepts an object containing four default parameters and custom parameters can be added optionally:
   - `http`: *[Boolean]* When set to false, Roosevelt will not log HTTP requests to the console.
   - `appStatus`: *[Boolean]* When set to false, Roosevelt will not log app status to the console.
   - `warnings`: *[Boolean]* When set to false, Roosevelt will not log app warnings to the console.
   - `verbose`: *[Boolean]* When set to false, Roosevelt will not output logs made by some of its other processes
+  - `disable`: *[Array]* Logs can also be suppressed using the disable parameter by adding the environment to be suppressed. Also, an environmental variable that is truthy can also be set. Ex: `'disable': ['production', 'LOADED_MOCHA_OPTS']`
   - Default: *[Object]*
 
       ```json
@@ -297,6 +298,17 @@ App behavior parameters
         "appStatus": true,
         "warnings": true,
         "verbose": false
+      }
+      ```
+  - Custom: *[Object]*
+      ```json
+      {
+        "debug": {
+          // enable is optional (defaults to true if omitted)
+          "enable": true,
+          // types can be set (ex: info, warn, error) but defaults to 'info' if omitted
+          "type": "error"
+        }
       }
       ```
 
@@ -819,6 +831,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. HTTP request logger middleware. |
+| `winston`                            | The [winston](https://github.com/winstonjs/winston) logger module for custom logging.|
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`. |
 | `appDir`                             | The directory the main module is in.     |
@@ -836,6 +849,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `params`                             | The params you sent to Roosevelt.        |
 | `port`                               | Port Roosevelt is running on.            |
 | `flags`                              | Command line flags sent to Roosevelt.    |
+| `logger`                             | The logging module used for simple parameterized logging.|
 
 Additionally the Roosevelt constructor returns the following object:
 
