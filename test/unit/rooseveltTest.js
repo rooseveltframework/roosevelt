@@ -16,7 +16,7 @@ describe('Roosevelt.js Tests', function () {
   const appDir = path.join(__dirname, '../app/rooseveltTest').replace('/\\/g', '/')
 
   // options to pass into test app generator
-  let sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+  let sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // paths to key and cert & ca files
   let certs = {
@@ -48,13 +48,13 @@ describe('Roosevelt.js Tests', function () {
     let defaultsJSON = JSON.parse(defaults)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we do get back an object of params, it means that roosevelt was able to complete its initialization
     testApp.on('message', (params) => {
-      assert.equal(params.port, defaultsJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
-      assert.equal(params.viewEngine, defaultsJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
-      assert.equal(params.favicon, defaultsJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
+      assert.strictEqual(params.port, defaultsJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
+      assert.strictEqual(params.viewEngine, defaultsJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
+      assert.strictEqual(params.favicon, defaultsJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
       testApp.send('stop')
     })
 
@@ -80,7 +80,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error stream check to see how many times it logs that the validator is disabled
     testApp.stderr.on('data', (data) => {
@@ -96,7 +96,7 @@ describe('Roosevelt.js Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
+      assert.strictEqual(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
       done()
     })
   })
@@ -117,7 +117,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error stream, check to see how many times the validator disabled log has output
     testApp.stderr.on('data', (data) => {
@@ -133,7 +133,7 @@ describe('Roosevelt.js Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
+      assert.strictEqual(initServedLog, 1, 'Roosevelt initialized the server either more or less then once')
       done()
     })
   })
@@ -155,7 +155,7 @@ describe('Roosevelt.js Tests', function () {
     let messageRecievedBool = false
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
@@ -167,10 +167,10 @@ describe('Roosevelt.js Tests', function () {
       let test1 = fse.existsSync(path.join(appDir, 'mvc'))
       let test2 = fse.existsSync(path.join(appDir, 'public'))
       let test3 = fse.existsSync(path.join(appDir, 'statics'))
-      assert.equal(test1, true, 'Roosevelt did not make its mvc folder')
-      assert.equal(test2, true, 'Roosevelt did not make its public folder')
-      assert.equal(test3, true, 'Roosevelt did not make its statics folder')
-      assert.equal(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
+      assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
+      assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
+      assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
+      assert.strictEqual(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
       done()
     })
   })
@@ -192,7 +192,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
@@ -204,17 +204,17 @@ describe('Roosevelt.js Tests', function () {
       let test1 = fse.existsSync(path.join(appDir, 'mvc'))
       let test2 = fse.existsSync(path.join(appDir, 'public'))
       let test3 = fse.existsSync(path.join(appDir, 'statics'))
-      assert.equal(test1, true, 'Roosevelt did not make its mvc folder')
-      assert.equal(test2, true, 'Roosevelt did not make its public folder')
-      assert.equal(test3, true, 'Roosevelt did not make its statics folder')
-      assert.equal(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
+      assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
+      assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
+      assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
+      assert.strictEqual(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
       done()
     })
   })
 
   it('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
     // reset sOptions
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+    sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
@@ -228,7 +228,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '1.1'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '1.1'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -245,7 +245,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
     testApp.on('exit', () => {
-      assert.equal(processKilledInt, 1, 'Roosevelt did not kill all the cluster workers that it generated')
+      assert.strictEqual(processKilledInt, 1, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     })
   })
@@ -262,7 +262,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--cores', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--cores', '2'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -279,7 +279,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
     function exit () {
-      assert.equal(serverStartInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
+      assert.strictEqual(serverStartInt, 2, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     }
   })
@@ -296,7 +296,7 @@ describe('Roosevelt.js Tests', function () {
       onServerStart: `(app) => {console.log("server started")}`
     }, sOptions)
 
-    const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -316,8 +316,8 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check how many instances of the app server were made, synonymous with how many cores have been used
     function exit () {
-      assert.equal(devModeBool, true, 'Roosevelt did not start in dev mode')
-      assert.equal(serverStartInt, 2, 'Roosevelt did not kill all of the cluster workers that it generated')
+      assert.strictEqual(devModeBool, true, 'Roosevelt did not start in dev mode')
+      assert.strictEqual(serverStartInt, 2, 'Roosevelt did not kill all of the cluster workers that it generated')
       done()
     }
   })
@@ -335,7 +335,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', 'max'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', 'max'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check output logs to kill the app when the server instances reach the max and keep track of all the thread that are killed
     testApp.stdout.on('data', (data) => {
@@ -352,14 +352,14 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check if the app had killed the cluster that the app had created
     function exit () {
-      assert.equal(serverStartInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
+      assert.strictEqual(serverStartInt, maxCores, 'Roosevelt did not kill all the cluster workers that it generated')
       done()
     }
   })
 
   it('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
     // reset sOptions
-    sOptions = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+    sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
     // bool var to hold whether a specific error was logged, how many cpu cores this enviroment has, and a var to hold what one above the amount of cores that exists
     let defaultCoresLogBool = false
@@ -375,7 +375,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `${tooManyCores}`], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `${tooManyCores}`], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see how many times the app makes a server instance
     testApp.stdout.on('data', (data) => {
@@ -398,8 +398,8 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, see if the app reports it will use one core and that it only started one instance of the app
     testApp.on('exit', () => {
-      assert.equal(defaultCoresLogBool, true, 'Roosevelt try to set the amount of cores to something that is not possible (too many)')
-      assert.equal(serverStartInt, 1, 'Roosevelt started more or less than 1 server for the app')
+      assert.strictEqual(defaultCoresLogBool, true, 'Roosevelt try to set the amount of cores to something that is not possible (too many)')
+      assert.strictEqual(serverStartInt, 1, 'Roosevelt started more or less than 1 server for the app')
       done()
     })
   })
@@ -417,7 +417,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `0`], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `0`], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see how many times the app makes a server instance
     testApp.stdout.on('data', (data) => {
@@ -440,8 +440,8 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, see if the app reports it will use one core and that it only started one instance of the app
     testApp.on('exit', () => {
-      assert.equal(defaultCoresLogBool, true, 'Roosevelt try to set the amount of cores to something that is not possible (too many)')
-      assert.equal(serverStartInt, 1, 'Roosevelt started more or less than 1 server for the app')
+      assert.strictEqual(defaultCoresLogBool, true, 'Roosevelt try to set the amount of cores to something that is not possible (too many)')
+      assert.strictEqual(serverStartInt, 1, 'Roosevelt started more or less than 1 server for the app')
       done()
     })
   })
@@ -462,7 +462,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
     testApp.stdout.on('data', (data) => {
@@ -478,7 +478,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check if roosevelt an https server started or not
     testApp.on('exit', () => {
-      assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
+      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
       done()
     })
   })
@@ -501,7 +501,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // Check the logs to see which type of server was made
     testApp.stdout.on('data', (data) => {
@@ -520,8 +520,8 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, see if the app started an https server and not an http server
     testApp.on('exit', () => {
-      assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
-      assert.equal(httpServerMadeBool, false, 'Roosevelt made a http Server even though the httpsOnly param is true')
+      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
+      assert.strictEqual(httpServerMadeBool, false, 'Roosevelt made a http Server even though the httpsOnly param is true')
       done()
     })
   })
@@ -538,7 +538,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
@@ -554,7 +554,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, see if the app started in production mode
     testApp.on('exit', () => {
-      assert.equal(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
+      assert.strictEqual(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
       done()
     })
   })
@@ -572,7 +572,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
@@ -583,7 +583,7 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app starts, check that localhostOnly was set correctly and then kill it
     testApp.on('message', (params) => {
-      assert.equal(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
+      assert.strictEqual(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
       if (productionModeBool) {
         testApp.send('stop')
       }
@@ -591,7 +591,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, see if the app started in production mode
     testApp.on('exit', () => {
-      assert.equal(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
+      assert.strictEqual(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
       done()
     })
   })
@@ -614,7 +614,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
@@ -631,13 +631,13 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app starts, check that localhostOnly was set correctly
     testApp.on('message', (params) => {
-      assert.equal(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
+      assert.strictEqual(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
     })
 
     // on exit, see if the app started in production mode
     testApp.on('exit', () => {
-      assert.equal(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
-      assert.equal(httpsServerMadeBool, true, 'Roosevelt did not make a HTTPS server even though it is enabled')
+      assert.strictEqual(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
+      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make a HTTPS server even though it is enabled')
       done()
     })
   })
@@ -654,7 +654,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if a message was recieved, then it probably means that the onServerStart param has excuted and sent something
     testApp.on('message', () => {
@@ -669,7 +669,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, test to see if a message was recieved by the test suite from the app
     testApp.on('exit', () => {
-      assert.equal(serverStartFunctionBool, false, 'Roosevelt still executed what was in onServerStart even though it is not a function')
+      assert.strictEqual(serverStartFunctionBool, false, 'Roosevelt still executed what was in onServerStart even though it is not a function')
       done()
     })
   })
@@ -688,12 +688,12 @@ describe('Roosevelt.js Tests', function () {
         httpsPort: 43733,
         passphrase: undefined,
         ca: undefined,
-        keyPath: {key: certs.key, cert: certs.cert}
+        keyPath: { key: certs.key, cert: certs.cert }
       }
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on logs, check to see if the specific log was outputted
     testApp.stdout.on('data', (data) => {
@@ -709,7 +709,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
-      assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
       done()
     })
   })
@@ -727,12 +727,12 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         httpsPort: 43733,
         passphrase: 'something',
-        keyPath: {key: certs.key, cert: certs.cert}
+        keyPath: { key: certs.key, cert: certs.cert }
       }
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on logs, check to see if the specific log was outputted
     testApp.stdout.on('data', (data) => {
@@ -748,7 +748,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
-      assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
       done()
     })
   })
@@ -765,14 +765,14 @@ describe('Roosevelt.js Tests', function () {
       https: {
         enable: true,
         httpsPort: 43733,
-        keyPath: {key: certs.key, cert: certs.cert},
+        keyPath: { key: certs.key, cert: certs.cert },
         ca: certs.ca,
         cafile: true
       }
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on logs, check to see if the specific log was outputted
     testApp.stdout.on('data', (data) => {
@@ -788,7 +788,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
-      assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
       done()
     })
   })
@@ -805,14 +805,14 @@ describe('Roosevelt.js Tests', function () {
       https: {
         enable: true,
         httpsPort: 43733,
-        keyPath: {key: certs.key, cert: certs.cert},
+        keyPath: { key: certs.key, cert: certs.cert },
         ca: [certs.ca, certs.ca2],
         cafile: true
       }
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on logs, check to see if the specific log was outputted
     testApp.stdout.on('data', (data) => {
@@ -828,7 +828,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
-      assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
       done()
     })
   })
@@ -845,14 +845,14 @@ describe('Roosevelt.js Tests', function () {
       https: {
         enable: true,
         httpsPort: 43733,
-        keyPath: {key: certs.key, cert: certs.cert},
+        keyPath: { key: certs.key, cert: certs.cert },
         ca: 32,
         cafile: true
       }
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on logs, check to see if the specific log was outputted
     testApp.stdout.on('data', (data) => {
@@ -868,7 +868,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on the apps exit, see of the HTTPS server was listening
     testApp.on('exit', () => {
-      assert.equal(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
       done()
     })
   })
@@ -892,7 +892,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
     testApp.stderr.on('data', (data) => {
       if (data.includes('Either kill that process or change this')) {
         samePortWarningBool = true
@@ -907,8 +907,8 @@ describe('Roosevelt.js Tests', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(serverStartedBool, false, 'Roosevelt completely compiled the app and started it even thought we get EADDRINUSE error')
-      assert.equal(samePortWarningBool, true, 'Roosevelt did not report that it could not start because something is using the same port that the app wants to use')
+      assert.strictEqual(serverStartedBool, false, 'Roosevelt completely compiled the app and started it even thought we get EADDRINUSE error')
+      assert.strictEqual(samePortWarningBool, true, 'Roosevelt did not report that it could not start because something is using the same port that the app wants to use')
       server.close()
       done()
     })
@@ -937,7 +937,7 @@ describe('Roosevelt.js Tests', function () {
 
     packageJSONSource = JSON.stringify(packageJSONSource)
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawnSync(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
@@ -948,7 +948,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
@@ -964,7 +964,7 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app exit, check to see if the warning log was made
     testApp.on('exit', () => {
-      assert.equal(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
+      assert.strictEqual(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
       done()
     })
   })
@@ -992,7 +992,7 @@ describe('Roosevelt.js Tests', function () {
 
     packageJSONSource = JSON.stringify(packageJSONSource)
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawnSync(npmName, ['install', 'express@3.0.0'], {cwd: appDir})
+    spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
@@ -1004,7 +1004,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
@@ -1020,7 +1020,7 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app exit, check to see if the warning log was made
     testApp.on('exit', () => {
-      assert.equal(missingOrOODPackageBool, false, 'Roosevelt did report that there are some missing or out of date packages in the app Directory even though checkDependencies is false')
+      assert.strictEqual(missingOrOODPackageBool, false, 'Roosevelt did report that there are some missing or out of date packages in the app Directory even though checkDependencies is false')
       done()
     })
   })
@@ -1045,7 +1045,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // watch error logs for the specific log that we are testing for
     testApp.stderr.on('data', (data) => {
@@ -1064,8 +1064,8 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check to see if the specific log was made and finish the test
     testApp.on('exit', () => {
-      assert.equal(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is inaccessible`)
-      assert.equal(EACCESSLogBool, true, `Roosevelt did not throw the specifc error log that we were looking for`)
+      assert.strictEqual(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is inaccessible`)
+      assert.strictEqual(EACCESSLogBool, true, `Roosevelt did not throw the specifc error log that we were looking for`)
       done()
     })
   })
@@ -1087,7 +1087,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (msg) => {
       // when the app finishes initialization, send a request to the server
@@ -1112,7 +1112,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check if the connection was closed because it finished or by the server closing
     testApp.on('exit', () => {
-      assert.equal(requestFinishedBool, false, 'Roosevelt did not destroy the active connection when it shut down')
+      assert.strictEqual(requestFinishedBool, false, 'Roosevelt did not destroy the active connection when it shut down')
       done()
     })
   })
@@ -1133,7 +1133,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
     testApp.stdout.on('data', (data) => {
@@ -1147,7 +1147,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check if roosevelt closed the https server and kept the process running
     testApp.on('exit', () => {
-      assert.equal(processRunningBool, true, 'The HTTP server did not close and keep the process running')
+      assert.strictEqual(processRunningBool, true, 'The HTTP server did not close and keep the process running')
       done()
     })
   })
@@ -1172,7 +1172,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
     testApp.stdout.on('data', (data) => {
@@ -1186,7 +1186,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on exit, check if roosevelt closed the https server and kept the process running
     testApp.on('exit', () => {
-      assert.equal(processRunningBool, true, 'The HTTPS server did not close and keep the process running')
+      assert.strictEqual(processRunningBool, true, 'The HTTPS server did not close and keep the process running')
       done()
     })
   })

@@ -12,7 +12,7 @@ describe('Roosevelt Routes Tests', function () {
   const appDir = path.join(__dirname, '../app/routesTest')
 
   // options to pass into test app generator
-  let options = {rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true}
+  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
@@ -43,7 +43,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
@@ -59,10 +59,10 @@ describe('Roosevelt Routes Tests', function () {
           let test2 = res.text.includes('Heading Test')
           let test3 = res.text.includes('This is the first sentence that I am grabbing from my teddy model')
           let test4 = res.text.includes('This is the second sentence that I am grabbing from my teddy model')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
-          assert.equal(test3, true)
-          assert.equal(test4, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
+          assert.strictEqual(test3, true)
+          assert.strictEqual(test4, true)
           testApp.send('stop')
         })
 
@@ -82,7 +82,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
@@ -98,10 +98,10 @@ describe('Roosevelt Routes Tests', function () {
           let test2 = res.text.includes('headingX')
           let test3 = res.text.includes('sentence1X')
           let test4 = res.text.includes('sentence2X')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
-          assert.equal(test3, true)
-          assert.equal(test4, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
+          assert.strictEqual(test3, true)
+          assert.strictEqual(test4, true)
           testApp.send('stop')
         })
 
@@ -122,7 +122,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
@@ -138,10 +138,10 @@ describe('Roosevelt Routes Tests', function () {
           let test2 = res.text.includes('headingX')
           let test3 = res.text.includes('sentence1X')
           let test4 = res.text.includes('sentence2X')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
-          assert.equal(test3, true)
-          assert.equal(test4, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
+          assert.strictEqual(test3, true)
+          assert.strictEqual(test4, true)
           testApp.send('stop')
         })
 
@@ -164,7 +164,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', () => {
@@ -178,8 +178,8 @@ describe('Roosevelt Routes Tests', function () {
           // data included on the 404 page
           const test1 = res.text.includes('404 Not Found')
           const test2 = res.text.includes('The requested URL /randomURL was not found on this server')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
           testApp.send('stop')
         })
 
@@ -203,7 +203,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', (params) => {
@@ -218,9 +218,9 @@ describe('Roosevelt Routes Tests', function () {
           let test1 = res.text.includes('404 custom test error page')
           let test2 = res.text.includes('The page you are looking for is not found')
           let test3 = res.text.includes('This is a test to see if we can make custom 404 controllers and pages')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
-          assert.equal(test3, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
+          assert.strictEqual(test3, true)
           testApp.send('stop')
         })
 
@@ -241,7 +241,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the server error route
     testApp.on('message', (params) => {
@@ -256,9 +256,9 @@ describe('Roosevelt Routes Tests', function () {
           let test1 = res.text.includes('500 custom test error page')
           let test2 = res.text.includes('An error had occurred on the server')
           let test3 = res.text.includes('This is a test to see if we can make custom 500 controllers and pages')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
-          assert.equal(test3, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
+          assert.strictEqual(test3, true)
           testApp.send('stop')
         })
 
@@ -278,7 +278,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the server error route
     testApp.on('message', (params) => {
@@ -292,8 +292,8 @@ describe('Roosevelt Routes Tests', function () {
           // data included on the default 500 page
           const test1 = res.text.includes('500 Internal Server Error')
           const test2 = res.text.includes('The requested URL /serverError is temporarily unavailable at this time.')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
           testApp.send('stop')
         })
 
@@ -319,7 +319,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (params) => {
       sendRequest()
@@ -412,11 +412,11 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // checks to see if the view engine returned is the first element
     testApp.on('message', (viewEngine) => {
-      assert.equal(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
+      assert.strictEqual(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
       testApp.send('stop')
     })
 
@@ -438,7 +438,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts test the custom view engine
     testApp.on('message', (params) => {
@@ -449,9 +449,9 @@ describe('Roosevelt Routes Tests', function () {
             assert.fail(err)
             testApp.send('stop')
           }
-          assert.equal(res.text.includes('jcs Test'), true)
-          assert.equal(res.text.includes('jcsHeader'), true)
-          assert.equal(res.text.includes('jcsParagraph'), true)
+          assert.strictEqual(res.text.includes('jcs Test'), true)
+          assert.strictEqual(res.text.includes('jcsHeader'), true)
+          assert.strictEqual(res.text.includes('jcsParagraph'), true)
           testApp.send('stop')
         })
     })
@@ -477,7 +477,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen to the stream errors for the view engine error
     testApp.stderr.on('data', (data) => {
@@ -493,7 +493,7 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the child process exits, test the assertion and finish the test
     testApp.on('exit', () => {
-      assert.equal(viewEngineFormattedIncorrectlyBool, true, 'Roosevelt did not throw an error when the way viewEngine was formatted incorrectly')
+      assert.strictEqual(viewEngineFormattedIncorrectlyBool, true, 'Roosevelt did not throw an error when the way viewEngine was formatted incorrectly')
       done()
     })
   })
@@ -512,7 +512,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // look at the error log and see if the error shows up
     testApp.stderr.on('data', (data) => {
@@ -528,7 +528,7 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the child process exits, test the assertion and finish the test
     testApp.on('exit', () => {
-      assert.equal(viewEngineConfiguredIncorrectlyBool, true, 'Roosevelt did not throw an error when the ViewEngine contains a node module that does not exists')
+      assert.strictEqual(viewEngineConfiguredIncorrectlyBool, true, 'Roosevelt did not throw an error when the ViewEngine contains a node module that does not exists')
       done()
     })
   })
@@ -543,7 +543,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app finishes its initialization, send a request to the teddy page
     testApp.on('message', (params) => {
@@ -559,10 +559,10 @@ describe('Roosevelt Routes Tests', function () {
           let test2 = res.text.includes('Heading Test')
           let test3 = res.text.includes('This is the first sentence that I am grabbing from my teddy model')
           let test4 = res.text.includes('This is the second sentence that I am grabbing from my teddy model')
-          assert.equal(test1, true)
-          assert.equal(test2, true)
-          assert.equal(test3, true)
-          assert.equal(test4, true)
+          assert.strictEqual(test1, true)
+          assert.strictEqual(test2, true)
+          assert.strictEqual(test3, true)
+          assert.strictEqual(test4, true)
           testApp.send('stop')
         })
     })
@@ -586,7 +586,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console.logs, check for correct output
     testApp.stdout.on('data', (data) => {
@@ -609,7 +609,7 @@ describe('Roosevelt Routes Tests', function () {
             if (err) {
               assert.fail(err)
             } else {
-              assert.equal(res.text, 'longWait done', 'Roosevelt did not finish a response that was made before it was shut down')
+              assert.strictEqual(res.text, 'longWait done', 'Roosevelt did not finish a response that was made before it was shut down')
             }
           })
       } else {
@@ -623,7 +623,7 @@ describe('Roosevelt Routes Tests', function () {
               assert.fail(err)
             } else {
               let test = res.text.includes('503 Service Unavailable')
-              assert.equal(test, true, 'Roosevelt did not respond back with a 503 page when a page was requested as it was shutting down')
+              assert.strictEqual(test, true, 'Roosevelt did not respond back with a 503 page when a page was requested as it was shutting down')
             }
           })
       }
@@ -631,8 +631,8 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
-      assert.equal(successfulShutdownBool, true, 'Roosevelt did not log that it successfully closed all connections and that its shutting down')
+      assert.strictEqual(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      assert.strictEqual(successfulShutdownBool, true, 'Roosevelt did not log that it successfully closed all connections and that its shutting down')
       done()
     })
   })
@@ -650,7 +650,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see that the app is shutting down
     testApp.stdout.on('data', (data) => {
@@ -676,7 +676,7 @@ describe('Roosevelt Routes Tests', function () {
             if (!err) {
               assert.fail('The server responded without error.')
             }
-            assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
+            assert.strictEqual(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
           })
       } else {
         testApp.send('stop')
@@ -685,8 +685,8 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
-      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      assert.strictEqual(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
+      assert.strictEqual(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
       done()
     })
   })
@@ -714,7 +714,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see that the app is shutting down
     testApp.stdout.on('data', (data) => {
@@ -740,7 +740,7 @@ describe('Roosevelt Routes Tests', function () {
             if (!err) {
               assert.fail('The server responded without error.')
             }
-            assert.equal(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
+            assert.strictEqual(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
           })
       } else {
         testApp.send('stop')
@@ -749,8 +749,8 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
-      assert.equal(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
+      assert.strictEqual(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
+      assert.strictEqual(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
       delete options.close
       delete options.exitProcess
       delete options.serverType
@@ -773,7 +773,7 @@ describe('Roosevelt Routes Tests', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see if the app completed its initialization
     testApp.stdout.on('data', (data) => {
@@ -796,8 +796,8 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the child process exits, test the assertions and finish the test
     testApp.on('exit', () => {
-      assert.equal(appCompletedInitLogBool, true, 'Roosevelt did not complete its initalization, probably because of the non-controller file in the controller directory')
-      assert.equal(controllerErrorLogBool, false, 'Roosevelt threw an error on a file in the controller directory that it should have passed over')
+      assert.strictEqual(appCompletedInitLogBool, true, 'Roosevelt did not complete its initalization, probably because of the non-controller file in the controller directory')
+      assert.strictEqual(controllerErrorLogBool, false, 'Roosevelt threw an error on a file in the controller directory that it should have passed over')
       done()
     })
   })

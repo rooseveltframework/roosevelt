@@ -81,7 +81,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `viewsPath was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `viewsPath was not made into a directory successfully`)
         done()
       }
     })
@@ -93,7 +93,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"modelsPath" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"modelsPath" was not made into a directory successfully`)
         done()
       }
     })
@@ -105,7 +105,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"controllersPath" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"controllersPath" was not made into a directory successfully`)
         done()
       }
     })
@@ -117,7 +117,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"staticsPath" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"staticsPath" was not made into a directory successfully`)
         done()
       }
     })
@@ -129,7 +129,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"PublicFolder" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"PublicFolder" was not made into a directory successfully`)
         done()
       }
     })
@@ -141,7 +141,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"js source directory" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"js source directory" was not made into a directory successfully`)
         done()
       }
     })
@@ -153,7 +153,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"css source directory" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"css source directory" was not made into a directory successfully`)
         done()
       }
     })
@@ -165,7 +165,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isDirectory(), true, `"image" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, `"image" was not made into a directory successfully`)
         done()
       }
     })
@@ -177,7 +177,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isSymbolicLink(), true, `"image" was not made into a symlink successfully`)
+        assert.strictEqual(stats.isSymbolicLink(), true, `"image" was not made into a symlink successfully`)
         done()
       }
     })
@@ -189,7 +189,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isSymbolicLink(), true, `"jsTest" was not made into a symlink successfully`)
+        assert.strictEqual(stats.isSymbolicLink(), true, `"jsTest" was not made into a symlink successfully`)
         done()
       }
     })
@@ -201,7 +201,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.equal(stats.isSymbolicLink(), true, `"cssTest" was not made into a symlink successfully`)
+        assert.strictEqual(stats.isSymbolicLink(), true, `"cssTest" was not made into a symlink successfully`)
         done()
       }
     })
@@ -210,13 +210,13 @@ describe('Folder Structure Tests', function () {
   it('should set "cssPath" express variable to absolute path of "css.sourceDir"', function () {
     const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').css.sourceDir)
     const test = folderCheck === app.expressApp.get('cssPath')
-    assert.equal(test, true, 'the path given by the combined paths and the path given by cssPath do not match')
+    assert.strictEqual(test, true, 'the path given by the combined paths and the path given by cssPath do not match')
   })
 
   it('should set "jsPath" express variable to absolute path of "js.sourceDir"', function () {
     const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').js.sourceDir)
     const test = folderCheck === app.expressApp.get('jsPath')
-    assert.equal(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
+    assert.strictEqual(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
   })
 
   it('should not generate extra directories or files into the appDir', function (done) {
@@ -232,7 +232,7 @@ describe('Folder Structure Tests', function () {
         dirs.forEach((dir) => {
           if (!dir.path.includes('.DS_Store')) {
             let test = expectedFolders.includes(dir.path)
-            assert.equal(test, true, `There is an extra directory or file at ${dir.path}`)
+            assert.strictEqual(test, true, `There is an extra directory or file at ${dir.path}`)
           }
         })
         done()

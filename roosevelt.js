@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
+const winston = require('winston')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -40,14 +41,18 @@ module.exports = function (params) {
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
+  app.set('winston', winston)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
+
+  // get and expose logger
   logger = require('./lib/tools/logger')(app.get('params').logging)
+  app.set('logger', logger)
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
   if (app.get('params').checkDependencies) {
-    let output = require('check-dependencies').sync({packageDir: params.appDir})
+    let output = require('check-dependencies').sync({ packageDir: params.appDir })
     if (!output.depsWereOk) {
       let mainError = output.error[output.error.length - 1]
       if (mainError.includes('Invoke npm install to install missing packages')) {

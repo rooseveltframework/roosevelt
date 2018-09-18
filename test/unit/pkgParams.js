@@ -18,10 +18,10 @@ describe('package.json Parameter Tests', function () {
   before(function () {
     fse.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(pkg))
-
     app = require('../../roosevelt')({
       appDir: appDir,
-      ignoreCLIFlags: true
+      ignoreCLIFlags: true,
+      logging: { disable: ['LOADED_MOCHA_OPTS'] }
     })
   })
 
@@ -38,7 +38,7 @@ describe('package.json Parameter Tests', function () {
   params.forEach((param) => {
     if (param !== 'logging' && param !== 'generateFolderStructure' && param !== 'staticsSymlinksToPublic') {
       it(`should set param "${param}" from package.json`, function () {
-        assert.deepEqual(app.expressApp.get('params')[param], pkgConfig[param])
+        assert.deepStrictEqual(app.expressApp.get('params')[param], pkgConfig[param])
       })
     }
   })
