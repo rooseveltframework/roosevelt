@@ -977,7 +977,7 @@ describe('JavaScript Tests', function () {
       }
     }, options)
 
-    const testApp = fork(path.join(appDir, 'app.js'), {'stdio': ['pipe', 'pipe', 'pipe', 'ipc']})
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', data => {
       if (data.includes('There are stale')) {
