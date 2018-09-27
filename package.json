@@ -27,7 +27,7 @@
     "html-minifier": "~3.5.15",
     "html-validator": "~3.0.0",
     "klaw": "~3.0.0",
-    "klaw-sync": "~5.0.0",
+    "klaw-sync": "~6.0.0",
     "method-override": "~3.0.0",
     "morgan": "~1.9.0",
     "node-emoji": "~1.8.1",
