@@ -676,6 +676,8 @@ Statics parameters
       }
       ```
 
+- `sharedTemplateFiles`: *[Array]* An array of templates from the `views` folder which will be exposed to be used by clientside JS.
+
 Public folder parameters
 ---
 
