@@ -150,6 +150,39 @@ describe('Logger Tests', function () {
     done()
   })
 
+  it('should handle empty logs and other data types', function (done) {
+    // require the logger for this test
+    const logger = require('../../lib/tools/logger')()
+
+    // variable to store the logs
+    let logs = []
+    // hook up standard output
+    let unhookStdout = hookStream(process.stdout, function (string, encoding, fd) {
+      logs.push(string)
+    })
+
+    // testing logs
+    logger.log()
+    logger.log('')
+    logger.log(123)
+    logger.log({ 'key': 'value' })
+    logger.log(['array'])
+
+    // unhook stdout
+    unhookStdout()
+
+    // log assertions
+    assert.strictEqual(logs[0].includes(''), true, 'The logger failed to output an empty log')
+    assert.strictEqual(logs[1].includes(''), true, 'The logger failed to output an emty string')
+    assert.strictEqual(logs[2].includes('123'), true, 'The logger did not output a number')
+    // use inspect for objects
+    assert.strictEqual(logs[3].includes(util.inspect({ key: 'value' }, false, null, true)), true, 'The logger did not output an object')
+    assert.strictEqual(logs[4].includes(util.inspect([ 'array' ], false, null, true)), true, 'The logger did not output an array')
+
+    // exit test
+    done()
+  })
+
   it('should not have console output in production if disable has an array item \'production\' in the logging parameters', function (done) {
     //
     let logBool = false
