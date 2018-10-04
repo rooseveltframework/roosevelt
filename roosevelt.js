@@ -171,7 +171,7 @@ module.exports = function (params) {
 
     preprocessCss()
 
-    require('./lib/tools/generateClientExposedViewsFile')(app)
+    require('./lib/tools/viewsBundler')(app)
 
     function preprocessCss () {
       require('./lib/preprocessCss')(app, bundleJs)

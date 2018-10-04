@@ -676,7 +676,14 @@ Statics parameters
       }
       ```
 
-- `sharedTemplateFiles`: *[Array]* An array of templates from the `views` folder which will be exposed to be used by clientside JS.
+- `clientViewBundles`: *[Object]* A map which will expose templates to clientside JS. Each entry is an array of templates which will be saved in the module defined in the key. The base path for where the client exposed templates are saved is `staticsRoot/.build/templates`
+  - Example:
+  ```json
+  {
+    "mainLayouts.js": ["baseLayout.html", "footer.html"],
+    "forms.js": ["forms/formTemplate.html"],
+  }
+  ```
 
 Public folder parameters
 ---
