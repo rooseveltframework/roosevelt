@@ -117,7 +117,11 @@ describe('Views Bundler Tests', function () {
       if (serverStarted(result)) {
         let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
 
-        assert.throws(klawsync(pathToExposedTemplatesFolder))
+        try {
+          klawsync(pathToExposedTemplatesFolder)
+        } catch (err) {
+          assert.strictEqual(err.message.includes('no such file or directory'), true)
+        }
 
         testApp.send('stop')
       }
@@ -142,7 +146,11 @@ describe('Views Bundler Tests', function () {
       if (serverStarted(result)) {
         let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
 
-        assert.throws(klawsync(pathToExposedTemplatesFolder))
+        try {
+          klawsync(pathToExposedTemplatesFolder)
+        } catch (err) {
+          assert.strictEqual(err.message.includes('no such file or directory'), true)
+        }
 
         testApp.send('stop')
       }
@@ -167,7 +175,11 @@ describe('Views Bundler Tests', function () {
       if (serverStarted(result)) {
         let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
 
-        assert.throws(klawsync(pathToExposedTemplatesFolder))
+        try {
+          klawsync(pathToExposedTemplatesFolder)
+        } catch (err) {
+          assert.strictEqual(err.message.includes('no such file or directory'), true)
+        }
 
         testApp.send('stop')
       }
