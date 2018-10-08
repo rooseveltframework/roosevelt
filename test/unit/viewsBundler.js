@@ -50,7 +50,8 @@ describe('Views Bundler Tests', function () {
       appDir,
       clientViewBundles: {
         'output.js': ['a.html']
-      }
+      },
+      generateFolderStructure: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -80,7 +81,8 @@ describe('Views Bundler Tests', function () {
       appDir,
       clientViewBundles: {
         'output.js': ['a']
-      }
+      },
+      generateFolderStructure: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -108,7 +110,36 @@ describe('Views Bundler Tests', function () {
   it('should not create a templates folder if there are no items in the whitelist', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {}
+      clientViewBundles: {},
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        try {
+          klawsync(pathToExposedTemplatesFolder)
+        } catch (err) {
+          assert.strictEqual(err.message.includes('no such file or directory'), true)
+        }
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should not create a templates folder if generateFolderStructure is false', function (done) {
+    generateTestApp({
+      appDir,
+      clientViewBundles: {},
+      generateFolderStructure: false
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -137,7 +168,8 @@ describe('Views Bundler Tests', function () {
       appDir,
       clientViewBundles: {
         'output.js': []
-      }
+      },
+      generateFolderStructure: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -166,7 +198,8 @@ describe('Views Bundler Tests', function () {
       appDir,
       clientViewBundles: {
         'output.js': null
-      }
+      },
+      generateFolderStructure: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -195,7 +228,8 @@ describe('Views Bundler Tests', function () {
       appDir,
       clientViewBundles: {
         'output.js': ['fake.html']
-      }
+      },
+      generateFolderStructure: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })

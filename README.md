@@ -859,6 +859,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `port`                               | Port Roosevelt is running on.            |
 | `flags`                              | Command line flags sent to Roosevelt.    |
 | `logger`                             | The logging module used for simple parameterized logging.|
+| `clientViewBundles`                  | The collection of views which will be exposed to the frontend JS. |
 
 Additionally the Roosevelt constructor returns the following object:
 
