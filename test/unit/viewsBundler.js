@@ -48,8 +48,10 @@ describe('Views Bundler Tests', function () {
   it('properly expose template files in a whitelist', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {
-        'output.js': ['a.html']
+      clientViews: {
+        bundles: {
+          'output.js': ['a.html']
+        }
       },
       generateFolderStructure: true
     }, options)
@@ -79,8 +81,10 @@ describe('Views Bundler Tests', function () {
   it('If a template doesn\'t have an extension, it will add .html to it', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {
-        'output.js': ['a']
+      clientViews: {
+        bundles: {
+          'output.js': ['a']
+        }
       },
       generateFolderStructure: true
     }, options)
@@ -110,7 +114,7 @@ describe('Views Bundler Tests', function () {
   it('should not create a templates folder if there are no items in the whitelist', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {},
+      clientViews: {},
       generateFolderStructure: true
     }, options)
 
@@ -138,7 +142,7 @@ describe('Views Bundler Tests', function () {
   it('should not create a templates folder if generateFolderStructure is false', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {},
+      clientViews: {},
       generateFolderStructure: false
     }, options)
 
@@ -166,8 +170,10 @@ describe('Views Bundler Tests', function () {
   it('should not create a templates folder if there is bundles without any contents', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {
-        'output.js': []
+      clientViews: {
+        bundles: {
+          'output.js': []
+        }
       },
       generateFolderStructure: true
     }, options)
@@ -196,8 +202,10 @@ describe('Views Bundler Tests', function () {
   it('should not create a templates folder if there is a bundle that is null', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {
-        'output.js': null
+      clientViews: {
+        bundles: {
+          'output.js': null
+        }
       },
       generateFolderStructure: true
     }, options)
@@ -226,8 +234,10 @@ describe('Views Bundler Tests', function () {
   it('should send an error to the console with an nonexistent template', function (done) {
     generateTestApp({
       appDir,
-      clientViewBundles: {
-        'output.js': ['fake.html']
+      clientViews: {
+        bundles: {
+          'output.js': ['fake.html']
+        }
       },
       generateFolderStructure: true
     }, options)

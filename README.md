@@ -676,14 +676,32 @@ Statics parameters
       }
       ```
 
-- `clientViewBundles`: *[Object]* A map which will expose templates to clientside JS. Each entry is an array of templates which will be saved in the module defined in the key. The base path for where the client exposed templates are saved is `staticsRoot/.build/templates`
-  - Example:
-  ```json
-  {
-    "mainLayouts.js": ["baseLayout.html", "footer.html"],
-    "forms.js": ["forms/formTemplate.html"],
-  }
-  ```
+- `clientViews`: *[Object]* options for template files to be exposed to Frontend JS
+  
+  - `bundles`: *[Object]* A map which will expose templates to clientside JS. Each entry is an array of templates which will be saved in the module defined in the key.
+  
+      - the contents of the bundle array's can be any type of templating language or plain old HTML which will be sent down to the client for usage.
+
+      - Example:
+        ```json
+        // the input files are found in the directory defined in the "viewsPath" config.
+        {
+          "mainLayouts.js": ["baseLayout.html", "footer.html"],
+          "forms.js": ["forms/formTemplate.html"],
+        }
+        ```
+
+  - `output`: *[string]* Subdirectory within the statics root to define where to save the client view bundles.
+
+    - Default: *[string]* `".build/templates"`
+
+  - Default: *[Object]*
+    ```json
+      "clientViews": {
+        "bundles": {},
+        "output": "./build/templates"
+      }
+    ```
 
 Public folder parameters
 ---
