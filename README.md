@@ -878,6 +878,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `flags`                              | Command line flags sent to Roosevelt.    |
 | `logger`                             | The logging module used for simple parameterized logging.|
 | `clientViewBundles`                  | The collection of views which will be exposed to the frontend JS. |
+| `clientViewsBundledOutput`           | Full path on the file system to where your app's client exposed views folder is located |
 
 Additionally the Roosevelt constructor returns the following object:
 
