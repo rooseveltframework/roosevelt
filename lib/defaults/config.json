@@ -87,6 +87,7 @@
   "cores": 1,
   "clientViews": {
     "bundles": {},
-    "output": ".build/templates"
+    "output": ".build/templates",
+    "minify": true
   }
 }

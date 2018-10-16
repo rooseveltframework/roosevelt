@@ -695,11 +695,16 @@ Statics parameters
 
     - Default: *[string]* `".build/templates"`
 
+  - `minify`: *[Boolean]* option to minify templates when being processed
+
+    - Default: *[Boolean]* `true`
+
   - Default: *[Object]*
     ```json
       "clientViews": {
         "bundles": {},
-        "output": "./build/templates"
+        "output": ".build/templates",
+        "minify": true
       }
     ```
 

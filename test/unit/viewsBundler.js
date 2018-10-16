@@ -3,15 +3,30 @@
 const assert = require('assert')
 const generateTestApp = require('../util/generateTestApp')
 const cleanupTestApp = require('../util/cleanupTestApp')
+const fsr = require('../../lib/tools/fsr')()
 const { fork } = require('child_process')
 const fse = require('fs-extra')
 const path = require('path')
 const klawsync = require('klaw-sync')
+const htmlMinifier = require('html-minifier').minify
+
+let minifyOptions = {
+  removeComments: true,
+  collapseWhitespace: true,
+  collapseBooleanAttributes: true,
+  remoaveAttributeQuotes: true,
+  removeEmptyAttributes: true
+}
 
 describe('Views Bundler Tests', function () {
   const appDir = path.join(__dirname, '../app/viewsBundler')
 
-  const template1 = `<h1>Hello World</h1>`
+  const template1 = `
+    <h1>Hello World</h1>
+    <div>
+        <p>lorem ipsum dolor set</p>
+    </div>
+  `
 
   let pathOfTemplates = [
     path.join(appDir, 'mvc/views/a.html')
@@ -250,6 +265,133 @@ describe('Views Bundler Tests', function () {
       }
 
       testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should save a file to a specific location when the output folder option is modified', function (done) {
+    let customPathArray = [
+      path.join(appDir, 'statics/js/output.js')
+    ]
+
+    generateTestApp({
+      appDir,
+      clientViews: {
+        bundles: {
+          'output.js': ['a.html']
+        },
+        output: 'js'
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/js')
+
+        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+
+        exposedTemplatesArray.forEach((file) => {
+          let test = customPathArray.includes(file.path)
+          assert.strictEqual(test, true)
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should minify a template when the minify param is enabled', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        bundles: {
+          'output.js': ['a.html']
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+
+        exposedTemplatesArray.forEach((file) => {
+          if (fsr.fileExists(file.path)) {
+            delete require.cache[require.resolve(file.path)]
+          }
+          let templateJSON = require(file.path)()
+
+          for (let key in templateJSON) {
+            let template = templateJSON[key]
+            assert.strictEqual(htmlMinifier(template), template)
+          }
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.error(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should not minify templates when it the param is disabled', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        bundles: {
+          'output.js': ['a.html']
+        },
+        minify: false
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+
+        exposedTemplatesArray.forEach((file) => {
+          if (fsr.fileExists(file.path)) {
+            delete require.cache[require.resolve(file.path)]
+          }
+          let templateJSON = require(file.path)()
+
+          for (let key in templateJSON) {
+            const template = templateJSON[key]
+            assert.notStrictEqual(htmlMinifier(template, minifyOptions), template)
+          }
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.error(result.toString())
     })
 
     testApp.on('exit', () => {
