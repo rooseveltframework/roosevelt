@@ -699,12 +699,17 @@ Statics parameters
 
     - Default: *[Boolean]* `true`
 
+  - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)
+
+    - Falls back to `htmlMinify.options` if empty
+
   - Default: *[Object]*
     ```json
       "clientViews": {
         "bundles": {},
         "output": ".build/templates",
-        "minify": true
+        "minify": true,
+        "minifyOptions": {}
       }
     ```
 

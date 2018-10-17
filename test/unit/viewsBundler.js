@@ -75,14 +75,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
-
-        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
-
-        exposedTemplatesArray.forEach((file) => {
-          let test = pathOfExposedTemplates.includes(file.path)
-          assert.strictEqual(test, true)
-        })
+        assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
@@ -108,14 +101,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
-
-        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
-
-        exposedTemplatesArray.forEach((file) => {
-          let test = pathOfExposedTemplates.includes(file.path)
-          assert.strictEqual(test, true)
-        })
+        assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
@@ -137,13 +123,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
-
-        try {
-          klawsync(pathToExposedTemplatesFolder)
-        } catch (err) {
-          assert.strictEqual(err.message.includes('no such file or directory'), true)
-        }
+        assertFilesNotCreated(appDir, 'statics/.build/templates')
 
         testApp.send('stop')
       }
@@ -165,13 +145,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
-
-        try {
-          klawsync(pathToExposedTemplatesFolder)
-        } catch (err) {
-          assert.strictEqual(err.message.includes('no such file or directory'), true)
-        }
+        assertFilesNotCreated(appDir, 'statics/.build/templates')
 
         testApp.send('stop')
       }
@@ -197,13 +171,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
-
-        try {
-          klawsync(pathToExposedTemplatesFolder)
-        } catch (err) {
-          assert.strictEqual(err.message.includes('no such file or directory'), true)
-        }
+        assertFilesNotCreated(appDir, 'statics/.build/templates')
 
         testApp.send('stop')
       }
@@ -229,13 +197,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
-
-        try {
-          klawsync(pathToExposedTemplatesFolder)
-        } catch (err) {
-          assert.strictEqual(err.message.includes('no such file or directory'), true)
-        }
+        assertFilesNotCreated(appDir, 'statics/.build/templates')
 
         testApp.send('stop')
       }
@@ -292,14 +254,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/js')
-
-        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
-
-        exposedTemplatesArray.forEach((file) => {
-          let test = customPathArray.includes(file.path)
-          assert.strictEqual(test, true)
-        })
+        assertFilesExist(appDir, 'statics/js', customPathArray)
 
         testApp.send('stop')
       }
@@ -337,7 +292,7 @@ describe('Views Bundler Tests', function () {
 
           for (let key in templateJSON) {
             let template = templateJSON[key]
-            assert.strictEqual(htmlMinifier(template), template)
+            assert.strictEqual(htmlMinifier(template, minifyOptions), template)
           }
         })
 
@@ -398,8 +353,74 @@ describe('Views Bundler Tests', function () {
       done()
     })
   })
+
+  it('should accept minify options', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        bundles: {
+          'output.js': ['a.html']
+        },
+        minifyOptions
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+
+        exposedTemplatesArray.forEach((file) => {
+          if (fsr.fileExists(file.path)) {
+            delete require.cache[require.resolve(file.path)]
+          }
+          let templateJSON = require(file.path)()
+
+          for (let key in templateJSON) {
+            let template = templateJSON[key]
+            assert.strictEqual(htmlMinifier(template, minifyOptions), template)
+          }
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.error(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
 
 function serverStarted (result) {
   return result.toString().includes('Roosevelt Express HTTP server listening')
+}
+
+function assertFilesNotCreated (appDir, templatePath) {
+  let pathToExposedTemplatesFolder = path.join(appDir, templatePath)
+
+  try {
+    klawsync(pathToExposedTemplatesFolder)
+  } catch (err) {
+    assert.strictEqual(err.message.includes('no such file or directory'), true)
+  }
+}
+
+function assertFilesExist (appDir, templatePath, pathOfExposedTemplates) {
+  let pathToExposedTemplatesFolder = path.join(appDir, templatePath)
+
+  let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+
+  exposedTemplatesArray.forEach((file) => {
+    let test = pathOfExposedTemplates.includes(file.path)
+    assert.strictEqual(test, true)
+  })
 }
