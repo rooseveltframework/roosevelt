@@ -768,6 +768,8 @@ Event list
 - `onReqAfterRoute(req, res)`: Fired after the request ends.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+- `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client
+  - `template`: A string containing a template written in any templating engine (Teddy, Pug, Handlebars, etc) 
 
 
 

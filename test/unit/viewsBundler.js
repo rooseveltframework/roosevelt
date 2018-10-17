@@ -398,6 +398,52 @@ describe('Views Bundler Tests', function () {
       done()
     })
   })
+
+  it('should be able to preprocess templates', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        bundles: {
+          'output.js': ['a.html']
+        },
+        minifyOptions
+      },
+      generateFolderStructure: true,
+      onClientViewsProcess: `(template) => {return template + "<div>Appended div!</div>"}`
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+
+        exposedTemplatesArray.forEach((file) => {
+          if (fsr.fileExists(file.path)) {
+            delete require.cache[require.resolve(file.path)]
+          }
+          let templateJSON = require(file.path)()
+
+          for (let key in templateJSON) {
+            let template = templateJSON[key]
+            assert.strictEqual(template.endsWith('<div>Appended div!</div>'), true)
+          }
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.log(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
 })
 
 function serverStarted (result) {
