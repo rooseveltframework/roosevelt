@@ -88,6 +88,9 @@
   "clientViews": {
     "bundles": {},
     "output": ".build/templates",
+    "exposeAll": false,
+    "blacklist": [],
+    "defaultBundle": "bundle.js",
     "minify": true,
     "minifyOptions": {}
   }

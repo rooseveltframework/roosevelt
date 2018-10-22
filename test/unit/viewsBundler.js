@@ -22,14 +22,21 @@ describe('Views Bundler Tests', function () {
   const appDir = path.join(__dirname, '../app/viewsBundler')
 
   const template1 = `
+    <!-- roosevelt-whitelist output.js -->
     <h1>Hello World</h1>
     <div>
         <p>lorem ipsum dolor set</p>
     </div>
   `
 
+  const blacklistedTemplate = `
+    <!-- roosevelt-blacklist -->
+    <p>This is in a blacklist</p>  
+  `
+
   let pathOfTemplates = [
-    path.join(appDir, 'mvc/views/a.html')
+    path.join(appDir, 'mvc/views/a.html'),
+    path.join(appDir, 'mvc/views/bad.html')
   ]
 
   let pathOfExposedTemplates = [
@@ -37,7 +44,8 @@ describe('Views Bundler Tests', function () {
   ]
 
   let staticTemplates = [
-    template1
+    template1,
+    blacklistedTemplate
   ]
 
   let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
@@ -409,7 +417,7 @@ describe('Views Bundler Tests', function () {
         minifyOptions
       },
       generateFolderStructure: true,
-      onClientViewsProcess: `(template) => {return template + "<div>Appended div!</div>"}`
+      onClientViewsProcess: `(template) => { return template + "<div>Appended div!</div>" }`
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -431,6 +439,139 @@ describe('Views Bundler Tests', function () {
             assert.strictEqual(template.endsWith('<div>Appended div!</div>'), true)
           }
         })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.log(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should be able to include a blacklist', function (done) {
+    const blacklist = ['bad.html']
+
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true,
+        blacklist
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        exposedTemplates.forEach((file) => {
+          if (fsr.fileExists(file.path)) {
+            delete require.cache[require.resolve(file.path)]
+          }
+          let templateJSON = require(file.path)()
+          let templates = Object.keys(templateJSON)
+
+          blacklist.forEach(notExposedFile => {
+            templates.forEach(template => {
+              assert.strictEqual(template.includes(notExposedFile), false)
+            })
+          })
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.log(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should be able to blacklist files with a <!-- roosevelt-blacklist --> tag at the top of the file', function (done) {
+    const blacklist = ['bad.html']
+
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        exposedTemplates.forEach((file) => {
+          if (fsr.fileExists(file.path)) {
+            delete require.cache[require.resolve(file.path)]
+          }
+          let templateJSON = require(file.path)()
+          let templates = Object.keys(templateJSON)
+
+          blacklist.forEach(notExposedFile => {
+            templates.forEach(template => {
+              assert.strictEqual(template.includes(notExposedFile), false)
+            })
+          })
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.log(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should save whitelisted files with a <!-- roosevelt-whitelist --> tag to the proper location', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        let outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
+
+        if (fsr.fileExists(outputBundle.path)) {
+          delete require.cache[require.resolve(outputBundle.path)]
+        }
+        let templateJSON = require(outputBundle.path)()
+        let templates = Object.keys(templateJSON)
+
+        assert.strictEqual(templates.length, 1)
 
         testApp.send('stop')
       }

@@ -703,13 +703,28 @@ Statics parameters
 
     - Falls back to `htmlMinify.options` if empty
 
+  - `exposeAll`: *[Boolean]* option to expose all templates down to the client. This will exclude templates that have `<!-- roosevelt-blacklist -->` at the top of the file or those listed in the `blacklist` property of `clientViews`
+
+    - Default: *[Boolean]* `false`
+
+  - `blacklist`: *[Array<String>]* Array of files / folders excluded when `exposeAll` is on.
+
+    - Default: *[Array<String>]* `[]`
+
+  - `defaultBundle`: *[String]* Filename for default location of templates if not specified with the `<!-- roosevelt-whitelist <filepath> -->` tag at the top of any template
+
+    - Default: *[String]* `"bundle.js"`
+
   - Default: *[Object]*
     ```json
       "clientViews": {
         "bundles": {},
         "output": ".build/templates",
         "minify": true,
-        "minifyOptions": {}
+        "minifyOptions": {},
+        "exposeAll": false,
+        "blacklist": [],
+        "defaultBundle": "bundle.js"
       }
     ```
 
