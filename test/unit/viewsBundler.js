@@ -28,6 +28,9 @@ describe('Views Bundler Tests', function () {
         <p>lorem ipsum dolor set</p>
     </div>
   `
+  const template2 = `
+    <div>This will be put in bundle.js</div>
+  `
 
   const blacklistedTemplate = `
     <!-- roosevelt-blacklist -->
@@ -36,6 +39,7 @@ describe('Views Bundler Tests', function () {
 
   let pathOfTemplates = [
     path.join(appDir, 'mvc/views/a.html'),
+    path.join(appDir, 'mvc/views/b.html'),
     path.join(appDir, 'mvc/views/bad.html')
   ]
 
@@ -45,6 +49,7 @@ describe('Views Bundler Tests', function () {
 
   let staticTemplates = [
     template1,
+    template2,
     blacklistedTemplate
   ]
 
@@ -564,6 +569,46 @@ describe('Views Bundler Tests', function () {
         let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
         let outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
+
+        if (fsr.fileExists(outputBundle.path)) {
+          delete require.cache[require.resolve(outputBundle.path)]
+        }
+        let templateJSON = require(outputBundle.path)()
+        let templates = Object.keys(templateJSON)
+
+        assert.strictEqual(templates.length, 1)
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.stderr.on('data', (result) => {
+      console.log(result.toString())
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should save whitelisted files without a <!-- roosevelt-whitelist --> tag to the default location', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        let outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
 
         if (fsr.fileExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
