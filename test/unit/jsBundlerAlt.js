@@ -69,7 +69,7 @@ describe.only('JS Bundler Tests', function () {
           ensureDirSync: sinon.stub(),
           writeFileSync: sinon.stub()
         }
-      },
+      }
     })
   })
 
