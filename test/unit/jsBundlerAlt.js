@@ -1,37 +1,79 @@
 /* eslint-env mocha */
 
-const squire = require('squirejs')
+const sinon = require('sinon')
+const proxyquire = require('proxyquire')
 
 describe.only('JS Bundler Tests', function () {
-  var injector
-  var mockBrowserify
-  var mockPath
-  var mockLogger
-  var mockFsr
-
+  var fakeGetMap
   var fakeApp
   var fakeCallback
-
   var jsBundler
-  beforeEach(function () {
-    mockBrowserify = {}
-    mockPath = {}
-    mockLogger = {}
-    mockFsr = {}
 
-    fakeApp = {}
+  beforeEach(function () {
+    fakeGetMap = {
+      params: {
+        logging: {
+          http: true,
+          appStatus: true,
+          warnings: true,
+          verbose: false
+        },
+        js: {
+          bundler: {
+            bundles: [
+              {
+                env: '',
+                files: [],
+                params: {
+                  paths: []
+                },
+                outputFile: ''
+              }
+            ],
+            expose: {}
+          }
+        }
+      },
+      appDir: {},
+      appName: {},
+      jsPath: {},
+      jsBundledOutput: '',
+      jsCompiledOutput: {}
+    }
+
+    fakeApp = {
+      get: sinon.stub().callsFake(function (key) {
+        return fakeGetMap[key]
+      })
+    }
     fakeCallback = function () {}
 
-    injector = new squire.Squire()
-    injector.mock('browserify', mockBrowserify)
-    injector.mock('path', mockPath)
-    injector.mock('./tools/logger', mockLogger)
-    injector.mock('./tools/fsr', mockFsr)
-
-    jsBundler = require('../../lib/jsBundler')
+    jsBundler = proxyquire('../../lib/jsBundler', {
+      'browserify': function (files, params) {
+        return {
+          bundle: sinon.stub()
+        }
+      },
+      'path': {
+        join: sinon.stub().returns('path')
+      },
+      './tools/logger': function (logging) {
+        return {
+          log: sinon.stub(),
+          error: sinon.stub()
+        }
+      },
+      './tools/fsr': function (app) {
+        return {
+          fileExists: sinon.stub(),
+          ensureDirSync: sinon.stub(),
+          writeFileSync: sinon.stub()
+        }
+      },
+    })
   })
 
-  it('should explode because the injector mocks are not complete yet', function () {
+  it('should run jsBundler in an isolated form', function () {
     jsBundler(fakeApp, fakeCallback)
   })
 })
