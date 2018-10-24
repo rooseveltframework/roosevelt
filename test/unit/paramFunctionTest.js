@@ -507,9 +507,9 @@ describe('Parameter Function Tests', function () {
     // create the symlinks
     let publicPath = path.join(appDir, 'public')
     fse.mkdirSync(publicPath)
-    fse.symlinkSync(imagesPath, path.join(publicPath, 'images'))
-    fse.symlinkSync(cssPath, path.join(publicPath, 'css'))
-    fse.symlinkSync(jsPath, path.join(publicPath, 'js'))
+    fse.symlinkSync(imagesPath, path.join(publicPath, 'images'), 'junction')
+    fse.symlinkSync(cssPath, path.join(publicPath, 'css'), 'junction')
+    fse.symlinkSync(jsPath, path.join(publicPath, 'js'), 'junction')
 
     // create the app.js file
     generateTestApp({
