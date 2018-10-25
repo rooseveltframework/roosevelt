@@ -77,7 +77,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a.html']
         }
       },
@@ -103,7 +103,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a']
         }
       },
@@ -173,7 +173,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': []
         }
       },
@@ -199,7 +199,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': null
         }
       },
@@ -225,7 +225,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['fake.html']
         }
       },
@@ -247,6 +247,32 @@ describe('Views Bundler Tests', function () {
     })
   })
 
+  it('should skip a file if it is in the whitelist but has a <!-- roosevelt-blacklist --> tag', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        whitelist: {
+          'output.js': ['bad.html']
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        assertFilesNotCreated(appDir, 'statics/.build/templates')
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
   it('should save a file to a specific location when the output folder option is modified', function (done) {
     let customPathArray = [
       path.join(appDir, 'statics/js/output.js')
@@ -255,7 +281,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a.html']
         },
         output: 'js'
@@ -282,7 +308,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a.html']
         }
       },
@@ -313,10 +339,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.error(result.toString())
-    })
-
     testApp.on('exit', () => {
       done()
     })
@@ -326,7 +348,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a.html']
         },
         minify: false
@@ -358,10 +380,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.error(result.toString())
-    })
-
     testApp.on('exit', () => {
       done()
     })
@@ -371,7 +389,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a.html']
         },
         minifyOptions
@@ -403,10 +421,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.error(result.toString())
-    })
-
     testApp.on('exit', () => {
       done()
     })
@@ -416,7 +430,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        bundles: {
+        whitelist: {
           'output.js': ['a.html']
         },
         minifyOptions
@@ -449,8 +463,35 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.log(result.toString())
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should be able to skip exposing files in the exposeAll step when already in whitelist', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true,
+        whitelist: {
+          'output.js': ['a.html']
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        assert.strictEqual(exposedTemplates.length, 2)
+
+        testApp.send('stop')
+      }
     })
 
     testApp.on('exit', () => {
@@ -496,10 +537,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.log(result.toString())
-    })
-
     testApp.on('exit', () => {
       done()
     })
@@ -542,10 +579,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.log(result.toString())
-    })
-
     testApp.on('exit', () => {
       done()
     })
@@ -582,10 +615,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    testApp.stderr.on('data', (result) => {
-      console.log(result.toString())
-    })
-
     testApp.on('exit', () => {
       done()
     })
@@ -620,10 +649,6 @@ describe('Views Bundler Tests', function () {
 
         testApp.send('stop')
       }
-    })
-
-    testApp.stderr.on('data', (result) => {
-      console.log(result.toString())
     })
 
     testApp.on('exit', () => {

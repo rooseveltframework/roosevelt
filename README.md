@@ -678,7 +678,7 @@ Statics parameters
 
 - `clientViews`: *[Object]* options for template files to be exposed to Frontend JS
   
-  - `bundles`: *[Object]* A map which will expose templates to clientside JS. Each entry is an array of templates which will be saved in the module defined in the key.
+  - `whitelist`: *[Object]* A map which will expose templates to clientside JS. Each entry is an array of templates which will be saved in the module defined in the key.
   
       - the contents of the bundle array's can be any type of templating language or plain old HTML which will be sent down to the client for usage.
 
@@ -718,7 +718,7 @@ Statics parameters
   - Default: *[Object]*
     ```json
       "clientViews": {
-        "bundles": {},
+        "whitelist": {},
         "output": ".build/templates",
         "minify": true,
         "minifyOptions": {},
@@ -904,7 +904,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `port`                               | Port Roosevelt is running on.            |
 | `flags`                              | Command line flags sent to Roosevelt.    |
 | `logger`                             | The logging module used for simple parameterized logging.|
-| `clientViewBundles`                  | The collection of views which will be exposed to the frontend JS. |
 | `clientViewsBundledOutput`           | Full path on the file system to where your app's client exposed views folder is located |
 
 Additionally the Roosevelt constructor returns the following object:

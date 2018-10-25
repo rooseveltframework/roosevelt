@@ -86,10 +86,10 @@
   "shutdownTimeout": 30000,
   "cores": 1,
   "clientViews": {
-    "bundles": {},
+    "whitelist": {},
+    "blacklist": [],
     "output": ".build/templates",
     "exposeAll": false,
-    "blacklist": [],
     "defaultBundle": "bundle.js",
     "minify": true,
     "minifyOptions": {}
