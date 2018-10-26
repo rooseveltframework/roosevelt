@@ -709,6 +709,8 @@ Statics parameters
 
   - `blacklist`: *[Array<String>]* Array of files / folders excluded when `exposeAll` is on.
 
+    - **Note**: Anything that is in the blacklist or that has a `<!-- roosevelt-blacklist -->` tag will never be added to any whitelist
+
     - Default: *[Array<String>]* `[]`
 
   - `defaultBundle`: *[String]* Filename for default location of templates if not specified with the `<!-- roosevelt-whitelist <filepath> -->` tag at the top of any template
