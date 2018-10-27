@@ -95,7 +95,8 @@
     "coverage": "nyc mocha --timeout 125000 test/unit",
     "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "test": "npm run lint && mocha --timeout 125000 test/unit"
+    "test": "npm run lint && mocha --timeout 125000 test/unit",
+    "test:integration": "mocha --timeout 125000 test/integration"
   },
   "lint-staged": {
     "*.js": "standard"

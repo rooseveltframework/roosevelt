@@ -3,7 +3,7 @@
 const sinon = require('sinon')
 const proxyquire = require('proxyquire')
 
-describe.only('JS Bundler Tests', function () {
+describe('JS Bundler Tests', function () {
   var fakeGetMap
   var fakeApp
   var fakeCallback
