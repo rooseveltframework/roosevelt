@@ -1148,5 +1148,107 @@ describe('HTML Validator/Kill Validator Test', function () {
         done()
       })
     })
+
+    it('should output human readable times (hours) on autokiller instantiation', function (done) {
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: true,
+          separateProcess: {
+            enable: true,
+            autoKiller: true,
+            autoKillerTimeout: 3600000
+          }
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      let hadIt = false
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.stdout.on('data', data => {
+        if (data.includes('automatically kill the detached validator after 1 hour of inactivity')) {
+          hadIt = true
+          testApp.send('stop') // pass
+        }
+        if (data.includes('server listening on port')) {
+          testApp.send('stop') // fail
+        }
+      })
+
+      testApp.on('exit', () => {
+        assert.strictEqual(hadIt, true, 'Human readable times (hours) did not output on autokiller instantiation')
+        done()
+      })
+    })
+
+    it('should output human readable times (minutes) on autokiller instantiation', function (done) {
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: true,
+          separateProcess: {
+            enable: true,
+            autoKiller: true,
+            autoKillerTimeout: 600000 // 10 minutes
+          }
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      let hadIt = false
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.stdout.on('data', data => {
+        if (data.includes('automatically kill the detached validator after 10 minutes of inactivity')) {
+          hadIt = true
+          testApp.send('stop') // pass
+        }
+        if (data.includes('server listening on port')) {
+          testApp.send('stop') // fail
+        }
+      })
+
+      testApp.on('exit', () => {
+        assert.strictEqual(hadIt, true, 'Human readable times (minutes) did not output on autokiller instantiation')
+        done()
+      })
+    })
+
+    it('should output human readable times (seconds) on autokiller instantiation', function (done) {
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        htmlValidator: {
+          enable: true,
+          separateProcess: {
+            enable: true,
+            autoKiller: true,
+            autoKillerTimeout: 10000 // 10 seconds
+          }
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      let hadIt = false
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.stdout.on('data', data => {
+        if (data.includes('automatically kill the detached validator after 10 seconds of inactivity')) {
+          hadIt = true
+          testApp.send('stop') // pass
+        }
+        if (data.includes('server listening on port')) {
+          testApp.send('stop') // fail
+        }
+      })
+
+      testApp.on('exit', () => {
+        assert.strictEqual(hadIt, true, 'Human readable times (seconds) did not output on autokiller instantiation')
+        done()
+      })
+    })
   })
 })
