@@ -1025,51 +1025,6 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should throw an EACCESS error when trying to start on port 100', function (done) {
-    // bool var to hold whether a specific log was outputted
-    let otherErrorLogBool = false
-    let EACCESSLogBool = false
-
-    // Windows does not throw an EACCESS error. Auto passing test.
-    if (process.platform === 'win32') {
-      otherErrorLogBool = true
-      EACCESSLogBool = true
-    }
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      port: 100
-    }, sOptions)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // watch error logs for the specific log that we are testing for
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.')) {
-        otherErrorLogBool = true
-      }
-      if (data.includes('listen EACCES')) {
-        EACCESSLogBool = true
-      }
-    })
-
-    // on startup, if we get there somehow, kill the app
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // on exit, check to see if the specific log was made and finish the test
-    testApp.on('exit', () => {
-      assert.strictEqual(otherErrorLogBool, true, `Roosevelt did not throw an error saying that the user's server port is inaccessible`)
-      assert.strictEqual(EACCESSLogBool, true, `Roosevelt did not throw the specifc error log that we were looking for`)
-      done()
-    })
-  })
-
   it('should be able to close an active connection when the app is closed', function (done) {
     // bool var to hold whether or not the request had finished
     let requestFinishedBool = false
