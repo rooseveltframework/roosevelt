@@ -17,22 +17,29 @@ module.exports = function fakeParams () {
         }
       }
     },
-    singleJsBundle: function () {
+    multiJsBundle: function () {
       return {
         logging: defaultLogging,
         js: {
           bundler: {
             bundles: [
               {
-                env: '',
+                env: 'dev',
                 files: [],
                 params: {
                   paths: []
                 },
-                outputFile: ''
+                outputFile: 'b1.js'
+              },
+              {
+                files: [],
+                params: {
+                  paths: []
+                },
+                outputFile: 'b2.js'
               }
             ],
-            expose: {}
+            expose: false
           }
         }
       }

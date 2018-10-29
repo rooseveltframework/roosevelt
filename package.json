@@ -92,7 +92,7 @@
   },
   "scripts": {
     "codecov": "./node_modules/.bin/codecov",
-    "coverage": "nyc mocha --timeout 125000 test/unit",
+    "coverage": "nyc mocha --timeout 15000 test/unit",
     "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
     "test": "npm run lint && mocha --timeout 125000 test/unit",

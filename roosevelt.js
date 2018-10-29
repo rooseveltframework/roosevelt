@@ -176,7 +176,7 @@ module.exports = function (params) {
     }
 
     function bundleJs () {
-      require('./lib/jsBundler')(app, compileJs)
+      require('./lib/jsBundler').bundle(app, compileJs)
     }
 
     function compileJs () {
