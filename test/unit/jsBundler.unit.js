@@ -112,7 +112,7 @@ describe('lib/jsBundler', function () {
       it('should check each bundle for inclusion', function () {
         jsBundler.bundle(fakeApp, fakeCallback)
 
-        assert.strict.equal(jsBundler.shouldIncludeBundle.callCount, 2, 'was called an incorrect number of times')
+        assert.strictEqual(jsBundler.shouldIncludeBundle.callCount, 2, 'was called an incorrect number of times')
         assert(jsBundler.shouldIncludeBundle.calledWith(process, fakeGetMap.params.js.bundler.bundles[0]), 'was not called with the first bundle')
         assert(jsBundler.shouldIncludeBundle.calledWith(process, fakeGetMap.params.js.bundler.bundles[1]), 'was not called with the second bundle')
       })
@@ -130,7 +130,7 @@ describe('lib/jsBundler', function () {
 
         it('should call conclude with the proper number of promises', function () {
           const promiseLength = jsBundler.conclude.getCall(0).args[1].length
-          assert.strict.equal(promiseLength, 2, 'there are the wrong amount of promises')
+          assert.strictEqual(promiseLength, 2, 'there are the wrong amount of promises')
         })
       })
 
@@ -146,7 +146,7 @@ describe('lib/jsBundler', function () {
 
         it('should call conclude with the proper number of promises', function () {
           const promiseLength = jsBundler.conclude.getCall(0).args[1].length
-          assert.strict.equal(promiseLength, 0, 'there are the wrong amount of promises')
+          assert.strictEqual(promiseLength, 0, 'there are the wrong amount of promises')
         })
       })
     })
@@ -166,7 +166,7 @@ describe('lib/jsBundler', function () {
       ]
 
       assert(jsBundler.path.join.calledWith(...expectedArgs), 'path.join was called with unexpected args')
-      assert.strict.equal(result, 'path.join result')
+      assert.strictEqual(result, 'path.join result')
     })
   })
 
@@ -177,12 +177,12 @@ describe('lib/jsBundler', function () {
 
     it('should return true when params.js.bundler.bundles.length has a nonzero length', function () {
       const result = jsBundler.isBundlerEnabled(fakeParams().multiJsBundle())
-      assert.strict.equal(result, true, 'expected return value to be true')
+      assert.strictEqual(result, true, 'expected return value to be true')
     })
 
     it('should return false when params.js.bundler.bundles.length has a zero length', function () {
       const result = jsBundler.isBundlerEnabled(fakeParams().emptyJsBundle())
-      assert.strict.equal(result, false, 'expected return value to be false')
+      assert.strictEqual(result, false, 'expected return value to be false')
     })
   })
 
@@ -445,9 +445,9 @@ describe('lib/jsBundler', function () {
       assert(jsBundler.path.join.calledWith('jsPath/', 'a.js'), 'path.join was not used with this file')
       assert(jsBundler.path.join.calledWith('jsPath/', 'b.js'), 'path.join was not used with this file')
       assert(jsBundler.path.join.calledWith('jsPath/', 'c.js'), 'path.join was not used with this file')
-      assert.strict.equal(bundle.files[0], 'result 1', 'the file path was not constructed properly')
-      assert.strict.equal(bundle.files[1], 'result 2', 'the file path was not constructed properly')
-      assert.strict.equal(bundle.files[2], 'result 3', 'the file path was not constructed properly')
+      assert.strictEqual(bundle.files[0], 'result 1', 'the file path was not constructed properly')
+      assert.strictEqual(bundle.files[1], 'result 2', 'the file path was not constructed properly')
+      assert.strictEqual(bundle.files[2], 'result 3', 'the file path was not constructed properly')
     })
 
     it('should pathify the bundle\'s paths', function () {
@@ -456,17 +456,17 @@ describe('lib/jsBundler', function () {
       assert(jsBundler.path.join.calledWith('appDir', '/a/'), 'path.join was not used with this file')
       assert(jsBundler.path.join.calledWith('appDir', '/b/'), 'path.join was not used with this file')
       assert(jsBundler.path.join.calledWith('appDir', '/c/'), 'path.join was not used with this file')
-      assert.strict.equal(bundle.params.paths[0], 'result 4', 'the file path was not constructed properly')
-      assert.strict.equal(bundle.params.paths[1], 'result 5', 'the file path was not constructed properly')
-      assert.strict.equal(bundle.params.paths[2], 'result 6', 'the file path was not constructed properly')
+      assert.strictEqual(bundle.params.paths[0], 'result 4', 'the file path was not constructed properly')
+      assert.strictEqual(bundle.params.paths[1], 'result 5', 'the file path was not constructed properly')
+      assert.strictEqual(bundle.params.paths[2], 'result 6', 'the file path was not constructed properly')
     })
 
     it('should provide a default path if the bundle has no params', function () {
       delete bundle.params
       jsBundler.processBundleFiles(bundle)
 
-      assert.strict.equal(bundle.params.paths[0], 'jsPath/', 'the default paths behavior is incorrect')
-      assert.strict.equal(bundle.params.paths.length, 1, 'there are too many paths')
+      assert.strictEqual(bundle.params.paths[0], 'jsPath/', 'the default paths behavior is incorrect')
+      assert.strictEqual(bundle.params.paths.length, 1, 'there are too many paths')
     })
   })
 
@@ -561,7 +561,7 @@ describe('lib/jsBundler', function () {
         })
 
         it('should not write to the build dir', function () {
-          assert.strict.equal(fsr.writeFileSync.callCount, 1, 'too many files were written')
+          assert.strictEqual(fsr.writeFileSync.callCount, 1, 'too many files were written')
         })
 
         it('should resolve the promise', function () {
