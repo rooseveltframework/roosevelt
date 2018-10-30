@@ -87,12 +87,15 @@ describe('Views Bundler Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (result) => {
+      console.log(result.toString())
       if (serverStarted(result)) {
         assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -115,10 +118,11 @@ describe('Views Bundler Tests', function () {
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
         assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
-
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -141,6 +145,8 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -190,6 +196,8 @@ describe('Views Bundler Tests', function () {
       }
     })
 
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -215,6 +223,8 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -242,6 +252,8 @@ describe('Views Bundler Tests', function () {
       testApp.send('stop')
     })
 
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -267,6 +279,8 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -294,10 +308,11 @@ describe('Views Bundler Tests', function () {
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
         assertFilesExist(appDir, 'statics/js', customPathArray)
-
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -338,6 +353,8 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -421,6 +438,8 @@ describe('Views Bundler Tests', function () {
       }
     })
 
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -494,6 +513,45 @@ describe('Views Bundler Tests', function () {
       }
     })
 
+    outputStderr(testApp)
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should save a file that has a whitelist defined both in roosevelt args and the template to the location defined in the template', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true,
+        whitelist: {
+          'foobar.js': ['a.html']
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        let pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+
+        let exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        exposedTemplates.forEach(bundle => {
+          let bundleName = bundle.path.split(path.sep).pop()
+
+          assert.notStrictEqual(bundleName, 'foobar.js')
+        })
+
+        testApp.send('stop')
+      }
+    })
+
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -537,6 +595,8 @@ describe('Views Bundler Tests', function () {
       }
     })
 
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -579,6 +639,8 @@ describe('Views Bundler Tests', function () {
       }
     })
 
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -614,6 +676,8 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
+
+    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -651,6 +715,8 @@ describe('Views Bundler Tests', function () {
       }
     })
 
+    outputStderr(testApp)
+
     testApp.on('exit', () => {
       done()
     })
@@ -680,4 +746,8 @@ function assertFilesExist (appDir, templatePath, pathOfExposedTemplates) {
     let test = pathOfExposedTemplates.includes(file.path)
     assert.strictEqual(test, true)
   })
+}
+
+function outputStderr (testApp) {
+  testApp.stderr.on('data', (result) => console.log(result.toString()))
 }
