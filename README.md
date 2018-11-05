@@ -59,7 +59,7 @@ Some important caveats to note:
 
 The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
 
-Once you have a sane developmemt environment, you can proceed with the standard install procedure below.
+Once you have a sane development environment, you can proceed with the standard install procedure below.
 
 
 Using the Roosevelt app generator
@@ -358,7 +358,7 @@ App behavior parameters
 
     - `enable`: *[Boolean]* Run the validator as a detached background process.
     - `autoKiller`: *[Boolean]* Spawns a process to kill the validator if it is backgrounded and idle for more than a certain amount of time.
-    - `autoKillerTimeout`: *[Number]* Time (in miliseconds) that the validator auto-killer process waits before it kills the backgrounded validator.
+    - `autoKillerTimeout`: *[Number]* Time (in milliseconds) that the validator auto-killer process waits before it kills the backgrounded validator.
 
   - `showWarnings`: *[Boolean]* When set to true, shows HTML validation warnings in addition to errors.
 
@@ -391,8 +391,8 @@ App behavior parameters
     ```
 
 - `toobusy`: Params to pass to the [node-toobusy](https://github.com/STRML/node-toobusy) module.
-  - `maxLagPerRequest`: *[Number]* Maximum amount of time (in miliseconds) a given request is allowed to take before being interrupted with a [503 error](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors).
-  - `lagCheckInterval`: *[Number]* Interval (in miliseconds) for checking event loop lag in miliseconds.
+  - `maxLagPerRequest`: *[Number]* Maximum amount of time (in milliseconds) a given request is allowed to take before being interrupted with a [503 error](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors).
+  - `lagCheckInterval`: *[Number]* Interval (in milliseconds) for checking event loop lag in milliseconds.
   - Default: *[Object]*
 
       ```json
@@ -531,6 +531,7 @@ Statics parameters
   - `compiler`: *[Object]* Which Roosevelt CSS preprocessor middleware (if any) to use.
 
     - `nodeModule`: *[String]* Node module name of the Roosevelt CSS preprocessor middleware you wish to use.
+
       - Note: Your chosen Roosevelt CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
     - `params`: *[Object]* Params to send to the Roosevelt CSS preprocessor middleware if it accepts any.
 
