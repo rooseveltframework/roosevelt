@@ -796,7 +796,7 @@ Roosevelt provides a series of events you can attach code to by passing a functi
 
 ```js
 require('roosevelt')({
-  onServerStart: function(app) { /* do something */ }
+  onServerStart: (app) => { /* do something */ }
 });
 ```
 
@@ -828,13 +828,13 @@ Controller files are just [standard Express routes](http://expressjs.com/api.htm
 To make a new controller, just make a new file in the controllers directory. For example:
 
 ```js
-module.exports = function(app) { // app is the Express app created by Roosevelt
+module.exports = (app) => { // app is the Express app created by Roosevelt
 
   // standard Express route
-  app.route('/about').get(function(req, res) {
+  app.route('/about').get((req, res) => {
 
     // load a data model
-    var model = require('models/dataModel');
+    let model = require('models/dataModel');
 
     // render a Teddy template and pass it the model
     res.render('about', model);
@@ -848,8 +848,8 @@ An example would be creating a reusable controller for "404 Not Found" pages:
 
 ```js
 // reusable controller "notFound.js"
-module.exports = function(app, req, res) {
-  var model = { content: 'Cannot find this page' };
+module.exports = (app, req, res) => {
+  let model = { content: 'Cannot find this page' };
   res.status(404);
   res.render('404', model);
 }
@@ -861,10 +861,10 @@ This allows them to be called at will in any other controller's route when neede
 
 ```js
 // import the "notFound" controller logic previously defined
-var throw404 = require('controllers/notFound');
+const throw404 = require('controllers/notFound');
 
-module.exports = function(app) {
-  app.route('/whatever').get(function(req, res) {
+module.exports = (app) => {
+  app.route('/whatever').get((req, res) => {
 
     // test some logic that could fail
     // thus triggering the need for the 404 controller
@@ -872,7 +872,7 @@ module.exports = function(app) {
 
       // logic didn't fail
       // so just render the page normally
-      var model = require('models/dataModel');
+      let model = require('models/dataModel');
       res.render('whatever', model);
     }
     else {
