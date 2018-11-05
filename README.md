@@ -280,14 +280,15 @@ App behavior parameters
 
   - Default: *[Boolean]* `true`.
 
-- `logging`: Accepts an object containing four default parameters and custom parameters can be added optionally:
-  - `http`: *[Boolean]* When set to false, Roosevelt will not log HTTP requests to the console.
+- `logging`: Declare the types of logging to use in Roosevelt's logger:
 
-  - `appStatus`: *[Boolean]* When set to false, Roosevelt will not log app status to the console.
+  - `http`: *[Boolean]* Log HTTP requests to the console.
 
-  - `warnings`: *[Boolean]* When set to false, Roosevelt will not log app warnings to the console.
+  - `appStatus`: *[Boolean]* Log app status to the console.
 
-  - `verbose`: *[Boolean]* When set to false, Roosevelt will not output logs made by some of its other processes
+  - `warnings`: *[Boolean]* Log app warnings to the console.
+
+  - `verbose`: *[Boolean]* Enable verbose (noisy) logging.
 
   - `disable`: *[Array]* Disable logging when any of the environment variables in this array are present.
 
@@ -304,17 +305,30 @@ App behavior parameters
       }
       ```
 
-  - Custom: *[Object]*
-      ```json
-      {
-        "debug": {
-          // enable is optional (defaults to true if omitted)
-          "enable": true,
-          // types can be set (ex: info, warn, error) but defaults to 'info' if omitted
-          "type": "error"
+  - You can also declare a custom log types and classify them as logs, warnings, or errors:
+
+      - Default `logging` param with custom log type called `debug` added to it: *[Object]*
+
+        ```json
+        {
+          "http": true,
+          "appStatus": true,
+          "warnings": true,
+          "verbose": false,
+          "debug": {
+            "enable": true,
+            "type": "error"
+          }
         }
-      }
-      ```
+        ```
+
+      - `enable` param: Enables or disables the custom log.
+
+        - Default: *[Boolean]* `true`.
+
+      - `type` param: Specifies what kind of log your custom log is:
+
+        - Allowed values: *[String]* `info`, `warn`, or `error`.
 
 - `minify`: Enables HTML minification as well as the minification step in supporting CSS and JS compilers.
 
