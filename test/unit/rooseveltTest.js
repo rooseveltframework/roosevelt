@@ -76,15 +76,16 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerInit: `(app) => {console.log("Server initialized")}`
     }, sOptions)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // on the error stream check to see how many times it logs that the validator is disabled
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('HTML validator disabled. Continuing without HTML validation...')) {
+    // on the output stream check to see how many times it logs that the server starts
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Server initialized')) {
         initServedLog++
       }
     })
@@ -113,15 +114,16 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      generateFolderStructure: true
+      generateFolderStructure: true,
+      onServerInit: `(app) => {console.log("Server initialized")}`
     }, sOptions)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // on the error stream, check to see how many times the validator disabled log has output
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('HTML validator disabled. Continuing without HTML validation...')) {
+    // on the output stream check to see how many times it logs that the server starts
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Server initialized')) {
         initServedLog++
       }
     })
