@@ -282,10 +282,17 @@ App behavior parameters
 
 - `logging`: Accepts an object containing four default parameters and custom parameters can be added optionally:
   - `http`: *[Boolean]* When set to false, Roosevelt will not log HTTP requests to the console.
+
   - `appStatus`: *[Boolean]* When set to false, Roosevelt will not log app status to the console.
+
   - `warnings`: *[Boolean]* When set to false, Roosevelt will not log app warnings to the console.
+
   - `verbose`: *[Boolean]* When set to false, Roosevelt will not output logs made by some of its other processes
-  - `disable`: *[Array]* Logs can also be suppressed using the disable parameter by adding the environment to be suppressed. Also, an environmental variable that is truthy can also be set. Ex: `'disable': ['production', 'LOADED_MOCHA_OPTS']`
+
+  - `disable`: *[Array]* Disable logging when any of the environment variables in this array are present.
+
+      - Example: `'disable': ['LOADED_MOCHA_OPTS']`
+
   - Default: *[Object]*
 
       ```json
@@ -296,6 +303,7 @@ App behavior parameters
         "verbose": false
       }
       ```
+
   - Custom: *[Object]*
       ```json
       {
@@ -896,6 +904,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. HTTP request logger middleware. |
 | `winston`                            | The [winston](https://github.com/winstonjs/winston) logger module for custom logging. |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
+| `appVersion`                         | The version number of your app derived from `package.json`.  |
 | `appDir`                             | The directory the main module is in.                         |
 | `package`                            | The contents of `package.json`.                              |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
