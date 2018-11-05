@@ -1,5 +1,6 @@
 {
   "port": 43711,
+  "enableCLIFlags": true,
   "generateFolderStructure": true,
   "localhostOnly": true,
   "logging": {
@@ -8,16 +9,16 @@
     "warnings": true,
     "verbose": false
   },
-  "noMinify": false,
+  "minify": true,
   "htmlValidator": {
-    "enable": false,
+    "enable": true,
     "separateProcess": {
       "enable": true,
       "autoKiller": true,
       "autoKillerTimeout": 3600000
     },
-    "port": 8888,
-    "suppressWarnings": false,
+    "port": 48888,
+    "showWarnings": true,
     "exceptions": {
       "requestHeader": "Partial",
       "modelValue": "_disableValidator"
@@ -45,7 +46,7 @@
   "staticsRoot": "statics",
   "htmlMinify": {
     "enable": true,
-    "exceptionURL": false,
+    "exceptionRoutes": false,
     "options": {
       "removeComments": true,
       "collapseWhitespace": true,

@@ -23,7 +23,7 @@
     },
     "custom6": false
   },
-  "noMinify": "package",
+  "minify": "package",
   "htmlValidator": {
     "enable": false,
     "separateProcess": {
@@ -32,7 +32,7 @@
       "autoKillerTimeout": 3600000
     },
     "port": "package",
-    "suppressWarnings": "package",
+    "showWarnings": "package",
     "exceptions": {
       "requestHeader": "package",
       "modelValue": "package"
@@ -61,7 +61,7 @@
   "staticsRoot": "package",
   "htmlMinify": {
     "enable": "package",
-    "exceptionURL": "package",
+    "exceptionRoutes": "package",
     "options": "package"
   },
   "css": {

@@ -1,6 +1,6 @@
 {
   "start": {
-    "value": "npm run production",
+    "value": "nodemon app.js --production-mode",
     "priority": "ignore"
   },
   "production": {

@@ -19,7 +19,7 @@ describe('Folder Structure Tests', function () {
 
     app = require('../../roosevelt')({
       appDir: appDir,
-      ignoreCLIFlags: true,
+      enableCLIFlags: false,
       generateFolderStructure: true,
       logging: {
         appStatus: false,

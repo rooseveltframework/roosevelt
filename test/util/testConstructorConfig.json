@@ -7,12 +7,12 @@
     "appStatus": false,
     "warnings": false
   },
-  "noMinify": "constructor",
+  "minify": "constructor",
   "htmlValidator": {
     "enable": "constructor",
     "separateProcess": "constructor",
     "port": "constructor",
-    "suppressWarnings": "constructor",
+    "showWarnings": "constructor",
     "exceptions": {
       "requestHeader": "constructor",
       "modelValue": "constructor"

@@ -253,7 +253,7 @@ describe('JavaScript Tests', function () {
     })
   })
 
-  it('should copy over the JS files to build without changing them when the noMinify param is true', function (done) {
+  it('should copy over the JS files to build without changing them when the minify param is false', function (done) {
     // get the buffer (string data) of the static files
     let staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
     let staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
@@ -263,7 +263,7 @@ describe('JavaScript Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      noMinify: true,
+      minify: false,
       js: {
         compiler: {
           nodeModule: 'roosevelt-uglify',

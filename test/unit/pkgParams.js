@@ -20,7 +20,7 @@ describe('package.json Parameter Tests', function () {
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(pkg))
     app = require('../../roosevelt')({
       appDir: appDir,
-      ignoreCLIFlags: true,
+      enableCLIFlags: false,
       logging: { disable: ['LOADED_MOCHA_OPTS'] }
     })
   })

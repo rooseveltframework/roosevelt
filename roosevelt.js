@@ -334,7 +334,7 @@ module.exports = function (params) {
       process.on('SIGINT', gracefulShutdown)
     } else {
       if (!app.get('params').https.httpsOnly) {
-        serverPush(httpServer, app.get('port'), 'HTTP')
+        serverPush(httpServer, app.get('params').port, 'HTTP')
       }
       if (app.get('params').https.enable) {
         serverPush(httpsServer, app.get('params').https.httpsPort, 'HTTPS')
