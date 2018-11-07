@@ -92,11 +92,14 @@
   },
   "scripts": {
     "codecov": "./node_modules/.bin/codecov",
-    "coverage": "nyc mocha --timeout 15000 test/unit",
+    "coverage": "nyc mocha --timeout 125000 --recursive test",
+    "coverage:integration": "nyc mocha --timeout 125000 test/integration",
+    "coverage:unit": "nyc mocha --timeout 15000 test/unit",
     "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "test": "npm run lint && mocha --timeout 125000 test/unit",
-    "test:integration": "mocha --timeout 125000 test/integration"
+    "test": "npm run lint && mocha --timeout 125000 --recursive test",
+    "test:integration": "mocha --timeout 125000 test/integration",
+    "test:unit": "mocha --timeout 15000 test/unit"
   },
   "lint-staged": {
     "*.js": "standard"
