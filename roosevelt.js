@@ -360,7 +360,7 @@ module.exports = function (params) {
         serverPush(httpServer, app.get('params').port, 'HTTP')
       }
       if (httpsParams.enable) {
-        serverPush(httpsServer, httpsParams.httpsPort, 'HTTPS')
+        serverPush(httpsServer, httpsParams.port, 'HTTPS')
       }
 
       process.on('SIGTERM', gracefulShutdown)

@@ -707,7 +707,7 @@ describe('Roosevelt Routes Tests', function () {
       generateFolderStructure: true,
       https: {
         enable: true,
-        httpsPort: 43203
+        port: 43203
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`,
       shutdownTimeout: 7000

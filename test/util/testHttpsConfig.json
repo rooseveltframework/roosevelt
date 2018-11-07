@@ -9,7 +9,7 @@
   "https": {
     "enable": true,
     "httpsOnly": true,
-    "httpsPort": 2468,
+    "port": 2468,
     "authInfoPath": {
       "p12": {
         "p12Path": "test/util/certs/test.p12",

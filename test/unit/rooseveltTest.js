@@ -554,7 +554,7 @@ describe('Roosevelt.js Tests', function () {
       localhostOnly: true,
       https: {
         enable: true,
-        httpsPort: 43203
+        port: 43203
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, sOptions)
@@ -836,7 +836,7 @@ describe('Roosevelt.js Tests', function () {
       generateFolderStructure: true,
       https: {
         enable: true,
-        httpsPort: 43203,
+        port: 43203,
         httpsOnly: true
       }
     }, sOptions)

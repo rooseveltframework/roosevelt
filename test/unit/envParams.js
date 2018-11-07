@@ -14,7 +14,7 @@ describe('ENV Parameter Tests', function () {
       warnings: false
     },
     https: {
-      httpsPort: 12345
+      port: 12345
     }
   }
   let app
@@ -41,12 +41,12 @@ describe('ENV Parameter Tests', function () {
     done()
   })
 
-  it('should change the https.httpsPort param to 45678', function (done) {
+  it('should change the https.port param to 45678', function (done) {
     process.env.HTTPS_PORT = 45678
     app = roosevelt({
       ...appConfig
     })
-    assert.strictEqual(app.expressApp.get('params').https.httpsPort, '45678')
+    assert.strictEqual(app.expressApp.get('params').https.port, '45678')
     delete process.env.HTTPS_PORT
     done()
   })
