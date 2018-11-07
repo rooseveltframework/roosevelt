@@ -12,8 +12,17 @@ module.exports = function (params, options) {
   // setting the app directory
   if (params === undefined) {
     appDir = options.appDir
+    params = {}
   } else {
     appDir = params.appDir || options.appDir
+  }
+
+  if (params.htmlValidator === undefined) {
+    params.htmlValidator = {}
+  }
+
+  if (params.htmlValidator.enable !== true) {
+    params.htmlValidator.enable = false
   }
 
   // require roosevelt at the top of every test app

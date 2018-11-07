@@ -21,6 +21,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
       if (err) {
+        console.log(err)
         throw err
       } else {
         done()
