@@ -42,13 +42,12 @@ describe('ENV Parameter Tests', function () {
   })
 
   it('should change the https.httpsPort param to 45678', function (done) {
-    const temp = process.env.HTTPS_PORT
     process.env.HTTPS_PORT = 45678
     app = roosevelt({
       ...appConfig
     })
     assert.strictEqual(app.expressApp.get('params').https.httpsPort, '45678')
-    process.env.HTTPS_PORT = temp
+    delete process.env.HTTPS_PORT
     done()
   })
 })
