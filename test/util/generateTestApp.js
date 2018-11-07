@@ -94,7 +94,7 @@ module.exports = function (params, options) {
     contents += defaultMessages
   }
 
-  // generate test app drectory
+  // generate test app directory
   fse.ensureDirSync(path.join(appDir))
 
   // generate app.js in test directory
