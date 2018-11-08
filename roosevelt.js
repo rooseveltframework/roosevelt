@@ -380,7 +380,8 @@ module.exports = function (params) {
     if (typeof testString !== 'string') {
       testString = testString.toString()
     }
-    return (testString.substring(testString.length - 6) === '-----\n')
+    let endOfLine = require('os').EOL
+    return (testString.substring(testString.length - (endOfLine.length + 5)) === ('-----' + endOfLine))
   }
 
   return {
