@@ -39,7 +39,7 @@
   "error5xx": "constructor",
   "error503": "constructor",
   "staticsRoot": "constructor",
-  "htmlMinify": {
+  "htmlMinifier": {
     "override": "constructor",
     "exception_url": "constructor",
     "htmlMinifier": "constructor"

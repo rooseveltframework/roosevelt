@@ -59,7 +59,7 @@
   "error5xx": "package",
   "error503": "package",
   "staticsRoot": "package",
-  "htmlMinify": {
+  "htmlMinifier": {
     "enable": "package",
     "exceptionRoutes": "package",
     "options": "package"

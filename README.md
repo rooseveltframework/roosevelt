@@ -506,7 +506,7 @@ Statics parameters
 - `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
 
   - Default: *[String]* `"statics"`.
-- `htmlMinify`: How you want Roosevelt to minify your HTML:
+- `htmlMinifier`: How you want Roosevelt to minify your HTML:
 
   - `enable`: *[Boolean]* Enable HTML minification.
 

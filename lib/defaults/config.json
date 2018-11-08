@@ -44,7 +44,7 @@
   "error5xx": "5xx.js",
   "error503": "503.js",
   "staticsRoot": "statics",
-  "htmlMinify": {
+  "htmlMinifier": {
     "enable": true,
     "exceptionRoutes": false,
     "options": {

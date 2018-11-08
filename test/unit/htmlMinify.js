@@ -9,7 +9,7 @@ const request = require('supertest')
 const roosevelt = require('../../roosevelt')
 
 describe('HTML Minification Tests', function () {
-  const appDir = path.join(__dirname, '../app/htmlMinify')
+  const appDir = path.join(__dirname, '../app/htmlMinifier')
   const appConfig = {
     appDir: appDir,
     logging: {
@@ -20,7 +20,7 @@ describe('HTML Minification Tests', function () {
     },
     generateFolderStructure: true,
     viewEngine: 'html:teddy',
-    htmlMinify: {
+    htmlMinifier: {
       enable: true,
       exceptionRoutes: false,
       options: {
@@ -72,7 +72,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, appConfig.htmlMinify.options)
+            const testMinify = minify(res.text, appConfig.htmlMinifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -97,7 +97,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, appConfig.htmlMinify.options)
+            const testMinify = minify(res.text, appConfig.htmlMinifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -105,10 +105,10 @@ describe('HTML Minification Tests', function () {
     }
   })
 
-  it('should not minify HTML when "htmlMinify.enable" param is set to false', function (done) {
+  it('should not minify HTML when "htmlMinifier.enable" param is set to false', function (done) {
     // copy root config and disable HTML minifier
     const config = JSON.parse(JSON.stringify(appConfig))
-    config.htmlMinify.enable = false
+    config.htmlMinifier.enable = false
 
     // initialize test app
     app = roosevelt({
@@ -126,7 +126,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinify.options)
+            const testMinify = minify(res.text, config.htmlMinifier.options)
             assert.notStrictEqual(testMinify, res.text)
           }
           done()
@@ -155,7 +155,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinify.options)
+            const testMinify = minify(res.text, config.htmlMinifier.options)
             assert.notStrictEqual(testMinify, res.text)
           }
           done()
@@ -166,7 +166,7 @@ describe('HTML Minification Tests', function () {
   it('should not minify HTML when requesting exceptionRoutes (string format)', function (done) {
     // copy root config and set exceptionRoutes as string
     const config = JSON.parse(JSON.stringify(appConfig))
-    config.htmlMinify.exceptionRoutes = '/minify'
+    config.htmlMinifier.exceptionRoutes = '/minify'
 
     // initialize test app
     app = roosevelt({
@@ -184,7 +184,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinify.options)
+            const testMinify = minify(res.text, config.htmlMinifier.options)
             assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionRoutes by testing another URL
@@ -200,7 +200,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinify.options)
+            const testMinify = minify(res.text, config.htmlMinifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -211,7 +211,7 @@ describe('HTML Minification Tests', function () {
   it('should not minify HTML when requesting exceptionRoutes (array format)', function (done) {
     // copy root config and set exceptionRoutes as array
     const config = JSON.parse(JSON.stringify(appConfig))
-    config.htmlMinify.exceptionRoutes = ['/minify']
+    config.htmlMinifier.exceptionRoutes = ['/minify']
 
     // initialize test app
     app = roosevelt({
@@ -229,7 +229,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinify.options)
+            const testMinify = minify(res.text, config.htmlMinifier.options)
             assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionRoutes by testing another URL
@@ -245,7 +245,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinify.options)
+            const testMinify = minify(res.text, config.htmlMinifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()

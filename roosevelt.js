@@ -190,7 +190,7 @@ module.exports = function (params) {
     }
     initialized = true
 
-    require('./lib/htmlMinify')(app)
+    require('./lib/htmlMinifier')(app)
 
     preprocessCss()
 
