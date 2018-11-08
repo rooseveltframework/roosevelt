@@ -70,7 +70,7 @@ module.exports = function (params) {
   httpsParams = app.get('params').https
 
   // let's try setting up the servers with user-supplied params
-  if (!httpsParams.httpsOnly) {
+  if (!httpsParams.force) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
   }
@@ -356,7 +356,7 @@ module.exports = function (params) {
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
     } else {
-      if (!app.get('params').https.httpsOnly) {
+      if (!app.get('params').https.force) {
         serverPush(httpServer, app.get('params').port, 'HTTP')
       }
       if (httpsParams.enable) {

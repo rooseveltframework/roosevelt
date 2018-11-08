@@ -8,7 +8,7 @@
   },
   "https": {
     "enable": true,
-    "httpsOnly": true,
+    "force": true,
     "port": 2468,
     "authInfoPath": {
       "p12": {

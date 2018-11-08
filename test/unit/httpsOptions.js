@@ -61,9 +61,9 @@ describe('HTTPS Server Options Tests', function () {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should create a http server and a https server when the https.httpsOnly param is false', function () {
+  it('should create a http server and a https server when the https.force param is false', function () {
     // change config
-    config.https.httpsOnly = false
+    config.https.force = false
 
     app({ appDir: appDir, ...config })
 
@@ -72,14 +72,14 @@ describe('HTTPS Server Options Tests', function () {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should not create a http.Server when the https.httpsOnly param is set to true', function () {
+  it('should not create a http.Server when the https.force param is set to true', function () {
     // change config
-    config.https.httpsOnly = true
+    config.https.force = true
 
     app({ appDir: appDir, ...config })
 
     // test assertion
-    assert(stubHttpServer.notCalled, 'http.Server called despite httpsOnly flag')
+    assert(stubHttpServer.notCalled, 'http.Server called despite force flag')
   })
 
   it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', function () {

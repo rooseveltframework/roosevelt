@@ -431,9 +431,9 @@ HTTPS parameters
   - Object members:
   - `enable`: Enable a HTTPS server.
     - Default: *[Boolean]* `false`.
-  - `httpsOnly`: Disable the HTTP server when running a HTTPS server.
+  - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
     - Default: *[Boolean]* `false`.
-  - `port`: The port your app will run a HTTPS server on. Can also be defined using the `HTTPS_PORT` environment variable.
+  - `port`: The port your app will run a HTTPS server on.
     - Default: *[Number]* `43733`.
   - `authInfoPath`: *[Object]* Specify either the paths where the _server_ certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
     - Default: `undefined`
