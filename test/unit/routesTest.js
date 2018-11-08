@@ -142,12 +142,42 @@ describe('Roosevelt Routes Tests', function () {
     })
   })
 
-  it('should default the route prefix to "/" if an invalid config is passed to urlPrefix"', function (done) {
+  it('should still create a route prefix even if there\'s no leading slash in the string', function (done) {
     // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      urlPrefix: 'badprefix',
+      urlPrefix: 'noleadingslash',
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // when the app starts and sends a message back to the parent try and request the test page
+    testApp.on('message', (params) => {
+      request(`http://localhost:${params.port}`)
+        .get('/noleadingslash/HTMLTest')
+        .expect(200, (err) => {
+          if (err) {
+            assert.fail(err)
+          }
+          testApp.send('stop')
+        })
+
+      // when the child process exits, finish the test
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+  })
+
+  it('should default the route prefix tp "/" if urlPrefix has reserved characters', function (done) {
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      urlPrefix: '^invalid',
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
