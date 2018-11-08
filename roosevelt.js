@@ -254,7 +254,7 @@ module.exports = function (params) {
 
   function exitLog () {
     clearTimeout(checkConnectionsTimeout)
-    logger.log('✔️', `${appName} successfully closed all connections and shut down gracefully.`.magenta)
+    logger.log('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
     if (shutdownType === 'close') {
       if (httpServer) {
         httpServer.close()
@@ -300,10 +300,8 @@ module.exports = function (params) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
         if (err.message.includes('EADDRINUSE')) {
           logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
-        } else {
-          logger.error('The server could not start due to insufficient permissions. You may need to run this process as a superuser to proceed. Alternatively you can try changing the port number to a port that requires lower permissions.'.red)
-          logger.error(err)
         }
+        logger.error(err)
         process.exit(1)
       }))
     }

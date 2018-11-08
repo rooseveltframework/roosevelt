@@ -59,7 +59,7 @@ describe('Roosevelt Autokill Test', function () {
       if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
         exit()
-      } else if (data.includes('There was no autoKiller running, creating a new one')) {
+      } else if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
@@ -109,7 +109,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('There was no autoKiller running, creating a new one')) {
+      if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
       }
       // on this specific log, kill the app
@@ -163,7 +163,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Restarting autoKiller')) {
+      if (data.includes('Respawning a process to automatically kill the detached validator')) {
         restartAutoKillerLogBool = true
       } else if (data.includes('Killed process with PID')) {
         exit()
@@ -226,7 +226,7 @@ describe('Roosevelt Autokill Test', function () {
 
         // check the console logs to see if our message was outputted
         testApp2.stdout.on('data', (data) => {
-          if (data.includes('There was no autoKiller running with the PID given, creating a new one')) {
+          if (data.includes('Spawning a process to automatically kill the detached validator')) {
             noAutoKillerFromPIDBool = true
           } else if (data.includes('Exiting auto Killer')) {
             // wait for the auto killer to finish before exiting the test
@@ -273,7 +273,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('There was no autoKiller running, creating a new one')) {
+      if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
       }
 

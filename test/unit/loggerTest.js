@@ -94,7 +94,7 @@ describe('Logger Tests', function () {
 
     // error log assertions
     assert.strictEqual(errors[0].includes('❌  This should have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
-    assert.strictEqual(errors[1].includes('⚠️  This should also have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
+    assert.strictEqual(errors[1].includes('⚠️   This should also have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
     assert.strictEqual(errors[2].includes('❤️  This should not add a prefix because one is already there'), true, 'The logger added an emoji prefix')
     assert.strictEqual(errors[3].includes('This log is custom ⚠️  with an emoji in the middle'), true, 'The logger did not output a custom log')
 
@@ -144,7 +144,7 @@ describe('Logger Tests', function () {
 
     // error log assertions
     assert.strictEqual(errors[0].includes('❌  Error Log'), true, 'The logger did not output an error log')
-    assert.strictEqual(errors[1].includes('⚠️  Warning Log'), true, 'The logger did not output a warning log')
+    assert.strictEqual(errors[1].includes('⚠️   Warning Log'), true, 'The logger did not output a warning log')
 
     // exit test
     done()
