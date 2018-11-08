@@ -26,10 +26,12 @@
     "lagCheckInterval": "constructor"
   },
   "shutdownTimeout": "constructor",
-  "bodyParserUrlencodedParams": {
-    "extended": "constructor"
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": "constructor"
+    },
+    "json": "constructor"
   },
-  "bodyParserJsonParams": "constructor",
   "https": "constructor",
   "modelsPath": "constructor",
   "viewsPath": "constructor",

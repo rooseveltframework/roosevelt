@@ -31,10 +31,12 @@
     "maxLagPerRequest": 70,
     "lagCheckInterval": 500
   },
-  "bodyParserUrlencodedParams": {
-    "extended": true
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": true
+    },
+    "json": {}
   },
-  "bodyParserJsonParams": {},
   "https": false,
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",

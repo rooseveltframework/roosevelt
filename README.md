@@ -402,18 +402,18 @@ App behavior parameters
       }
       ```
 
-- `bodyParserUrlencodedParams`: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
+- `bodyParser`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser).
+
   - Default: *[Object]*
 
       ```json
       {
-        "extended": true
+        "urlEncoded": {
+          "extended": true
+        },
+        "json": {}
       }
       ```
-
-- `bodyParserJsonParams`: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
-
-  - Default: *[Object]* `{}`.
 
 - `checkDependencies`: Whether or not to warn if dependencies are out of date.
 

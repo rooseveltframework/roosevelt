@@ -46,10 +46,12 @@
     "lagCheckInterval": "package"
   },
   "shutdownTimeout": "package",
-  "bodyParserUrlencodedParams": {
-    "extended": "package"
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": "package"
+    },
+    "json": "package"
   },
-  "bodyParserJsonParams": "package",
   "https": "package",
   "modelsPath": "package",
   "viewsPath": "package",
