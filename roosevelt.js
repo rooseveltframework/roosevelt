@@ -20,13 +20,11 @@ module.exports = function (params) {
   let logger
   let appName
   let appEnv
+  let httpsParams
   let httpServer
   let httpsServer
   let httpsOptions
-  let keyPath
-  let ca
-  let cafile
-  let passphrase
+  let authInfoPath
   let numCPUs = 1
   let servers = []
   let i
@@ -69,50 +67,72 @@ module.exports = function (params) {
   flags = app.get('flags')
 
   logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
+  httpsParams = app.get('params').https
 
   // let's try setting up the servers with user-supplied params
-  if (!app.get('params').https.httpsOnly) {
+  if (!httpsParams.httpsOnly) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
   }
 
-  if (app.get('params').https.enable) {
-    httpsOptions = {
-      requestCert: app.get('params').https.requestCert,
-      rejectUnauthorized: app.get('params').https.rejectUnauthorized
-    }
-    ca = app.get('params').https.ca
-    cafile = app.get('params').https.cafile !== false
-    passphrase = app.get('params').https.passphrase
-    keyPath = app.get('params').https.keyPath
+  if (httpsParams.enable) {
+    authInfoPath = httpsParams.authInfoPath
 
-    if (keyPath) {
-      if (app.get('params').https.pfx) {
-        httpsOptions.pfx = fs.readFileSync(keyPath.pfx)
-      } else {
-        httpsOptions.key = fs.readFileSync(keyPath.key)
-        httpsOptions.cert = fs.readFileSync(keyPath.cert)
-      }
-      if (passphrase) {
-        httpsOptions.passphrase = passphrase
-      }
-      if (ca) {
-        // Are we using a CA file, or are we sending the CA directly?
-        if (cafile) {
-          // String or array
-          if (typeof ca === 'string') {
-            httpsOptions.ca = fs.readFileSync(ca)
-          } else if (ca instanceof Array) {
-            httpsOptions.ca = []
-            ca.forEach(function (val, index, array) {
-              httpsOptions.ca.push(fs.readFileSync(val))
-            })
+    // options to configure to the https server
+    httpsOptions = {}
+
+    if (authInfoPath) {
+      if (authInfoPath.p12 && authInfoPath.p12.p12Path) {
+        // if the string ends with a dot and 3 alphanumeric characters (including _)
+        // then we assume it's a filepath.
+        if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
+          httpsOptions.pfx = fs.readFileSync(authInfoPath.p12.p12Path)
+        } else { // if the string doesn't end that way, we assume it's an encrypted string
+          httpsOptions.pfx = authInfoPath.p12.p12Path
+        }
+        if (authInfoPath.p12.passphrase) {
+          httpsOptions.passphrase = authInfoPath.p12.passphrase
+        }
+      } else if (authInfoPath.authCertAndKey) {
+        if (authInfoPath.authCertAndKey.cert) {
+          if (isCertString(authInfoPath.authCertAndKey.cert)) {
+            httpsOptions.cert = authInfoPath.authCertAndKey.cert
+          } else {
+            httpsOptions.cert = fs.readFileSync(authInfoPath.authCertAndKey.cert)
           }
-        } else {
-          httpsOptions.ca = ca
+        }
+        if (authInfoPath.authCertAndKey.key) {
+          // key strings are formatted the same way as cert strings
+          if (isCertString(authInfoPath.authCertAndKey.key)) {
+            httpsOptions.key = authInfoPath.authCertAndKey.key
+          } else {
+            httpsOptions.key = fs.readFileSync(authInfoPath.authCertAndKey.key)
+          }
         }
       }
     }
+    if (httpsParams.caCert) {
+      if (typeof httpsParams.caCert === 'string') {
+        if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
+          httpsOptions.ca = httpsParams.caCert
+        } else { // it's a file path to the file, so read file
+          httpsOptions.ca = fs.readFileSync(httpsParams.caCert)
+        }
+      } else if (httpsParams.caCert instanceof Array) {
+        httpsOptions.ca = []
+
+        httpsParams.caCert.forEach(function (certOrPath) {
+          let certStr = certOrPath
+          if (!isCertString(certOrPath)) {
+            certStr = fs.readFileSync(certOrPath)
+          }
+          httpsOptions.ca.push(certStr)
+        })
+      }
+    }
+    httpsOptions.requestCert = httpsParams.requestCert
+    httpsOptions.rejectUnauthorized = httpsParams.rejectUnauthorized
+
     httpsServer = https.Server(httpsOptions, app)
     httpsServer.on('connection', mapConnections)
   }
@@ -339,8 +359,8 @@ module.exports = function (params) {
       if (!app.get('params').https.httpsOnly) {
         serverPush(httpServer, app.get('params').port, 'HTTP')
       }
-      if (app.get('params').https.enable) {
-        serverPush(httpsServer, app.get('params').https.httpsPort, 'HTTPS')
+      if (httpsParams.enable) {
+        serverPush(httpsServer, httpsParams.port, 'HTTPS')
       }
 
       process.on('SIGTERM', gracefulShutdown)
@@ -353,6 +373,14 @@ module.exports = function (params) {
       return initServer(startHttpServer)
     }
     startHttpServer()
+  }
+
+  function isCertString (stringToTest) {
+    let testString = stringToTest
+    if (typeof testString !== 'string') {
+      testString = testString.toString()
+    }
+    return (testString.substring(testString.length - 6) === '-----\n')
   }
 
   return {

@@ -9,16 +9,18 @@
   "https": {
     "enable": true,
     "httpsOnly": true,
-    "httpsPort": 1234,
-    "pfx": false,
-    "keyPath": {
-      "pfx": "test/util/certs/test.p12",
-      "key": "test/util/certs/test.req.key",
-      "cert": "test/util/certs/test.req.crt"
+    "port": 2468,
+    "authInfoPath": {
+      "p12": {
+        "p12Path": "test/util/certs/test.p12",
+        "passphrase": "testpass"
+      },
+      "authCertAndKey": {
+        "cert": "test/util/certs/test.req.crt",
+        "key": "test/util/certs/test.req.key"
+      }
     },
-    "passphrase": "testpass",
-    "cafile": true,
-    "ca": "test/util/certs/ca.crt",
+    "caCert": "test/util/certs/ca.crt",
     "requestCert": false,
     "rejectUnauthorized": false
   }

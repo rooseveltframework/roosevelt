@@ -18,14 +18,6 @@ describe('Roosevelt.js Tests', function () {
   // options to pass into test app generator
   let sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
-  // paths to key and cert & ca files
-  let certs = {
-    key: path.join(__dirname, '/../util/certs/test.req.key'),
-    cert: path.join(__dirname, '/../util/certs/test.req.crt'),
-    ca: path.join(__dirname, '/../util/certs/ca.crt'),
-    ca2: path.join(__dirname, '/../util/certs/ca-2.crt')
-  }
-
   // clean up the test app directory after each test
   afterEach(function (done) {
     cleanupTestApp(appDir, (err) => {
@@ -448,86 +440,6 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to start an HTTPS server if it is enabled', function (done) {
-    // bool var to see if a specific log was outputted
-    let httpsServerMadeBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 43203
-      }
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // listen on the logs to see if the https server is initialized
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        httpsServerMadeBool = true
-      }
-    })
-
-    // when the app starts, kill it
-    testApp.on('message', (params) => {
-      testApp.send('stop')
-    })
-
-    // on exit, check if roosevelt an https server started or not
-    testApp.on('exit', () => {
-      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
-      done()
-    })
-  })
-
-  it('should start an HTTPS server if it is enabled and httpsOnly param is true', function (done) {
-    // bool var to see if specifics log was outputted
-    let httpsServerMadeBool = false
-    let httpServerMadeBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 43203,
-        httpsOnly: true
-      }
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // Check the logs to see which type of server was made
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        httpsServerMadeBool = true
-      }
-      if (data.includes('Roosevelt Express HTTP server listening on port')) {
-        httpServerMadeBool = true
-      }
-    })
-
-    // when the app starts, kill it
-    testApp.on('message', (params) => {
-      testApp.send('stop')
-    })
-
-    // on exit, see if the app started an https server and not an http server
-    testApp.on('exit', () => {
-      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make the HTTPS server even though it was enabled')
-      assert.strictEqual(httpServerMadeBool, false, 'Roosevelt made a http Server even though the httpsOnly param is true')
-      done()
-    })
-  })
-
   it('should be able to run the app in production mode', function (done) {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
@@ -598,52 +510,6 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
-    // bool var to hold whether a specific log was outputted
-    let productionModeBool = false
-    let httpsServerMadeBool = false
-
-    // generate a app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      localhostOnly: true,
-      https: {
-        enable: true,
-        httpsPort: 43203
-      },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // test to see if the app is being run in production mode
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting Roosevelt Express in production mode...')) {
-        productionModeBool = true
-      }
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        httpsServerMadeBool = true
-      }
-      if (httpsServerMadeBool) {
-        testApp.send('stop')
-      }
-    })
-
-    // when the app starts, check that localhostOnly was set correctly
-    testApp.on('message', (params) => {
-      assert.strictEqual(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
-    })
-
-    // on exit, see if the app started in production mode
-    testApp.on('exit', () => {
-      assert.strictEqual(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
-      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make a HTTPS server even though it is enabled')
-      done()
-    })
-  })
-
   it('should not execute onServerStart if the value is not a function', function (done) {
     // bool var that will hold whether or not a message is recieved based on if a function was passed to onServerStart
     let serverStartFunctionBool = false
@@ -676,201 +542,48 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to start the app as an HTTPS server without the passphrase or ca', function (done) {
-    // bool var to hold that the HTTPS server is listening
-    let HTTPSServerListeningBool = false
+  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
+    // bool var to hold whether a specific log was outputted
+    let productionModeBool = false
+    let httpsServerMadeBool = false
 
-    // generate the app.js file
+    // generate a app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      localhostOnly: true,
       https: {
         enable: true,
-        httpsPort: 43733,
-        passphrase: undefined,
-        ca: undefined,
-        keyPath: { key: certs.key, cert: certs.cert }
-      }
+        port: 43203
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
     }, sOptions)
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // on logs, check to see if the specific log was outputted
+    // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting Roosevelt Express in production mode...')) {
+        productionModeBool = true
+      }
       if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        HTTPSServerListeningBool = true
+        httpsServerMadeBool = true
+      }
+      if (httpsServerMadeBool) {
+        testApp.send('stop')
       }
     })
 
-    // when the app finishes initialization and starts, kill it
+    // when the app starts, check that localhostOnly was set correctly
     testApp.on('message', (params) => {
-      testApp.send('stop')
+      assert.strictEqual(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
     })
 
-    // on the apps exit, see of the HTTPS server was listening
+    // on exit, see if the app started in production mode
     testApp.on('exit', () => {
-      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
-      done()
-    })
-  })
-
-  it('should be able to start the app as an HTTPS server with a passphrase', function (done) {
-    // bool var to hold that the HTTPS server is listening
-    let HTTPSServerListeningBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 43733,
-        passphrase: 'something',
-        keyPath: { key: certs.key, cert: certs.cert }
-      }
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on logs, check to see if the specific log was outputted
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        HTTPSServerListeningBool = true
-      }
-    })
-
-    // when the app finishes initialization and starts, kill it
-    testApp.on('message', (params) => {
-      testApp.send('stop')
-    })
-
-    // on the apps exit, see of the HTTPS server was listening
-    testApp.on('exit', () => {
-      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
-      done()
-    })
-  })
-
-  it('should be able to start an HTTPS server if a ca string is passed in', function (done) {
-    // bool var to hold that the HTTPS server is listening
-    let HTTPSServerListeningBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 43733,
-        keyPath: { key: certs.key, cert: certs.cert },
-        ca: certs.ca,
-        cafile: true
-      }
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on logs, check to see if the specific log was outputted
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        HTTPSServerListeningBool = true
-      }
-    })
-
-    // when the app finishes initialization and starts, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // on the apps exit, see of the HTTPS server was listening
-    testApp.on('exit', () => {
-      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
-      done()
-    })
-  })
-
-  it('should be able to start an HTTPS server if a ca array is passed in', function (done) {
-    // bool var to hold that the HTTPS server is listening
-    let HTTPSServerListeningBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 43733,
-        keyPath: { key: certs.key, cert: certs.cert },
-        ca: [certs.ca, certs.ca2],
-        cafile: true
-      }
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on logs, check to see if the specific log was outputted
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        HTTPSServerListeningBool = true
-      }
-    })
-
-    // when the app finishes initialization and starts, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // on the apps exit, see of the HTTPS server was listening
-    testApp.on('exit', () => {
-      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
-      done()
-    })
-  })
-
-  it('should be able to start an HTTPS server if a ca passed in is not a string or array and cafile is set to true', function (done) {
-    // bool var to hold that the HTTPS server is listening
-    let HTTPSServerListeningBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      https: {
-        enable: true,
-        httpsPort: 43733,
-        keyPath: { key: certs.key, cert: certs.cert },
-        ca: 32,
-        cafile: true
-      }
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on logs, check to see if the specific log was outputted
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Roosevelt Express HTTPS server listening on port')) {
-        HTTPSServerListeningBool = true
-      }
-    })
-
-    // when the app finishes initialization and starts, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // on the apps exit, see of the HTTPS server was listening
-    testApp.on('exit', () => {
-      assert.strictEqual(HTTPSServerListeningBool, true, 'Roosevelt did not make a HTTPS Server')
+      assert.strictEqual(productionModeBool, true, 'Roosevelt did not start in production mode even though the production flag was passed to it as a command line arg')
+      assert.strictEqual(httpsServerMadeBool, true, 'Roosevelt did not make a HTTPS server even though it is enabled')
       done()
     })
   })
@@ -1123,7 +836,7 @@ describe('Roosevelt.js Tests', function () {
       generateFolderStructure: true,
       https: {
         enable: true,
-        httpsPort: 43203,
+        port: 43203,
         httpsOnly: true
       }
     }, sOptions)

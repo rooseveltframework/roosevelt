@@ -429,27 +429,33 @@ HTTPS parameters
 
 - `https`: *[Object]* Run a HTTPS server using Roosevelt.
   - Object members:
-  - `enable`: Enable HTTPS server.
+  - `enable`: Enable a HTTPS server.
     - Default: *[Boolean]* `false`.
-  - `httpsOnly`: Disable HTTP server when running a HTTPS server.
+  - `httpsOnly`: Disable the HTTP server when running a HTTPS server.
     - Default: *[Boolean]* `false`.
-  - `httpsPort`: The port your app will run a HTTPS server on.
+  - `port`: The port your app will run a HTTPS server on. Can also be defined using the `HTTPS_PORT` environment variable.
     - Default: *[Number]* `43733`.
-  - `pfx`: Specify whether or not your app will use pfx or standard certification.
-    - Default: *[Boolean]* `false`.
-  - `keyPath`: Stores the file paths of specific key/certificate to be used by the server.
-    - Default: `null`.
-    - When set: *[Object]*  `pfx`, `key`, `cert` -- use one of {`pfx`} or {`key`, `cert`}.
-  - `passphrase`: *[String]* Supply the HTTPS server with the password for the certificate being used, if necessary.
-    - Default: `null`.
-  - `ca`: *[String]* Certificate authority to match client certificates against, as a file path or array of file paths. Can also be a full certificate string, requiring `cafile` to be `false`.
-    - Default: `null`.
-  - `cafile`: Whether or not the entry supplied by `ca` is a file.
-    - Default: *[Boolean]* `true`.
-  - `requestCert`: Request a certificate from a client and attempt to verify it.
-    - Default: *[Boolean]* `false`.
-  - `rejectUnauthorized`: Upon failing to authorize a user with supplied CA(s), reject their connection entirely.
-    - Default: *[Boolean]* `false`.
+  - `authInfoPath`: *[Object]* Specify either the paths where the _server_ certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
+    - Default: `undefined`
+    - Object members:
+    - `p12`: *[Object]* Parameter used when the _server_ certificate/key is in PKCS#12 format.
+      - Object members:
+      - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (.p12/.pfx) _or_ a PKCS#12-formatted string or buffer (i.e. the result of fs.readFileSync(/path/to/file/example.p12))
+        - Default: `undefined`
+      - `passphrase`: *[String]* The password used to encrypt the PKCS#12-formatted file or string.
+        - Default: `undefined`.
+    - `authCertAndKey`: *[Object]* Parameter used when the _server_ certificate and key are in separate PEM-encoded files.
+      - Object members:
+      - `cert`: *[String]* Either the path to a PEM-encoded certificate file (.crt, .cer, etc.) or a PEM-encoded certificate string.
+        - Default: `undefined`
+      - `key`: *[String]* Either the path to a PEM-encoded key file (.crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+        - Default: `undefined`
+  - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. _This certificate (chain) will be used to verify **client** certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are **not** signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt)_.
+    - Default: `undefined`.
+  - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
+    - Default: `undefined`.
+  - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
+    - Default:  `undefined`.
   - Default: *[Object]* `{}`.
 
 
