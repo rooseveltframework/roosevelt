@@ -547,7 +547,7 @@ describe('JavaScript Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       js: {
-        sourceDir: 'jsTestA',
+        sourcePath: 'jsTestA',
         compiler: {
           nodeModule: 'roosevelt-uglify',
           showWarnings: false,

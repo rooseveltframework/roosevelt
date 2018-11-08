@@ -45,7 +45,7 @@
     "htmlMinifier": "constructor"
   },
   "css": {
-    "sourceDir": "constructor",
+    "sourcePath": "constructor",
     "compiler": "constructor",
     "whitelist": "constructor",
     "output": "constructor",
@@ -53,7 +53,7 @@
     "versionFile": "constructor"
   },
   "js": {
-    "sourceDir": "constructor",
+    "sourcePath": "constructor",
     "compiler": "constructor",
     "whitelist": "constructor",
     "blacklist": "constructor",

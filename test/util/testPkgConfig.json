@@ -65,7 +65,7 @@
     "options": "package"
   },
   "css": {
-    "sourceDir": "package",
+    "sourcePath": "package",
     "compiler": "package",
     "whitelist": "package",
     "output": "package",
@@ -73,7 +73,7 @@
     "versionFile": "package"
   },
   "js": {
-    "sourceDir": "package",
+    "sourcePath": "package",
     "compiler": "package",
     "whitelist": "package",
     "blacklist": "package",

@@ -29,12 +29,12 @@ describe('symlinkToPublic Parameter Tests', function () {
     })
   })
 
-  it('should populate staticsSymlinksToPublic with js sourceDir when compiler is disabled', function () {
+  it('should populate staticsSymlinksToPublic with js sourcePath when compiler is disabled', function () {
     // init roosevelt constructor
     app = roosevelt({
       ...appConfig,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         output: '.build/js',
         symlinkToPublic: true
       },
@@ -43,8 +43,8 @@ describe('symlinkToPublic Parameter Tests', function () {
 
     let params = app.expressApp.get('params')
 
-    // ensure js sourceDir is included
-    assert(params.staticsSymlinksToPublic.includes(params.js.sourceDir))
+    // ensure js sourcePath is included
+    assert(params.staticsSymlinksToPublic.includes(params.js.sourcePath))
 
     // ensure js output is not included
     assert(!params.staticsSymlinksToPublic.includes(`js: ${params.js.output}`))
@@ -55,7 +55,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     app = roosevelt({
       ...appConfig,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         output: '.build/js',
         compiler: {
           nodeModule: 'roosevelt-uglify'
@@ -70,16 +70,16 @@ describe('symlinkToPublic Parameter Tests', function () {
     // ensure js output is included
     assert(params.staticsSymlinksToPublic.includes(`js: ${params.js.output}`))
 
-    // ensure js sourceDir is not included
-    assert(!params.staticsSymlinksToPublic.includes(params.js.sourceDir))
+    // ensure js sourcePath is not included
+    assert(!params.staticsSymlinksToPublic.includes(params.js.sourcePath))
   })
 
-  it('should populate staticsSymlinksToPublic with css sourceDir when compiler is disabled', function () {
+  it('should populate staticsSymlinksToPublic with css sourcePath when compiler is disabled', function () {
     // init roosevelt constructor
     app = roosevelt({
       ...appConfig,
       css: {
-        sourceDir: 'css',
+        sourcePath: 'css',
         output: '.build/css',
         symlinkToPublic: true
       },
@@ -88,8 +88,8 @@ describe('symlinkToPublic Parameter Tests', function () {
 
     let params = app.expressApp.get('params')
 
-    // ensure css sourceDir is included
-    assert(params.staticsSymlinksToPublic.includes(params.css.sourceDir))
+    // ensure css sourcePath is included
+    assert(params.staticsSymlinksToPublic.includes(params.css.sourcePath))
 
     // ensure css output is not included
     assert(!params.staticsSymlinksToPublic.includes(`css: ${params.css.output}`))
@@ -100,7 +100,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     app = roosevelt({
       ...appConfig,
       css: {
-        sourceDir: 'css',
+        sourcePath: 'css',
         output: '.build/css',
         compiler: {
           nodeModule: 'roosevelt-less'
@@ -115,21 +115,21 @@ describe('symlinkToPublic Parameter Tests', function () {
     // ensure css output is included
     assert(params.staticsSymlinksToPublic.includes(`css: ${params.css.output}`))
 
-    // ensure css sourceDir is not included
-    assert(!params.staticsSymlinksToPublic.includes(params.css.sourceDir))
+    // ensure css sourcePath is not included
+    assert(!params.staticsSymlinksToPublic.includes(params.css.sourcePath))
   })
 
-  it('should not populate staticsSymlinksToPublic with js/css sourceDir when symlinkToPublic is disabled', function () {
+  it('should not populate staticsSymlinksToPublic with js/css sourcePath when symlinkToPublic is disabled', function () {
     // init roosevelt constructor
     app = roosevelt({
       ...appConfig,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         output: '.build/js',
         symlinkToPublic: false
       },
       css: {
-        sourceDir: 'css',
+        sourcePath: 'css',
         output: '.build/css',
         symlinkToPublic: false
       },
@@ -147,7 +147,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     app = roosevelt({
       ...appConfig,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         output: '.build/js',
         compiler: {
           nodeModule: 'roosevelt-uglify'
@@ -155,7 +155,7 @@ describe('symlinkToPublic Parameter Tests', function () {
         symlinkToPublic: false
       },
       css: {
-        sourceDir: 'css',
+        sourcePath: 'css',
         output: '.build/css',
         compiler: {
           nodeModule: 'roosevelt-less'
@@ -171,17 +171,17 @@ describe('symlinkToPublic Parameter Tests', function () {
     assert.deepStrictEqual(params.staticsSymlinksToPublic, [])
   })
 
-  it('should not populate staticsSymlinksToPublic with js/css sourceDir when it already contains a js/css directory ', function () {
+  it('should not populate staticsSymlinksToPublic with js/css sourcePath when it already contains a js/css directory ', function () {
     // init roosevelt constructor
     app = roosevelt({
       ...appConfig,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         output: '.build/js',
         symlinkToPublic: true
       },
       css: {
-        sourceDir: 'csss',
+        sourcePath: 'csss',
         output: '.build/css',
         symlinkToPublic: true
       },
@@ -199,7 +199,7 @@ describe('symlinkToPublic Parameter Tests', function () {
     app = roosevelt({
       ...appConfig,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         output: '.build/js',
         compiler: {
           nodeModule: 'roosevelt-uglify'
@@ -207,7 +207,7 @@ describe('symlinkToPublic Parameter Tests', function () {
         symlinkToPublic: true
       },
       css: {
-        sourceDir: 'css',
+        sourcePath: 'css',
         output: '.build/css',
         compiler: {
           nodeModule: 'roosevelt-less'

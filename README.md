@@ -532,7 +532,7 @@ Statics parameters
 
 - `css`: *[Object]* How you want Roosevelt to configure your CSS preprocessor:
 
-  - `sourceDir`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and written to a build directory when the app is started.
+  - `sourcePath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and written to a build directory when the app is started.
 
   - `compiler`: *[Object]* Which Roosevelt CSS preprocessor middleware (if any) to use.
 
@@ -570,7 +570,7 @@ Statics parameters
 
   - `symlinkToPublic`: *[Boolean]* When enabled Roosevelt will automatically add your CSS directory to the `staticsSymlinksToPublic` param.
 
-    - Note: If the compiler is enabled `output` will be symlinked. If not,  `sourceDir` will be symlinked.
+    - Note: If the compiler is enabled `output` will be symlinked. If not,  `sourcePath` will be symlinked.
 
   - `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`.
 
@@ -597,7 +597,7 @@ Statics parameters
 
       ```json
       {
-        "sourceDir": "css",
+        "sourcePath": "css",
         "compiler": {
           "nodeModule": "roosevelt-less",
           "params": {
@@ -617,7 +617,7 @@ Statics parameters
 
 - `js`: *[Object]* How you want Roosevelt to configure your JS compiled:
 
-  - `sourceDir`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to a build directory when the app is started.
+  - `sourcePath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to a build directory when the app is started.
 
   - `compiler`: Which Roosevelt JS minifier middleware (if any) to use.
 
@@ -660,13 +660,13 @@ Statics parameters
 
   - `symlinkToPublic`: *[Boolean]* When enabled Roosevelt will automatically add your JS directory to the `staticsSymlinksToPublic` param.
 
-    - Note: If the compiler is enabled `output` will be symlinked. If not,  `sourceDir` will be symlinked.
+    - Note: If the compiler is enabled `output` will be symlinked. If not,  `sourcePath` will be symlinked.
 
   - `bundler`: Params related to bundling JS with [browserify](http://browserify.org):
 
     - Note: Use of browserify in Roosevelt is optional. If no bundles are defined here, the browserify step will be skipped.
 
-    - `bundles`: *[Array]* Declare one or more source JS files in your `sourceDir` to be browserify bundles via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts).
+    - `bundles`: *[Array]* Declare one or more source JS files in your `sourcePath` to be browserify bundles via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts).
 
       - `env`: *[String]* Bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
       - `params`: *[Object]* The [browserify params](https://github.com/browserify/browserify#methods) to send to browserify. If it is not set, these default params will be sent: `{"paths": <your jsPath>}`.
@@ -737,7 +737,7 @@ Statics parameters
               ```
       - Default: *[Array]* `[]`.
 
-    - `output`: Subdirectory within `sourceDir` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces.
+    - `output`: Subdirectory within `sourcePath` where you would like [browserify](http://browserify.org) to deposit bundled JS files it produces.
 
       - Default: *[String]* `".bundled"`.
 
@@ -749,7 +749,7 @@ Statics parameters
 
       ```json
       {
-        "sourceDir": "js",
+        "sourcePath": "js",
         "compiler": {
           "nodeModule": "roosevelt-uglify",
           "showWarnings": false,

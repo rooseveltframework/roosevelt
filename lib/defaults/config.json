@@ -56,7 +56,7 @@
     }
   },
   "css": {
-    "sourceDir": "css",
+    "sourcePath": "css",
     "compiler": "none",
     "whitelist": null,
     "output": ".build/css",
@@ -64,7 +64,7 @@
     "versionFile": null
   },
   "js": {
-    "sourceDir": "js",
+    "sourcePath": "js",
     "compiler": "none",
     "whitelist": null,
     "blacklist": null,
