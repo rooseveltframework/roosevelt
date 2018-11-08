@@ -367,15 +367,15 @@ App behavior parameters
       ```json
       {
         "enable": true,
-        "exceptions": {
-          "requestHeader": "Partial",
-          "modelValue": "_disableValidator"
-        },
-        "port": 48888,
         "separateProcess": {
           "enable": true,
           "autoKiller": true,
           "autoKillerTimeout": 360000
+        },
+        "port": 48888,
+        "exceptions": {
+          "requestHeader": "Partial",
+          "modelValue": "_disableValidator"
         },
         "showWarnings": true,
       }
@@ -423,6 +423,10 @@ App behavior parameters
 
   - Default: *[Number]* `1`.
   - To use all available cores, set this value to `max`.
+
+- `shutdownTimeout`: Maximum amount of time in milliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
+
+  - Default: *[Number]* `30000` (30 seconds).
 
 HTTPS parameters
 ---

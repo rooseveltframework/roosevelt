@@ -37,11 +37,14 @@
     },
     "json": {}
   },
+  "checkDependencies": true,
+  "cores": 1,
+  "shutdownTimeout": 30000,
   "https": false,
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
-  "controllersPath": "mvc/controllers",
   "viewEngine": "none",
+  "controllersPath": "mvc/controllers",
   "error404": "404.js",
   "error5xx": "5xx.js",
   "error503": "503.js",
@@ -84,8 +87,5 @@
     "images"
   ],
   "versionedPublic": false,
-  "alwaysHostPublic": false,
-  "checkDependencies": true,
-  "shutdownTimeout": 30000,
-  "cores": 1
+  "alwaysHostPublic": false
 }
