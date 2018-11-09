@@ -35,7 +35,6 @@ Table of contents
 - [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
   - [App behavior parameters](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters)
   - [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters)
-  - [Error page parameters](https://github.com/rooseveltframework/roosevelt#error-page-parameters)
   - [Statics parameters](https://github.com/rooseveltframework/roosevelt#statics-parameters)
   - [Public folder parameters](https://github.com/rooseveltframework/roosevelt#public-folder-parameters)
   - [Events](https://github.com/rooseveltframework/roosevelt#events)
@@ -177,6 +176,10 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --attach-validator `: Forces the HTML validator to run as an attached process.
   - Default shorthand:
     - `-a`
+- `node app.js --host-public `: Forces Roosevelt to always host the [public folder](https://github.com/rooseveltframework/roosevelt#public-folder-parameters) even when `alwaysHostPublic` is set to false. Useful for testing production mode.
+  - Default shorthands:
+    - `--statics`
+    - `-s`
 
 ## Combining npm scripts and command line arguments
 
@@ -469,9 +472,11 @@ MVC parameters
 - `modelsPath`: Relative path on filesystem to where your model files are located.
 
   - Default: *[String]* `"mvc/models"`.
+
 - `viewsPath`: Relative path on filesystem to where your view files are located.
 
   - Default: *[String]* `"mvc/views"`.
+
 - `viewEngine`: What templating engine to use, formatted as `"fileExtension: nodeModule"`.
   - [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) default: *[String]* `"html: teddy"`.
   - Also by default when using the generator, the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
@@ -494,15 +499,14 @@ MVC parameters
 
   - Default: *[String]* `"mvc/controllers"`.
 
-Error page parameters
----
+- `errorPages`: Relative path on filesystem to where your various error page controller files are located. If you do not supply them, Roosevelt will use its default ones instead:
 
-- `error404`: Relative path on filesystem to where your "404 Not Found" controller is located. If you do not supply one, Roosevelt will use its default 404 controller instead.
-  - Default: *[String]* `"404.js"`.
-- `error5xx`: Relative path on filesystem to where your "Internal Server Error" controller is located. If you do not supply one, Roosevelt will use its default controller instead.
-  - Default: *[String]* `"5xx.jx"`.
-- `error503`: Relative path on filesystem to where your "503 Service Unavailable" controller is located. If you do not supply one, Roosevelt will use its default 503 controller instead.
-  - Default: *[String]* `"503.js"`.
+  - `notFound`: Your [404 Not Found](https://en.wikipedia.org/wiki/HTTP_404) error page.
+    - Default: *[String]* `"404.js"`.
+  - `internalServerError`: Your [Internal Server Error](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
+    - Default: *[String]* `"5xx.js"`.
+  - `serviceUnavailable`: Your [503 Service Unavailable](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
+    - Default: *[String]* `"503.js"`.
 
 Statics parameters
 ---

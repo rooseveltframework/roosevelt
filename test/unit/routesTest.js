@@ -198,7 +198,9 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error404: '404test.js',
+      errorPages: {
+        notFound: '404test.js'
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -236,7 +238,9 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error5xx: '500test.js',
+      errorPages: {
+        internalServerError: '500test.js'
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -358,7 +362,9 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      error503: '503test.js',
+      errorPages: {
+        serviceUnavailable: '503test.js'
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`,
       toobusy: {
         maxLagPerRequest: 10,

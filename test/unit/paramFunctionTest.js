@@ -593,7 +593,9 @@ describe('Parameter Function Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`,
-      error404: '404errController.js'
+      errorPages: {
+        notFound: '404errController.js'
+      }
     }, options)
 
     // fork the app.js file and run it as a child process

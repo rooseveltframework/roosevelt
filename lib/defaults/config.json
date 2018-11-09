@@ -45,9 +45,11 @@
   "viewsPath": "mvc/views",
   "viewEngine": "none",
   "controllersPath": "mvc/controllers",
-  "error404": "404.js",
-  "error5xx": "5xx.js",
-  "error503": "503.js",
+  "errorPages": {
+    "notFound": "404.js",
+    "internalServerError": "5xx.js",
+    "serviceUnavailable": "503.js"
+  },
   "staticsRoot": "statics",
   "htmlMinifier": {
     "enable": true,

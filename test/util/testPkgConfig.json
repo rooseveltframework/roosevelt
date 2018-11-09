@@ -57,9 +57,11 @@
   "viewsPath": "package",
   "controllersPath": "package",
   "viewEngine": "none",
-  "error404": "package",
-  "error5xx": "package",
-  "error503": "package",
+  "errorPages": {
+    "notFound": "package",
+    "internalServerError": "package",
+    "serviceUnavailable": "package"
+  },
   "staticsRoot": "package",
   "htmlMinifier": {
     "enable": "package",

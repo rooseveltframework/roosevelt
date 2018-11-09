@@ -37,9 +37,11 @@
   "viewsPath": "constructor",
   "controllersPath": "constructor",
   "viewEngine": null,
-  "error404": "constructor",
-  "error5xx": "constructor",
-  "error503": "constructor",
+  "errorPages": {
+    "notFound": "constructor",
+    "internalServerError": "constructor",
+    "serviceUnavailable": "constructor"
+  },
   "staticsRoot": "constructor",
   "htmlMinifier": {
     "override": "constructor",
