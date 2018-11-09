@@ -377,7 +377,7 @@ App behavior parameters
           "requestHeader": "Partial",
           "modelValue": "_disableValidator"
         },
-        "showWarnings": true,
+        "showWarnings": true
       }
       ```
 

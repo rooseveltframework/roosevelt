@@ -667,7 +667,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Dependencies are out of date! You may need to run npm i')) {
+      if (data.includes('Currently installed npm dependencies do not match')) {
         missingOrOODPackageBool = true
       }
     })
@@ -701,13 +701,13 @@ describe('Roosevelt.js Tests', function () {
     let packageJSONSource = {
       dependencies: {
         colors: '~1.2.0',
-        express: '~4.16.2'
+        teddy: '~0.4.0'
       }
     }
 
     packageJSONSource = JSON.stringify(packageJSONSource)
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
+    spawnSync(npmName, ['install', 'teddy@3.0.0'], { cwd: appDir })
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
@@ -723,7 +723,7 @@ describe('Roosevelt.js Tests', function () {
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Dependencies are out of date! You may need to run npm i')) {
+      if (data.includes('Currently installed npm dependencies do not match')) {
         missingOrOODPackageBool = true
       }
     })
