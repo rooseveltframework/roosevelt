@@ -690,17 +690,17 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // Add dependencies to the packageJSONSource
     packageJSONSource.dependencies = {}
-    packageJSONSource.dependencies.express = '~4.16.2'
+    packageJSONSource.dependencies.teddy = '~0.4.0'
     packageJSONSource.dependencies.colors = `~1.2.0`
     packageJSONSource = JSON.stringify(packageJSONSource)
 
     // Create the package.json file in the app test dir
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
-    // Install an old version of express
-    spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
+    // Install an old version of teddy
+    spawnSync(npmName, ['install', 'teddy@0.3.0'], { cwd: appDir })
 
-    // rewrite the package.json file reflecting the newer version of express
+    // rewrite the package.json file reflecting the newer version of teddy
     fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // fork the auditor and run it as a child process
