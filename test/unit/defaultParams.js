@@ -11,7 +11,6 @@ describe('Default Parameter Tests', function () {
   before(function () {
     app = require('../../roosevelt')({
       appDir: path.join(__dirname, '../app/defaultParams'),
-      ignoreCLIFlags: true,
       logging: {
         http: false,
         appStatus: false,

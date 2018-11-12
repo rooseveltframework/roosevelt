@@ -42,7 +42,7 @@ describe('Roosevelt Autokill Test', function () {
       generateFolderStructure: true,
       htmlValidator: {
         enable: true,
-        port: 8888,
+        port: 48888,
         separateProcess: {
           enable: true,
           autoKillerTimeout: 1000
@@ -59,7 +59,7 @@ describe('Roosevelt Autokill Test', function () {
       if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
         exit()
-      } else if (data.includes('There was no autoKiller running, creating a new one')) {
+      } else if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
       } else if (data.includes('cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
@@ -95,7 +95,7 @@ describe('Roosevelt Autokill Test', function () {
       },
       htmlValidator: {
         enable: true,
-        port: 8888,
+        port: 48888,
         separateProcess: {
           enable: true,
           autoKillerTimeout: 10000
@@ -109,7 +109,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('There was no autoKiller running, creating a new one')) {
+      if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
       }
       // on this specific log, kill the app
@@ -146,7 +146,7 @@ describe('Roosevelt Autokill Test', function () {
       },
       htmlValidator: {
         enable: true,
-        port: 8888,
+        port: 48888,
         separateProcess: {
           enable: true,
           autoKillerTimeout: 1000
@@ -156,14 +156,14 @@ describe('Roosevelt Autokill Test', function () {
     }, options)
 
     // fork an autoKiller instance
-    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [8888, 10000, 'true'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [48888, 10000, 'true'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Restarting autoKiller')) {
+      if (data.includes('Respawning a process to automatically kill the detached validator')) {
         restartAutoKillerLogBool = true
       } else if (data.includes('Killed process with PID')) {
         exit()
@@ -226,7 +226,7 @@ describe('Roosevelt Autokill Test', function () {
 
         // check the console logs to see if our message was outputted
         testApp2.stdout.on('data', (data) => {
-          if (data.includes('There was no autoKiller running with the PID given, creating a new one')) {
+          if (data.includes('Spawning a process to automatically kill the detached validator')) {
             noAutoKillerFromPIDBool = true
           } else if (data.includes('Exiting auto Killer')) {
             // wait for the auto killer to finish before exiting the test
@@ -259,7 +259,7 @@ describe('Roosevelt Autokill Test', function () {
       generateFolderStructure: true,
       htmlValidator: {
         enable: true,
-        port: 8888,
+        port: 48888,
         separateProcess: {
           enable: true,
           autoKillerTimeout: 1000
@@ -273,7 +273,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('There was no autoKiller running, creating a new one')) {
+      if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
       }
 

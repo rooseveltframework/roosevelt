@@ -9,7 +9,7 @@ module.exports = function (app, err, req, res) {
     status: status,
     url: req.url,
     mainDomain: req.headers['x-forwarded-host'] || req.headers.host,
-    appVersion: app.get('package').version
+    appVersion: app.get('appVersion')
   }
   let errorTemplate = template(errorPage, model)
 
