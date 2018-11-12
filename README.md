@@ -800,7 +800,7 @@ Statics parameters
 
   - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)
 
-    - Falls back to `htmlMinify.options` if empty
+    - Falls back to `htmlMinifier.options` if empty
 
   - `exposeAll`: *[Boolean]* option to expose all templates down to the client. This will exclude templates that have `<!-- roosevelt-blacklist -->` at the top of the file or those listed in the `blacklist` property of `clientViews`
 
