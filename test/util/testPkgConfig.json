@@ -23,7 +23,7 @@
     },
     "custom6": false
   },
-  "noMinify": "package",
+  "minify": "package",
   "htmlValidator": {
     "enable": false,
     "separateProcess": {
@@ -32,7 +32,7 @@
       "autoKillerTimeout": 3600000
     },
     "port": "package",
-    "suppressWarnings": "package",
+    "showWarnings": "package",
     "exceptions": {
       "requestHeader": "package",
       "modelValue": "package"
@@ -46,26 +46,30 @@
     "lagCheckInterval": "package"
   },
   "shutdownTimeout": "package",
-  "bodyParserUrlencodedParams": {
-    "extended": "package"
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": "package"
+    },
+    "json": "package"
   },
-  "bodyParserJsonParams": "package",
   "https": "package",
   "modelsPath": "package",
   "viewsPath": "package",
   "controllersPath": "package",
   "viewEngine": "none",
-  "error404": "package",
-  "error5xx": "package",
-  "error503": "package",
+  "errorPages": {
+    "notFound": "package",
+    "internalServerError": "package",
+    "serviceUnavailable": "package"
+  },
   "staticsRoot": "package",
-  "htmlMinify": {
+  "htmlMinifier": {
     "enable": "package",
-    "exceptionURL": "package",
+    "exceptionRoutes": "package",
     "options": "package"
   },
   "css": {
-    "sourceDir": "package",
+    "sourcePath": "package",
     "compiler": "package",
     "whitelist": "package",
     "output": "package",
@@ -73,7 +77,7 @@
     "versionFile": "package"
   },
   "js": {
-    "sourceDir": "package",
+    "sourcePath": "package",
     "compiler": "package",
     "whitelist": "package",
     "blacklist": "package",

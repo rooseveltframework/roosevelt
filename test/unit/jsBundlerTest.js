@@ -192,7 +192,7 @@ describe('JS Bundler Tests', function () {
       path.join(appDir, 'statics/js/bundleJSTest'),
       path.join(appDir, 'statics/.build/js/bundleJSTest')
     ]
-    // array of path to the bundle js file in the altered sourceDir
+    // array of path to the bundle js file in the altered sourcePath
     let arrayOfAlteredSDBundleJSFilesPaths = [
       path.join(appDir, 'statics/js/bundleJSTest/bundle.js')
     ]

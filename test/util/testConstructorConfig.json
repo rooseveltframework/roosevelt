@@ -7,12 +7,12 @@
     "appStatus": false,
     "warnings": false
   },
-  "noMinify": "constructor",
+  "minify": "constructor",
   "htmlValidator": {
     "enable": "constructor",
     "separateProcess": "constructor",
     "port": "constructor",
-    "suppressWarnings": "constructor",
+    "showWarnings": "constructor",
     "exceptions": {
       "requestHeader": "constructor",
       "modelValue": "constructor"
@@ -26,26 +26,30 @@
     "lagCheckInterval": "constructor"
   },
   "shutdownTimeout": "constructor",
-  "bodyParserUrlencodedParams": {
-    "extended": "constructor"
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": "constructor"
+    },
+    "json": "constructor"
   },
-  "bodyParserJsonParams": "constructor",
   "https": "constructor",
   "modelsPath": "constructor",
   "viewsPath": "constructor",
   "controllersPath": "constructor",
   "viewEngine": null,
-  "error404": "constructor",
-  "error5xx": "constructor",
-  "error503": "constructor",
+  "errorPages": {
+    "notFound": "constructor",
+    "internalServerError": "constructor",
+    "serviceUnavailable": "constructor"
+  },
   "staticsRoot": "constructor",
-  "htmlMinify": {
+  "htmlMinifier": {
     "override": "constructor",
     "exception_url": "constructor",
     "htmlMinifier": "constructor"
   },
   "css": {
-    "sourceDir": "constructor",
+    "sourcePath": "constructor",
     "compiler": "constructor",
     "whitelist": "constructor",
     "output": "constructor",
@@ -53,7 +57,7 @@
     "versionFile": "constructor"
   },
   "js": {
-    "sourceDir": "constructor",
+    "sourcePath": "constructor",
     "compiler": "constructor",
     "whitelist": "constructor",
     "blacklist": "constructor",

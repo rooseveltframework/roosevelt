@@ -19,7 +19,7 @@ describe('Folder Structure Tests', function () {
 
     app = require('../../roosevelt')({
       appDir: appDir,
-      ignoreCLIFlags: true,
+      enableCLIFlags: false,
       generateFolderStructure: true,
       logging: {
         appStatus: false,
@@ -31,10 +31,10 @@ describe('Folder Structure Tests', function () {
       staticsRoot: 'staticsRootTest',
       publicFolder: 'publicFolderTest',
       js: {
-        sourceDir: 'jsTest'
+        sourcePath: 'jsTest'
       },
       css: {
-        sourceDir: 'cssTest'
+        sourcePath: 'cssTest'
       },
       staticsSymlinksToPublic: [
         'images',
@@ -207,14 +207,14 @@ describe('Folder Structure Tests', function () {
     })
   })
 
-  it('should set "cssPath" express variable to absolute path of "css.sourceDir"', function () {
-    const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').css.sourceDir)
+  it('should set "cssPath" express variable to absolute path of "css.sourcePath"', function () {
+    const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').css.sourcePath)
     const test = folderCheck === app.expressApp.get('cssPath')
     assert.strictEqual(test, true, 'the path given by the combined paths and the path given by cssPath do not match')
   })
 
-  it('should set "jsPath" express variable to absolute path of "js.sourceDir"', function () {
-    const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').js.sourceDir)
+  it('should set "jsPath" express variable to absolute path of "js.sourcePath"', function () {
+    const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').js.sourcePath)
     const test = folderCheck === app.expressApp.get('jsPath')
     assert.strictEqual(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
   })
