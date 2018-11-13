@@ -530,7 +530,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
   it('should not report that there are missing params if _roosevelt-missing-exempt is set to true', function (done) {
     // bool var to hold whether or not the correct logs are being outputted
-    let extraParamBool = false
+    let missingParamBool = false
     let errorBool = false
     let startingConfigAuditBool = false
 
@@ -558,7 +558,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // on the error stream, check config auditor output
     testApp.stderr.on('data', (data) => {
       if (data.includes('Missing param "multiples"')) {
-        extraParamBool = true
+        missingParamBool = true
       }
       if (data.includes('Issues have been detected in roosevelt config')) {
         errorBool = true
@@ -572,7 +572,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
-      assert.strictEqual(extraParamBool, false, 'configAuditor should not have warned about a missing param in the roosevelt config')
+      assert.strictEqual(missingParamBool, false, 'configAuditor should not have warned about a missing param in the roosevelt config')
       assert.strictEqual(errorBool, false, 'configAuditor should not have reported issues with the roosevelt config')
       done()
     })
