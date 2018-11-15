@@ -434,7 +434,7 @@ App behavior parameters
 - `urlPrefix`: A string to prepend to all controller routes.
   
   - Default: *[String]* `'/'`
-  - Example: `'urlPrefix': '/foo'` would append `foo` too all routes
+  - Example: `"urlPrefix": "/foo"` would prepend `foo` to all routes.
 
 HTTPS parameters
 ---
