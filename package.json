@@ -60,7 +60,7 @@
     "sinon": "7.1.1",
     "standard": "12.0.1",
     "supertest": "3.3.0",
-    "teddy": "0.4.27"
+    "teddy": "0.4.28"
   },
   "repository": {
     "type": "git",
