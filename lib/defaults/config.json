@@ -36,11 +36,13 @@
   },
   "bodyParser": {
     "urlEncoded": {
-      "extended": true
+      "extended": true,
+      "_roosevelt-extra-exempt": true,
+      "_roosevelt-missing-exempt": true
     },
-    "json": {},
-    "_roosevelt-extra-exempt": true,
-    "_roosevelt-missing-exempt": true
+    "json": {
+      "_roosevelt-extra-exempt": true
+    }
   },
   "checkDependencies": true,
   "cores": 1,
