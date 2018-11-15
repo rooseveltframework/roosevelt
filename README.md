@@ -431,7 +431,7 @@ App behavior parameters
 
   - Default: *[Number]* `30000` (30 seconds).
 
-- `urlPrefix`: A prefix to append to all routes within the controller files.
+- `urlPrefix`: A string to prepend to all controller routes.
   
   - Default: *[String]* `'/'`
   - Example: `'urlPrefix': '/foo'` would append `foo` too all routes
