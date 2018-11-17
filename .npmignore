@@ -1,2 +1,5 @@
+.nyc_output
 .travis.yml
 .vscode
+coverage
+renovate.json
