@@ -12,13 +12,27 @@ module.exports = function (params, options) {
   // setting the app directory
   if (params === undefined) {
     appDir = options.appDir
+    params = {}
   } else {
     appDir = params.appDir || options.appDir
   }
 
+  if (params.htmlValidator === undefined) {
+    params.htmlValidator = {}
+  }
+
+  if (params.htmlValidator.enable !== true) {
+    params.htmlValidator.enable = false
+  }
+
   // require roosevelt at the top of every test app
   contents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, { depth: null })})\n\n`
-  let defaultMessages = 'process.send(app.expressApp.get(\'params\'))'
+
+  // add express env to params object for testing purposes (this hacky crap is a pretty good sign we should probably refactor the tests to be better than this)
+  let defaultMessages = 'let params = app.expressApp.get(\'params\')\n'
+  defaultMessages += 'params[\'_env\'] = app.expressApp.get(\'env\')\n'
+  defaultMessages += 'process.send(params)'
+
   contents = contents.replace(/('\()/g, '(')
   contents = contents.replace(/(\}')/g, '}')
 
@@ -80,7 +94,7 @@ module.exports = function (params, options) {
     contents += defaultMessages
   }
 
-  // generate test app drectory
+  // generate test app directory
   fse.ensureDirSync(path.join(appDir))
 
   // generate app.js in test directory

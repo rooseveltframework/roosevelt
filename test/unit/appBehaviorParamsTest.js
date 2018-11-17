@@ -112,7 +112,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     })
   })
 
-  it('should be able to set bodyParserURLencodedParams and send too many parameters to body-parser.urlencoded', function (done) {
+  it('should be able to set bodyParser urlEncoded params and send too many parameters to body-parser.urlencoded', function (done) {
     let tooManyParamErrorBool = false
 
     // generate the test app
@@ -120,9 +120,11 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`,
-      bodyParserUrlencodedParams: {
-        extended: true,
-        parameterLimit: 1
+      bodyParser: {
+        urlEncoded: {
+          extended: true,
+          parameterLimit: 1
+        }
       }
     }, options)
 
@@ -153,7 +155,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     })
   })
 
-  it('should be able to send params to body-parser.json through bodyParserJsonParams and see a change in behavior', function (done) {
+  it('should be able to send params to body-parser.json through bodyParser JSON params and see a change in behavior', function (done) {
     let entityTooLargeBool = false
 
     // generate the test app
@@ -161,8 +163,10 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`,
-      bodyParserJsonParams: {
-        limit: 10
+      bodyParser: {
+        json: {
+          limit: 10
+        }
       }
     }, options)
 

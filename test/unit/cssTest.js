@@ -316,7 +316,7 @@ describe('CSS Section Tests', function () {
     })
   })
 
-  it('should copy over the CSS files to build without changing them when the noMinify param is true', function (done) {
+  it('should copy over the CSS files to build without changing them when the minify param is false', function (done) {
     // grab the buffers of the static files
     let bufferOfStaticFileA = fs.readFileSync(pathOfCSSStaticFilesArray[0], 'utf8')
     let bufferOfStaticFileB = fs.readFileSync(pathOfCSSStaticFilesArray[1], 'utf8')
@@ -338,7 +338,7 @@ describe('CSS Section Tests', function () {
         }
       },
       generateFolderStructure: true,
-      noMinify: true
+      minify: false
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -432,7 +432,7 @@ describe('CSS Section Tests', function () {
         }
       },
       generateFolderStructure: true,
-      noMinify: true
+      minify: false
     }, options)
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -479,7 +479,7 @@ describe('CSS Section Tests', function () {
         }
       },
       generateFolderStructure: true,
-      noMinify: true
+      minify: false
     }, options)
 
     // fork the app.js file and run it as a child process

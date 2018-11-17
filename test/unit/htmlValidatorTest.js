@@ -69,7 +69,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -122,7 +122,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test3, true)
             assert.strictEqual(test4, true)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -137,14 +137,14 @@ describe('HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should allow warning logs if "suppressWarnings" is false', function (done) {
+    it('should allow warning logs if "showWarnings" is true', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          suppressWarnings: false,
+          showWarnings: true,
           separateProcess: {
             enable: false,
             autoKiller: false
@@ -172,7 +172,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -187,14 +187,14 @@ describe('HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should not allow warning logs if "suppressWarnings" is true', function (done) {
+    it('should not allow warning logs if "showWarnings" is false', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          suppressWarnings: true,
+          showWarnings: false,
           separateProcess: {
             enable: false,
             autoKiller: false
@@ -222,7 +222,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -244,7 +244,7 @@ describe('HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          suppressWarnings: true,
+          showWarnings: false,
           separateProcess: {
             enable: false,
             autoKiller: false
@@ -275,7 +275,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             let test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, true)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -297,7 +297,7 @@ describe('HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          suppressWarnings: true,
+          showWarnings: false,
           separateProcess: {
             enable: false,
             autoKiller: false
@@ -328,7 +328,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             let test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -350,7 +350,7 @@ describe('HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          suppressWarnings: true,
+          showWarnings: false,
           separateProcess: {
             enable: false,
             autoKiller: false
@@ -382,7 +382,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             let test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -407,7 +407,7 @@ describe('HTML Validator/Kill Validator Test', function () {
         ],
         htmlValidator: {
           enable: true,
-          suppressWarnings: true,
+          showWarnings: false,
           separateProcess: {
             enable: false,
             autoKiller: false
@@ -436,7 +436,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             let test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, false)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -465,7 +465,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             enable: false,
             autoKiller: false
           },
-          suppressWarnings: true,
+          showWarnings: false,
           exceptions: {
             modelValue: '_disableValidatorTest'
           }
@@ -492,7 +492,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -521,7 +521,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             enable: false,
             autoKiller: false
           },
-          suppressWarnings: true,
+          showWarnings: false,
           exceptions: {
             modelValue: '_disableValidatorTest'
           }
@@ -546,7 +546,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             let test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, true)
             // kill the validator and the app
-            fkill(`:8888`, { force: true }).then(() => {
+            fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -572,7 +572,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             enable: false,
             autoKiller: false
           },
-          suppressWarnings: true,
+          showWarnings: false,
           port: 3000
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -617,12 +617,12 @@ describe('HTML Validator/Kill Validator Test', function () {
         appDir: appDir,
         htmlValidator: {
           enable: true,
-          suppressWarnings: true,
+          showWarnings: false,
           separateProcess: {
             enable: true,
             autoKiller: false
           },
-          port: 8888
+          port: 48888
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
@@ -665,7 +665,7 @@ describe('HTML Validator/Kill Validator Test', function () {
                 assert.strictEqual(test2, true)
 
                 // kill the validator with fkill
-                fkill(`:8888`, { force: true }).then(() => {
+                fkill(`:48888`, { force: true }).then(() => {
                   // see that the validator is no longer listening
                   request(`http://localhost:${params.htmlValidator.port}`)
                     .get('/')
