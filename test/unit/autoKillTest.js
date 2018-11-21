@@ -28,7 +28,7 @@ describe('Roosevelt Autokill Test', function () {
     })
   })
 
-  it('should kill the validator after the app has gracefully shutdown if the validator is a seperate process', function (done) {
+  it('should kill the validator after the app has gracefully shutdown if the validator is a separate process', function (done) {
     let cannotConnectBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
