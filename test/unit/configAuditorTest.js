@@ -27,7 +27,7 @@ describe('Roosevelt Config Auditor Test', function () {
     let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
     packageJSONSource.rooseveltConfig = defaultContent
-    // seperate the commands from the rest of the data in the scripts file
+    // separate the commands from the rest of the data in the scripts file
     packageJSONSource.scripts = {}
     let keys = Object.keys(scriptContent)
     for (let x = 0; x < keys.length; x++) {

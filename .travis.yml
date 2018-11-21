@@ -6,6 +6,9 @@ os:
 node_js:
   - "11"
   - "10"
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install jdk11; export PATH=$PATH:"/c/Program Files/Java/jdk-11.0.1/bin"; fi
+
 script:
   - npm run lint
   - npm run coverage
