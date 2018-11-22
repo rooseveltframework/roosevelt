@@ -51,7 +51,7 @@
     "eslint": "5.9.0",
     "eslint-plugin-mocha": "5.2.0",
     "husky": "1.2.0",
-    "lint-staged": "8.0.5",
+    "lint-staged": "8.1.0",
     "mocha": "5.2.0",
     "nyc": "13.1.0",
     "proxyquire": "2.1.0",
