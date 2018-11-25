@@ -3,7 +3,6 @@
 ## Before opening a pull request
 
 - Be sure all tests pass: `npm t`.
-
 - Ensure 100% code coverage and write new tests if necessary: `npm run coverage`.
 - Add your changes to `CHANGELOG.md`.
 
