@@ -8,7 +8,7 @@
 - Various dependencies bumped.
 - CI improvements.
 
-## 0.12.1 and beyond
+## 0.12.1 and below
 
 [Here be dragons](https://en.wikipedia.org/wiki/Here_be_dragons)...
 
