@@ -172,7 +172,7 @@ describe('Roosevelt Routes Tests', function () {
     })
   })
 
-  it('should default the route prefix tp "/" if urlPrefix has reserved characters', function (done) {
+  it('should default the route prefix to "/" if urlPrefix has reserved characters', function (done) {
     // generate the test app
     generateTestApp({
       appDir: appDir,
