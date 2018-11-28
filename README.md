@@ -435,6 +435,7 @@ App behavior parameters
   
   - Default: *[String]* `"/"`.
   - Example: `"urlPrefix": "/foo"` would prepend `foo` to all routes.
+  - **Note:** Activating `urlPrefix` will modify the `app` argument within controller files to use an express `router`. To access the app object, use `req.app` inside of individual routes.
 
 HTTPS parameters
 ---
