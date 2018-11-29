@@ -62,7 +62,6 @@
     "enable": true,
     "exceptionRoutes": false,
     "options": {
-      "removeComments": true,
       "collapseWhitespace": true,
       "collapseBooleanAttributes": true,
       "removeAttributeQuotes": true,
