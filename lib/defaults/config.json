@@ -1,61 +1,78 @@
 {
   "port": 43711,
+  "enableCLIFlags": true,
   "generateFolderStructure": true,
   "localhostOnly": true,
   "logging": {
     "http": true,
     "appStatus": true,
     "warnings": true,
-    "verbose": false
+    "verbose": false,
+    "_roosevelt-extra-exempt": true
   },
-  "noMinify": false,
+  "minify": true,
   "htmlValidator": {
-    "enable": false,
+    "enable": true,
     "separateProcess": {
       "enable": true,
       "autoKiller": true,
       "autoKillerTimeout": 3600000
     },
-    "port": 8888,
-    "suppressWarnings": false,
+    "port": 48888,
+    "showWarnings": true,
     "exceptions": {
       "requestHeader": "Partial",
       "modelValue": "_disableValidator"
     }
   },
   "multipart": {
-    "multiples": true
+    "multiples": true,
+    "_roosevelt-extra-exempt": true,
+    "_roosevelt-missing-exempt": true
   },
   "toobusy": {
     "maxLagPerRequest": 70,
     "lagCheckInterval": 500
   },
-  "bodyParserUrlencodedParams": {
-    "extended": true
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": true,
+      "_roosevelt-extra-exempt": true,
+      "_roosevelt-missing-exempt": true
+    },
+    "json": {
+      "_roosevelt-extra-exempt": true
+    }
   },
-  "bodyParserJsonParams": {},
+  "checkDependencies": true,
+  "cores": 1,
+  "shutdownTimeout": 30000,
   "https": false,
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
-  "controllersPath": "mvc/controllers",
   "viewEngine": "none",
-  "error404": "404.js",
-  "error5xx": "5xx.js",
-  "error503": "503.js",
+  "controllersPath": "mvc/controllers",
+  "errorPages": {
+    "notFound": "404.js",
+    "internalServerError": "5xx.js",
+    "serviceUnavailable": "503.js"
+  },
   "staticsRoot": "statics",
-  "htmlMinify": {
+  "htmlMinifier": {
     "enable": true,
-    "exceptionURL": false,
+    "exceptionRoutes": false,
     "options": {
       "removeComments": true,
       "collapseWhitespace": true,
       "collapseBooleanAttributes": true,
       "removeAttributeQuotes": true,
-      "removeEmptyAttributes": true
+      "removeEmptyAttributes": true,
+      "_roosevelt-extra-exempt": true,
+      "_roosevelt-missing-exempt": true
     }
   },
   "css": {
-    "sourceDir": "css",
+    "sourcePath": "css",
     "compiler": "none",
     "whitelist": null,
     "output": ".build/css",
@@ -63,7 +80,7 @@
     "versionFile": null
   },
   "js": {
-    "sourceDir": "js",
+    "sourcePath": "js",
     "compiler": "none",
     "whitelist": null,
     "blacklist": null,
@@ -81,10 +98,6 @@
     "images"
   ],
   "versionedPublic": false,
-  "alwaysHostPublic": false,
-  "checkDependencies": true,
-  "shutdownTimeout": 30000,
-  "cores": 1,
   "clientViews": {
     "whitelist": {},
     "blacklist": [],
@@ -93,5 +106,6 @@
     "defaultBundle": "bundle.js",
     "minify": true,
     "minifyOptions": {}
-  }
+  },
+  "alwaysHostPublic": false
 }

@@ -192,7 +192,7 @@ describe('JS Bundler Tests', function () {
       path.join(appDir, 'statics/js/bundleJSTest'),
       path.join(appDir, 'statics/.build/js/bundleJSTest')
     ]
-    // array of path to the bundle js file in the altered sourceDir
+    // array of path to the bundle js file in the altered sourcePath
     let arrayOfAlteredSDBundleJSFilesPaths = [
       path.join(appDir, 'statics/js/bundleJSTest/bundle.js')
     ]
@@ -491,7 +491,7 @@ describe('JS Bundler Tests', function () {
   })
 
   it('should be able to pass an array of paths that will help broswerify with linking required modules to where they are', function (done) {
-    // Seperate test app options for this test
+    // Separate test app options for this test
     let options2 = { rooseveltPath: '../../../roosevelt', method: 'initServer' }
     // bool var to hold whether a Hello was given from one of the scripts
     let consolLogHelloBool = false
@@ -500,7 +500,7 @@ describe('JS Bundler Tests', function () {
     module.exports.sayHello = sayHello`
     let js2SourceCode = `const greeting = require('greeting')
     greeting.sayHello()`
-    // write one in the static js folder, and the other to a seperate folder for this test
+    // write one in the static js folder, and the other to a separate folder for this test
     fse.mkdirSync(path.join(appDir, 'statics/module'))
     fse.writeFileSync(path.join(appDir, 'statics/module/greeting.js'), js1SourceCode)
     fse.writeFileSync(path.join(appDir, 'statics/js/salutation.js'), js2SourceCode)

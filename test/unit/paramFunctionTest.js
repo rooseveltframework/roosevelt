@@ -507,9 +507,9 @@ describe('Parameter Function Tests', function () {
     // create the symlinks
     let publicPath = path.join(appDir, 'public')
     fse.mkdirSync(publicPath)
-    fse.symlinkSync(imagesPath, path.join(publicPath, 'images'))
-    fse.symlinkSync(cssPath, path.join(publicPath, 'css'))
-    fse.symlinkSync(jsPath, path.join(publicPath, 'js'))
+    fse.symlinkSync(imagesPath, path.join(publicPath, 'images'), 'junction')
+    fse.symlinkSync(cssPath, path.join(publicPath, 'css'), 'junction')
+    fse.symlinkSync(jsPath, path.join(publicPath, 'js'), 'junction')
 
     // create the app.js file
     generateTestApp({
@@ -593,7 +593,9 @@ describe('Parameter Function Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       onServerStart: `(app) => {process.send(app.get("params"))}`,
-      error404: '404errController.js'
+      errorPages: {
+        notFound: '404errController.js'
+      }
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -750,30 +752,6 @@ describe('Parameter Function Tests', function () {
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
-      done()
-    })
-  })
-
-  it('can change the nodeEnv to be something that is not development or production', function (done) {
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      nodeEnv: 'something'
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app finishes initialization, check that the nodeEnv of the app stayed the same as the one passed in and that it is not prod or dev
-    testApp.on('message', (params) => {
-      assert.strictEqual(params.nodeEnv, 'something', 'Roosevelt did not keep the node Env string that was passed in as a param')
-      testApp.send('stop')
-    })
-
-    // when the app exits, finish the test
-    testApp.on('exit', () => {
       done()
     })
   })

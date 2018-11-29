@@ -1,1 +1,7 @@
+.nyc_output
 .travis.yml
+.vscode
+coverage
+renovate.json
+CONTRIBUTING.md
+CHANGELOG.md

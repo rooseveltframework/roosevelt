@@ -7,11 +7,14 @@ const roosevelt = require('../../roosevelt')
 describe('ENV Parameter Tests', function () {
   const appConfig = {
     appDir: path.join(__dirname, '../app/envParams'),
-    ignoreCLIFlags: true,
+    enableCLIFlags: false,
     logging: {
       http: false,
       appStatus: false,
       warnings: false
+    },
+    https: {
+      port: 12345
     }
   }
   let app
@@ -35,6 +38,16 @@ describe('ENV Parameter Tests', function () {
     })
     assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.enable, false)
     process.env.ROOSEVELT_VALIDATOR = temp
+    done()
+  })
+
+  it('should change the https.port param to 45678', function (done) {
+    process.env.HTTPS_PORT = 45678
+    app = roosevelt({
+      ...appConfig
+    })
+    assert.strictEqual(app.expressApp.get('params').https.port, '45678')
+    delete process.env.HTTPS_PORT
     done()
   })
 })
