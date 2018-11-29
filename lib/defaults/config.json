@@ -98,6 +98,7 @@
     "images"
   ],
   "versionedPublic": false,
+  "alwaysHostPublic": false,
   "clientViews": {
     "whitelist": {},
     "blacklist": [],
@@ -106,6 +107,5 @@
     "defaultBundle": "bundle.js",
     "minify": true,
     "minifyOptions": {}
-  },
-  "alwaysHostPublic": false
+  }
 }
