@@ -203,7 +203,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
   - Set to `attached` to force the HTML validator to run as an attached process.
 - `ROOSEVELT_AUTOKILLER`:
   - Set to `on` to spawn a process to kill the HTML validator if it is running in the background and idle for more than a certain amount of time. The timeout can be configured in [app behavior params](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters).
-  - Set to `off`to turn off the HTML validator autokiller on the separate process.
+  - Set to `off`to disable the HTML validator autokiller.
 
 Environment variable precedence:
 
