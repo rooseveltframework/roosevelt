@@ -3,6 +3,7 @@
 ## Next version
 
 - Put your changes here.
+- Added autokiller environment variable to enable/disable the HTML validator autokiller
 
 ## 0.12.2
 
