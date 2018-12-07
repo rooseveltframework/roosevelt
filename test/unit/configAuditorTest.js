@@ -27,7 +27,7 @@ describe('Roosevelt Config Auditor Test', function () {
     let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
     packageJSONSource.rooseveltConfig = defaultContent
-    // seperate the commands from the rest of the data in the scripts file
+    // separate the commands from the rest of the data in the scripts file
     packageJSONSource.scripts = {}
     let keys = Object.keys(scriptContent)
     for (let x = 0; x < keys.length; x++) {
@@ -474,6 +474,106 @@ describe('Roosevelt Config Auditor Test', function () {
       assert.strictEqual(extraMaxServersBool, true, 'config Auditor did not sport the extra maxServers param in the rooseveltConfig')
       assert.strictEqual(error1Bool, true, 'configAuditor did not report that we had issues with the roosevelt config')
       assert.strictEqual(error2Bool, true, 'configAuditor did not report where a user can go to for examples of correct syntax and values')
+      done()
+    })
+  })
+
+  it('should not report that there are extra params if _roosevelt-extra-exempt is set to true', function (done) {
+    // bool var to hold whether or not the correct logs are being outputted
+    let extraParamBool = false
+    let errorBool = false
+    let startingConfigAuditBool = false
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    packageJSONSource.rooseveltConfig.logging.extraParam = true
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // on the output stream, check
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    // on the error stream, check config auditor output
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Extra param "extraParam" found')) {
+        extraParamBool = true
+      }
+      if (data.includes('Issues have been detected in roosevelt config')) {
+        errorBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.strictEqual(extraParamBool, false, 'configAuditor should not have warned about the extra param in the roosevelt config')
+      assert.strictEqual(errorBool, false, 'configAuditor should not have reported issues with the roosevelt config')
+      done()
+    })
+  })
+
+  it('should not report that there are missing params if _roosevelt-missing-exempt is set to true', function (done) {
+    // bool var to hold whether or not the correct logs are being outputted
+    let missingParamBool = false
+    let errorBool = false
+    let startingConfigAuditBool = false
+
+    // generate the package.json file
+    fse.ensureDirSync(appDir)
+    delete packageJSONSource.rooseveltConfig.multipart.multiples
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      onServerStart: `(app) => {process.send("something")}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // on the output stream, check
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting roosevelt user configuration audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    // on the error stream, check config auditor output
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Missing param "multiples"')) {
+        missingParamBool = true
+      }
+      if (data.includes('Issues have been detected in roosevelt config')) {
+        errorBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.strictEqual(missingParamBool, false, 'configAuditor should not have warned about a missing param in the roosevelt config')
+      assert.strictEqual(errorBool, false, 'configAuditor should not have reported issues with the roosevelt config')
       done()
     })
   })
