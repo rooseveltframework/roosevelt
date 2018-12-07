@@ -203,7 +203,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
   - Set to `attached` to force the HTML validator to run as an attached process.
 - `ROOSEVELT_AUTOKILLER`:
   - Set to `on` to turn on the HTML validator autokiller on the separate process.
-  - Set to `off`to turn off the HTML validator autokiller on the separe process.
+  - Set to `off`to turn off the HTML validator autokiller on the separate process.
 
 Environment variable precedence:
 
