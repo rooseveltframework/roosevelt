@@ -251,6 +251,84 @@ describe('Command Line Tests', function () {
     })
   })
 
+  it('should change the app to enable autokiller ("--enable-validator-autokiller")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--enable-validator-autokiller'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should change the app to enable the html Validator autokiller ("--html-validator-autokiller")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--html-validator-autokiller'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should change the app to enable the html Validator autokiller ("-k")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['-k'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should change the app to disable validator ("--disable-validator-autokiller")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--disable-validator-autokiller'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should change the app to disable validator ("--no-autokiller")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--no-autokiller'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should change the app to disable the html Validator autokiller ("-n")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['-n'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
   describe('check combination of flags', function () {
     it('should change the app to put it into dev mode, enable validator, and attach validator ("--development-mode, --enable-validator, --attach-validator")', function (done) {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--enable-validator', '--attach-validator'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
