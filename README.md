@@ -177,6 +177,14 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --attach-validator `: Forces the HTML validator to run as an attached process.
   - Default shorthand:
     - `-a`
+- `node app.js --enable-validator-autokiller `: Forces the HTML validator autokiller to be enabled.
+  - Default shorthands:
+    - `--html-validator-autokiller`
+    - `-k`
+- `node app.js --disable-validator-autokiller `: Forces the HTML validator autokiller to be disabled.
+  - Default shorthands:
+    - `--no-autokiller`
+    - `-n`
 - `node app.js --host-public `: Forces Roosevelt to always host the [public folder](https://github.com/rooseveltframework/roosevelt#public-folder-parameters) even when `alwaysHostPublic` is set to false. Useful for testing production mode.
   - Default shorthands:
     - `--statics`
@@ -201,6 +209,9 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `ROOSEVELT_VALIDATOR`:
   - Set to `detached` to force the HTML validator to run as a detached background process.
   - Set to `attached` to force the HTML validator to run as an attached process.
+- `ROOSEVELT_AUTOKILLER`:
+  - Set to `on` to spawn a process to kill the HTML validator if it is running in the background and idle for more than a certain amount of time. The timeout can be configured in [app behavior params](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters).
+  - Set to `off`to disable the HTML validator autokiller.
 
 Environment variable precedence:
 

@@ -50,4 +50,26 @@ describe('ENV Parameter Tests', function () {
     delete process.env.HTTPS_PORT
     done()
   })
+
+  it('should set validator autokiller param to true for separate processes', function (done) {
+    const temp = process.env.ROOSEVELT_AUTOKILLER
+    process.env.ROOSEVELT_AUTOKILLER = 'on'
+    app = roosevelt({
+      ...appConfig
+    })
+    assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.autoKiller, true)
+    process.env.ROOSEVELT_AUTOKILLER = temp
+    done()
+  })
+
+  it('should set validator autokiller param to false for separate processes', function (done) {
+    const temp = process.env.ROOSEVELT_AUTOKILLER
+    process.env.ROOSEVELT_AUTOKILLER = 'off'
+    app = roosevelt({
+      ...appConfig
+    })
+    assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.autoKiller, false)
+    process.env.ROOSEVELT_AUTOKILLER = temp
+    done()
+  })
 })
