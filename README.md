@@ -846,6 +846,57 @@ Event list
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
 
+Authoring your own CSS and JS preprocessors
+---
+
+Roosevelt allows users to bypass the default preprocessors and define their own custom compilers. To use this feature correctly, use Roosevelt's constructor like so:
+
+```js
+let app = require('roosevelt')({
+  cssCompiler: (app) => {
+    return {
+      versionCode: function (app) {
+        // version code functionality
+      },
+      parse: function (app, fileName) {
+        // css parsing functionality
+      }
+    }
+  },
+  jsCompiler: (app) => {
+    return {
+      parse: function (app, fileName) {
+        // js parsing functionality
+      }
+    }
+  }
+})
+```
+
+- `cssCompiler(app)`: Custom CSS preprocessor
+  - `versionCode(app)`: Returns version of the application.
+    - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+  - `parse(app, fileName)`: Handles parsing of CSS files.
+    - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+    - `fileName`: Name of file to parse.
+- `jsCompiler(app)`: Custom Javascript preprocessor
+  - `parse(app, fileName)`: Handles parsing of JavaScript files.
+    - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+    - `fileName`: Name of file to parse.
+
+In `package.json`:
+
+```js
+"css": {
+  "compiler": {
+    "nodeModule": "custom",
+  [...]
+"js": {
+  "compiler": {
+    "nodeModule": "custom",
+  [...]
+```
+
 Making controller files
 ===
 
