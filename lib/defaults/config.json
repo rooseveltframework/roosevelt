@@ -47,6 +47,7 @@
   "checkDependencies": true,
   "cores": 1,
   "shutdownTimeout": 30000,
+  "cleanTimer": 604800000,
   "https": false,
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",

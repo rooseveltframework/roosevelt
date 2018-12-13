@@ -917,7 +917,6 @@ describe('JavaScript Tests', function () {
       assert.strictEqual(test, false)
       testApp.send('stop')
     })
-
     // on the app's exit, check for bool value
     testApp.on('exit', () => {
       done()
@@ -935,7 +934,6 @@ describe('JavaScript Tests', function () {
     // write to gitignore
     fse.ensureDirSync(path.join(appDir))
     fse.writeFileSync(pathOfGitignore, gitignoreData)
-
     gitignoreFiles = gitignoreScanner(pathOfGitignore)
 
     gitignoreFiles.forEach((file) => {
@@ -943,11 +941,59 @@ describe('JavaScript Tests', function () {
         ignoredCorrectBool = false
       }
     })
+
     if (gitignoreFiles.includes('coverage')) {
       addedCorrectBool = true
     }
     assert.strictEqual(ignoredCorrectBool, true, 'gitignoreScanner module did not ignore correct files')
     assert.strictEqual(addedCorrectBool, true, 'gitignoreScanner did not add correct files')
     done()
+  })
+
+  it('should report to the user that there is a stale file in their .build directory', function (done) {
+    // bool variable to check if the app logged that there was a stale file
+    let staleLoggedBool = false
+    // date variable to set a.js to
+    let date = new Date('Thu Aug 20 2015 15:10:36 GMT+0800 (EST)')
+
+    // make the compiled file using uglify
+    let result = uglify.minify(test1, {})
+    let newJs = result.code
+    // write it to the compile file
+    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
+    fse.utimesSync(path.join(appDir, 'statics/.build/js', 'a.js'), date, date)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stderr.on('data', data => {
+      if (data.includes('There are stale')) {
+        staleLoggedBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      if (staleLoggedBool === false) {
+        assert.fail('Roosevelt did not report that there was a stale file in .build')
+      }
+      done()
+    })
   })
 })
