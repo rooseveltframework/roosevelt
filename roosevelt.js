@@ -46,9 +46,6 @@ module.exports = function (params) {
   // source user supplied params
   app = require('./lib/sourceParams')(app)
 
-  // Store updated params back into local variable
-  params = app.get('params')
-
   // get and expose logger
   logger = require('./lib/tools/logger')(app.get('params').logging)
   app.set('logger', logger)
