@@ -174,11 +174,13 @@ module.exports = function (params) {
   // use user-defined cssCompiler
   if (params.cssCompiler && typeof params.cssCompiler === 'function') {
     cssProcessor = params.cssCompiler(app)
+    logger.log('💭', `${appName} is using your custom css preprocessor.`.bold)
   }
 
   // use user-defined jsCompiler
   if (params.jsCompiler && typeof params.jsCompiler === 'function') {
     jsProcessor = params.jsCompiler(app)
+    logger.log('💭', `${appName} is using your custom js preprocessor.`.bold)
   }
 
   // assign individual keys to connections when opened so they can be destroyed gracefully
