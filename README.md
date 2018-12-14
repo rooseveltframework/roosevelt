@@ -2,7 +2,7 @@
 Roosevelt MVC web framework
 ===
 
-[![Build Status](https://travis-ci.org/rooseveltframework/roosevelt.svg?branch=master)](https://travis-ci.org/rooseveltframework/roosevelt) [![Build status](https://ci.appveyor.com/api/projects/status/bu0t22kfonjo1f5w/branch/master?svg=true)](https://ci.appveyor.com/project/kethinov/roosevelt/branch/master) [![codecov](https://codecov.io/gh/rooseveltframework/roosevelt/branch/master/graph/badge.svg)](https://codecov.io/gh/rooseveltframework/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
+[![Build Status](https://travis-ci.org/rooseveltframework/roosevelt.svg?branch=master)](https://travis-ci.org/rooseveltframework/roosevelt) [![codecov](https://codecov.io/gh/rooseveltframework/roosevelt/branch/master/graph/badge.svg)](https://codecov.io/gh/rooseveltframework/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
 Roosevelt is a web application development framework based on [Express](http://expressjs.com) that aims to be the easiest web framework on the [Node.js](https://nodejs.org) stack to learn and use.
 
@@ -54,6 +54,7 @@ First you will need to install [Node.js](http://nodejs.org). Both the current an
 Some important caveats to note:
 
 - nvm is not available on Windows. Windows users should try out [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nvs](https://github.com/jasongin/nvs).
+- It is also recommended that Windows users use a terminal that supports emojis, such as [cmder](http://cmder.net/), at least until Microsoft [rolls out this planned update to cmd.exe](https://arstechnica.com/gadgets/2018/07/microsoft-is-making-the-windows-command-line-a-lot-better/).
 - Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
 The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
@@ -176,6 +177,14 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --attach-validator `: Forces the HTML validator to run as an attached process.
   - Default shorthand:
     - `-a`
+- `node app.js --enable-validator-autokiller `: Forces the HTML validator autokiller to be enabled.
+  - Default shorthands:
+    - `--html-validator-autokiller`
+    - `-k`
+- `node app.js --disable-validator-autokiller `: Forces the HTML validator autokiller to be disabled.
+  - Default shorthands:
+    - `--no-autokiller`
+    - `-n`
 - `node app.js --host-public `: Forces Roosevelt to always host the [public folder](https://github.com/rooseveltframework/roosevelt#public-folder-parameters) even when `alwaysHostPublic` is set to false. Useful for testing production mode.
   - Default shorthands:
     - `--statics`
@@ -200,6 +209,9 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `ROOSEVELT_VALIDATOR`:
   - Set to `detached` to force the HTML validator to run as a detached background process.
   - Set to `attached` to force the HTML validator to run as an attached process.
+- `ROOSEVELT_AUTOKILLER`:
+  - Set to `on` to spawn a process to kill the HTML validator if it is running in the background and idle for more than a certain amount of time. The timeout can be configured in [app behavior params](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters).
+  - Set to `off`to disable the HTML validator autokiller.
 
 Environment variable precedence:
 
@@ -360,8 +372,8 @@ App behavior parameters
   - `separateProcess`: *[Object]* How to run the validator:
 
     - `enable`: *[Boolean]* Run the validator as a detached background process.
-    - `autoKiller`: *[Boolean]* Spawns a process to kill the validator if it is backgrounded and idle for more than a certain amount of time.
-    - `autoKillerTimeout`: *[Number]* Time (in milliseconds) that the validator auto-killer process waits before it kills the backgrounded validator.
+    - `autoKiller`: *[Boolean]* Spawns a process to kill the validator if it is running in the background and idle for more than a certain amount of time.
+    - `autoKillerTimeout`: *[Number]* Time (in milliseconds) that the validator auto-killer process waits before it kills the validator running in the background.
 
   - `showWarnings`: *[Boolean]* When set to true, shows HTML validation warnings in addition to errors.
 

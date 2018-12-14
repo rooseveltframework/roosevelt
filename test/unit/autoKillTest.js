@@ -28,7 +28,7 @@ describe('Roosevelt Autokill Test', function () {
     })
   })
 
-  it('should kill the validator after the app has gracefully shutdown if the validator is a seperate process', function (done) {
+  it('should kill the validator after the app has gracefully shutdown if the validator is a separate process', function (done) {
     let cannotConnectBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
@@ -156,7 +156,7 @@ describe('Roosevelt Autokill Test', function () {
     }, options)
 
     // fork an autoKiller instance
-    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [48888, 10000, 'true'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [48888, 60000, 'true'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })

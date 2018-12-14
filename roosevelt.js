@@ -380,8 +380,14 @@ module.exports = function (params) {
     if (typeof testString !== 'string') {
       testString = testString.toString()
     }
-    let endOfLine = require('os').EOL
-    return (testString.substring(testString.length - (endOfLine.length + 5)) === ('-----' + endOfLine))
+    let lastChar = testString.substring(testString.length - 1)
+    // A file path string won't have an end of line character at the end
+    // Looking for either \n or \r allows for nearly any OS someone could
+    // use, and a few that node doesn't work on.
+    if (lastChar === '\n' || lastChar === '\r') {
+      return true
+    }
+    return false
   }
 
   return {
