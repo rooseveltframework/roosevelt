@@ -876,6 +876,46 @@ describe('JavaScript Tests', function () {
     })
   })
 
+  it('should start roosevelt app in production mode with a custom js preprocessor', function (done) {
+    // bool var to hold whether or not a custom preprocessor was found
+    let foundPreprocessor = false
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      jsCompiler: `(app) => { return { parse: (app, fileName) => { return 1 } } }`,
+      js: {
+        sourcePath: 'js',
+        compiler: {
+          nodeModule: 'custom-jspreprocessor',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('is using your custom js preprocessor')) {
+        foundPreprocessor = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(foundPreprocessor, true, 'The Roosevelt app did not use the custom js preprocessor')
+      done()
+    })
+  })
+
   it('should read files for compiler to ignore from .gitignore', function (done) {
     // sample gitignore pattern for test app to ignore
     let gitignoreData = 'Thumbs.db'
