@@ -996,4 +996,35 @@ describe('JavaScript Tests', function () {
       done()
     })
   })
+
+  it('should report to the user that the build scanner is not running because of an invalid cleanTimer parameter', function (done) {
+    // bool variable to check if build scanner is running
+    let noScanner = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      cleanTimer: null
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stderr.on('data', data => {
+      if (data.includes('Unable to parse cleanTimer roosevelt parameter')) {
+        noScanner = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      if (noScanner === false) {
+        assert.fail('Roosevelt did not report that the build scanner is not running')
+      }
+      done()
+    })
+  })
 })
