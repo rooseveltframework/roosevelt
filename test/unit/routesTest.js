@@ -826,7 +826,7 @@ describe('Roosevelt Routes Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see if the app completed its initialization
-    testApp.stdout.on('data', (data) => {
+    testApp.stderr.on('data', (data) => {
       if (data.includes('There are files without Express routes located in your controllers directory.')) {
         controllerErrorLogBool = true
       }
