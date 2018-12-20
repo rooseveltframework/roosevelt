@@ -807,4 +807,40 @@ describe('Roosevelt Routes Tests', function () {
       done()
     })
   })
+
+  it('should report which controller files have no express routes in them', function (done) {
+    // Will be true if controller errors are reported
+    let controllerErrorLogBool = false
+
+    // copy the ico file into the controller directory
+    fse.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // on console logs, see if the app completed its initialization
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('There are files without Express routes located in your controllers directory.')) {
+        controllerErrorLogBool = true
+      }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the child process exits, test the assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(controllerErrorLogBool, true, 'Roosevelt reported a warning that there are invalid controller files')
+      done()
+    })
+  })
 })
