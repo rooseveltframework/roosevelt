@@ -207,7 +207,11 @@ module.exports = function (params) {
     }
 
     function validateHTML () {
-      require('./lib/htmlValidator')(app, mapRoutes)
+      require('./lib/htmlValidator')(app, scanBuiltFiles)
+    }
+
+    function scanBuiltFiles () {
+      require('./lib/tools/buildScanner')(app, mapRoutes)
     }
 
     function mapRoutes () {
