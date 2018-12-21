@@ -211,7 +211,11 @@ module.exports = function (params) {
     }
 
     function checkControllers () {
-      require('./lib/checkRoutes')(app, mapRoutes)
+      require('./lib/checkRoutes')(app, scanBuiltFiles)
+    }
+
+    function scanBuiltFiles () {
+      require('./lib/tools/buildScanner')(app, mapRoutes)
     }
 
     function mapRoutes () {
