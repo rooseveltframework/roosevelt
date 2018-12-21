@@ -73,5 +73,6 @@
   "favicon": "constructor",
   "versionedPublic": "constructor",
   "alwaysHostPublic": "constructor",
-  "cores": "constructor"
+  "cores": "constructor",
+  "cleanTimer": "constructor"
 }
