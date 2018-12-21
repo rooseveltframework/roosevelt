@@ -787,6 +787,14 @@ Statics parameters
       }
       ```
 
+- `cleanTimer`: Time in milliseconds to allow before considering files in CSS/JS compile directories stale and recommending running `npm run clean`.
+  - Default: *[Number]* `604800000` (1 week)
+  - Useful time conversions to `milliseconds` to configure this param with:
+    - `1 day`: `86400000`
+    - `1 week`: `604800000`
+    - `1 month`: `2419200000`
+  - Set to `0`, `null`, or anything that isn't a number to disable the check entirely.
+
 Public folder parameters
 ---
 
