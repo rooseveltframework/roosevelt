@@ -610,7 +610,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should be able to run the htmlValidator independently from the app if the seperateProcess param is set to true', function (done) {
+    it('should be able to run the htmlValidator independently from the app if the separateProcess param is set to true', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -787,7 +787,7 @@ describe('HTML Validator/Kill Validator Test', function () {
         if (data.includes('Request Failed.\nStatus Code: 500')) {
           requestFailedLogBool = true
         }
-        if (data.includes('Another process that is not the HTMLValidator is using this port already. Quiting the initialization of your app')) {
+        if (data.includes('Another process that is not the HTMLValidator is using this port already. Quitting the initialization of your app')) {
           twoProcessToPortsBool = true
         }
       })

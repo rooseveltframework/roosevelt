@@ -3,3 +3,5 @@
 .vscode
 coverage
 renovate.json
+CONTRIBUTING.md
+CHANGELOG.md

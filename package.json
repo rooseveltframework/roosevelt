@@ -7,7 +7,7 @@
     "Troy Coutu <autre31415@gmail.com>",
     "Alexander J. Lallier <alexanderlallier@aol.com>"
   ],
-  "version": "0.12.1",
+  "version": "0.12.2",
   "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
@@ -48,10 +48,10 @@
   },
   "devDependencies": {
     "codecov": "3.1.0",
-    "eslint": "5.9.0",
+    "eslint": "5.10.0",
     "eslint-plugin-mocha": "5.2.0",
-    "husky": "1.1.4",
-    "lint-staged": "8.0.5",
+    "husky": "1.2.0",
+    "lint-staged": "8.1.0",
     "mocha": "5.2.0",
     "nyc": "13.1.0",
     "proxyquire": "2.1.0",
