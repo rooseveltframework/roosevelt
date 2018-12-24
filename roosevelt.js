@@ -35,8 +35,6 @@ module.exports = function (params) {
   let clusterKilled = 0
   let checkConnectionsTimeout
   let shutdownType
-  let cssProcessor
-  let jsProcessor
 
   // expose initial vars
   app.set('express', express)
@@ -171,16 +169,6 @@ module.exports = function (params) {
     params.onServerInit(app)
   }
 
-  // use user-defined cssCompiler
-  if (params.cssCompiler && typeof params.cssCompiler === 'function') {
-    cssProcessor = params.cssCompiler(app)
-  }
-
-  // use user-defined jsCompiler
-  if (params.jsCompiler && typeof params.jsCompiler === 'function') {
-    jsProcessor = params.jsCompiler(app)
-  }
-
   // assign individual keys to connections when opened so they can be destroyed gracefully
   function mapConnections (conn) {
     let key = conn.remoteAddress + ':' + conn.remotePort
@@ -207,7 +195,7 @@ module.exports = function (params) {
     preprocessCss()
 
     function preprocessCss () {
-      require('./lib/preprocessCss')(app, cssProcessor, bundleJs)
+      require('./lib/preprocessCss')(app, bundleJs)
     }
 
     function bundleJs () {
@@ -215,7 +203,7 @@ module.exports = function (params) {
     }
 
     function compileJs () {
-      require('./lib/jsCompiler')(app, jsProcessor, validateHTML)
+      require('./lib/jsCompiler')(app, validateHTML)
     }
 
     function validateHTML () {
