@@ -1335,7 +1335,7 @@ describe('CSS Section Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes('is using your custom css preprocessor')) {
+      if (data.includes('using your custom CSS preprocessor')) {
         foundPreprocessor = true
       }
     })
