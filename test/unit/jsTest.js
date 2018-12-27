@@ -900,7 +900,7 @@ describe('JavaScript Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes('is using your custom js preprocessor')) {
+      if (data.includes('using your custom JS preprocessor')) {
         foundPreprocessor = true
       }
     })
