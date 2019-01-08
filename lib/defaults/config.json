@@ -98,5 +98,5 @@
   ],
   "versionedPublic": false,
   "alwaysHostPublic": false,
-  "urlPrefix": "/"
+  "routers": false
 }
