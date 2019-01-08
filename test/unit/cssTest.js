@@ -1305,4 +1305,49 @@ describe('CSS Section Tests', function () {
       done()
     })
   })
+
+  it('should start roosevelt app in production mode with a custom css preprocessor', function (done) {
+    // bool var to hold whether or not a custom preprocessor was found
+    let foundPreprocessor = false
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      cssCompiler: `(app) => { return { versionCode: (app) => { return 1 }, parse: (app, fileName) => { return 1 } } }`,
+      css: {
+        sourcePath: 'css',
+        compiler: {
+          nodeModule: 'custom-csspreprocessor',
+          params: {
+            cleanCSS: {
+              advanced: true,
+              aggressiveMerging: true
+            },
+            sourceMap: null
+          }
+        }
+      }
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('using your custom CSS preprocessor')) {
+        foundPreprocessor = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(foundPreprocessor, true, 'The Roosevelt app did not use the custom css preprocessor')
+      done()
+    })
+  })
 })

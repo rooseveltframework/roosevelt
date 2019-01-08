@@ -876,6 +876,46 @@ describe('JavaScript Tests', function () {
     })
   })
 
+  it('should start roosevelt app in production mode with a custom js preprocessor', function (done) {
+    // bool var to hold whether or not a custom preprocessor was found
+    let foundPreprocessor = false
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      jsCompiler: `(app) => { return { parse: (app, fileName) => { return 1 } } }`,
+      js: {
+        sourcePath: 'js',
+        compiler: {
+          nodeModule: 'custom-jspreprocessor',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    // fork the app and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('using your custom JS preprocessor')) {
+        foundPreprocessor = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(foundPreprocessor, true, 'The Roosevelt app did not use the custom js preprocessor')
+      done()
+    })
+  })
+
   it('should read files for compiler to ignore from .gitignore', function (done) {
     // sample gitignore pattern for test app to ignore
     let gitignoreData = 'Thumbs.db'
@@ -917,7 +957,6 @@ describe('JavaScript Tests', function () {
       assert.strictEqual(test, false)
       testApp.send('stop')
     })
-
     // on the app's exit, check for bool value
     testApp.on('exit', () => {
       done()
@@ -935,7 +974,6 @@ describe('JavaScript Tests', function () {
     // write to gitignore
     fse.ensureDirSync(path.join(appDir))
     fse.writeFileSync(pathOfGitignore, gitignoreData)
-
     gitignoreFiles = gitignoreScanner(pathOfGitignore)
 
     gitignoreFiles.forEach((file) => {
@@ -943,11 +981,90 @@ describe('JavaScript Tests', function () {
         ignoredCorrectBool = false
       }
     })
+
     if (gitignoreFiles.includes('coverage')) {
       addedCorrectBool = true
     }
     assert.strictEqual(ignoredCorrectBool, true, 'gitignoreScanner module did not ignore correct files')
     assert.strictEqual(addedCorrectBool, true, 'gitignoreScanner did not add correct files')
     done()
+  })
+
+  it('should report to the user that there is a stale file in their .build directory', function (done) {
+    // bool variable to check if the app logged that there was a stale file
+    let staleLoggedBool = false
+    // date variable to set a.js to
+    let date = new Date('Thu Aug 20 2015 15:10:36 GMT+0800 (EST)')
+
+    // make the compiled file using uglify
+    let result = uglify.minify(test1, {})
+    let newJs = result.code
+    // write it to the compile file
+    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
+    fse.utimesSync(path.join(appDir, 'statics/.build/js', 'a.js'), date, date)
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      js: {
+        compiler: {
+          nodeModule: 'roosevelt-uglify',
+          showWarnings: false,
+          params: {}
+        }
+      }
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stderr.on('data', data => {
+      if (data.includes('There are stale')) {
+        staleLoggedBool = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      if (staleLoggedBool === false) {
+        assert.fail('Roosevelt did not report that there was a stale file in .build')
+      }
+      done()
+    })
+  })
+
+  it('should report to the user that the build scanner is not running because of an invalid cleanTimer parameter', function (done) {
+    // bool variable to check if build scanner is running
+    let noScanner = false
+
+    // generate the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      cleanTimer: null
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.stderr.on('data', data => {
+      if (data.includes('Unable to parse cleanTimer roosevelt parameter')) {
+        noScanner = true
+      }
+    })
+
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      if (noScanner === false) {
+        assert.fail('Roosevelt did not report that the build scanner is not running')
+      }
+      done()
+    })
   })
 })

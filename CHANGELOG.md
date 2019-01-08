@@ -2,7 +2,11 @@
 
 ## Next version
 
-- Added autokiller environment variable to enable/disable the HTML validator autokiller.
+- Roosevelt will now warn you if your CSS/JS compile directory is getting stale and might need to be cleaned with `npm run clean`. A new `cleanTimer` param has been added to configure or disable this check.
+- Added new feature to create custom CSS/JS preprocessors on the fly.
+- Added environment variable to enable/disable the HTML validator autokiller.
+- Various dependencies bumped.
+- Added OpenJDK support to the Java HTML Validator.
 
 ## 0.12.2
 
