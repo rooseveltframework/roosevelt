@@ -231,6 +231,47 @@ describe('Roosevelt Routes Tests', function () {
     })
   })
 
+  it('should render routes of controllers using a schema file within the controllers directory', function (done) {
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      routers: 'schema.js',
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    let schema = `module.exports = [
+      {
+        prefix: '/prefix',
+        controllers: ['plainHTMLController.js']
+      }
+    ]`
+
+    fse.writeFileSync(path.join(appDir, 'mvc/controllers/schema.js'), schema)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // when the app starts and sends a message back to the parent try and request the test page
+    testApp.on('message', (params) => {
+      // test basic HTML Route
+      request(`http://localhost:${params.port}`)
+        .get('/prefix/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            testApp.send('stop')
+            assert.fail(err)
+          }
+          testApp.send('stop')
+        })
+
+      // when the child process exits, finish the test
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+  })
+
   // test for console output for invalid params within routers
   let logOutputTests = [
     {
@@ -287,6 +328,12 @@ describe('Roosevelt Routes Tests', function () {
       ],
       getRequest: '/HTMLTest',
       logMessage: 'Roosevelt Express found an invalid configuration in the router'
+    },
+    {
+      logName: 'should warn that a file containing the routers could not be loaded by roosevelt',
+      routers: 'doesnotexist.js',
+      getRequest: '/HTMLTest',
+      logMessage: 'Failed to load file: "doesnotexist.js". All controllers will be routed through the app level router'
     }
   ]
   let warnBool
