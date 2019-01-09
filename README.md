@@ -444,11 +444,19 @@ App behavior parameters
 
   - Default: *[Number]* `30000` (30 seconds).
 
-- `urlPrefix`: A string to prepend to all controller routes.
-  
-  - Default: *[String]* `"/"`.
-  - Example: `"urlPrefix": "/foo"` would prepend `foo` to all routes.
-  - **Note:** Activating `urlPrefix` will modify the `app` argument within controller files to use an express `router`. To access the app object, use `req.app` inside of individual routes.
+- `routers`: An array of objects that define express routers.
+  - `prefix`: *[String]* The URL path prefix for the router to use.
+  - `controllers`: *[Array]* List of files or directories relative to the controllers directory to use with the defined prefix.
+  - Default: *[Boolean]* `false`.
+  - Example:
+
+    ```json
+    [{
+      "prefix": "/route",
+      "controllers": ["controller.js", "directory"]
+    }]
+    ```
+  **NOTE** When using `routers` roosevelt will modify the `app` argument within controller files to use an express `router`. The app object will be the second argument inside of those controllers.
 
 HTTPS parameters
 ---
