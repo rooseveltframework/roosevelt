@@ -117,7 +117,12 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      urlPrefix: '/prefix',
+      routers: [
+        {
+          prefix: '/prefix',
+          controllers: ['plainHTMLController.js']
+        }
+      ],
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -126,13 +131,97 @@ describe('Roosevelt Routes Tests', function () {
 
     // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', (params) => {
+      // test the basic HTML Route
       request(`http://localhost:${params.port}`)
         .get('/prefix/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
+            testApp.send('stop')
             assert.fail(err)
           }
           testApp.send('stop')
+        })
+    })
+
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should still create a router even if there\'s no leading slash in the prefix paramater', function (done) {
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      routers: [
+        {
+          prefix: 'prefix',
+          controllers: ['plainHTMLController.js']
+        }
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // when the app starts and sends a message back to the parent try and request the test page
+    testApp.on('message', (params) => {
+      // test the basic HTML Route
+      request(`http://localhost:${params.port}`)
+        .get('/prefix/HTMLTest')
+        .expect(200, (err, res) => {
+          if (err) {
+            testApp.send('stop')
+            assert.fail(err)
+          }
+          testApp.send('stop')
+        })
+    })
+
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should render routes of all controllers within a directory using a route prefix', function (done) {
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      routers: [
+        {
+          prefix: '/prefix',
+          controllers: ['routerDir']
+        }
+      ],
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // when the app starts and sends a message back to the parent try and request the test page
+    testApp.on('message', (params) => {
+      // test the first controller in the directory
+      request(`http://localhost:${params.port}`)
+        .get('/prefix/controller1')
+        .expect(200, (err, res) => {
+          if (err) {
+            testApp.send('stop')
+            assert.fail(err)
+          }
+          // test the second controller in the directory
+          request(`http://localhost:${params.port}`)
+            .get('/prefix/controller2')
+            .expect(200, (err, res) => {
+              if (err) {
+                assert.fail(err)
+              }
+              testApp.send('stop')
+            })
         })
 
       // when the child process exits, finish the test
@@ -142,121 +231,101 @@ describe('Roosevelt Routes Tests', function () {
     })
   })
 
-  it('should still create a route prefix even if there\'s no leading slash in the string', function (done) {
-    // generate the test app
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      urlPrefix: 'noleadingslash',
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, options)
+  // test for console output for invalid params within routers
+  let logOutputTests = [
+    {
+      logName: 'should warn about an invalid router config and use the main app router for any controllers in that config',
+      routers: [
+        {
+          prefix: [true],
+          controllers: ['plainHTMLController.js']
+        }
+      ],
+      getRequest: '/HTMLTest',
+      logMessage: 'Roosevelt Express found an invalid configuration in the router'
+    },
+    {
+      logName: 'should warn about an invalid controller data type in a router config',
+      routers: [
+        {
+          prefix: '/prefix',
+          controllers: [true, 'plainHTMLController.js']
+        }
+      ],
+      getRequest: '/prefix/HTMLTest',
+      logMessage: '"true" must be type string but found type boolean'
+    },
+    {
+      logName: 'should warn that roosevelt failed to load a controller or directory defined in routers',
+      routers: [
+        {
+          prefix: '/prefix',
+          controllers: ['doesnotexist.js', 'plainHTMLController.js']
+        }
+      ],
+      getRequest: '/prefix/HTMLTest',
+      logMessage: 'failed to load the controller: "doesnotexist.js" to use with the router associated with prefix: /prefix'
+    },
+    {
+      logName: 'should warn that roosevelt failed to load a controller or directory defined in routers',
+      routers: [
+        {
+          prefix: '/prefix',
+          controllers: ['doesnotexist', 'plainHTMLController.js']
+        }
+      ],
+      getRequest: '/prefix/HTMLTest',
+      logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with prefix: /prefix'
+    },
+    {
+      logName: 'should use the default app router if the prefix contains unsafe url characters',
+      routers: [
+        {
+          prefix: '^invalid',
+          controllers: ['plainHTMLController.js']
+        }
+      ],
+      getRequest: '/HTMLTest',
+      logMessage: 'Roosevelt Express found an invalid configuration in the router'
+    }
+  ]
+  let warnBool
+  logOutputTests.forEach(test => {
+    it(test.logName, function (done) {
+      warnBool = false
+      // generate the test app
+      generateTestApp({
+        appDir: appDir,
+        generateFolderStructure: true,
+        routers: test.routers,
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
 
-    // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      // fork and run app.js as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // when the app starts and sends a message back to the parent try and request the test page
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
-        .get('/noleadingslash/HTMLTest')
-        .expect(200, (err) => {
-          if (err) {
-            assert.fail(err)
-          }
-          testApp.send('stop')
-        })
-
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
+      // when the app starts and sends a message back to the parent try and request the test page
+      testApp.on('message', (params) => {
+        request(`http://localhost:${params.port}`)
+          .get(test.getRequest)
+          .expect(200, (err, res) => {
+            if (err) {
+              testApp.send('stop')
+              assert.fail(err)
+            }
+            testApp.send('stop')
+          })
       })
-    })
-  })
 
-  it('should default the route prefix to "/" if urlPrefix has reserved characters', function (done) {
-    // generate the test app
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      urlPrefix: '^invalid',
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, options)
-
-    // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app starts and sends a message back to the parent try and request the test page
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
-        .expect(200, (err) => {
-          if (err) {
-            assert.fail(err)
-          }
-          testApp.send('stop')
-        })
-
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
+      testApp.stderr.on('data', message => {
+        if (message.toString().includes(test.logMessage)) {
+          warnBool = true
+        }
       })
-    })
-  })
-
-  it('should default the route prefix to "/" if urlPrefix is undefined"', function (done) {
-    // generate the test app
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      urlPrefix: undefined,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, options)
-
-    // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app starts and sends a message back to the parent try and request the test page
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
-        .expect(200, function (err) {
-          if (err) {
-            assert.fail(err)
-          }
-          testApp.send('stop')
-        })
 
       // when the child process exits, finish the test
       testApp.on('exit', () => {
-        done()
-      })
-    })
-  })
-
-  it('should default the route prefix to "/" if urlPrefix is not a string"', function (done) {
-    // generate the test app
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      urlPrefix: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, options)
-
-    // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app starts and sends a message back to the parent try and request the test page
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
-        .get('/HTMLTest')
-        .expect(200, function (err) {
-          if (err) {
-            assert.fail(err)
-          }
-          testApp.send('stop')
-        })
-
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
+        assert.strictEqual(warnBool, true)
         done()
       })
     })
