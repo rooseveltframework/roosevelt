@@ -444,7 +444,7 @@ App behavior parameters
 
   - Default: *[Number]* `30000` (30 seconds).
 
-- `routers`: Here you can define a list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
+- `routers`: Here you can define an array list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
   - `prefix`: *[String]* The URL path prefix for the router to use.
   - `controllers`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
   - Default: *[Boolean]* `false`.
