@@ -444,20 +444,6 @@ App behavior parameters
 
   - Default: *[Number]* `30000` (30 seconds).
 
-- `routers`: Here you can define an array list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
-  - `prefix`: *[String]* The URL path prefix for the router to use.
-  - `controllers`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
-  - Default: *[Boolean]* `false`.
-  - Example usage:
-
-    ```json
-    [{
-      "prefix": "/route",
-      "controllers": ["controller.js", "directory"]
-    }]
-    ```
-  **NOTE** When using `routers` roosevelt will modify the `app` argument within controller files to use an express `router`. The app object will be the second argument inside of those controllers.
-
 HTTPS parameters
 ---
 
@@ -534,6 +520,19 @@ MVC parameters
     - Default: *[String]* `"5xx.js"`.
   - `serviceUnavailable`: Your [503 Service Unavailable](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
     - Default: *[String]* `"503.js"`.
+
+- `routers`: Here you can define an array list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
+  - `prefix`: *[String]* The URL path prefix for the router to use.
+  - `controllers`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
+  - Default: *[Boolean]* `false`.
+  - Example usage:
+
+    ```json
+    [{
+      "prefix": "/route",
+      "controllers": ["controller.js", "directory"]
+    }]
+    ```
 
 Statics parameters
 ---
