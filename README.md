@@ -448,7 +448,7 @@ App behavior parameters
   - `prefix`: *[String]* The URL path prefix for the router to use.
   - `controllers`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
   - Default: *[Boolean]* `false`.
-  - Example:
+  - Example usage:
 
     ```json
     [{
