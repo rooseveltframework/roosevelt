@@ -275,26 +275,76 @@ describe('Roosevelt Routes Tests', function () {
   // test for console output for invalid params within routers
   let logOutputTests = [
     {
-      logName: 'should warn about an invalid router config and use the main app router for any controllers in that config',
+      logName: 'should warn that the router must be type object',
+      routers: [
+        'not an object'
+      ],
+      getRequest: '/HTMLTest',
+      logMessage: 'Invalid configuration in the routers parameter. Expected an Object but got type: string.'
+    },
+    {
+      logName: 'should warn that the key index is missing from a routers parameter',
       routers: [
         {
-          prefix: [true],
+          controllers: ['plainHTMLController.js']
+        }
+      ],
+      getRequest: '/HTMLtest',
+      logMessage: 'Missing key "prefix" in the routers parameter at index 0.'
+    },
+    {
+      logName: 'should warn that a prefix must be a URL safe string',
+      routers: [
+        {
+          prefix: '^invalid',
           controllers: ['plainHTMLController.js']
         }
       ],
       getRequest: '/HTMLTest',
-      logMessage: 'Roosevelt Express found an invalid configuration in the router'
+      logMessage: 'Invalid "prefix" in the routers parameter at index: 0. Must be a URL safe string.'
     },
     {
-      logName: 'should warn about an invalid controller data type in a router config',
+      logName: 'should warn that the key controllers is missing from one of the routers in the routers parameter',
       routers: [
         {
-          prefix: '/prefix',
-          controllers: [true, 'plainHTMLController.js']
+          prefix: '/test'
         }
       ],
-      getRequest: '/prefix/HTMLTest',
-      logMessage: '"true" must be type string but found type boolean'
+      getRequest: '/HTMLTest',
+      logMessage: 'Missing key "controllers" in the routers parameter at index 0.'
+    },
+    {
+      logName: 'should warn that the value for controllers is invalid in one of the routers',
+      routers: [
+        {
+          prefix: '/test',
+          controllers: true
+        }
+      ],
+      getRequest: '/HTMLTest',
+      logMessage: 'Invalid value for "controllers" in the routers parameter at index: 0. Must be an array.'
+    },
+    {
+      logName: 'should warn that the value for controllers is an empty array in one of the routers',
+      routers: [
+        {
+          prefix: '/test',
+          controllers: []
+        }
+      ],
+      getRequest: '/HTMLTest',
+      logMessage: 'The value for "controllers" in the routers parameter at index: 0 is an empty array.'
+    },
+    {
+      logName: 'should warn that an invalid controller file was found in one of the routers',
+      routers: [
+        {
+          prefix: '/test',
+          controllers: ['plainHTMLController.js', true]
+        }
+      ],
+      getRequest: '/test/HTMLTest',
+      logMessage: `Invalid controller found in [ 'plainHTMLController.js', true ] at index: 1.`
     },
     {
       logName: 'should warn that roosevelt failed to load a controller or directory defined in routers',
@@ -319,27 +369,17 @@ describe('Roosevelt Routes Tests', function () {
       logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with prefix: /prefix'
     },
     {
-      logName: 'should use the default app router if the prefix contains unsafe url characters',
-      routers: [
-        {
-          prefix: '^invalid',
-          controllers: ['plainHTMLController.js']
-        }
-      ],
-      getRequest: '/HTMLTest',
-      logMessage: 'Roosevelt Express found an invalid configuration in the router'
-    },
-    {
       logName: 'should warn that a file containing the routers could not be loaded by roosevelt',
       routers: 'doesnotexist.js',
       getRequest: '/HTMLTest',
       logMessage: 'Failed to load file: "doesnotexist.js". All controllers will be routed through the app level router'
     }
   ]
-  let warnBool
+
   logOutputTests.forEach(test => {
+    let warnBool = false
+    let rooseveltLogOutput
     it(test.logName, function (done) {
-      warnBool = false
       // generate the test app
       generateTestApp({
         appDir: appDir,
@@ -365,6 +405,7 @@ describe('Roosevelt Routes Tests', function () {
       })
 
       testApp.stderr.on('data', message => {
+        rooseveltLogOutput = message.toString()
         if (message.toString().includes(test.logMessage)) {
           warnBool = true
         }
@@ -372,7 +413,7 @@ describe('Roosevelt Routes Tests', function () {
 
       // when the child process exits, finish the test
       testApp.on('exit', () => {
-        assert.strictEqual(warnBool, true)
+        assert.strictEqual(warnBool, true, `Roosevelt expected the error message: ${test.logMessage} but recieved: ${rooseveltLogOutput}`)
         done()
       })
     })
