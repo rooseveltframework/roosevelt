@@ -275,9 +275,10 @@ describe('Roosevelt Routes Tests', function () {
   // test for console output for invalid params within routers
   let logOutputTests = [
     {
-      logName: 'should warn that the router must be type object',
+      logName: 'should warn that the router must be type object and just skip if it\'s an empty object',
       routers: [
-        'not an object'
+        'not an object',
+        {}
       ],
       getRequest: '/HTMLTest',
       logMessage: 'Invalid configuration in the routers parameter. Expected an Object but got type: string.'

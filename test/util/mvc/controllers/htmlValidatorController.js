@@ -1,14 +1,14 @@
-module.exports = (app) => {
+module.exports = (router) => {
   const path = require('path')
   // route to request the plain HTML page and return the HTML page
-  app.route('/Broken').get((req, res) => {
+  router.route('/Broken').get((req, res) => {
     // Path to broken html
     const badPath = path.join(__dirname, '../views/brokenHTMLTest.html')
     // send broken html to user
     res.sendFile(badPath)
   })
 
-  app.route('/brokenHeaderTest').get((req, res) => {
+  router.route('/brokenHeaderTest').get((req, res) => {
     // Path to broken html
     const badPath = path.join(__dirname, '../views/brokenHTMLTest.html')
     // set the response header to have the value of what will be needed to stop validating
@@ -17,7 +17,7 @@ module.exports = (app) => {
     res.sendFile(badPath)
   })
 
-  app.route('/brokenObjectTest').get((req, res) => {
+  router.route('/brokenObjectTest').get((req, res) => {
     // Path to broken html
     const badPath = path.join(__dirname, '../views/brokenHTMLTest.html')
     // create the object that has a value that will stop validation
@@ -26,7 +26,7 @@ module.exports = (app) => {
     res.render(badPath, model)
   })
 
-  app.route('/brokenObject2Test').get((req, res) => {
+  router.route('/brokenObject2Test').get((req, res) => {
     // Path to broken html
     const badPath = path.join(__dirname, '../views/brokenHTMLTest.html')
     // create the object that has a value that will stop validation

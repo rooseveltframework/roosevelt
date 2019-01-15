@@ -1,5 +1,5 @@
-module.exports = (app) => {
-  app.route('/controller2').get((req, res) => {
+module.exports = (router) => {
+  router.route('/controller2').get((req, res) => {
     res.send('test')
   })
 }
