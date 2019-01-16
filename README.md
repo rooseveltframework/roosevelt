@@ -876,10 +876,10 @@ Controller files are just [standard Express routes](http://expressjs.com/api.htm
 To make a new controller, just make a new file in the controllers directory. For example:
 
 ```js
-module.exports = (app) => { // app is the Express app created by Roosevelt
+module.exports = (router, app) => { // router is an Express router and app is the Express app created by Roosevelt
 
   // standard Express route
-  app.route('/about').get((req, res) => {
+  router.route('/about').get((req, res) => {
 
     // load a data model
     let model = require('models/dataModel');
@@ -911,8 +911,8 @@ This allows them to be called at will in any other controller's route when neede
 // import the "notFound" controller logic previously defined
 const throw404 = require('controllers/notFound');
 
-module.exports = (app) => {
-  app.route('/whatever').get((req, res) => {
+module.exports = (router, app) => {
+  router.route('/whatever').get((req, res) => {
 
     // test some logic that could fail
     // thus triggering the need for the 404 controller
