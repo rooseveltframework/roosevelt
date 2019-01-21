@@ -19,6 +19,7 @@ describe('Roosevelt Autokill Test', function () {
 
   // clean up the test app directory after each test
   afterEach(function (done) {
+    console.log(`In test/unit/autoKillTest line 22, called afterEach function.`)
     cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
@@ -56,6 +57,7 @@ describe('Roosevelt Autokill Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
+      console.log(`In test/unit/autoKillTest line 60 testApp data from stdout is ${data}`)
       if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
         exit()
@@ -66,8 +68,13 @@ describe('Roosevelt Autokill Test', function () {
       }
     })
 
+    testApp.stderr.on('data', (data) => {
+      console.log(`In test/unit/autoKillTest line 72 testApp data from stderr is ${data}`)
+    })
+
     // when the app finishes initiailization, kill it
     testApp.on('message', (msg) => {
+      console.log(`In test/unit/autoKillTest line 77 msg from testApp is ${msg}`)
       testApp.send('stop')
     })
 
