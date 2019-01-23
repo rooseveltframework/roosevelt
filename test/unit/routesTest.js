@@ -813,7 +813,7 @@ describe('Roosevelt Routes Tests', function () {
     let controllerErrorLogBool = false
 
     // copy the ico file into the controller directory
-    fse.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
+    fse.writeFileSync(path.join(appDir, 'mvc/controllers/404.js'), 'const notFound = "Nothing to see here."')
 
     // generate the test app
     generateTestApp({
