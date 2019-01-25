@@ -255,7 +255,7 @@ describe('Roosevelt Routes Tests', function () {
       }
     ]`
 
-    fse.writeFileSync(path.join(appDir, 'mvc/controllers/schema.js'), schema)
+    fse.outputFileSync(path.join(appDir, 'mvc/controllers/schema.js'), schema)
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -283,7 +283,7 @@ describe('Roosevelt Routes Tests', function () {
   // test for console output for invalid params within routers
   let logOutputTests = [
     {
-      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of they indices in the controllers array is not an object',
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of they indices in the files array is not an object',
       routers: {
         controllers: [
           'not an object',
@@ -402,6 +402,30 @@ describe('Roosevelt Routes Tests', function () {
       },
       getRequest: '/HTMLTest',
       logMessage: 'Failed to load file: "doesnotexist.js". All controllers will be routed through the app level router'
+    },
+    {
+      logName: 'should warn that there is an invalid configuration in the "routers.statics" parameter if one of they indices in the files array is not an object',
+      routers: {
+        statics: [
+          'not an object',
+          {}
+        ]
+      },
+      getRequest: '/css/style.css',
+      logMessage: 'Invalid configuration found in the "routers.statics" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+    },
+    {
+      logName: 'should warn that the app failed to load a statics directory associated with a specific router if the directory does not exist',
+      routers: {
+        statics: [
+          {
+            prefix: '/prefix',
+            files: ['doesnotexist', 'css']
+          }
+        ]
+      },
+      getRequest: '/prefix/css/style.css',
+      logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with static prefix: /prefix'
     }
   ]
 
@@ -409,6 +433,7 @@ describe('Roosevelt Routes Tests', function () {
     let warnBool = false
     let rooseveltLogOutput
     it(test.logName, function (done) {
+      fse.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body: { color: red; }')
       // generate the test app
       generateTestApp({
         appDir: appDir,
@@ -418,7 +443,7 @@ describe('Roosevelt Routes Tests', function () {
       }, options)
 
       // fork and run app.js as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the app starts and sends a message back to the parent try and request the test page
       testApp.on('message', (params) => {
