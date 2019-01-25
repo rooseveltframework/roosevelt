@@ -433,7 +433,7 @@ describe('Roosevelt Routes Tests', function () {
     let warnBool = false
     let rooseveltLogOutput
     it(test.logName, function (done) {
-      fse.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body: { color: red; }')
+      fse.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body { color: red; }')
       // generate the test app
       generateTestApp({
         appDir: appDir,
