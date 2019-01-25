@@ -283,7 +283,7 @@ describe('Roosevelt Routes Tests', function () {
   // test for console output for invalid params within routers
   let logOutputTests = [
     {
-      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of they indices in the files array is not an object',
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the indices in the files array is not an object',
       routers: {
         controllers: [
           'not an object',
@@ -404,7 +404,7 @@ describe('Roosevelt Routes Tests', function () {
       logMessage: 'Failed to load file: "doesnotexist.js". All controllers will be routed through the app level router'
     },
     {
-      logName: 'should warn that there is an invalid configuration in the "routers.statics" parameter if one of they indices in the files array is not an object',
+      logName: 'should warn that there is an invalid configuration in the "routers.statics" parameter if one of the indices in the files array is not an object',
       routers: {
         statics: [
           'not an object',
