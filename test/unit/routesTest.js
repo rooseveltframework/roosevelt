@@ -117,12 +117,14 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      routers: [
-        {
-          prefix: '/prefix',
-          controllers: ['plainHTMLController.js']
-        }
-      ],
+      routers: {
+        controllers: [
+          {
+            prefix: '/prefix',
+            files: ['plainHTMLController.js']
+          }
+        ]
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -154,12 +156,14 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      routers: [
-        {
-          prefix: 'prefix',
-          controllers: ['plainHTMLController.js']
-        }
-      ],
+      routers: {
+        controllers: [
+          {
+            prefix: 'prefix',
+            files: ['plainHTMLController.js']
+          }
+        ]
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -191,12 +195,14 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      routers: [
-        {
-          prefix: '/prefix',
-          controllers: ['routerDir']
-        }
-      ],
+      routers: {
+        controllers: [
+          {
+            prefix: '/prefix',
+            files: ['routerDir']
+          }
+        ]
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
@@ -236,14 +242,16 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      routers: 'schema.js',
+      routers: {
+        controllers: 'schema.js'
+      },
       onServerStart: `(app) => {process.send(app.get("params"))}`
     }, options)
 
     let schema = `module.exports = [
       {
         prefix: '/prefix',
-        controllers: ['plainHTMLController.js']
+        files: ['plainHTMLController.js']
       }
     ]`
 
@@ -275,103 +283,123 @@ describe('Roosevelt Routes Tests', function () {
   // test for console output for invalid params within routers
   let logOutputTests = [
     {
-      logName: 'should warn that the router must be type object and just skip if it\'s an empty object',
-      routers: [
-        'not an object',
-        {}
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of they indices in the controllers array is not an object',
+      routers: {
+        controllers: [
+          'not an object',
+          {}
+        ]
+      },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid configuration in the routers parameter. Expected an Object but got type: string.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that the key index is missing from a routers parameter',
-      routers: [
-        {
-          controllers: ['plainHTMLController.js']
-        }
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects is missing the key "prefix"',
+      routers: {
+        controllers: [
+          {
+            files: ['plainHTMLController.js']
+          }
+        ]
+      },
       getRequest: '/HTMLtest',
-      logMessage: 'Missing key "prefix" in the routers parameter at index 0.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that a prefix must be a URL safe string',
-      routers: [
-        {
-          prefix: '^invalid',
-          controllers: ['plainHTMLController.js']
-        }
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if the prefix includes unsafe URL Characters',
+      routers: {
+        controllers: [
+          {
+            prefix: '^invalid',
+            files: ['plainHTMLController.js']
+          }
+        ]
+      },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid "prefix" in the routers parameter at index: 0. Must be a URL safe string.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that the key controllers is missing from one of the routers in the routers parameter',
-      routers: [
-        {
-          prefix: '/test'
-        }
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects is missing the key "files"',
+      routers: {
+        controllers: [
+          {
+            prefix: '/test'
+          }
+        ]
+      },
       getRequest: '/HTMLTest',
-      logMessage: 'Missing key "controllers" in the routers parameter at index 0.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that the value for controllers is invalid in one of the routers',
-      routers: [
-        {
-          prefix: '/test',
-          controllers: true
-        }
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects has invalid data type for the key "files"',
+      routers: {
+        controllers: [
+          {
+            prefix: '/test',
+            files: true
+          }
+        ]
+      },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid value for "controllers" in the routers parameter at index: 0. Must be an array.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that the value for controllers is an empty array in one of the routers',
-      routers: [
-        {
-          prefix: '/test',
-          controllers: []
-        }
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects has an empty array for the key "files"',
+      routers: {
+        controllers: [
+          {
+            prefix: '/test',
+            files: []
+          }
+        ]
+      },
       getRequest: '/HTMLTest',
-      logMessage: 'The value for "controllers" in the routers parameter at index: 0 is an empty array.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that an invalid controller file was found in one of the routers',
-      routers: [
-        {
-          prefix: '/test',
-          controllers: ['plainHTMLController.js', true]
-        }
-      ],
+      logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects has an invalid data type within the key "files"',
+      routers: {
+        controllers: [
+          {
+            prefix: '/test',
+            files: ['plainHTMLController.js', true]
+          }
+        ]
+      },
       getRequest: '/test/HTMLTest',
-      logMessage: `Invalid controller found in [ 'plainHTMLController.js', true ] at index: 1.`
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
     },
     {
-      logName: 'should warn that roosevelt failed to load a controller or directory defined in routers',
-      routers: [
-        {
-          prefix: '/prefix',
-          controllers: ['doesnotexist.js', 'plainHTMLController.js']
-        }
-      ],
+      logName: 'should warn that the app failed to load a controller file associated with a specific router if the file does not exist',
+      routers: {
+        controllers: [
+          {
+            prefix: '/prefix',
+            files: ['doesnotexist.js', 'plainHTMLController.js']
+          }
+        ]
+      },
       getRequest: '/prefix/HTMLTest',
-      logMessage: 'failed to load the controller: "doesnotexist.js" to use with the router associated with prefix: /prefix'
+      logMessage: 'failed to load the file: "doesnotexist.js" to use with the router associated with controller prefix: /prefix'
     },
     {
-      logName: 'should warn that roosevelt failed to load a controller or directory defined in routers',
-      routers: [
-        {
-          prefix: '/prefix',
-          controllers: ['doesnotexist', 'plainHTMLController.js']
-        }
-      ],
+      logName: 'should warn that the app failed to load a controllers directory associated with a specific router if the directory does not exist',
+      routers: {
+        controllers: [
+          {
+            prefix: '/prefix',
+            files: ['doesnotexist', 'plainHTMLController.js']
+          }
+        ]
+      },
       getRequest: '/prefix/HTMLTest',
-      logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with prefix: /prefix'
+      logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with controller prefix: /prefix'
     },
     {
-      logName: 'should warn that a file containing the routers could not be loaded by roosevelt',
-      routers: 'doesnotexist.js',
+      logName: 'should warn that a schema file containing the controller routers could not be loaded by roosevelt',
+      routers: {
+        controllers: 'doesnotexist.js'
+      },
       getRequest: '/HTMLTest',
       logMessage: 'Failed to load file: "doesnotexist.js". All controllers will be routed through the app level router'
     }
@@ -400,8 +428,9 @@ describe('Roosevelt Routes Tests', function () {
             if (err) {
               testApp.send('stop')
               assert.fail(err)
+            } else {
+              testApp.send('stop')
             }
-            testApp.send('stop')
           })
       })
 
