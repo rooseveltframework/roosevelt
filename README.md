@@ -521,16 +521,31 @@ MVC parameters
   - `serviceUnavailable`: Your [503 Service Unavailable](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
     - Default: *[String]* `"503.js"`.
 
-- `routers`: Here you can define an array list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
-  - `prefix`: *[String]* The URL path prefix for the router to use.
-  - `controllers`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
-  - Default: *[Boolean]* `false`.
-  - Example usage:
+- `routers`: *[Object]* Define routes for express routers and static files
+  - Object members:
+  - `controllers`: *[Array]* Here you can define an array list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
+    - `prefix`: *[String]* The URL path prefix for the router to use.
+    - `files`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
+    - Default: *[Boolean]* `false`.
+    - Example usage:
 
     ```json
     [{
       "prefix": "/route",
-      "controllers": ["controller.js", "directory"]
+      "files": ["controller.js", "directory"]
+    }]
+    ```
+
+  - `statics`: *[Array]* Here you can define an array list of objects that represent route prefixes for static files that live inside the `publicFolder`.
+    - `prefix`: *[String]* The URL path prefix for the public directories to use.
+    - `files`: *[Array]* List of directories in `publicFolder` that will be mounted to this route.
+    - Default: *[Boolean]* `false`.
+    - Example usage:
+
+    ```json
+    [{
+      "prefix": "/statics",
+      "files": ["css", "images", "js"]
     }]
     ```
 
