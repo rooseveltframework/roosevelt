@@ -536,7 +536,7 @@ MVC parameters
       }]
       ```
 
-    - `statics`: *[Array]* Here you can define an array list of objects that represent route prefixes for static files that live inside the `publicFolder`.
+    - `public`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of static files into a series of public routes.
       - `prefix`: *[String]* The URL path prefix for the public directories to use.
       - `files`: *[Array]* List of directories in `publicFolder` that will be mounted to this route.
       - Default: *[Boolean]* `false`.
