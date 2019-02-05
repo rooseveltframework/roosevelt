@@ -521,7 +521,7 @@ MVC parameters
   - `serviceUnavailable`: Your [503 Service Unavailable](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
     - Default: *[String]* `"503.js"`.
 
-- `routers`: *[Object]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) to create for groups of controllers or statics. If none are defined, Roosevelt will default to creating one single global router with the route prefix `/` that all controllers and all statics will be routed through.
+- `routers`: *[Object]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) to create for groups of controllers or static files. If none are defined, Roosevelt will default to creating one single global router with the route prefix `/` that all controllers and all static files will be routed through.
   - Object members:
     - `controllers`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of controller routes.
       - `prefix`: *[String]* The URL path prefix for the router to use.
