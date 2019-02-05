@@ -404,28 +404,28 @@ describe('Roosevelt Routes Tests', function () {
       logMessage: 'Failed to load file: "doesnotexist.js". All controllers will be routed through the app level router'
     },
     {
-      logName: 'should warn that there is an invalid configuration in the "routers.statics" parameter if one of the indices in the files array is not an object',
+      logName: 'should warn that there is an invalid configuration in the "routers.public" parameter if one of the indices in the files array is not an object',
       routers: {
-        statics: [
+        public: [
           'not an object',
           {}
         ]
       },
       getRequest: '/css/style.css',
-      logMessage: 'Invalid configuration found in the "routers.statics" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.public" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
-      logName: 'should warn that the app failed to load a statics directory associated with a specific router if the directory does not exist',
+      logName: 'should warn that the app failed to load a public directory associated with a specific router if the directory does not exist',
       routers: {
-        statics: [
+        public: [
           {
             prefix: '/prefix',
-            files: ['doesnotexist', 'css']
+            dirs: ['doesnotexist', 'css']
           }
         ]
       },
       getRequest: '/prefix/css/style.css',
-      logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with static prefix: /prefix'
+      logMessage: 'failed to load the directory: "doesnotexist" to use with the router associated with public prefix: /prefix'
     }
   ]
 
