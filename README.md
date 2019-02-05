@@ -523,7 +523,7 @@ MVC parameters
 
 - `routers`: *[Object]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) to create for groups of controllers or statics. If none are defined, Roosevelt will default to creating one single global router with the route prefix `/` that all controllers and all statics will be routed through.
   - Object members:
-    - `controllers`: *[Array]* Here you can define an array list of [Express routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of routes.
+    - `controllers`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of controller routes.
       - `prefix`: *[String]* The URL path prefix for the router to use.
       - `files`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
       - Default: *[Boolean]* `false`.
