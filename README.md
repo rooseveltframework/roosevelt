@@ -544,7 +544,7 @@ MVC parameters
 
       ```json
       [{
-        "prefix": "/statics",
+        "prefix": "/something",
         "files": ["css", "images", "js"]
       }]
       ```
