@@ -531,7 +531,7 @@ MVC parameters
 
       ```json
       [{
-        "prefix": "/route",
+        "prefix": "/something",
         "files": ["controller.js", "directory"]
       }]
       ```
