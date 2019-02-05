@@ -537,7 +537,7 @@ MVC parameters
       ```
 
     - `public`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of static files into a series of public routes.
-      - `prefix`: *[String]* The URL path prefix for the public directories to use.
+      - `prefix`: *[String]* The URL path prefix for the public directory to use.
       - `files`: *[Array]* List of directories in `publicFolder` that will be mounted to this route.
       - Default: *[Boolean]* `false`.
       - Example usage:
