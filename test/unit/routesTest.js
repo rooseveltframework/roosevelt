@@ -291,7 +291,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects is missing the key "prefix"',
@@ -303,7 +303,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/HTMLtest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if the prefix includes unsafe URL Characters',
@@ -316,7 +316,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects is missing the key "files"',
@@ -328,7 +328,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects has invalid data type for the key "files"',
@@ -341,7 +341,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects has an empty array for the key "files"',
@@ -354,7 +354,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/HTMLTest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that there is an invalid configuration in the "routers.controllers" parameter if one of the controller objects has an invalid data type within the key "files"',
@@ -367,7 +367,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/test/HTMLTest',
-      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.controllers" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that the app failed to load a controller file associated with a specific router if the file does not exist',
@@ -412,7 +412,7 @@ describe('Roosevelt Routes Tests', function () {
         ]
       },
       getRequest: '/css/style.css',
-      logMessage: 'Invalid configuration found in the "routers.statics" parameter. Please make sure it is coded correctly. See documentation at http://github.com/kethinov/roosevelt for examples.'
+      logMessage: 'Invalid configuration found in the "routers.statics" parameter. Please make sure it is coded correctly. See documentation at http://github.com/rooseveltframework/roosevelt for examples.'
     },
     {
       logName: 'should warn that the app failed to load a statics directory associated with a specific router if the directory does not exist',
