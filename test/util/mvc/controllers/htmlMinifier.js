@@ -1,15 +1,15 @@
-module.exports = app => {
+module.exports = router => {
   const model = require(`models/teddyModel`)
 
-  app.route('/minify').get((req, res) => {
+  router.route('/minify').get((req, res) => {
     res.render('teddyTest', model)
   })
 
-  app.route('/anotherRoute').get((req, res) => {
+  router.route('/anotherRoute').get((req, res) => {
     res.render('teddyTest', model)
   })
 
-  app.route('/callbackRoute').get((req, res) => {
+  router.route('/callbackRoute').get((req, res) => {
     res.render('teddyTest', model, (err, html) => {
       if (err) {
         console.error(err)
