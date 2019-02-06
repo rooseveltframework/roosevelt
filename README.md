@@ -18,7 +18,7 @@ Some notable features:
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
-*Note: this is documentation for Roosevelt 0.12.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
+*Note: this is documentation for Roosevelt 0.13.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
 
 Table of contents
 ===
@@ -1081,6 +1081,7 @@ Lastly, in order to activate the custom preprocessor feature, alter `package.jso
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.12.x](https://github.com/rooseveltframework/roosevelt/blob/59b00cab727bc754e1bcaf2d1df6d76e54630dc4/README.md)*
 - *[0.11.x](https://github.com/rooseveltframework/roosevelt/blob/df3f4f60a08215fcbae7b5c9765623bb46c2cd2c/README.md)*
 - *[0.10.x](https://github.com/rooseveltframework/roosevelt/blob/fac53c2c8d6fedd74f4c3ef85c481dba250dee00/README.md)*
 - *[0.9.x](https://github.com/rooseveltframework/roosevelt/blob/15031010974475f7baf2355b9e06a977675db269/README.md)*

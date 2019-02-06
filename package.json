@@ -7,7 +7,7 @@
     "Troy Coutu <autre31415@gmail.com>",
     "Alexander J. Lallier <alexanderlallier@aol.com>"
   ],
-  "version": "0.12.2",
+  "version": "0.13.0",
   "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
