@@ -527,6 +527,7 @@ MVC parameters
       - `prefix`: *[String]* The URL path prefix for the router to use.
       - `files`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
       - Default: *[Boolean]* `false`.
+      - **Note**: `controllers` can also be a *[String]* that represents a schema file within the controllers directory. That file should export the *[Array]* list of Express Routers and define them the same way as you would in the `rooseveltConfig`.
       - Example usage:
 
       ```json
