@@ -40,7 +40,7 @@
     "prismjs": "~1.15.0",
     "ps-node": "~0.1.6",
     "serve-favicon": "~2.5.0",
-    "tamper": "~1.0.0",
+    "tamper": "~1.1.0",
     "tmp": "~0.0.33",
     "toobusy-js": "~0.5.1",
     "vnu-jar": "~18.12.0",
