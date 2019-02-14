@@ -24,9 +24,6 @@
       {
         "requestHeader": "Partial",
         "modelValue": "_disableValidator"
-      },{
-        "requestHeader": "Partial",
-        "modelValue": "_disableValidator"
       }
     ]
   },
