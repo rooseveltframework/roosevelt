@@ -35,7 +35,7 @@
     "klaw-sync": "~6.0.0",
     "method-override": "~3.0.0",
     "morgan": "~1.9.1",
-    "node-emoji": "~1.8.1",
+    "node-emoji": "~1.10.0",
     "parent-require": "~1.0.0",
     "prismjs": "~1.15.0",
     "ps-node": "~0.1.6",
