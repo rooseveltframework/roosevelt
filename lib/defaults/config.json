@@ -20,12 +20,10 @@
     },
     "port": 48888,
     "showWarnings": true,
-    "exceptions": [
-      {
-        "requestHeader": "Partial",
-        "modelValue": "_disableValidator"
-      }
-    ]
+    "exceptions": {
+      "requestHeader": "Partial",
+      "modelValue": "_disableValidator"
+    }
   },
   "multipart": {
     "multiples": true,
