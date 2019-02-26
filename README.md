@@ -18,7 +18,7 @@ Some notable features:
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
-*Note: this is documentation for Roosevelt 0.12.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
+*Note: this is documentation for Roosevelt 0.13.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
 
 Table of contents
 ===
@@ -449,34 +449,34 @@ HTTPS parameters
 
 - `https`: *[Object]* Run a HTTPS server using Roosevelt.
   - Object members:
-  - `enable`: Enable a HTTPS server.
-    - Default: *[Boolean]* `false`.
-  - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
-    - Default: *[Boolean]* `false`.
-  - `port`: The port your app will run a HTTPS server on.
-    - Default: *[Number]* `43733`.
-  - `authInfoPath`: *[Object]* Specify either the paths where the _server_ certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-    - Default: `undefined`
-    - Object members:
-    - `p12`: *[Object]* Parameter used when the _server_ certificate/key is in PKCS#12 format.
+    - `enable`: Enable a HTTPS server.
+      - Default: *[Boolean]* `false`.
+    - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
+      - Default: *[Boolean]* `false`.
+    - `port`: The port your app will run a HTTPS server on.
+      - Default: *[Number]* `43733`.
+    - `authInfoPath`: *[Object]* Specify either the paths where the _server_ certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
+      - Default: `undefined`
       - Object members:
-      - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (.p12/.pfx) _or_ a PKCS#12-formatted string or buffer (i.e. the result of fs.readFileSync(/path/to/file/example.p12))
-        - Default: `undefined`
-      - `passphrase`: *[String]* The password used to encrypt the PKCS#12-formatted file or string.
-        - Default: `undefined`.
-    - `authCertAndKey`: *[Object]* Parameter used when the _server_ certificate and key are in separate PEM-encoded files.
-      - Object members:
-      - `cert`: *[String]* Either the path to a PEM-encoded certificate file (.crt, .cer, etc.) or a PEM-encoded certificate string.
-        - Default: `undefined`
-      - `key`: *[String]* Either the path to a PEM-encoded key file (.crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-        - Default: `undefined`
-  - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. _This certificate (chain) will be used to verify **client** certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are **not** signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt)_.
-    - Default: `undefined`.
-  - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
-    - Default: `undefined`.
-  - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
-    - Default:  `undefined`.
-  - Default: *[Object]* `{}`.
+        - `p12`: *[Object]* Parameter used when the _server_ certificate/key is in PKCS#12 format.
+          - Object members:
+            - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (.p12/.pfx) _or_ a PKCS#12-formatted string or buffer (i.e. the result of fs.readFileSync(/path/to/file/example.p12))
+              - Default: `undefined`
+            - `passphrase`: *[String]* The password used to encrypt the PKCS#12-formatted file or string.
+              - Default: `undefined`.
+        - `authCertAndKey`: *[Object]* Parameter used when the _server_ certificate and key are in separate PEM-encoded files.
+          - Object members:
+            - `cert`: *[String]* Either the path to a PEM-encoded certificate file (.crt, .cer, etc.) or a PEM-encoded certificate string.
+              - Default: `undefined`
+            - `key`: *[String]* Either the path to a PEM-encoded key file (.crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+              - Default: `undefined`
+    - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. _This certificate (chain) will be used to verify **client** certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are **not** signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt)_.
+      - Default: `undefined`.
+    - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
+      - Default: `undefined`.
+    - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
+      - Default:  `undefined`.
+    - Default: *[Object]* `{}`.
 
 
 MVC parameters
@@ -520,6 +520,35 @@ MVC parameters
     - Default: *[String]* `"5xx.js"`.
   - `serviceUnavailable`: Your [503 Service Unavailable](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
     - Default: *[String]* `"503.js"`.
+
+- `routers`: *[Object]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) to create for groups of controllers or static files. If none are defined, Roosevelt will default to creating one single global router with the route prefix `/` that all controllers and all static files will be routed through.
+  - Object members:
+    - `controllers`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of controller routes.
+      - `prefix`: *[String]* The URL path prefix for the router to use.
+      - `files`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
+      - Default: *[Boolean]* `false`.
+      - **Note**: `controllers` can also be a *[String]* that represents a schema file within the controllers directory. That file should define and export the list of Express Routers the same way as you would within the `rooseveltConfig`.
+      - Example usage:
+
+      ```json
+      [{
+        "prefix": "/something",
+        "files": ["controller.js", "directory"]
+      }]
+      ```
+
+    - `public`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of static files into a series of public routes.
+      - `prefix`: *[String]* The URL path prefix for the public directory to use.
+      - `dirs`: *[Array]* List of directories in `publicFolder` that will be mounted to this route.
+      - Default: *[Boolean]* `false`.
+      - Example usage:
+
+      ```json
+      [{
+        "prefix": "/something",
+        "dirs": ["css", "images", "js"]
+      }]
+      ```
 
 Statics parameters
 ---
@@ -863,10 +892,10 @@ Controller files are just [standard Express routes](http://expressjs.com/api.htm
 To make a new controller, just make a new file in the controllers directory. For example:
 
 ```js
-module.exports = (app) => { // app is the Express app created by Roosevelt
+module.exports = (router, app) => { // router is an Express router and app is the Express app created by Roosevelt
 
   // standard Express route
-  app.route('/about').get((req, res) => {
+  router.route('/about').get((req, res) => {
 
     // load a data model
     let model = require('models/dataModel');
@@ -898,8 +927,8 @@ This allows them to be called at will in any other controller's route when neede
 // import the "notFound" controller logic previously defined
 const throw404 = require('controllers/notFound');
 
-module.exports = (app) => {
-  app.route('/whatever').get((req, res) => {
+module.exports = (router, app) => {
+  router.route('/whatever').get((req, res) => {
 
     // test some logic that could fail
     // thus triggering the need for the 404 controller
@@ -1052,6 +1081,7 @@ Lastly, in order to activate the custom preprocessor feature, alter `package.jso
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.12.x](https://github.com/rooseveltframework/roosevelt/blob/59b00cab727bc754e1bcaf2d1df6d76e54630dc4/README.md)*
 - *[0.11.x](https://github.com/rooseveltframework/roosevelt/blob/df3f4f60a08215fcbae7b5c9765623bb46c2cd2c/README.md)*
 - *[0.10.x](https://github.com/rooseveltframework/roosevelt/blob/fac53c2c8d6fedd74f4c3ef85c481dba250dee00/README.md)*
 - *[0.9.x](https://github.com/rooseveltframework/roosevelt/blob/15031010974475f7baf2355b9e06a977675db269/README.md)*

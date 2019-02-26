@@ -98,5 +98,6 @@
     "images"
   ],
   "versionedPublic": false,
-  "alwaysHostPublic": false
+  "alwaysHostPublic": false,
+  "routers": false
 }

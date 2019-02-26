@@ -1,7 +1,7 @@
-module.exports = (app) => {
+module.exports = (router) => {
   const fse = require('fs-extra')
   const path = require('path')
-  app.route('/multipartTest').post((req, res) => {
+  router.route('/multipartTest').post((req, res) => {
     let test = {}
 
     // see if the correct amount of files have been uploaded onto
@@ -20,7 +20,7 @@ module.exports = (app) => {
     res.send(test)
   })
 
-  app.route('/multipartUploadDir').post((req, res) => {
+  router.route('/multipartUploadDir').post((req, res) => {
     let test = {}
     let keys = Object.keys(req.files)
 
@@ -35,7 +35,7 @@ module.exports = (app) => {
     res.send(test)
   })
 
-  app.route('/multipartDelete').post((req, res) => {
+  router.route('/multipartDelete').post((req, res) => {
     // make an object that can send back whether file exists or not
     let test = {
       existenceTest: []
@@ -56,7 +56,7 @@ module.exports = (app) => {
     res.send(test)
   })
 
-  app.route('/multipartChangePath').post((req, res) => {
+  router.route('/multipartChangePath').post((req, res) => {
     // make an object that can be sent back and looked on in mocha
     let test = {}
     let keys = Object.keys(req.files)
@@ -68,7 +68,7 @@ module.exports = (app) => {
     res.send(test)
   })
 
-  app.route('/multipartDirSwitch').post((req, res) => {
+  router.route('/multipartDirSwitch').post((req, res) => {
     // object to pass back on response
     let test = {}
     // hold the path to the original temp file
@@ -81,7 +81,7 @@ module.exports = (app) => {
     res.send(test)
   })
 
-  app.route('/simpleMultipart').post((req, res) => {
+  router.route('/simpleMultipart').post((req, res) => {
     // object to send back to client
     let test = {}
     // save the amount of files onto the object and send it back
