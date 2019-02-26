@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put new changes here.
+- Add option to allow multiple exceptions to html validator
 
 ## 0.13.0
 
