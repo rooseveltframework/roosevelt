@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put new changes here.
+- Enhancement to `res.redirect()` for custom routers to prepend the prefix to redirects that are relative to the hostname
 
 ## 0.13.0
 
