@@ -906,6 +906,8 @@ module.exports = (router, app) => { // router is an Express router and app is th
 };
 ```
 
+**Note:** If custom routers are being used, the [res.redirect()](https://expressjs.com/en/api.html#res.redirect) method will prepend the prefix to redirects that are relative to the hostname. To override this setting pass `true` as the last argument.
+
 Sometimes it is also useful to separate controller logic from your routing. This can be done by creating a reusable controller module.
 
 An example would be creating a reusable controller for "404 Not Found" pages:

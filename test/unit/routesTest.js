@@ -474,6 +474,108 @@ describe('Roosevelt Routes Tests', function () {
     })
   })
 
+  let redirectTests = [
+    {
+      logName: 'should concatenate a route prefix for redirection with res.redirect(address)',
+      status: 302,
+      redirectArgs: {
+        address: '/endpoint'
+      },
+      location: '/prefix/endpoint'
+    },
+    {
+      logName: 'should concatenate a route prefix for redirection with res.redirect(status, address)',
+      status: 302,
+      redirectArgs: {
+        address: '/endpoint',
+        status: '302'
+      },
+      location: '/prefix/endpoint'
+    },
+    {
+      logName: 'should not concatenate a route prefix for redirection with res.redirect(address, override)',
+      status: 302,
+      redirectArgs: {
+        address: '/endpoint',
+        override: 'true'
+      },
+      location: '/endpoint'
+    },
+    {
+      logName: 'should not concatenate a route prefix for redirection with res.redirect(status, address, override)',
+      status: 302,
+      redirectArgs: {
+        address: '/endpoint',
+        status: '302',
+        override: 'true'
+      },
+      location: '/endpoint'
+    },
+    {
+      logName: 'should log an error and redirect to \'/\' if invalid or no arguments are passed to res.redirect()',
+      status: 302,
+      redirectArgs: {},
+      location: '/',
+      error: true,
+      errorLog: 'Invalid arguments supplied to res.redirect()'
+    }
+  ]
+  redirectTests.forEach(test => {
+    it(test.logName, function (done) {
+      let location
+      let errorBool
+      fse.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body { color: red; }')
+      // generate the test app
+      generateTestApp({
+        appDir: appDir,
+        generateFolderStructure: true,
+        routers: {
+          controllers: [
+            {
+              prefix: '/prefix',
+              files: ['routerDir']
+            }
+          ]
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork and run app.js as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      // when the app starts and sends a message back to the parent try and request the test page
+      testApp.on('message', (params) => {
+        request(`http://localhost:${params.port}`)
+          .post('/prefix/redirect')
+          .send(test.redirectArgs)
+          .expect(302, (err, res) => {
+            if (err) {
+              testApp.send('stop')
+              assert.fail(err)
+            } else {
+              location = res.headers.location
+              testApp.send('stop')
+            }
+          })
+      })
+
+      if (test.error) {
+        testApp.stderr.on('data', data => {
+          if (data.includes(test.errorLog)) {
+            errorBool = true
+          }
+        })
+      }
+
+      // when the child process exits, finish the test
+      testApp.on('exit', () => {
+        assert.strictEqual(location, test.location)
+        if (test.error) assert.strictEqual(errorBool, true, 'Roosevelt was expected to print an error log if invalid or no arguments are passed to res.redirect()')
+        done()
+      })
+    })
+  })
+
   it('should use a custom port and render a basic HTML page on request', function (done) {
     // generate the test app
     generateTestApp({
