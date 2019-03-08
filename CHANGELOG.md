@@ -2,6 +2,7 @@
 
 ## Next version
 
+- Enhancement to `res.redirect()` for custom routers to prepend the prefix to redirects that are relative to the hostname
 - Add option to allow multiple exceptions to html validator
 
 ## 0.13.0
