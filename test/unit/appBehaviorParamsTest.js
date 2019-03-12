@@ -244,6 +244,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
           if (res.status === 200) {
             // if we get a 200, an error was not thrown and something is wrong
             assert.fail('Roosevelt was able to parse the form even though we have exceeded the max field size')
+            testApp.send('stop')
           }
         })
     })
