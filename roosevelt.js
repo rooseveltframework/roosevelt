@@ -203,7 +203,15 @@ module.exports = function (params) {
     }
 
     function compileJs () {
-      require('./lib/jsCompiler')(app, validateHTML)
+      if (app.get('params').htmlTidy) {
+        require('./lib/jsCompiler')(app, tidyHTML)
+      } else {
+        require('./lib/jsCompiler')(app, validateHTML)
+      }
+    }
+
+    function tidyHTML () {
+      require('./lib/htmlTidy')(app, scanBuiltFiles)
     }
 
     function validateHTML () {

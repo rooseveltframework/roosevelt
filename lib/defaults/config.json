@@ -11,6 +11,7 @@
     "_roosevelt-extra-exempt": true
   },
   "minify": true,
+  "htmlTidy": false,
   "htmlValidator": {
     "enable": true,
     "separateProcess": {
