@@ -41,7 +41,7 @@
     "ps-node": "~0.1.6",
     "serve-favicon": "~2.5.0",
     "tamper": "~1.1.0",
-    "tmp": "~0.0.33",
+    "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1",
     "vnu-jar": "~19.3.0",
     "winston": "3.2.1"
