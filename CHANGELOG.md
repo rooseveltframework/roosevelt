@@ -3,7 +3,9 @@
 ## Next version
 
 - Enhancement to `res.redirect()` for custom routers to prepend the prefix to redirects that are relative to the hostname.
-- Add option to allow multiple exceptions to html validator.
+- HTML validator `exceptions` param will now accept an array of values instead of just a single string value.
+- Various dependencies bumped.
+- CI improvements. 
 
 ## 0.13.0
 
