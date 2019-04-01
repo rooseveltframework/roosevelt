@@ -224,19 +224,6 @@ describe('Command Line Tests', function () {
       })
     })
 
-    it('should force alwaysHostPublic on', function (done) {
-      const testApp = fork(path.join(appDir, 'app.js'), ['--host-public'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-      testApp.on('message', params => {
-        assert.strictEqual(params.alwaysHostPublic, true)
-        testApp.send('stop')
-      })
-
-      testApp.on('exit', () => {
-        done()
-      })
-    })
-
     it('should change the app to attach the html Validator ("-a")', function (done) {
       const testApp = fork(path.join(appDir, 'app.js'), ['-a'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
@@ -248,6 +235,45 @@ describe('Command Line Tests', function () {
       testApp.on('exit', () => {
         done()
       })
+    })
+  })
+
+  it('should force alwaysHostPublic on', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--host-public'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.alwaysHostPublic, true)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should force alwaysHostPublic on ("statics")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['--statics'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.alwaysHostPublic, true)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should force alwaysHostPublic on ("-s")', function (done) {
+    const testApp = fork(path.join(appDir, 'app.js'), ['-s'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    testApp.on('message', params => {
+      assert.strictEqual(params.alwaysHostPublic, true)
+      testApp.send('stop')
+    })
+
+    testApp.on('exit', () => {
+      done()
     })
   })
 
