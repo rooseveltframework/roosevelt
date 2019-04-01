@@ -251,7 +251,7 @@ describe('Command Line Tests', function () {
     })
   })
 
-  it('should force alwaysHostPublic on ("statics")', function (done) {
+  it('should force alwaysHostPublic on ("--statics")', function (done) {
     const testApp = fork(path.join(appDir, 'app.js'), ['--statics'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', params => {
