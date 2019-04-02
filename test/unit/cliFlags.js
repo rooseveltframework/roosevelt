@@ -641,6 +641,35 @@ describe('Command Line Tests', function () {
         done()
       })
     })
+
+    it('should change the app to attach validator, enable autokiller, and always host public ("-aks")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['-aks'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.on('message', params => {
+        assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
+        assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
+        assert.strictEqual(params.alwaysHostPublic, true)
+        testApp.send('stop')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+
+    it('should change the app to disable the autokiller, and always host public ("-ns")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['-ns'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.on('message', params => {
+        assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
+        assert.strictEqual(params.alwaysHostPublic, true)
+        testApp.send('stop')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
   })
 
   describe('check mutually exclusive flags', function () {
@@ -729,6 +758,32 @@ describe('Command Line Tests', function () {
         assert.strictEqual(params['_env'], 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
+        testApp.send('stop')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+
+    it('should change the app to enable autokiller, and disable autokiller ("-kn")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['-kn'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.on('message', params => {
+        assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
+        testApp.send('stop')
+      })
+
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+
+    it('should change the app to disable autokiller and enable autokiller ("-nk")', function (done) {
+      const testApp = fork(path.join(appDir, 'app.js'), ['-nk'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      testApp.on('message', params => {
+        assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
         testApp.send('stop')
       })
 
