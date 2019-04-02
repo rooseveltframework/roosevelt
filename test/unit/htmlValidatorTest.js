@@ -535,7 +535,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       // when the server starts,  check that the page has not been validated
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
-          .get('/brokenObjectNoModel')
+          .get('/noModelTest')
           .set('partialtest', 'true')
           .expect(200, (err, res) => {
             if (err) {
