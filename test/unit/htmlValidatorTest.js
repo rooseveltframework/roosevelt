@@ -507,6 +507,62 @@ describe('HTML Validator/Kill Validator Test', function () {
       })
     })
 
+    it('should still try to validate the HTML page if there is no model ', function (done) {
+      // generate the app
+      generateTestApp({
+        generateFolderStructure: true,
+        appDir: appDir,
+        viewEngine: [
+          'html: teddy'
+        ],
+        htmlValidator: {
+          enable: true,
+          separateProcess: {
+            enable: false,
+            autoKiller: false
+          },
+          showWarnings: false,
+          exceptions: {
+            modelValue: '_disableValidatorTest'
+          }
+        },
+        onServerStart: `(app) => {process.send(app.get("params"))}`
+      }, options)
+
+      // fork the app and start it as a child process
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+      // when the server starts,  check that the page has not been validated
+      testApp.on('message', (params) => {
+        request(`http://localhost:${params.port}`)
+          .get('/brokenObjectNoModel')
+          .expect(500, (err, res) => {
+            if (err) {
+              assert.fail(err)
+              testApp.send('stop')
+            }
+
+            // check to see that the page did not validate
+            let test1 = res.text.includes('HTML did not pass validation')
+            let test2 = res.text.includes('Errors:')
+            assert.strictEqual(test1, true)
+            assert.strictEqual(test2, true)
+            // kill the validator and the app
+            fkill(`:48888`, { force: true }).then(() => {
+              testApp.send('stop')
+            }, (err) => {
+              console.log(err)
+              testApp.send('stop')
+            })
+          })
+      })
+
+      // when the child process exits, finish the test
+      testApp.on('exit', () => {
+        done()
+      })
+    })
+
     it('should try to validate the HTML page because the model in the response does not hold a value that is set in the exception param', function (done) {
       // generate the app
       generateTestApp({
