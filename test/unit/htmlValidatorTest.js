@@ -507,7 +507,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       })
     })
 
-    it('should still try to validate the HTML page if there is no model ', function (done) {
+    it('should still validate the HTML page if there is no model ', function (done) {
       // generate the app
       generateTestApp({
         generateFolderStructure: true,
@@ -523,7 +523,7 @@ describe('HTML Validator/Kill Validator Test', function () {
           },
           showWarnings: false,
           exceptions: {
-            modelValue: '_disableValidatorTest'
+            requestHeader: 'partialtest'
           }
         },
         onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -536,17 +536,18 @@ describe('HTML Validator/Kill Validator Test', function () {
       testApp.on('message', (params) => {
         request(`http://localhost:${params.port}`)
           .get('/brokenObjectNoModel')
-          .expect(500, (err, res) => {
+          .set('partialtest', 'true')
+          .expect(200, (err, res) => {
             if (err) {
               assert.fail(err)
               testApp.send('stop')
             }
-
+            // test the header exception in the app param is false or not there
+            let test1 = typeof res.header.partialtest === 'undefined'
+            assert.strictEqual(test1, false)
             // check to see that the page did not validate
-            let test1 = res.text.includes('HTML did not pass validation')
-            let test2 = res.text.includes('Errors:')
-            assert.strictEqual(test1, true)
-            assert.strictEqual(test2, true)
+            let test2 = res.text.includes('HTML did not pass validation')
+            assert.strictEqual(test2, false)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
               testApp.send('stop')
