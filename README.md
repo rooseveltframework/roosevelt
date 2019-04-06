@@ -251,7 +251,7 @@ Some notable things ignored by default and why:
 Configure your app with parameters
 ===
 
-Roosevelt is designed to have a minimal amount of boilerplate so you can focus on just writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
+Roosevelt is designed to have a minimal amount of boilerplate so you can spend less time focused on configuration and more time writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
 
 ```js
 require('roosevelt')().startServer();
@@ -887,9 +887,9 @@ Event list
 Making controller files
 ===
 
-Controller files are just [standard Express routes](http://expressjs.com/api.html#app.VERB). A route is the term Express uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
+Controller files are places to write [Express routes](http://expressjs.com/api.html#app.VERB). A route is the term Express uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
 
-To make a new controller, just make a new file in the controllers directory. For example:
+To make a new controller, make a new file in the controllers directory. For example:
 
 ```js
 module.exports = (router, app) => { // router is an Express router and app is the Express app created by Roosevelt
@@ -937,7 +937,7 @@ module.exports = (router, app) => {
     if (something) {
 
       // logic didn't fail
-      // so just render the page normally
+      // so render the page normally
       let model = require('models/dataModel');
       res.render('whatever', model);
     }
