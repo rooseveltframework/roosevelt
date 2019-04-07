@@ -7,7 +7,7 @@ node_js:
   - "11"
   - "10"
 before_script:
-  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install jdk11; export PATH=$PATH:"/c/Program Files/Java/jdk-11.0.2/bin"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then choco install jdk8; export PATH=$PATH:"/c/Program Files/Java/jdk1.8.0_201/bin"; fi
 
 script:
   - npm run lint

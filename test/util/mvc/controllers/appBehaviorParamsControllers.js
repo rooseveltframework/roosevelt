@@ -1,11 +1,11 @@
-module.exports = (app) => {
-  app.route('/paramLimit').post((req, res) => {
+module.exports = (router, app) => {
+  router.route('/paramLimit').post((req, res) => {
     let test1 = req.body.test1
 
-    res.send(`Recieved params from url ${test1}}`)
+    res.send(`Recieved params from url ${test1}`)
   })
 
-  app.route('/JSONLimit').post((req, res) => {
+  router.route('/JSONLimit').post((req, res) => {
     let keys = Object.keys(req.body)
     let arrayOfValues = []
 
