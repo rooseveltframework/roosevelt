@@ -6,6 +6,7 @@
 - HTML validator `exceptions` param will now accept an array of values instead of just a single string value.
 - Various dependencies bumped.
 - CI improvements. 
+- Replace internal logger with Roosevelt-logger.
 
 ## 0.13.0
 
