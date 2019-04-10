@@ -44,7 +44,6 @@
     "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1",
     "vnu-jar": "~19.3.0",
-    "winston": "3.2.1",
     "roosevelt-logger": "0.1.0"
   },
   "devDependencies": {
