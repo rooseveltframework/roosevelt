@@ -39,12 +39,12 @@
     "parent-require": "~1.0.0",
     "prismjs": "~1.16.0",
     "ps-node": "~0.1.6",
+    "roosevelt-logger": "0.1.0",
     "serve-favicon": "~2.5.0",
     "tamper": "~1.1.0",
     "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1",
-    "vnu-jar": "~19.3.0",
-    "roosevelt-logger": "0.1.0"
+    "vnu-jar": "~19.3.0"
   },
   "devDependencies": {
     "codecov": "3.3.0",
