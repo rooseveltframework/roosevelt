@@ -48,7 +48,7 @@ module.exports = function (params) {
   params = app.get('params')
 
   // get and expose logger
-  logger = require('roosevelt-logger')(app.get('params').logging)
+  logger = require('roosevelt-logger')
   app.set('logger', logger)
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
