@@ -46,7 +46,7 @@ describe('Logger Tests', function () {
 
   it('should initialize a logger and test many different logs', function (done) {
     // require the logger for this test
-    const logger = require('../../lib/tools/logger')(pkgConfig.logging)
+    const logger = require('roosevelt-logger')(pkgConfig.logging)
 
     // variable to store the logs
     let logs = []
@@ -90,13 +90,13 @@ describe('Logger Tests', function () {
     assert.strictEqual(logs[3].includes('Should be of type info'), true, 'The logger did not output a custom log')
     assert.strictEqual(logs[4].includes('Single object key type param'), true, 'The logger did not output a custom log')
     assert.strictEqual(logs[5].includes('Single object key enabled param'), true, 'The logger did not output a custom log')
-    assert.strictEqual(logs[6].includes(util.inspect({ 'this': 'is an object' }, false, null, true)), true, 'The logger did not output an object')
+    assert.strictEqual(logs[6].includes(util.inspect({ 'this': 'is an object' }, false, null, false)), true, 'The logger did not output an object')
 
     // error log assertions
     assert.strictEqual(errors[0].includes('❌  This should have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
     assert.strictEqual(errors[1].includes('⚠️   This should also have an emoji prefix'), true, 'The logger did not automatically add an emoji to the error log')
     assert.strictEqual(errors[2].includes('❤️  This should not add a prefix because one is already there'), true, 'The logger added an emoji prefix')
-    assert.strictEqual(errors[3].includes('This log is custom ⚠️  with an emoji in the middle'), true, 'The logger did not output a custom log')
+    assert.strictEqual(errors[3].includes('This log is custom ⚠️  with an emoji in the middle'), false, 'The logger did not output a custom log')
 
     // disabled log assertions
     if (typeof logs[7] !== 'undefined') {
@@ -112,7 +112,7 @@ describe('Logger Tests', function () {
 
   it('should use the defaults if no logging params are passed in', function (done) {
     // require the logger for this test
-    const logger = require('../../lib/tools/logger')()
+    const logger = require('roosevelt-logger')()
 
     // variable to store the logs
     let logs = []
@@ -152,7 +152,7 @@ describe('Logger Tests', function () {
 
   it('should handle empty logs and other data types', function (done) {
     // require the logger for this test
-    const logger = require('../../lib/tools/logger')()
+    const logger = require('roosevelt-logger')()
 
     // variable to store the logs
     let logs = []
@@ -176,8 +176,8 @@ describe('Logger Tests', function () {
     assert.strictEqual(logs[1].includes(''), true, 'The logger failed to output an emty string')
     assert.strictEqual(logs[2].includes('123'), true, 'The logger did not output a number')
     // use inspect for objects
-    assert.strictEqual(logs[3].includes(util.inspect({ key: 'value' }, false, null, true)), true, 'The logger did not output an object')
-    assert.strictEqual(logs[4].includes(util.inspect([ 'array' ], false, null, true)), true, 'The logger did not output an array')
+    assert.strictEqual(logs[3].includes(util.inspect({ key: 'value' })), true, 'The logger did not output an object')
+    assert.strictEqual(logs[4].includes(util.inspect([ 'array' ], false, null, false)), true, 'The logger did not output an array')
 
     // exit test
     done()
