@@ -8,7 +8,6 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
-const winston = require('winston')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -39,7 +38,6 @@ module.exports = function (params) {
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
-  app.set('winston', winston)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
@@ -48,7 +46,7 @@ module.exports = function (params) {
   params = app.get('params')
 
   // get and expose logger
-  logger = require('roosevelt-logger')(app.get('params').logging)
+  logger = require('roosevelt-logger')(app.get(''))
   app.set('logger', logger)
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
