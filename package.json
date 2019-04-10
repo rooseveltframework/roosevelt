@@ -45,7 +45,7 @@
     "toobusy-js": "~0.5.1",
     "vnu-jar": "~19.3.0",
     "winston": "3.2.1",
-    "roosevelt-logger": "../roosevelt-logger"
+    "roosevelt-logger": "0.1.0"
   },
   "devDependencies": {
     "codecov": "3.3.0",
