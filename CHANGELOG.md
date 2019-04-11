@@ -2,11 +2,11 @@
 
 ## Next version
 
+- Replace internal logger with Roosevelt-logger.
 - If custom routers are being used, the `res.redirect()` method will now prepend the prefix to redirects that are relative to the hostname. To override this setting pass `true` as the last argument.
 - HTML validator `exceptions` param will now accept an array of values instead of just a single string value.
 - Various dependencies bumped.
 - CI improvements. 
-- Replace internal logger with Roosevelt-logger.
 
 ## 0.13.0
 
