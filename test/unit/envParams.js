@@ -10,8 +10,8 @@ describe('ENV Parameter Tests', function () {
     enableCLIFlags: false,
     logging: {
       http: false,
-      appStatus: false,
-      warnings: false
+      info: false,
+      warn: false
     },
     https: {
       port: 12345

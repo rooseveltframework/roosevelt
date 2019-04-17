@@ -4,8 +4,8 @@
   "localhostOnly": "package",
   "logging": {
     "http": false,
-    "appStatus": false,
-    "warnings": false,
+    "info": false,
+    "warn": false,
     "verbose": false,
     "custom1": true,
     "custom2": {

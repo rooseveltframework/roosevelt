@@ -13,8 +13,8 @@ describe('Default Parameter Tests', function () {
       appDir: path.join(__dirname, '../app/defaultParams'),
       logging: {
         http: false,
-        appStatus: false,
-        warnings: false
+        info: false,
+        warn: false
       }
     })
   })

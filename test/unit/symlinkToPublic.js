@@ -11,8 +11,8 @@ describe('symlinkToPublic Parameter Tests', function () {
     appDir: appDir,
     logging: {
       http: false,
-      appStatus: false,
-      warnings: false,
+      info: false,
+      warn: false,
       verbose: false
     }
   }

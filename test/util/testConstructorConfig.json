@@ -4,8 +4,8 @@
   "localhostOnly": "constructor",
   "logging": {
     "http": false,
-    "appStatus": false,
-    "warnings": false
+    "info": false,
+    "warn": false
   },
   "minify": "constructor",
   "htmlValidator": {

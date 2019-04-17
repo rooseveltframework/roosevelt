@@ -5,8 +5,8 @@
   "localhostOnly": true,
   "logging": {
     "http": true,
-    "appStatus": true,
-    "warnings": true,
+    "info": true,
+    "warn": true,
     "verbose": false,
     "_roosevelt-extra-exempt": true
   },

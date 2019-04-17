@@ -14,8 +14,8 @@ describe('HTML Minification Tests', function () {
     appDir: appDir,
     logging: {
       http: false,
-      appStatus: false,
-      warnings: false,
+      info: false,
+      warn: false,
       verbose: false
     },
     generateFolderStructure: true,
