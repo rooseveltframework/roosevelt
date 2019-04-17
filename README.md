@@ -300,9 +300,9 @@ App behavior parameters
 
   - `http`: *[Boolean]* Log HTTP requests to the console.
 
-  - `appStatus`: *[Boolean]* Log app status to the console.
+  - `info`: *[Boolean]* Log app status to the console.
 
-  - `warnings`: *[Boolean]* Log app warnings to the console.
+  - `warn`: *[Boolean]* Log app warnings to the console.
 
   - `verbose`: *[Boolean]* Enable verbose (noisy) logging.
 
@@ -315,8 +315,8 @@ App behavior parameters
       ```json
       {
         "http": true,
-        "appStatus": true,
-        "warnings": true,
+        "info": true,
+        "warn": true,
         "verbose": false
       }
       ```
@@ -328,8 +328,8 @@ App behavior parameters
         ```json
         {
           "http": true,
-          "appStatus": true,
-          "warnings": true,
+          "info": true,
+          "warn": true,
           "verbose": false,
           "debug": {
             "enable": true,
