@@ -841,7 +841,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
       // look at the errors logs to see if specific log is outputted
       testApp.stderr.on('data', (data) => {
-        if (data.includes('Request Failed.\nStatus Code: 500')) {
+        if (data.includes('Request Failed.')) {
           requestFailedLogBool = true
         }
         if (data.includes('Another process that is not the HTMLValidator is using this port already. Quitting the initialization of your app')) {
