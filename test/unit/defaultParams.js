@@ -12,9 +12,11 @@ describe('Default Parameter Tests', function () {
     app = require('../../roosevelt')({
       appDir: path.join(__dirname, '../app/defaultParams'),
       logging: {
-        http: false,
-        info: false,
-        warn: false
+        methods: {
+          http: false,
+          info: false,
+          warn: false
+        }
       }
     })
   })

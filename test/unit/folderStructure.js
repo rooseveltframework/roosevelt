@@ -22,8 +22,10 @@ describe('Folder Structure Tests', function () {
       enableCLIFlags: false,
       generateFolderStructure: true,
       logging: {
-        info: false,
-        warn: false
+        methods: {
+          info: false,
+          warn: false
+        }
       },
       viewsPath: 'mvc/viewsTest',
       modelsPath: 'mvc/modelsTest',

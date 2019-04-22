@@ -37,7 +37,9 @@ describe('Roosevelt Autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       generateFolderStructure: true,
       htmlValidator: {
@@ -91,7 +93,9 @@ describe('Roosevelt Autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       htmlValidator: {
         enable: true,
@@ -142,7 +146,9 @@ describe('Roosevelt Autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       htmlValidator: {
         enable: true,
@@ -190,7 +196,9 @@ describe('Roosevelt Autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       htmlValidator: {
         enable: true,
