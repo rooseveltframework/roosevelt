@@ -100,14 +100,14 @@
     "coverage": "nyc mocha --timeout 125000 test/unit",
     "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "test": "npm run lint && mocha --timeout 125000 test/unit"
+    "test": "mocha --timeout 125000 test/unit"
   },
   "lint-staged": {
     "*.js": "standard"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && eslint ./test/unit"
     }
   }
 }
