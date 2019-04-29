@@ -486,7 +486,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // generate the package.json file
     fse.ensureDirSync(appDir)
-    packageJSONSource.rooseveltConfig.logging.methods.extraParam = true
+    packageJSONSource.rooseveltConfig.logging.extraParam = true
     fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
