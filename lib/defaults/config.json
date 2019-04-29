@@ -8,6 +8,7 @@
       "http": true,
       "info": true,
       "warn": true,
+      "error": true,
       "verbose": false
     },
     "_roosevelt-extra-exempt": true
