@@ -77,7 +77,7 @@ describe('Roosevelt Autokill Test', function () {
     function exit () {
       assert.strictEqual(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
       assert.strictEqual(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-      assert.strictEqual(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+      assert.strictEqual(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed already')
       done()
     }
   })
