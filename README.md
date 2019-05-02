@@ -18,7 +18,7 @@ Some notable features:
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
-*Note: this is documentation for Roosevelt 0.13.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
+*Note: this is documentation for Roosevelt 0.14.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
 
 Table of contents
 ===
@@ -296,28 +296,19 @@ App behavior parameters
 
   - Default: *[Boolean]* `true`.
 
-- `logging`: Declare the types of logging to use in Roosevelt's logger:
-
-  - `http`: *[Boolean]* Log HTTP requests to the console.
-
-  - `info`: *[Boolean]* Log app status to the console.
-
-  - `warn`: *[Boolean]* Log app warnings to the console.
-
-  - `verbose`: *[Boolean]* Enable verbose (noisy) logging.
-
-  - `disable`: *[Array]* Disable logging when any of the environment variables in this array are present.
-
-      - Example: `'disable': ['LOADED_MOCHA_OPTS']`
+- `logging`: Params to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger params documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
 
   - Default: *[Object]*
 
       ```json
       {
-        "http": true,
-        "info": true,
-        "warn": true,
-        "verbose": false
+        "methods": {
+          "http": true,
+          "info": true,
+          "warn": true,
+          "error": true,
+          "verbose": false
+        }
       }
       ```
 
@@ -1082,6 +1073,7 @@ Lastly, in order to activate the custom preprocessor feature, alter `package.jso
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.13.x](https://github.com/rooseveltframework/roosevelt/blob/a308aff84d1415c3325b781f371fd3c3c915946c/README.md)*
 - *[0.12.x](https://github.com/rooseveltframework/roosevelt/blob/59b00cab727bc754e1bcaf2d1df6d76e54630dc4/README.md)*
 - *[0.11.x](https://github.com/rooseveltframework/roosevelt/blob/df3f4f60a08215fcbae7b5c9765623bb46c2cd2c/README.md)*
 - *[0.10.x](https://github.com/rooseveltframework/roosevelt/blob/fac53c2c8d6fedd74f4c3ef85c481dba250dee00/README.md)*
