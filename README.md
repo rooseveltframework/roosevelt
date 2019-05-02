@@ -296,28 +296,19 @@ App behavior parameters
 
   - Default: *[Boolean]* `true`.
 
-- `logging`: Declare the types of logging to use in Roosevelt's logger:
-
-  - `http`: *[Boolean]* Log HTTP requests to the console.
-
-  - `info`: *[Boolean]* Log app status to the console.
-
-  - `warn`: *[Boolean]* Log app warnings to the console.
-
-  - `verbose`: *[Boolean]* Enable verbose (noisy) logging.
-
-  - `disable`: *[Array]* Disable logging when any of the environment variables in this array are present.
-
-      - Example: `'disable': ['LOADED_MOCHA_OPTS']`
+- `logging`: Params to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger params documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
 
   - Default: *[Object]*
 
       ```json
       {
-        "http": true,
-        "info": true,
-        "warn": true,
-        "verbose": false
+        "methods": {
+          "http": true,
+          "info": true,
+          "warn": true,
+          "error": true,
+          "verbose": false
+        }
       }
       ```
 
