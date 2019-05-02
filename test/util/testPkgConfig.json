@@ -3,25 +3,27 @@
   "generateFolderStructure": false,
   "localhostOnly": "package",
   "logging": {
-    "http": false,
-    "appStatus": false,
-    "warnings": false,
-    "verbose": false,
-    "custom1": true,
-    "custom2": {
-      "type": "info"
-    },
-    "custom3": {
-      "enable": true
-    },
-    "custom4": {
-      "enable": true,
-      "type": "error"
-    },
-    "custom5": {
-      "enable": false
-    },
-    "custom6": false
+    "methods": {
+      "http": false,
+      "info": false,
+      "warn": false,
+      "verbose": false,
+      "custom1": true,
+      "custom2": {
+        "type": "info"
+      },
+      "custom3": {
+        "enable": true
+      },
+      "custom4": {
+        "enable": true,
+        "type": "error"
+      },
+      "custom5": {
+        "enable": false
+      },
+      "custom6": false
+    }
   },
   "minify": "package",
   "htmlValidator": {

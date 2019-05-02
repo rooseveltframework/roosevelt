@@ -9,9 +9,11 @@ describe('ENV Parameter Tests', function () {
     appDir: path.join(__dirname, '../app/envParams'),
     enableCLIFlags: false,
     logging: {
-      http: false,
-      appStatus: false,
-      warnings: false
+      methods: {
+        http: false,
+        info: false,
+        warn: false
+      }
     },
     https: {
       port: 12345

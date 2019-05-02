@@ -2,9 +2,11 @@
   "port": 1234,
   "generateFolderStructure": false,
   "logging": {
-    "http": false,
-    "appStatus": false,
-    "warnings": false
+    "methods": {
+      "http": false,
+      "info": false,
+      "warn": false
+    }
   },
   "https": {
     "enable": true,

@@ -13,10 +13,12 @@ describe('HTML Minification Tests', function () {
   const appConfig = {
     appDir: appDir,
     logging: {
-      http: false,
-      appStatus: false,
-      warnings: false,
-      verbose: false
+      methods: {
+        http: false,
+        info: false,
+        warn: false,
+        verbose: false
+      }
     },
     generateFolderStructure: true,
     viewEngine: 'html:teddy',

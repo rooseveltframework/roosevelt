@@ -300,9 +300,9 @@ App behavior parameters
 
   - `http`: *[Boolean]* Log HTTP requests to the console.
 
-  - `appStatus`: *[Boolean]* Log app status to the console.
+  - `info`: *[Boolean]* Log app status to the console.
 
-  - `warnings`: *[Boolean]* Log app warnings to the console.
+  - `warn`: *[Boolean]* Log app warnings to the console.
 
   - `verbose`: *[Boolean]* Enable verbose (noisy) logging.
 
@@ -315,8 +315,8 @@ App behavior parameters
       ```json
       {
         "http": true,
-        "appStatus": true,
-        "warnings": true,
+        "info": true,
+        "warn": true,
         "verbose": false
       }
       ```
@@ -328,8 +328,8 @@ App behavior parameters
         ```json
         {
           "http": true,
-          "appStatus": true,
-          "warnings": true,
+          "info": true,
+          "warn": true,
           "verbose": false,
           "debug": {
             "enable": true,
@@ -983,7 +983,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. HTTP request logger middleware. |
-| `winston`                            | The [winston](https://github.com/winstonjs/winston) logger module for custom logging. |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`.  |
 | `appDir`                             | The directory the main module is in.                         |

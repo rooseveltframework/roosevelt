@@ -35,16 +35,15 @@
     "klaw-sync": "~6.0.0",
     "method-override": "~3.0.0",
     "morgan": "~1.9.1",
-    "node-emoji": "~1.10.0",
     "parent-require": "~1.0.0",
     "prismjs": "~1.16.0",
     "ps-node": "~0.1.6",
+    "roosevelt-logger": "0.2.1",
     "serve-favicon": "~2.5.0",
     "tamper": "~1.1.0",
     "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1",
-    "vnu-jar": "~19.3.0",
-    "winston": "3.2.1"
+    "vnu-jar": "~19.3.0"
   },
   "devDependencies": {
     "codecov": "3.3.0",

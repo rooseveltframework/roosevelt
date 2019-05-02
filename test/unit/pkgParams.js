@@ -21,7 +21,9 @@ describe('package.json Parameter Tests', function () {
     app = require('../../roosevelt')({
       appDir: appDir,
       enableCLIFlags: false,
-      logging: { disable: ['LOADED_MOCHA_OPTS'] }
+      logging: {
+        params: { disable: ['LOADED_MOCHA_OPTS'] }
+      }
     })
   })
 

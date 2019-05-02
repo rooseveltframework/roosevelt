@@ -37,7 +37,9 @@ describe('Roosevelt Autokill Test', function () {
     generateTestApp({
       appDir: appDir,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       generateFolderStructure: true,
       htmlValidator: {
@@ -75,7 +77,7 @@ describe('Roosevelt Autokill Test', function () {
     function exit () {
       assert.strictEqual(htmlValidatorPortClosedBool, true, 'The auto Killer did not kill the html Validator after the app was closed')
       assert.strictEqual(autoKillerStartedBool, true, 'Roosevelt did not start the autoKiller')
-      assert.strictEqual(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
+      assert.strictEqual(cannotConnectBool, true, 'The auto Killer somehow kept on connecting with the app even thought it closed already')
       done()
     }
   })
@@ -91,7 +93,9 @@ describe('Roosevelt Autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       htmlValidator: {
         enable: true,
@@ -142,7 +146,9 @@ describe('Roosevelt Autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       htmlValidator: {
         enable: true,
@@ -190,7 +196,9 @@ describe('Roosevelt Autokill Test', function () {
       appDir: appDir,
       generateFolderStructure: true,
       logging: {
-        verbose: true
+        methods: {
+          verbose: true
+        }
       },
       htmlValidator: {
         enable: true,
