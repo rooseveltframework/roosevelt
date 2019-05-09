@@ -46,7 +46,7 @@
   },
   "frontendReload": {
     "enabled": true,
-    "port": 9857,
+    "port": 9856,
     "verbose": false
   },
   "checkDependencies": true,
