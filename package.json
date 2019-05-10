@@ -52,7 +52,7 @@
     "husky": "2.2.0",
     "lint-staged": "8.1.6",
     "mocha": "6.1.4",
-    "nyc": "14.1.0",
+    "nyc": "14.1.1",
     "proxyquire": "2.1.0",
     "roosevelt-less": "0.7.1",
     "roosevelt-uglify": "0.3.1",
