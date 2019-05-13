@@ -32,6 +32,9 @@ describe('Reload Frontend Tests', function () {
   })
 
   it('should start Reload HTTP server in development mode', function (done) {
+    // Boolean for determining if Reload is running
+    let foundReload = false
+
     // generate the test app
     generateTestApp({
       appDir: appDir,
@@ -45,17 +48,22 @@ describe('Reload Frontend Tests', function () {
     // process.stdout
     testApp.stdout.on('data', (data) => {
       if (data.includes('Reload HTTP server is listening on port:')) {
+        foundReload = true
         testApp.send('stop')
       }
     })
 
     // when the child process exits, finish the test
     testApp.on('exit', () => {
+      assert.strictEqual(foundReload, true, 'HTTP Reload is not running')
       done()
     })
   })
 
   it('should start Reload HTTPS server in development mode', function (done) {
+    // Boolean for determining if Reload is running
+    let foundReload = false
+
     // generate the test app
     generateTestApp({
       appDir: appDir,
@@ -84,12 +92,58 @@ describe('Reload Frontend Tests', function () {
     // process.stdout
     testApp.stdout.on('data', (data) => {
       if (data.includes('Reload HTTPS server is listening on port:')) {
+        foundReload = true
         testApp.send('stop')
       }
     })
 
     // when the child process exits, finish the test
     testApp.on('exit', () => {
+      assert.strictEqual(foundReload, true, 'HTTPS Reload is not running')
+      done()
+    })
+  })
+
+  it('should start Reload HTTP & HTTPS server in development mode', function (done) {
+    // Boolean for determining if Reload is running
+    let foundReload = 0
+
+    // generate the test app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      https: {
+        enable: true,
+        port: 43712,
+        force: false,
+        authInfoPath: {
+          p12: {
+            p12Path: 'test/util/certs/test.p12',
+            passphrase: 'testpass'
+          },
+          authCertAndKey: {
+            cert: 'test/util/certs/test.req.crt',
+            key: 'test/util/certs/test.req.key'
+          }
+        }
+      },
+      onServerStart: `(app) => {process.send(app.get("params"))}`
+    }, options)
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // process.stdout
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Reload HTTPS server is listening on port:') || data.includes('Reload HTTP server is listening on port:')) {
+        foundReload++
+        testApp.send('stop')
+      }
+    })
+
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(foundReload, 2, 'HTTP & HTTPS Reload is not running')
       done()
     })
   })
@@ -203,6 +257,7 @@ describe('Reload Frontend Tests', function () {
       frontendReload: {
         enabled: true,
         port: 'invalid',
+        httpsPort: 'invalid',
         verbose: false
       },
       onServerStart: `(app) => {process.send(app.get("params"))}`
@@ -253,7 +308,7 @@ describe('Reload Frontend Tests', function () {
     })
   })
 
-  it('should be able to inject reload script tag to view', function (done) {
+  it('should inject reload script tag into document', function (done) {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -273,7 +328,7 @@ describe('Reload Frontend Tests', function () {
             testApp.send('stop')
           }
           // Should now have script tag containing reload.js
-          assert.strictEqual(res.text.includes(`<script src='/reload/reload.js'></script>`), true)
+          assert.strictEqual(res.text.includes(`<script src='/reloadHttp/reload.js'></script>`), true)
 
           testApp.send('stop')
         })
