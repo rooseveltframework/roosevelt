@@ -34,10 +34,8 @@
     "method-override": "~3.0.0",
     "morgan": "~1.9.1",
     "parent-require": "~1.0.0",
-    "ps-node": "~0.1.6",
     "roosevelt-logger": "0.2.1",
     "serve-favicon": "~2.5.0",
-    "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1"
   },
   "devDependencies": {
@@ -52,6 +50,7 @@
     "nyc": "14.1.1",
     "prismjs": "~1.16.0",
     "proxyquire": "2.1.0",
+    "ps-node": "~0.1.6",
     "roosevelt-less": "0.7.1",
     "roosevelt-uglify": "0.3.1",
     "sinon": "7.3.2",
@@ -59,6 +58,7 @@
     "supertest": "4.0.2",
     "tamper": "~1.1.0",
     "teddy": "0.4.28",
+    "tmp": "~0.1.0",
     "vnu-jar": "~19.3.0"
   },
   "repository": {
