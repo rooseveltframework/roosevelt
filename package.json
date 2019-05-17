@@ -59,7 +59,7 @@
     "tamper": "~1.1.0",
     "teddy": "~0.4.28",
     "tmp": "~0.1.0",
-    "vnu-jar": "~19.3.0"
+    "vnu-jar": "~18.11.5"
   },
   "repository": {
     "type": "git",
