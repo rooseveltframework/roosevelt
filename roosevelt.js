@@ -205,7 +205,11 @@ module.exports = function (params) {
     }
 
     function validateHTML () {
-      require('./lib/htmlValidator')(app, scanBuiltFiles)
+      if (app.get('env') === 'development') {
+        require('./lib/htmlValidator')(app, scanBuiltFiles)
+      } else {
+        scanBuiltFiles()
+      }
     }
 
     function scanBuiltFiles () {
