@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.14.1
+
+- Moved several things to devDependencies to shrink production builds.
+- Various dependencies bumped.
+
 ## 0.14.0
 
 - Replaced internal logger with [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). Note: this removes the `winston` Express variable that was previously provided, but it is still indirectly accessible by drilling down through the `logger` Express variable now. See [roosevelt-logger member variable documentation](https://github.com/rooseveltframework/roosevelt-logger#properties-of-roosevelt-logger-module).
