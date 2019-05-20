@@ -18,7 +18,7 @@ Some notable features:
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
-*Note: this is documentation for Roosevelt 0.13.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
+*Note: this is documentation for Roosevelt 0.14.x. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
 
 Table of contents
 ===
@@ -296,28 +296,19 @@ App behavior parameters
 
   - Default: *[Boolean]* `true`.
 
-- `logging`: Declare the types of logging to use in Roosevelt's logger:
-
-  - `http`: *[Boolean]* Log HTTP requests to the console.
-
-  - `appStatus`: *[Boolean]* Log app status to the console.
-
-  - `warnings`: *[Boolean]* Log app warnings to the console.
-
-  - `verbose`: *[Boolean]* Enable verbose (noisy) logging.
-
-  - `disable`: *[Array]* Disable logging when any of the environment variables in this array are present.
-
-      - Example: `'disable': ['LOADED_MOCHA_OPTS']`
+- `logging`: Params to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger params documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
 
   - Default: *[Object]*
 
       ```json
       {
-        "http": true,
-        "appStatus": true,
-        "warnings": true,
-        "verbose": false
+        "methods": {
+          "http": true,
+          "info": true,
+          "warn": true,
+          "error": true,
+          "verbose": false
+        }
       }
       ```
 
@@ -328,8 +319,8 @@ App behavior parameters
         ```json
         {
           "http": true,
-          "appStatus": true,
-          "warnings": true,
+          "info": true,
+          "warn": true,
           "verbose": false,
           "debug": {
             "enable": true,
@@ -983,7 +974,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. HTTP request logger middleware. |
-| `winston`                            | The [winston](https://github.com/winstonjs/winston) logger module for custom logging. |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`.  |
 | `appDir`                             | The directory the main module is in.                         |
@@ -1083,6 +1073,7 @@ Lastly, in order to activate the custom preprocessor feature, alter `package.jso
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.13.x](https://github.com/rooseveltframework/roosevelt/blob/a308aff84d1415c3325b781f371fd3c3c915946c/README.md)*
 - *[0.12.x](https://github.com/rooseveltframework/roosevelt/blob/59b00cab727bc754e1bcaf2d1df6d76e54630dc4/README.md)*
 - *[0.11.x](https://github.com/rooseveltframework/roosevelt/blob/df3f4f60a08215fcbae7b5c9765623bb46c2cd2c/README.md)*
 - *[0.10.x](https://github.com/rooseveltframework/roosevelt/blob/fac53c2c8d6fedd74f4c3ef85c481dba250dee00/README.md)*

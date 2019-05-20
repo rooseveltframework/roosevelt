@@ -8,7 +8,6 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
-const winston = require('winston')
 const reload = require('reload')
 
 module.exports = function (params) {
@@ -18,7 +17,6 @@ module.exports = function (params) {
   params.appDir = params.appDir || path.dirname(module.parent.filename)
 
   let app = express() // initialize express
-  let logger
   let appName
   let appEnv
   let httpsParams
@@ -44,7 +42,6 @@ module.exports = function (params) {
   // expose initial vars
   app.set('express', express)
   app.set('params', params)
-  app.set('winston', winston)
 
   // source user supplied params
   app = require('./lib/sourceParams')(app)
@@ -53,7 +50,8 @@ module.exports = function (params) {
   params = app.get('params')
 
   // get and expose logger
-  logger = require('./lib/tools/logger')(app.get('params').logging)
+  const Logger = require('roosevelt-logger')
+  const logger = new Logger(params.logging)
   app.set('logger', logger)
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
@@ -71,7 +69,7 @@ module.exports = function (params) {
   appEnv = app.get('env')
   flags = app.get('flags')
 
-  logger.log('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
+  logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
   httpsParams = app.get('params').https
 
   // let's try setting up the servers with user-supplied params
@@ -236,7 +234,11 @@ module.exports = function (params) {
     }
 
     function validateHTML () {
-      require('./lib/htmlValidator')(app, scanBuiltFiles)
+      if (app.get('env') === 'development') {
+        require('./lib/htmlValidator')(app, scanBuiltFiles)
+      } else {
+        scanBuiltFiles()
+      }
     }
 
     function scanBuiltFiles () {
@@ -281,7 +283,7 @@ module.exports = function (params) {
     }, app.get('params').shutdownTimeout)
 
     app.set('roosevelt:state', 'disconnecting')
-    logger.log('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
+    logger.info('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
     if (cluster.isMaster) {
       keys = Object.keys(cluster.workers)
@@ -307,7 +309,7 @@ module.exports = function (params) {
 
   function exitLog () {
     clearTimeout(checkConnectionsTimeout)
-    logger.log('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
+    logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
     if (shutdownType === 'close') {
       if (httpServer) {
         httpServer.close()
@@ -362,7 +364,7 @@ module.exports = function (params) {
     let lock = {}
     let startupCallback = function (proto, port) {
       return function () {
-        logger.log('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
+        logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
         if (!Object.isFrozen(lock)) {
           Object.freeze(lock)
           // fire user-defined onServerStart event
@@ -378,7 +380,7 @@ module.exports = function (params) {
         cluster.fork()
       }
       cluster.on('exit', function (worker, code, signal) {
-        logger.log('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
+        logger.info('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
         clusterKilled++
         if (clusterKilled === parseInt(numCPUs)) {
           exitLog()

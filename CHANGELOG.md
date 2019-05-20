@@ -2,10 +2,20 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.14.1
+
+- Moved several things to devDependencies to shrink production builds.
+- Various dependencies bumped.
+
+## 0.14.0
+
+- Replaced internal logger with [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). Note: this removes the `winston` Express variable that was previously provided, but it is still indirectly accessible by drilling down through the `logger` Express variable now. See [roosevelt-logger member variable documentation](https://github.com/rooseveltframework/roosevelt-logger#properties-of-roosevelt-logger-module).
 - If custom routers are being used, the `res.redirect()` method will now prepend the prefix to redirects that are relative to the hostname. To override this setting pass `true` as the last argument.
 - HTML validator `exceptions` param will now accept an array of values instead of just a single string value.
 - Various dependencies bumped.
-- CI improvements. 
+- CI improvements.
 
 ## 0.13.0
 
@@ -30,4 +40,3 @@
 ## 0.12.1 and below
 
 [Here be dragons](https://en.wikipedia.org/wiki/Here_be_dragons)...
-

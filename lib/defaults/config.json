@@ -4,10 +4,13 @@
   "generateFolderStructure": true,
   "localhostOnly": true,
   "logging": {
-    "http": true,
-    "appStatus": true,
-    "warnings": true,
-    "verbose": false,
+    "methods": {
+      "http": true,
+      "info": true,
+      "warn": true,
+      "error": true,
+      "verbose": false
+    },
     "_roosevelt-extra-exempt": true
   },
   "minify": true,
