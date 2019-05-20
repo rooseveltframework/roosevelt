@@ -43,7 +43,7 @@
     "tamper": "~1.1.0",
     "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1",
-    "vnu-jar": "~18.11.5"
+    "vnu-jar": "~19.5.0"
   },
   "devDependencies": {
     "codecov": "~3.5.0",
