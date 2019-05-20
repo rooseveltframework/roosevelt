@@ -38,8 +38,8 @@ module.exports = function (params) {
   let checkConnectionsTimeout
   let shutdownType
 
-  let httpReload
-  let httpsReload
+  let httpReloadPromise
+  let httpsReloadPromise
 
   // expose initial vars
   app.set('express', express)
@@ -79,13 +79,8 @@ module.exports = function (params) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
 
-
-    if (!httpsParams.enable && params.frontendReload.enabled === true && appEnv === 'development') {
-      reload(app, { port: params.frontendReload.port, verbose: params.frontendReload.verbose, webSocketServerWaitStart: true }).then(function (reload) {
-        httpReload = reload
-      }).catch(function (err) {
-        logger.error(('Reload was unable due to initialize due to an error' + err.toString()).red)
-      })
+    if (params.frontendReload.enabled && appEnv === 'development') {
+      httpReloadPromise = reload(app, { route: '/reloadHttp', port: params.frontendReload.port, verbose: params.frontendReload.verbose, webSocketServerWaitStart: true })
     }
   }
 
@@ -156,12 +151,8 @@ module.exports = function (params) {
       }
     }
 
-    if (params.frontendReload.enabled === true && appEnv === 'development') {
-      reload(app, { port: params.frontendReload.port, verbose: params.frontendReload.verbose, forceWss: true, https: reloadHttpsOptions, webSocketServerWaitStart: true }).then(function (reload) {
-        httpsReload = reload
-      }).catch(function (err) {
-        logger.error(('Reload was unable due to initialize due to an error' + err.toString()).red)
-      })
+    if (params.frontendReload.enabled && appEnv === 'development') {
+      httpsReloadPromise = reload(app, { route: '/reloadHttps', port: params.frontendReload.httpsPort || params.frontendReload.port, verbose: params.frontendReload.verbose, forceWss: true, https: reloadHttpsOptions, webSocketServerWaitStart: true })
     }
 
     httpsOptions.requestCert = httpsParams.requestCert
@@ -224,6 +215,10 @@ module.exports = function (params) {
     }
     initialized = true
 
+    // Inject reload javascript HTML tag
+    require('./lib/injectReload')(app)
+
+    // Minify HTML
     require('./lib/htmlMinifier')(app)
 
     preprocessCss()
@@ -396,21 +391,27 @@ module.exports = function (params) {
     } else {
       if (!app.get('params').https.force) {
         serverPush(httpServer, app.get('params').port, 'HTTP')
-        if (httpReload && params.frontendReload.enabled === true) {
-          httpReload.startWebSocketServer().then(function () {
-            logger.log('🎧', `Reload HTTP server is listening on port: ${params.frontendReload.port}`.bold)
+        if (httpReloadPromise) {
+          httpReloadPromise.then(httpReload => {
+            httpReload.startWebSocketServer().then(() => {
+              logger.log('🎧', `Reload HTTP server is listening on port: ${params.frontendReload.port}`.bold)
+            })
           }).catch(function (err) {
-            logger.error(('Reload was unable to start due to an error' + err.toString()).red)
+            logger.error(('Reload was unable to initialize - ' + err.toString()).red)
           })
         }
       }
       if (httpsParams.enable) {
         serverPush(httpsServer, httpsParams.port, 'HTTPS')
-        if (httpsReload && params.frontendReload.enabled === true) {
-          httpsReload.startWebSocketServer().then(function () {
-            logger.log('🎧', `Reload HTTPS server is listening on port: ${params.frontendReload.port}`.bold)
+        if (httpsReloadPromise) {
+          httpsReloadPromise.then(httpsReload => {
+            httpsReload.startWebSocketServer().then(() => {
+              logger.log('🎧', `Reload HTTPS server is listening on port: ${params.frontendReload.httpsPort || params.frontendReload.port}`.bold)
+            }).catch(function (err) {
+              logger.error((`Reload was unable to start - ${err.toString()}`).red)
+            })
           }).catch(function (err) {
-            logger.error(('Reload was unable to start due to an error' + err.toString()).red)
+            logger.error(('Reload was unable to initialize - ' + err.toString()).red)
           })
         }
       }
