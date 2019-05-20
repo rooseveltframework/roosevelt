@@ -7,7 +7,7 @@
     "Troy Coutu <autre31415@gmail.com>",
     "Alexander J. Lallier <alexanderlallier@aol.com>"
   ],
-  "version": "0.14.1",
+  "version": "0.14.2",
   "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
@@ -30,7 +30,7 @@
     "formidable": "~1.2.1",
     "fs-extra": "~8.0.1",
     "html-minifier": "~4.0.0",
-    "html-validator": "~4.0.2",
+    "html-validator": "~4.0.3",
     "klaw": "~3.0.0",
     "klaw-sync": "~6.0.0",
     "method-override": "~3.0.0",
