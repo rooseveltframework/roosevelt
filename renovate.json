@@ -1,6 +1,6 @@
 {
   "extends": [
-    ":preserveSemverRanges",
-    "config:base"
+    "config:base",
+    ":preserveSemverRanges"
   ]
 }
