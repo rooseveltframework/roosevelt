@@ -27,6 +27,10 @@
     "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
+  "dev-install": {
+    "value": "npm install && cd ./node_modules/roosevelt && npm install --only=dev",
+    "priority": "ignore"
+  },
   "kill-validator": {
     "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
     "priority": "error",
