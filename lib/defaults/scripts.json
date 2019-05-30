@@ -35,10 +35,6 @@
     "value": "cd ./node_modules/roosevelt && npm prune --production",
     "priority": "ignore"
   },
-  "postinstall": {
-    "value": "npm run dev-install",
-    "priority": "ignore"
-  },
   "kill-validator": {
     "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
     "priority": "error",
