@@ -28,11 +28,15 @@
     "priority": "ignore"
   },
   "dev-install": {
-    "value": "npm install && cd ./node_modules/roosevelt && npm install --only=dev",
+    "value": "cd ./node_modules/roosevelt && npm install --only=dev",
     "priority": "ignore"
   },
   "dev-prune": {
     "value": "cd ./node_modules/roosevelt && npm prune --production",
+    "priority": "ignore"
+  },
+  "postinstall": {
+    "value": "npm run dev-install",
     "priority": "ignore"
   },
   "kill-validator": {
