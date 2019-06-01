@@ -5,7 +5,7 @@ os:
   - windows
 node_js:
   - "10"
-  - "12"
+  - "11"
 before_install:
   - if [[ "$TRAVIS_OS_NAME" == "windows" ]]; then
       export JAVA_HOME=${JAVA_HOME:-/c/jdk};
