@@ -74,7 +74,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -90,7 +90,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Missing param "controllersPath"!')) {
         controllersPathMissingBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         error1Bool = true
       }
       if (data.includes('for the latest sample rooseveltConfig.')) {
@@ -155,11 +155,11 @@ describe('Roosevelt Config Auditor Test', function () {
     unhookStdout()
     unhookStderr()
 
-    let test1 = logs[0].includes('Starting roosevelt user configuration audit...')
+    let test1 = logs[0].includes('Starting rooseveltConfig audit...')
     let test2 = errors[0].includes('Missing param "modelsPath"!')
     let test3 = errors[1].includes('Missing param "viewsPath"!')
     let test4 = errors[2].includes('Missing param "controllersPath"!')
-    let test5 = errors[3].includes('Issues have been detected in roosevelt config')
+    let test5 = errors[3].includes('Issues have been detected in rooseveltConfig')
     let test6 = errors[4].includes('for the latest sample rooseveltConfig.')
     assert.strictEqual(test1, true, 'Roosevelt did not start the configAuditor')
     assert.strictEqual(test2, true, 'configAuditor did not report that the package.json file is missing a models path value')
@@ -190,7 +190,7 @@ describe('Roosevelt Config Auditor Test', function () {
     let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -205,7 +205,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Missing param "controllersPath"!')) {
         controllersPathMissingBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         error1Bool = true
       }
       if (data.includes('for the latest sample rooseveltConfig.')) {
@@ -250,7 +250,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -282,7 +282,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check for specific logs to see if it would log out that the config audtior is starting
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         rooseveltAuditStartedBool = true
       }
     })
@@ -323,7 +323,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check for specific logs to see if it would log out that the config audtior is starting
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         rooseveltAuditStartedBool = true
       }
     })
@@ -384,7 +384,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Missing param "whitelist" in "js"!')) {
         missingWhiteListJSBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         error1Bool = true
       }
       if (data.includes('for the latest sample rooseveltConfig.')) {
@@ -394,7 +394,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream check to see if the config auditor has started
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -442,7 +442,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -455,7 +455,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Extra param "maxServers" found, this can be removed.')) {
         extraMaxServersBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         error1Bool = true
       }
       if (data.includes('for the latest sample rooseveltConfig.')) {
@@ -500,7 +500,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -510,7 +510,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Extra param "extraParam" found')) {
         extraParamBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         errorBool = true
       }
     })
@@ -550,7 +550,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -560,7 +560,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Missing param "multiples"')) {
         missingParamBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         errorBool = true
       }
     })
@@ -601,7 +601,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check to see if the config auditor is running
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -611,7 +611,7 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Detected outdated script "clean". Update contents to "node ./node_modules/roosevelt/lib/scripts/appCleanup.js" to restore functionality.')) {
         cleanNotUpToDateBool = true
       }
-      if (data.includes('Issues have been detected in roosevelt config')) {
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
         error1Bool = true
       }
       if (data.includes('for the latest sample rooseveltConfig.')) {
@@ -653,10 +653,10 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream, check for config auditor data
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
-      if (data.includes('Configuration audit completed with no errors found.')) {
+      if (data.includes('rooseveltConfig audit completed with no errors found.')) {
         noErrorsBool = true
       }
     })
@@ -689,7 +689,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // check the output stream to see if the config auditor is running
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
     })
@@ -721,10 +721,10 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
-      if (data.includes('Configuration audit completed with no errors found.')) {
+      if (data.includes('rooseveltConfig audit completed with no errors found.')) {
         noErrorsBool = true
       }
     })
@@ -754,10 +754,10 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the output stream
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting roosevelt user configuration audit...')) {
+      if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
-      if (data.includes('Configuration audit completed with no errors found.')) {
+      if (data.includes('rooseveltConfig audit completed with no errors found.')) {
         noErrorsBool = true
       }
     })

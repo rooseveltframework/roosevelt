@@ -55,7 +55,7 @@ module.exports = function (params) {
     if (!output.depsWereOk) {
       let mainError = output.error[output.error.length - 1]
       if (mainError.includes('npm install')) {
-        logger.warn('📦', 'Currently installed npm dependencies do not match the versions that are specified in package.json! You may need to run npm i or npm ci'.yellow)
+        logger.warn('📦', 'Currently installed npm dependencies do not match the versions that are specified in package.json! You may need to run npm i or npm ci')
       }
     }
   }
@@ -150,7 +150,7 @@ module.exports = function (params) {
     if (fsr.fileExists(faviconPath)) {
       app.use(require('serve-favicon')(faviconPath))
     } else {
-      logger.warn(`Favicon ${app.get('params').favicon} does not exist. Please ensure the "favicon" param is configured correctly.`.yellow)
+      logger.warn(`Favicon ${app.get('params').favicon} does not exist. Please ensure the "favicon" param is configured correctly.`)
     }
   }
 
@@ -237,7 +237,7 @@ module.exports = function (params) {
 
     // force destroy connections if the server takes too long to shut down
     checkConnectionsTimeout = setTimeout(() => {
-      logger.error(`${appName} could not close all connections in time; forcefully shutting down`.red)
+      logger.error(`${appName} could not close all connections in time; forcefully shutting down`)
       for (key in connections) {
         connections[key].destroy()
       }
@@ -312,20 +312,20 @@ module.exports = function (params) {
       } else if (cores <= max && cores > 0) {
         numCPUs = cores
       } else {
-        logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`.yellow)
+        logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`)
       }
     }
 
     // shut down the process if both the htmlValidator and the app are trying to use the same port
     if (app.get('params').port === app.get('params').htmlValidator.port) {
-      logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`.red)
+      logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`)
       process.exit(1)
     }
 
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
         if (err.message.includes('EADDRINUSE')) {
-          logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.red)
+          logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`)
         }
         logger.error(err)
         process.exit(1)

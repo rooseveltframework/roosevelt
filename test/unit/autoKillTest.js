@@ -63,7 +63,7 @@ describe('Roosevelt Autokill Test', function () {
         exit()
       } else if (data.includes('Spawning a process to automatically kill the detached validator')) {
         autoKillerStartedBool = true
-      } else if (data.includes('cannot connect to app, killing the validator now')) {
+      } else if (data.includes('Cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
       }
     })
@@ -120,7 +120,7 @@ describe('Roosevelt Autokill Test', function () {
       if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true
         testApp.send('stop')
-      } else if (data.includes('cannot connect to app, killing the validator now')) {
+      } else if (data.includes('Cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
       } else if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
@@ -216,7 +216,7 @@ describe('Roosevelt Autokill Test', function () {
     // on the output stream, check for specific logs
     testApp.stdout.on('data', data => {
       // kill the app after the auto killer runs
-      if (data.includes('Starting the auto Validator Killer')) {
+      if (data.includes('Starting the validator autokiller')) {
         testApp.send('stop')
 
         // start a second test app
@@ -236,7 +236,7 @@ describe('Roosevelt Autokill Test', function () {
         testApp2.stdout.on('data', (data) => {
           if (data.includes('Spawning a process to automatically kill the detached validator')) {
             noAutoKillerFromPIDBool = true
-          } else if (data.includes('Exiting auto Killer')) {
+          } else if (data.includes('Exiting autokiller')) {
             // wait for the auto killer to finish before exiting the test
             exit()
           }
@@ -292,7 +292,7 @@ describe('Roosevelt Autokill Test', function () {
         }, 3000)
       } else if (data.includes('app is still active, resetting timer')) {
         timerResetBool = true
-      } else if (data.includes('cannot connect to app, killing the validator now')) {
+      } else if (data.includes('Cannot connect to app, killing the validator now')) {
         cannotConnectBool = true
       } else if (data.includes('Killed process with PID')) {
         htmlValidatorPortClosedBool = true
