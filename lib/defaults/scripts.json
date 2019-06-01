@@ -1,4 +1,22 @@
 {
+  "dev-install": {
+    "value": "cd ./node_modules/roosevelt && npm install --only=dev",
+    "priority": "error",
+    "inspect": true
+  },
+  "di": {
+    "value": "cd ./node_modules/roosevelt && npm install --only=dev",
+    "priority": "ignore"
+  },
+  "dev-prune": {
+    "value": "cd ./node_modules/roosevelt && npm prune --production",
+    "priority": "error",
+    "inspect": true
+  },
+  "dp": {
+    "value": "cd ./node_modules/roosevelt && npm prune --production",
+    "priority": "ignore"
+  },
   "start": {
     "value": "nodemon app.js --production-mode",
     "priority": "ignore"
@@ -25,14 +43,6 @@
   },
   "d": {
     "value": "nodemon app.js --development-mode",
-    "priority": "ignore"
-  },
-  "dev-install": {
-    "value": "cd ./node_modules/roosevelt && npm install --only=dev",
-    "priority": "ignore"
-  },
-  "dev-prune": {
-    "value": "cd ./node_modules/roosevelt && npm prune --production",
     "priority": "ignore"
   },
   "kill-validator": {
