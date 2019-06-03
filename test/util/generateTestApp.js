@@ -26,7 +26,7 @@ module.exports = function (params, options) {
   }
 
   // require roosevelt at the top of every test app
-  contents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, { depth: null })})\n\n`
+  contents += `const app = require(\`${options.rooseveltPath}\`)(${util.inspect(params, { depth: null, compact: true })})\n\n`
 
   // add express env to params object for testing purposes (this hacky crap is a pretty good sign we should probably refactor the tests to be better than this)
   let defaultMessages = 'let params = app.expressApp.get(\'params\')\n'
