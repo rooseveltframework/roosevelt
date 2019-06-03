@@ -1,7 +1,35 @@
+# contents of .gitignore
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+Thumbs.db
+.DS_Store
+
+npm-debug.log
+node_modules
+jsdoc
+
+nbproject
+
+.jscodehints
+test/app
+
+coverage
 .nyc_output
+
+# exclusive to .npmignore
 .travis.yml
 .vscode
-coverage
 renovate.json
 CONTRIBUTING.md
 CHANGELOG.md
