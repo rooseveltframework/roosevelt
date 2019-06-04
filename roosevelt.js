@@ -65,6 +65,14 @@ module.exports = function (params) {
   flags = app.get('flags')
 
   logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
+
+  // if running in prod, warn why public static assets don't load
+  if (appEnv === 'production') {
+    if (!app.get('params').alwaysHostPublic) {
+      logger.warn('📦', 'Public static assets don\'t load in production mode when Roosevelt config "alwaysHostPublic" set to false (default). You can load public static assets by using \'--host-public\''.yellow)
+    }
+  }
+
   httpsParams = app.get('params').https
 
   // let's try setting up the servers with user-supplied params
