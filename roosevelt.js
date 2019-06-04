@@ -69,7 +69,7 @@ module.exports = function (params) {
   // if running in prod, warn why public static assets don't load
   if (appEnv === 'production') {
     if (!app.get('params').alwaysHostPublic) {
-      logger.warn('📦', 'Public static assets don\'t load in production mode when Roosevelt config "alwaysHostPublic" set to false (default). You can load public static assets by using \'--host-public\''.yellow)
+      logger.warn('📁', 'In production mode Roosevelt defaults to not exposing the public folder. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "alwaysHostPublic" to true or pass the "--host-public" command line flag.')
     }
   }
 
