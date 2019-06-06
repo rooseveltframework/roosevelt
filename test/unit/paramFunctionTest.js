@@ -542,8 +542,7 @@ describe('Parameter Function Tests', function () {
 
   it('should throw an error if there is a controller that is not coded properly in the mvc', function (done) {
     // bool var to hold whether or not the controller errors logs are outputted
-    let controllerErrorLogBool1 = false
-    let controllerErrorLogBool2 = false
+    let controllerErrorLogBool = false
 
     // put the err Controller into the mvc
     fse.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
@@ -560,11 +559,8 @@ describe('Parameter Function Tests', function () {
 
     // listen to the error logs and see if one about the night being dark and full of error pops up
     testApp.stderr.on('data', (data) => {
-      if (data.includes('The night is dark and full of errors!')) {
-        controllerErrorLogBool1 = true
-      }
       if (data.includes('failed to load controller file')) {
-        controllerErrorLogBool2 = true
+        controllerErrorLogBool = true
       }
     })
 
@@ -575,8 +571,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app is about to exit, check to see if the two error logs were outputted
     testApp.on('exit', () => {
-      assert.strictEqual(controllerErrorLogBool1, true, 'Roosevelt did not toss custom Error to mark that a controller has syntax errors with it')
-      assert.strictEqual(controllerErrorLogBool2, true, 'Roosevelt did not toss a comment to show which controller is wrong')
+      assert.strictEqual(controllerErrorLogBool, true, 'Roosevelt did not toss a comment to show which controller is wrong')
       done()
     })
   })
@@ -679,43 +674,6 @@ describe('Parameter Function Tests', function () {
 
     // when the child process exits, finish the test
     testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should only give the quirky error log back once if there are more then one broken controllers', function (done) {
-    // put in the two syntax error controllers
-    fse.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
-    fse.copyFileSync(path.join(appDir, '../../util/errController2.js'), path.join(appDir, 'mvc/controllers/errController2.js'))
-
-    // num var to hold how many times the quirky error is outputted
-    let gameOfThronesErrorNum = 0
-
-    // create the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app logs, see if the quirky error is given and keep count
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('The night is dark and full of errors!')) {
-        gameOfThronesErrorNum++
-      }
-    })
-
-    // once the app finishes initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // once the app is about to finish, check the amount of times the quote has been used
-    testApp.on('exit', () => {
-      assert.strictEqual(gameOfThronesErrorNum, 1, 'Roosevelt had thrown the Game of Thrones error more than once')
       done()
     })
   })

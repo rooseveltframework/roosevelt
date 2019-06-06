@@ -1051,7 +1051,7 @@ describe('JavaScript Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', data => {
-      if (data.includes('Unable to parse cleanTimer roosevelt parameter')) {
+      if (data.includes('Unable to parse cleanTimer Roosevelt parameter')) {
         noScanner = true
       }
     })

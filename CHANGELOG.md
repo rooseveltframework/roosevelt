@@ -4,6 +4,18 @@
 
 - Put your changes here...
 
+## 0.14.3
+
+- Restored move of several things to devDependencies to shrink production builds. Feature is now activated using `ROOSEVELT_DEPLOYMENT` environment variable. There are also new corresponding `npm run` commands `dev-install` and `dev-prune` to manage this. See README for more details.
+- Copyediting on several logs to improve clarity.
+- Various dependencies bumped.
+- CI improvements.
+
+## 0.14.2
+
+- Reverted most changes in 0.14.1 to fix [#713](https://github.com/rooseveltframework/roosevelt/issues/713), but preserved modularization of htmlValidator.js so that if any devDependencies are missing, the app will not crash in production mode.
+- Various dependencies bumped.
+
 ## 0.14.1
 
 - Moved several things to devDependencies to shrink production builds.
