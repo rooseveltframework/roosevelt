@@ -48,7 +48,7 @@
     }
   },
   "frontendReload": {
-    "enabled": true,
+    "enable": true,
     "port": 9856,
     "httpsPort": 9857,
     "verbose": false

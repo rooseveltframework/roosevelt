@@ -8,7 +8,6 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs')
 const fsr = require('./lib/tools/fsr')()
-const reload = require('reload')
 
 module.exports = function (params) {
   params = params || {} // ensure params are an object
@@ -77,8 +76,8 @@ module.exports = function (params) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
 
-    if (params.frontendReload.enabled && appEnv === 'development') {
-      httpReloadPromise = reload(app, { route: '/reloadHttp', port: params.frontendReload.port, verbose: params.frontendReload.verbose, webSocketServerWaitStart: true })
+    if (params.frontendReload.enable && appEnv === 'development') {
+      httpReloadPromise = require('reload')(app, { route: '/reloadHttp', port: params.frontendReload.port, verbose: params.frontendReload.verbose, webSocketServerWaitStart: true })
     }
   }
 
@@ -149,8 +148,8 @@ module.exports = function (params) {
       }
     }
 
-    if (params.frontendReload.enabled && appEnv === 'development') {
-      httpsReloadPromise = reload(app, { route: '/reloadHttps', port: params.frontendReload.httpsPort || params.frontendReload.port, verbose: params.frontendReload.verbose, forceWss: true, https: reloadHttpsOptions, webSocketServerWaitStart: true })
+    if (params.frontendReload.enable && appEnv === 'development') {
+      httpsReloadPromise = require('reload')(app, { route: '/reloadHttps', port: params.frontendReload.httpsPort || params.frontendReload.port, verbose: params.frontendReload.verbose, forceWss: true, https: reloadHttpsOptions, webSocketServerWaitStart: true })
     }
 
     httpsOptions.requestCert = httpsParams.requestCert

@@ -186,7 +186,7 @@ describe('Reload Frontend Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       frontendReload: {
-        enabled: false,
+        enable: false,
         port: 9857,
         verbose: false
       },
@@ -221,7 +221,7 @@ describe('Reload Frontend Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       frontendReload: {
-        enabled: true,
+        enable: true,
         port: 'invalid',
         verbose: false
       },
@@ -255,7 +255,7 @@ describe('Reload Frontend Tests', function () {
         force: true
       },
       frontendReload: {
-        enabled: true,
+        enable: true,
         port: 'invalid',
         httpsPort: 'invalid',
         verbose: false
