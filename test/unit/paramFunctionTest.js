@@ -616,8 +616,11 @@ describe('Parameter Function Tests', function () {
   })
 
   it('should skip over elements that are not files when loading in controllers', function (done) {
-    // bool var to see if an error show up
-    let errorLoggedBool = false
+    // reference list of routes to compare against
+    let referenceRoutes = [
+      '/controller1',
+      '/controller2'
+    ]
 
     // copy the mvc over to the app
     fse.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
@@ -629,25 +632,28 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: `(app) => {process.send(app.get("routes"))}`,
       checkDependencies: false
     }, options)
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stderr.on('data', (data) => {
-      errorLoggedBool = true
-    })
-
     // when the app is finished with its initialization, kill it
-    testApp.on('message', () => {
+    testApp.on('message', (routes) => {
+      // check that routes in controllers have been populated in the app
+      assert(routes.length > 0)
+
+      // check app's routes against reference list
+      referenceRoutes.forEach(route => {
+        assert(routes.includes(route))
+      })
+
       testApp.send('stop')
     })
 
-    // when the app is going to exit, check to see if an error was thrown thru the entire process
+    // when the child process exits, finish the test
     testApp.on('exit', () => {
-      assert.strictEqual(errorLoggedBool, false, 'An error has occur with the feature of skipping over files in the controllers directory that are not files')
       done()
     })
   })

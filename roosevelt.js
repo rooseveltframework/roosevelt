@@ -256,6 +256,9 @@ module.exports = function (params) {
       // map routes
       app = require('./lib/mapRoutes')(app)
 
+      // parse routes
+      app.set('routes', parseRoutes(app))
+
       // custom error page
       app = require('./lib/500ErrorPage.js')(app)
 
@@ -263,6 +266,34 @@ module.exports = function (params) {
         cb()
       }
     }
+  }
+
+  // Parse routes of app and router level routes
+  function parseRoutes (app, basePath, endpoints) {
+    const regexpExpressRegexp = /^\/\^\\\/(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\(\[\^\\\/]\+\?\)\)))\\\/.*/
+    let stack = app.stack || (app._router && app._router.stack)
+
+    endpoints = endpoints || []
+    basePath = basePath || ''
+
+    stack.forEach(function (stackItem) {
+      if (stackItem.route) {
+        for (let method in stackItem.route.methods) {
+          if (method === 'get' && !stackItem.route.path.match(/(\/:[a-z]+)|(\.)|(\*)/)) {
+            endpoints.push(basePath + (basePath && stackItem.route.path === '/' ? '' : stackItem.route.path))
+          }
+        }
+      } else if (stackItem.name === 'router' || stackItem.name === 'bound dispatch') {
+        if (regexpExpressRegexp.test(stackItem.regexp)) {
+          let parsedPath = regexpExpressRegexp.exec(stackItem.regexp)[1].replace(/\\\//g, '/')
+          parseRoutes(stackItem.handle, basePath + '/' + parsedPath, endpoints)
+        } else {
+          parseRoutes(stackItem.handle, basePath, endpoints)
+        }
+      }
+    })
+
+    return endpoints
   }
 
   // shut down all servers, connections and threads that the roosevelt app is using
