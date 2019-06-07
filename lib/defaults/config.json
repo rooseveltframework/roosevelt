@@ -47,6 +47,12 @@
       "_roosevelt-extra-exempt": true
     }
   },
+  "frontendReload": {
+    "enable": true,
+    "port": 9856,
+    "httpsPort": 9857,
+    "verbose": false
+  },
   "checkDependencies": true,
   "cores": 1,
   "shutdownTimeout": 30000,

@@ -22,6 +22,7 @@ module.exports = function (params) {
   let httpServer
   let httpsServer
   let httpsOptions
+  let reloadHttpsOptions = {}
   let authInfoPath
   let numCPUs = 1
   let servers = []
@@ -33,6 +34,9 @@ module.exports = function (params) {
   let clusterKilled = 0
   let checkConnectionsTimeout
   let shutdownType
+
+  let httpReloadPromise
+  let httpsReloadPromise
 
   // expose initial vars
   app.set('express', express)
@@ -71,6 +75,10 @@ module.exports = function (params) {
   if (!httpsParams.force) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
+
+    if (params.frontendReload.enable && appEnv === 'development') {
+      httpReloadPromise = require('reload')(app, { route: '/reloadHttp', port: params.frontendReload.port, verbose: params.frontendReload.verbose, webSocketServerWaitStart: true })
+    }
   }
 
   if (httpsParams.enable) {
@@ -88,16 +96,25 @@ module.exports = function (params) {
         } else { // if the string doesn't end that way, we assume it's an encrypted string
           httpsOptions.pfx = authInfoPath.p12.p12Path
         }
+
+        reloadHttpsOptions.p12 = {}
+        reloadHttpsOptions.p12.p12Path = httpsOptions.pfx
+
         if (authInfoPath.p12.passphrase) {
           httpsOptions.passphrase = authInfoPath.p12.passphrase
+          reloadHttpsOptions.p12.passphrase = httpsOptions.passphrase
         }
       } else if (authInfoPath.authCertAndKey) {
+        reloadHttpsOptions.certAndKey = {}
+
         if (authInfoPath.authCertAndKey.cert) {
           if (isCertString(authInfoPath.authCertAndKey.cert)) {
             httpsOptions.cert = authInfoPath.authCertAndKey.cert
           } else {
             httpsOptions.cert = fs.readFileSync(authInfoPath.authCertAndKey.cert)
           }
+
+          reloadHttpsOptions.certAndKey.cert = httpsOptions.cert
         }
         if (authInfoPath.authCertAndKey.key) {
           // key strings are formatted the same way as cert strings
@@ -106,6 +123,8 @@ module.exports = function (params) {
           } else {
             httpsOptions.key = fs.readFileSync(authInfoPath.authCertAndKey.key)
           }
+
+          reloadHttpsOptions.certAndKey.key = httpsOptions.key
         }
       }
     }
@@ -128,6 +147,11 @@ module.exports = function (params) {
         })
       }
     }
+
+    if (params.frontendReload.enable && appEnv === 'development') {
+      httpsReloadPromise = require('reload')(app, { route: '/reloadHttps', port: params.frontendReload.httpsPort || params.frontendReload.port, verbose: params.frontendReload.verbose, forceWss: true, https: reloadHttpsOptions, webSocketServerWaitStart: true })
+    }
+
     httpsOptions.requestCert = httpsParams.requestCert
     httpsOptions.rejectUnauthorized = httpsParams.rejectUnauthorized
 
@@ -188,6 +212,10 @@ module.exports = function (params) {
     }
     initialized = true
 
+    // Inject reload javascript HTML tag
+    require('./lib/injectReload')(app)
+
+    // Minify HTML
     require('./lib/htmlMinifier')(app)
 
     preprocessCss()
@@ -364,9 +392,29 @@ module.exports = function (params) {
     } else {
       if (!app.get('params').https.force) {
         serverPush(httpServer, app.get('params').port, 'HTTP')
+        if (httpReloadPromise) {
+          httpReloadPromise.then(httpReload => {
+            httpReload.startWebSocketServer().then(() => {
+              logger.log('🎧', `Reload HTTP server is listening on port: ${params.frontendReload.port}`.bold)
+            })
+          }).catch(function (err) {
+            logger.error(('Reload was unable to initialize - ' + err.toString()).red)
+          })
+        }
       }
       if (httpsParams.enable) {
         serverPush(httpsServer, httpsParams.port, 'HTTPS')
+        if (httpsReloadPromise) {
+          httpsReloadPromise.then(httpsReload => {
+            httpsReload.startWebSocketServer().then(() => {
+              logger.log('🎧', `Reload HTTPS server is listening on port: ${params.frontendReload.httpsPort || params.frontendReload.port}`.bold)
+            }).catch(function (err) {
+              logger.error((`Reload was unable to start - ${err.toString()}`).red)
+            })
+          }).catch(function (err) {
+            logger.error(('Reload was unable to initialize - ' + err.toString()).red)
+          })
+        }
       }
 
       process.on('SIGTERM', gracefulShutdown)
