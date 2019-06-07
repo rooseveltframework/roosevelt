@@ -51,6 +51,7 @@
     "prismjs": "~1.16.0",
     "proxyquire": "~2.1.0",
     "ps-node": "~0.1.6",
+    "reload": "~3.0.1",
     "roosevelt-less": "~0.7.1",
     "roosevelt-uglify": "~0.3.1",
     "sinon": "~7.3.2",
