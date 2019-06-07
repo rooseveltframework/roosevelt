@@ -814,6 +814,18 @@ Statics parameters
       }
       ```
 
+- `frontendReload`: Settings to use for the [reload](https://github.com/alallier/reload) module which automatically reloads your browser when your frontend code changes.
+  - Default: *[Object]*
+
+      ```json
+      {
+        "enable": true,
+        "port": 9856,
+        "httpsPort": 9857,
+        "verbose": false
+      }
+      ```
+
 - `cleanTimer`: Time in milliseconds to allow before considering files in CSS/JS compile directories stale and recommending running `npm run clean`.
   - Default: *[Number]* `604800000` (1 week)
   - Useful time conversions to `milliseconds` to configure this param with:
