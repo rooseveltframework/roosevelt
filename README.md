@@ -14,6 +14,7 @@ Some notable features:
 - Uses [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than popular alternatives. Can be configured to use any templating system that supports Express.
 - [LESS](http://lesscss.org) and [UglifyJS](http://lisperator.net/uglifyjs/) preconfigured out of the box to intelligently minify your external facing CSS and JS files. Other preprocessors are supported via wrapper modules.
 - Built-in, easy to use interface to [browserify](http://browserify.org) bundling for frontend JS modularization using the Node.js module `exports` and `require` syntax.
+- Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
 - Automatic HTML validation in development mode of your post-server rendered HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges;image-rendering: -o-crisp-edges;image-rendering: -webkit-optimize-contrast;image-rendering: crisp-edges;-ms-interpolation-mode: nearest-neighbor;'>
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/master/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
@@ -811,6 +812,18 @@ Statics parameters
           "output": ".bundled",
           "expose": true
         }
+      }
+      ```
+
+- `frontendReload`: Settings to use for the [reload](https://github.com/alallier/reload) module which automatically reloads your browser when your frontend code changes.
+  - Default: *[Object]*
+
+      ```json
+      {
+        "enable": true,
+        "port": 9856,
+        "httpsPort": 9857,
+        "verbose": false
       }
       ```
 

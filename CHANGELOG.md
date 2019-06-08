@@ -2,7 +2,8 @@
 
 ## Next version
 
-- Put your changes here...
+- Added automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
+- Various dependencies bumped.
 
 ## 0.14.3
 
