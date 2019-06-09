@@ -69,6 +69,14 @@ module.exports = function (params) {
   flags = app.get('flags')
 
   logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
+
+  // if running in prod, warn why public static assets don't load
+  if (appEnv === 'production') {
+    if (!app.get('params').alwaysHostPublic) {
+      logger.warn('📁', 'In production mode Roosevelt defaults to not exposing the public folder. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "alwaysHostPublic" to true or pass the "--host-public" command line flag.')
+    }
+  }
+
   httpsParams = app.get('params').https
 
   // let's try setting up the servers with user-supplied params
@@ -248,6 +256,9 @@ module.exports = function (params) {
       // map routes
       app = require('./lib/mapRoutes')(app)
 
+      // parse routes
+      app.set('routes', parseRoutes(app))
+
       // custom error page
       app = require('./lib/500ErrorPage.js')(app)
 
@@ -255,6 +266,34 @@ module.exports = function (params) {
         cb()
       }
     }
+  }
+
+  // Parse routes of app and router level routes
+  function parseRoutes (app, basePath, endpoints) {
+    const regexpExpressRegexp = /^\/\^\\\/(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\(\[\^\\\/]\+\?\)\)))\\\/.*/
+    let stack = app.stack || (app._router && app._router.stack)
+
+    endpoints = endpoints || []
+    basePath = basePath || ''
+
+    stack.forEach(function (stackItem) {
+      if (stackItem.route) {
+        for (let method in stackItem.route.methods) {
+          if (method === 'get' && !stackItem.route.path.match(/(\/:[a-z]+)|(\.)|(\*)/)) {
+            endpoints.push(basePath + (basePath && stackItem.route.path === '/' ? '' : stackItem.route.path))
+          }
+        }
+      } else if (stackItem.name === 'router' || stackItem.name === 'bound dispatch') {
+        if (regexpExpressRegexp.test(stackItem.regexp)) {
+          let parsedPath = regexpExpressRegexp.exec(stackItem.regexp)[1].replace(/\\\//g, '/')
+          parseRoutes(stackItem.handle, basePath + '/' + parsedPath, endpoints)
+        } else {
+          parseRoutes(stackItem.handle, basePath, endpoints)
+        }
+      }
+    })
+
+    return endpoints
   }
 
   // shut down all servers, connections and threads that the roosevelt app is using
