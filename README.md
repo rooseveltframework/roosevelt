@@ -990,13 +990,14 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | Express variable                     | Description                                                  |
 | ------------------------------------ | ------------------------------------------------------------ |
 | `express`                            | The Express module.                                          |
+| `routes`                             | List of all routes loaded in the Express app by Roosevelt.   |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
-| `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module. Used for handling multipart forms. |
-| `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module. HTTP request logger middleware. |
-| `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
-| `appVersion`                         | The version number of your app derived from `package.json`.  |
-| `appDir`                             | The directory the main module is in.                         |
-| `package`                            | The contents of `package.json`.                              |
+| `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module Roosevelt uses internally. Used for handling multipart forms. |
+| `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module Roosevelt uses internally. HTTP request logger middleware. |
+| `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
+| `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
+| `viewsPath`                          | Full path on the file system to where your app's views folder is located. |
+| `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
 | `cssPath`                            | Full path on the file system to where your app's CSS source files are located. |
@@ -1004,12 +1005,12 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
 | `jsCompiledOutput`                   | Full path on the file system to where your app's minified JS files are located. |
 | `jsBundledOutput`                    | Full path on the file system to where your app's bundled JS files are located. |
-| `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
-| `viewsPath`                          | Full path on the file system to where your app's views folder is located. |
-| `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `params`                             | The params you sent to Roosevelt.                            |
 | `flags`                              | Command line flags sent to Roosevelt.                        |
-| `logger`                             | The logging module used for simple parameterized logging.    |
+| `appDir`                             | The directory the main module is in.                         |
+| `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
+| `appVersion`                         | The version number of your app derived from `package.json`.  |
+| `package`                            | The contents of `package.json`.                              |
 
 Additionally the Roosevelt constructor returns the following object:
 

@@ -3,6 +3,8 @@
 ## Next version
 
 - Added automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
+- A console warning will now appear explaining why public static assets don't load in prod mode when alwaysHostPublic is set to false (the default).
+- New Express variable added: `routes` containing a list of all routes loaded in the application.
 - Various dependencies bumped.
 
 ## 0.14.3
