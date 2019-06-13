@@ -1,6 +1,6 @@
 # Roosevelt Changelog
 
-## 0.14.4
+## Next version
 
 - Put your changes here...
 
