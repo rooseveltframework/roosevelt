@@ -719,6 +719,49 @@ describe('Parameter Function Tests', function () {
     })
   })
 
+  it('should be able to symlink to directories ', function (done) {
+    // prepare paths to folders
+    let publicPath = path.join(appDir, 'public')
+    let parentDirPath = path.join(publicPath, 'parentDir')
+    let symDirPath = path.join(parentDirPath, 'symDir')
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      alwaysHostPublic: true,
+      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      staticsSymlinksToPublic: ['parentDir/symDir']
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
+    // when the app is exiting, check if the parent directory and the symlink subdirectory were created successfully
+    testApp.on('exit', () => {
+      fse.lstat(parentDirPath, (err, stats) => {
+        if (err) {
+          done(err)
+        } else {
+          assert.strictEqual(stats.isDirectory(), true, `parent directory of symlink not created successfully`)
+        }
+      })
+      fse.lstat(symDirPath, (err, stats) => {
+        if (err) {
+          done(err)
+        } else {
+          assert.strictEqual(stats.isSymbolicLink(), true, `symlink to directory not created successfully`)
+        }
+      })
+      done()
+    })
+  })
+
   it('should throw, catch and display an error if the controllersPath passed to roosevelt is not a dictionary', function (done) {
     // bool var to hold whether or not a specific error log was outputted
     let loadControllerFilesFailBool = false
