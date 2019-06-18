@@ -373,6 +373,7 @@ App behavior parameters
     - `enable`: *[Boolean]* Run the validator as a detached background process.
     - `autoKiller`: *[Boolean]* Spawns a process to kill the validator if it is running in the background and idle for more than a certain amount of time.
     - `autoKillerTimeout`: *[Number]* Time (in milliseconds) that the validator auto-killer process waits before it kills the validator running in the background.
+      - Note: You will see `"GET /roosevelt-dev-mode-ping HTTP/1.1" 404` in your HTTP logs when `autoKiller` is enabled if you allow your app to idle in development mode. This is a normal behavior that the autokiller uses to determine if it should kill the validator process.
 
   - `showWarnings`: *[Boolean]* When set to true, shows HTML validation warnings in addition to errors.
 
