@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+Fixed frontend reload on HTML validator error page
 
 ## 0.14.4
 
