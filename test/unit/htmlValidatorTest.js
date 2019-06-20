@@ -778,13 +778,13 @@ describe('HTML Validator/Kill Validator Test', function () {
         const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
         testApp2.stdout.on('data', (data) => {
-          if (data.includes('Detached validator found on port: 2500')) {
+          if (data.includes('Detached validator found on port 2500')) {
             detachedValidatorFound2Bool = true
           }
           if (data.includes('Starting HTML validator...')) {
             startingHTMLValidator2Bool = true
           }
-          if (data.includes('HTML validator listening on port: 2500')) {
+          if (data.includes('HTML validator listening on port 2500')) {
             detachedValidatorListen2Bool = true
           }
         })
