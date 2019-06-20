@@ -3,6 +3,7 @@
 ## Next version
 
 Fixed frontend reload on HTML validator error page
+Added informational comment above front end reload script tag to state that it is injected
 
 ## 0.14.4
 
