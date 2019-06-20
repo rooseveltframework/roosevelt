@@ -47,7 +47,7 @@ describe('Reload Frontend Tests', function () {
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Reload HTTP server is listening on port:')) {
+      if (data.includes('Frontend reload HTTP server is listening on port')) {
         foundReload = true
         testApp.send('stop')
       }
@@ -91,7 +91,7 @@ describe('Reload Frontend Tests', function () {
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Reload HTTPS server is listening on port:')) {
+      if (data.includes('Frontend reload HTTPS server is listening on port')) {
         foundReload = true
         testApp.send('stop')
       }
@@ -135,7 +135,7 @@ describe('Reload Frontend Tests', function () {
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Reload HTTPS server is listening on port:') || data.includes('Reload HTTP server is listening on port:')) {
+      if (data.includes('Frontend reload HTTPS server is listening on port') || data.includes('Frontend reload HTTP server is listening on port')) {
         foundReload++
         testApp.send('stop')
       }
@@ -162,7 +162,7 @@ describe('Reload Frontend Tests', function () {
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Reload HTTP server is listening on port:')) {
+      if (data.includes('Frontend reload HTTP server is listening on port')) {
         reloadFound = true
       }
     })
@@ -198,7 +198,7 @@ describe('Reload Frontend Tests', function () {
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
-      if (data.includes('Reload HTTP server is listening on port:')) {
+      if (data.includes('Frontend reload HTTP server is listening on port')) {
         reloadFound = true
       }
     })

@@ -2,8 +2,16 @@
 
 ## Next version
 
-Fixed frontend reload on HTML validator error page
-Added informational comment above front end reload script tag to state that it is injected
+- Put your changes here...
+
+## 0.14.5
+
+- `staticsSymlinksToPublic` will now create missing subdirectories necessary to create a symlink in a target location.
+- Fixed a bug which caused Java hs_err_pid error logs to pile up in your app directory under certain conditions.
+- Fixed a bug which caused frontend reload to not work on the various error pages.
+- Added code comment above frontend reload script tag to explain that it is injected by Roosevelt.
+- Did some copyediting on frontend reload logging.
+- Various dependencies bumped.
 
 ## 0.14.4
 

@@ -434,7 +434,7 @@ module.exports = function (params) {
         if (httpReloadPromise) {
           httpReloadPromise.then(httpReload => {
             httpReload.startWebSocketServer().then(() => {
-              logger.log('🎧', `Reload HTTP server is listening on port: ${params.frontendReload.port}`.bold)
+              logger.log('🎧', `Frontend reload HTTP server is listening on port ${params.frontendReload.port}`.bold)
             })
           }).catch(function (err) {
             logger.error(('Reload was unable to initialize - ' + err.toString()).red)
@@ -446,7 +446,7 @@ module.exports = function (params) {
         if (httpsReloadPromise) {
           httpsReloadPromise.then(httpsReload => {
             httpsReload.startWebSocketServer().then(() => {
-              logger.log('🎧', `Reload HTTPS server is listening on port: ${params.frontendReload.httpsPort || params.frontendReload.port}`.bold)
+              logger.log('🎧', `Frontend reload HTTPS server is listening on port ${params.frontendReload.httpsPort || params.frontendReload.port}`.bold)
             }).catch(function (err) {
               logger.error((`Reload was unable to start - ${err.toString()}`).red)
             })
