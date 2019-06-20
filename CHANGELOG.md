@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Fixed a bug which required the folder name of a roosevelt fork/clone to match exactly "roosevelt" to run tests in it successfully
 
 ## 0.14.5
 
