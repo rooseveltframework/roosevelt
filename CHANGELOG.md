@@ -2,6 +2,7 @@
 
 ## Next version
 
+- Breaking change: Moved css minification from roosevelt-less to Roosevelt using clean-css as a direct dependency. The clean-css library had an update with breaking changes so the rooseveltConfig params in "cleanCSS", 'advanced' and 'aggressiveMerging', are now outdated
 - Fixed a bug which required the folder name of a roosevelt fork/clone to match exactly "roosevelt" to run tests in it successfully
 
 ## 0.14.5
