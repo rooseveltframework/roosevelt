@@ -83,10 +83,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -131,10 +128,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -181,10 +175,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -233,10 +224,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -284,10 +272,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -329,10 +314,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -379,10 +361,7 @@ describe('CSS Section Tests', function () {
       css: {
         compiler: {
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -423,10 +402,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'test_module_1',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -470,10 +446,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'test_module_2',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -519,10 +492,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -567,10 +537,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -614,10 +581,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -664,10 +628,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -711,10 +672,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -767,10 +725,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -824,10 +779,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -882,10 +834,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -939,10 +888,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1002,10 +948,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1065,10 +1008,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1113,10 +1053,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1164,10 +1101,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1216,10 +1150,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1272,10 +1203,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1321,10 +1249,7 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'custom-csspreprocessor',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
+            cleanCSS: {},
             sourceMap: null
           }
         }
