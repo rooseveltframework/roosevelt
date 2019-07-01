@@ -404,7 +404,6 @@ describe('JavaScript Tests', function () {
     // the app should not be able to initialize if it has this specific whitelist error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -481,7 +480,6 @@ describe('JavaScript Tests', function () {
       let testFilePath = path.join(appDir, 'statics/.build/js/testDir')
       let test = fse.existsSync(testFilePath)
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -523,7 +521,6 @@ describe('JavaScript Tests', function () {
     // the app should not be able to initialize if this specific error was thrown
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the error was logged
@@ -600,11 +597,6 @@ describe('JavaScript Tests', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     // when the app is about to end, check to see if the js static file was made or not
     testApp.on('exit', () => {
       // js static folder
@@ -630,11 +622,6 @@ describe('JavaScript Tests', function () {
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
 
     // when the app is about to end, check to see if the build or js output folder were made
     testApp.on('exit', () => {
@@ -773,7 +760,6 @@ describe('JavaScript Tests', function () {
     // the app should not be able to initailize with this specific error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     // when the app is about to end, check that the error was hit
@@ -817,7 +803,6 @@ describe('JavaScript Tests', function () {
     // app should not be able to initialize with this specific error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     // when the app is about to end, check that the error was hit
@@ -903,10 +888,6 @@ describe('JavaScript Tests', function () {
       if (data.includes('using your custom JS preprocessor')) {
         foundPreprocessor = true
       }
-    })
-
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test
