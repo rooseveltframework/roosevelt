@@ -47,7 +47,6 @@ describe('Roosevelt.js Tests', function () {
       assert.strictEqual(params.port, defaultsJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
       assert.strictEqual(params.viewEngine, defaultsJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
       assert.strictEqual(params.favicon, defaultsJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
-      testApp.send('stop')
     })
 
     // finish the test on exit
