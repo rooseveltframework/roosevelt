@@ -262,7 +262,7 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // when the child process exits, check for assertions and finish the test
     testApp.on('exit', () => {
-      assert.strictEqual(startingConfigAuditBool, false, 'Roosevelt ')
+      assert.strictEqual(startingConfigAuditBool, false, 'Roosevelt should not have started the config auditor when app already has a public folder in the app directory')
       done()
     })
   })
@@ -285,10 +285,6 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Starting rooseveltConfig audit...')) {
         rooseveltAuditStartedBool = true
       }
-    })
-
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     // when the child process exits, check for assertions and finish the test
@@ -326,10 +322,6 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Starting rooseveltConfig audit...')) {
         rooseveltAuditStartedBool = true
       }
-    })
-
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
