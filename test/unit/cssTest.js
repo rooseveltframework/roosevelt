@@ -447,7 +447,6 @@ describe('CSS Section Tests', function () {
     // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
-      testApp.send('stop')
     })
 
     // on exit, see if the error was given
@@ -495,7 +494,6 @@ describe('CSS Section Tests', function () {
     // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
-      testApp.send('stop')
     })
 
     // on exit, see if the error was given
@@ -592,7 +590,6 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/css'))
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check whether or not the specific log was given
@@ -736,7 +733,6 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(cssBuildDirPath)
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check that the specific log was given
@@ -1090,11 +1086,6 @@ describe('CSS Section Tests', function () {
       }
     })
 
-    // when the app finishes initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     // when the app is going to exit, see if the creation versionFile log was made
     testApp.on('exit', () => {
       assert.strictEqual(versionFileCreationLogBool, false, 'Roosevelt created a new versionFile file even thought their is one that exist and is up to date')
@@ -1139,7 +1130,6 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'statics/.build/css/d.less'))
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     // when the app is about to exit, see if the error was thrown
@@ -1338,10 +1328,6 @@ describe('CSS Section Tests', function () {
       if (data.includes('using your custom CSS preprocessor')) {
         foundPreprocessor = true
       }
-    })
-
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test
