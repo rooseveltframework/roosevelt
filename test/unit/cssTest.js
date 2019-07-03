@@ -83,7 +83,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -128,7 +127,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -175,7 +173,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -224,7 +221,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -272,7 +268,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -314,7 +309,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -361,7 +355,6 @@ describe('CSS Section Tests', function () {
       css: {
         compiler: {
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -402,7 +395,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'test_module_1',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -446,7 +438,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'test_module_2',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -492,7 +483,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -537,7 +527,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -581,7 +570,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -628,7 +616,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -672,7 +659,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
@@ -725,7 +711,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -779,7 +764,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -834,7 +818,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -888,7 +871,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -948,7 +930,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1008,7 +989,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1053,7 +1033,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1101,7 +1080,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1150,7 +1128,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1203,7 +1180,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         },
@@ -1249,7 +1225,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'custom-csspreprocessor',
           params: {
-            cleanCSS: {},
             sourceMap: null
           }
         }
