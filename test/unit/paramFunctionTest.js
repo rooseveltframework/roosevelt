@@ -192,11 +192,8 @@ describe('Parameter Function Tests', function () {
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.send('stop')
           }
-          setTimeout(() => {
-            testApp.send('stop')
-          }, 1000)
+          testApp.send('stop')
         })
     })
 
@@ -266,11 +263,6 @@ describe('Parameter Function Tests', function () {
       }
     })
 
-    // when the app finishes initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     // when the app is about to exit, check if the specific log was outputted
     testApp.on('exit', () => {
       assert.strictEqual(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
@@ -298,7 +290,6 @@ describe('Parameter Function Tests', function () {
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
-            testApp.send('stop')
           }
           testApp.send('stop')
         })
@@ -383,7 +374,6 @@ describe('Parameter Function Tests', function () {
     testApp.on('message', () => {
       let test = fse.existsSync(path.join(appDir, 'public/0.5.1'))
       assert.strictEqual(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the specific log was made
@@ -445,11 +435,6 @@ describe('Parameter Function Tests', function () {
       }
     })
 
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     testApp.on('exit', () => {
       assert.strictEqual(viewsDirectoryCreationLogBool, false, 'Roosevelt created a views folder even though generateFolderStrucutre is false')
       done()
@@ -474,11 +459,6 @@ describe('Parameter Function Tests', function () {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/controllers')}`)) {
         controllersDirectoryCreationLogBool = true
       }
-    })
-
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test
