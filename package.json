@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/roosevelt/graphs/contributors"
     }
   ],
-  "version": "0.14.5",
+  "version": "0.14.6",
   "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "codecov": "~3.5.0",
-    "eslint": "~6.0.0",
+    "eslint": "~6.0.1",
     "eslint-plugin-mocha": "~5.3.0",
     "fkill": "~6.2.0",
     "html-validator": "~4.0.3",

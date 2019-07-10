@@ -2,9 +2,13 @@
 
 ## Next version
 
-- Fixed a bug where postinstall script would remove devDeps on an additional run of `npm i`
-- Postinstall script checks if Roosevelt itself is a devDependency of the app before installing its own devDeps (no longer installs Roosevelt devDeps when running `npm i` in Roosevelt sub modules)
-- Fixed a bug which required the folder name of a roosevelt fork/clone to match exactly "roosevelt" to run tests in it successfully
+- Put your changes here...
+
+## 0.14.6
+
+- Fixed a bug that caused `devDependencies` of Roosevelt to be removed if `npm i` was run more than once.
+- Fixed a bug that caused the automated testing to break if your clone of Roosevelt was not named "roosevelt."
+- Various dependencies bumped.
 
 ## 0.14.5
 
