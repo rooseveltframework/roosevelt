@@ -51,7 +51,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, test the htmlValidator by trying to recieve bad html page
       testApp.on('message', (params) => {
@@ -64,8 +64,8 @@ describe('HTML Validator/Kill Validator Test', function () {
               testApp.send('stop')
             }
             // test the text returned to see if it has the validation error page title in it
-            let test1 = res.text.includes('HTML did not pass validation')
-            let test2 = res.text.includes('<h2>Errors:</h2>')
+            const test1 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('<h2>Errors:</h2>')
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and app
@@ -100,7 +100,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, test to see if valid html will not cause an error
       testApp.on('message', (params) => {
@@ -113,10 +113,10 @@ describe('HTML Validator/Kill Validator Test', function () {
               testApp.send('stop')
             }
             // test if the elements added into the plain HTML show in the response
-            let test1 = res.text.includes('TitleX')
-            let test2 = res.text.includes('headingX')
-            let test3 = res.text.includes('sentence1X')
-            let test4 = res.text.includes('sentence2X')
+            const test1 = res.text.includes('TitleX')
+            const test2 = res.text.includes('headingX')
+            const test3 = res.text.includes('sentence1X')
+            const test4 = res.text.includes('sentence2X')
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             assert.strictEqual(test3, true)
@@ -154,7 +154,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, send a get request to the server
       testApp.on('message', (params) => {
@@ -167,8 +167,8 @@ describe('HTML Validator/Kill Validator Test', function () {
             }
 
             // test the text returned to see if it has the validation error page title in it
-            let test1 = res.text.includes('HTML did not pass validation')
-            let test2 = res.text.includes('<h2>Warnings:</h2>')
+            const test1 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('<h2>Warnings:</h2>')
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and the app
@@ -204,7 +204,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, send a request to a page that has both html errors and warnings
       testApp.on('message', (params) => {
@@ -217,8 +217,8 @@ describe('HTML Validator/Kill Validator Test', function () {
             }
 
             // test the text returned to see if it has the validation error page title in it
-            let test1 = res.text.includes('HTML did not pass validation')
-            let test2 = res.text.includes('<h2>Warnings:</h2>')
+            const test1 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('<h2>Warnings:</h2>')
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, false)
             // kill the validator and the app
@@ -257,7 +257,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, request a page that has both html errors and warnings
       testApp.on('message', (params) => {
@@ -269,10 +269,10 @@ describe('HTML Validator/Kill Validator Test', function () {
               testApp.send('stop')
             }
             // test the header exception in the app param is false or not there
-            let test1 = typeof res.header.partialtest === 'undefined'
+            const test1 = typeof res.header.partialtest === 'undefined'
             assert.strictEqual(test1, true)
             // test the text returned to see if it has the validation error page title in it
-            let test2 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, true)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
@@ -310,7 +310,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, request a page that has a unique response header
       testApp.on('message', (params) => {
@@ -322,10 +322,10 @@ describe('HTML Validator/Kill Validator Test', function () {
               testApp.send('stop')
             }
             // test the header exception in the app param is false or not there
-            let test1 = typeof res.header.partialtest === 'undefined'
+            const test1 = typeof res.header.partialtest === 'undefined'
             assert.strictEqual(test1, false)
             // test the text returned to see if it has the validation error page title in it
-            let test2 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
@@ -363,7 +363,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, request the broken page with a unique request header
       testApp.on('message', (params) => {
@@ -376,10 +376,10 @@ describe('HTML Validator/Kill Validator Test', function () {
               testApp.send('stop')
             }
             // test the header exception in the app param is false or not there
-            let test1 = typeof res.header.partialtest === 'undefined'
+            const test1 = typeof res.header.partialtest === 'undefined'
             assert.strictEqual(test1, false)
             // check to see that the page did not validate
-            let test2 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
@@ -420,7 +420,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and start it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, and then check that the page has not been validated
       testApp.on('message', (params) => {
@@ -433,7 +433,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             }
 
             // check to see that the page did not validate
-            let test1 = res.text.includes('HTML did not pass validation')
+            const test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, false)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
@@ -474,7 +474,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and start it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts,  check that the page has not been validated
       testApp.on('message', (params) => {
@@ -487,8 +487,8 @@ describe('HTML Validator/Kill Validator Test', function () {
             }
 
             // check to see that the page did not validate
-            let test1 = res.text.includes('HTML did not pass validation')
-            let test2 = res.text.includes('Errors:')
+            const test1 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('Errors:')
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and the app
@@ -530,7 +530,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and start it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts,  check that the page has not been validated
       testApp.on('message', (params) => {
@@ -543,10 +543,10 @@ describe('HTML Validator/Kill Validator Test', function () {
               testApp.send('stop')
             }
             // test the header exception in the app param is false or not there
-            let test1 = typeof res.header.partialtest === 'undefined'
+            const test1 = typeof res.header.partialtest === 'undefined'
             assert.strictEqual(test1, false)
             // check to see that the page did not validate
-            let test2 = res.text.includes('HTML did not pass validation')
+            const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
@@ -587,7 +587,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and start it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, check that the page has not been validated
       testApp.on('message', (params) => {
@@ -600,7 +600,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             }
 
             // check to see tha tthe page did not validate
-            let test1 = res.text.includes('HTML did not pass validation')
+            const test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, true)
             // kill the validator and the app
             fkill(`:48888`, { force: true }).then(() => {
@@ -636,7 +636,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts, see if we can send a request to the new port
       testApp.on('message', (params) => {
@@ -649,7 +649,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             }
 
             // check to see that the page loaded
-            let test1 = res.status
+            const test1 = res.status
             assert.strictEqual(test1, 200)
             // kill the validator and the app
             fkill(`:3000`, { force: true }).then(() => {
@@ -685,7 +685,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // test to see that the validator still works
       testApp.on('message', (params) => {
@@ -700,7 +700,7 @@ describe('HTML Validator/Kill Validator Test', function () {
               testAppError = true
             }
             // check to see that the page did validate and failed
-            let test1 = res.text.includes('HTML did not pass validation')
+            const test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, true)
             testApp.send('stop')
           })
@@ -718,7 +718,7 @@ describe('HTML Validator/Kill Validator Test', function () {
                   assert.fail('was not able to connect to independently running htmlValidator')
                   done()
                 }
-                let test2 = res.text.includes('Ready to check  - Nu Html Checker')
+                const test2 = res.text.includes('Ready to check  - Nu Html Checker')
                 assert.strictEqual(test2, true)
 
                 // kill the validator with fkill
@@ -766,7 +766,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app.js file and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the server starts , kill the app
       testApp.on('message', () => {
@@ -775,7 +775,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
       // when the app exits, run another app and see if it grabs onto the validator made by the first app
       testApp.on('exit', () => {
-        const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+        const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
         testApp2.stdout.on('data', (data) => {
           if (data.includes('Detached validator found on port 2500')) {
@@ -815,7 +815,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       let twoProcessToPortsBool = false
 
       // create a dummy server that will give back a 500 error on the port that the html Validator wants to use
-      let server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.statusCode = 500
         res.end()
       }).listen(43711)
@@ -837,7 +837,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // look at the errors logs to see if specific log is outputted
       testApp.stderr.on('data', (data) => {
@@ -872,7 +872,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       let twoProcessToPortsBool = false
 
       // make a dummy server that is on the port that the htmlValidator wants to go on and that returns a 200 status Code
-      let server = http.createServer(function (req, res) {
+      const server = http.createServer(function (req, res) {
         res.statusCode = 200
         res.end()
       }).listen(43711)
@@ -893,7 +893,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // check the error logs to see if the correct error log was outputted
       testApp.stderr.on('data', (data) => {
@@ -936,7 +936,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app.js file and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', (params) => {
         // close the htmlValidator
@@ -949,8 +949,8 @@ describe('HTML Validator/Kill Validator Test', function () {
                 assert.fail(err)
                 testApp.send('stop')
               }
-              let test1 = res.text.includes('Cannot connect to validator')
-              let test2 = res.text.includes('Unable to connect to HTML validator')
+              const test1 = res.text.includes('Cannot connect to validator')
+              const test2 = res.text.includes('Unable to connect to HTML validator')
               assert.strictEqual(test1, true, 'Roosevelt either did not detect an error or did not give back the right page (pageTitle)')
               assert.strictEqual(test2, true, 'Roosevelt either did not detect an error or did not give back the right page (pageHeader)')
               testApp.send('stop')
@@ -988,7 +988,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the message of starting the HTML Validator comes, send a response to the app to speed up its clock by 30 secs
       testApp.stdout.on('data', (data) => {
@@ -1031,7 +1031,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], env: { PATH: 'sfsfsff' } })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'], env: { PATH: 'sfsfsff' } })
 
       // on error logs, check to see if any of them are the error log that we want
       testApp.stderr.on('data', (data) => {
@@ -1073,7 +1073,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app.js file and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // If the test errors, see if it is the specfic one about the two services trying to use the same port
       testApp.stderr.on('data', (data) => {
@@ -1095,7 +1095,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       // when the app is about to exit, see if the specifc error was outputted
       testApp.on('exit', () => {
         assert.strictEqual(samePortErrorBool, true, 'Roosevelt is not catching the error that describes 2 or more servers using a single port and giving a specific message to the programmer')
-        const killLine = fork('lib/scripts/killValidator.js', { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+        const killLine = fork('lib/scripts/killValidator.js', { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
         killLine.on('exit', () => {
           done()
@@ -1128,7 +1128,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       // fork the app.js file and run it as a child process
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // when the app starts, kill the app
       testApp.on('message', (params) => {
@@ -1137,7 +1137,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
       // when the app is about to finish, fork the kill Validator
       testApp.on('exit', () => {
-        const killLine = fork('lib/scripts/killValidator.js', [], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+        const killLine = fork('lib/scripts/killValidator.js', [], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
         killLine.stdout.on('data', data => {
           if (data.includes('Scanning for validator now...')) {
             calledToScan = true
@@ -1176,12 +1176,12 @@ describe('HTML Validator/Kill Validator Test', function () {
         onServerStart: `(app) => {process.send(app.get("params"))}`
       }, options)
 
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       // on the output stream, check for logs
       testApp.stdout.on('data', data => {
         if (data.includes('HTML validator listening on port')) {
-          const killLine = fork('../../../lib/scripts/killValidator.js', [], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir })
+          const killLine = fork('../../../lib/scripts/killValidator.js', [], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'], cwd: appDir })
           // check for the logs saying that the validator was found and killed
           killLine.stdout.on('data', data => {
             if (data.includes('Validator successfully found with PID')) {
@@ -1222,7 +1222,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       let hadIt = false
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.stdout.on('data', data => {
         if (data.includes('automatically kill the detached validator after 1 hour of inactivity')) {
@@ -1256,7 +1256,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       let hadIt = false
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.stdout.on('data', data => {
         if (data.includes('automatically kill the detached validator after 10 minutes of inactivity')) {
@@ -1290,7 +1290,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       }, options)
 
       let hadIt = false
-      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+      const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.stdout.on('data', data => {
         if (data.includes('automatically kill the detached validator after 10 seconds of inactivity')) {
