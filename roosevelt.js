@@ -15,26 +15,21 @@ module.exports = function (params) {
   // appDir is either specified by the user or sourced from the parent require
   params.appDir = params.appDir || path.dirname(module.parent.filename)
 
+  const reloadHttpsOptions = {}
+  const servers = []
+  const connections = {}
   let app = express() // initialize express
-  let appName
-  let appEnv
-  let httpsParams
   let httpServer
   let httpsServer
   let httpsOptions
-  let reloadHttpsOptions = {}
   let authInfoPath
   let numCPUs = 1
-  let servers = []
   let i
-  let connections = {}
   let initialized = false
   let faviconPath
-  let flags
   let clusterKilled = 0
   let checkConnectionsTimeout
   let shutdownType
-
   let httpReloadPromise
   let httpsReloadPromise
 
@@ -55,18 +50,18 @@ module.exports = function (params) {
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
   if (app.get('params').checkDependencies) {
-    let output = require('check-dependencies').sync({ packageDir: app.get('appDir') })
+    const output = require('check-dependencies').sync({ packageDir: app.get('appDir') })
     if (!output.depsWereOk) {
-      let mainError = output.error[output.error.length - 1]
+      const mainError = output.error[output.error.length - 1]
       if (mainError.includes('npm install')) {
         logger.warn('📦', 'Currently installed npm dependencies do not match the versions that are specified in package.json! You may need to run npm i or npm ci')
       }
     }
   }
 
-  appName = app.get('appName')
-  appEnv = app.get('env')
-  flags = app.get('flags')
+  const appName = app.get('appName')
+  const appEnv = app.get('env')
+  const flags = app.get('flags')
 
   logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
@@ -77,7 +72,7 @@ module.exports = function (params) {
     }
   }
 
-  httpsParams = app.get('params').https
+  const httpsParams = app.get('params').https
 
   // let's try setting up the servers with user-supplied params
   if (!httpsParams.force) {
@@ -201,7 +196,7 @@ module.exports = function (params) {
 
   // assign individual keys to connections when opened so they can be destroyed gracefully
   function mapConnections (conn) {
-    let key = conn.remoteAddress + ':' + conn.remotePort
+    const key = conn.remoteAddress + ':' + conn.remotePort
     connections[key] = conn
 
     // once the connection closes, remove
@@ -271,21 +266,21 @@ module.exports = function (params) {
   // Parse routes of app and router level routes
   function parseRoutes (app, basePath, endpoints) {
     const regexpExpressRegexp = /^\/\^\\\/(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\(\[\^\\\/]\+\?\)\)))\\\/.*/
-    let stack = app.stack || (app._router && app._router.stack)
+    const stack = app.stack || (app._router && app._router.stack)
 
     endpoints = endpoints || []
     basePath = basePath || ''
 
     stack.forEach(function (stackItem) {
       if (stackItem.route) {
-        for (let method in stackItem.route.methods) {
+        for (const method in stackItem.route.methods) {
           if (method === 'get' && !stackItem.route.path.match(/(\/:[a-z]+)|(\.)|(\*)/)) {
             endpoints.push(basePath + (basePath && stackItem.route.path === '/' ? '' : stackItem.route.path))
           }
         }
       } else if (stackItem.name === 'router' || stackItem.name === 'bound dispatch') {
         if (regexpExpressRegexp.test(stackItem.regexp)) {
-          let parsedPath = regexpExpressRegexp.exec(stackItem.regexp)[1].replace(/\\\//g, '/')
+          const parsedPath = regexpExpressRegexp.exec(stackItem.regexp)[1].replace(/\\\//g, '/')
           parseRoutes(stackItem.handle, basePath + '/' + parsedPath, endpoints)
         } else {
           parseRoutes(stackItem.handle, basePath, endpoints)
@@ -361,7 +356,7 @@ module.exports = function (params) {
   }
 
   function connectionCheck () {
-    let connectionsAmount = Object.keys(connections)
+    const connectionsAmount = Object.keys(connections)
     if (connectionsAmount.length === 0) {
       exitLog()
     }
@@ -371,7 +366,7 @@ module.exports = function (params) {
   function startHttpServer () {
     // determine number of CPUs to use
     const max = os.cpus().length
-    let cores = flags.cores
+    const cores = flags.cores
 
     if (cores) {
       if (cores === 'max') {
@@ -399,8 +394,8 @@ module.exports = function (params) {
       }))
     }
 
-    let lock = {}
-    let startupCallback = function (proto, port) {
+    const lock = {}
+    const startupCallback = function (proto, port) {
       return function () {
         logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
         if (!Object.isFrozen(lock)) {
@@ -473,7 +468,7 @@ module.exports = function (params) {
     if (typeof testString !== 'string') {
       testString = testString.toString()
     }
-    let lastChar = testString.substring(testString.length - 1)
+    const lastChar = testString.substring(testString.length - 1)
     // A file path string won't have an end of line character at the end
     // Looking for either \n or \r allows for nearly any OS someone could
     // use, and a few that node doesn't work on.

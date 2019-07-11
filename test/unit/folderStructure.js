@@ -233,7 +233,7 @@ describe('Folder Structure Tests', function () {
       .on('end', () => {
         dirs.forEach((dir) => {
           if (!dir.path.includes('.DS_Store')) {
-            let test = expectedFolders.includes(dir.path)
+            const test = expectedFolders.includes(dir.path)
             assert.strictEqual(test, true, `There is an extra directory or file at ${dir.path}`)
           }
         })

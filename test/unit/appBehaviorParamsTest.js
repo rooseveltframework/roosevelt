@@ -29,7 +29,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
   })
 
   // options to pass into test app generator
-  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   it('should be able to post files to the server, move them, and read their content', function (done) {
     // generate the test app
@@ -42,7 +42,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts, send a file to the server
     testApp.on('message', (params) => {
@@ -58,12 +58,12 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
           assert(res.body.lengthTest, true)
 
           // test to see if the file exists (testing to see if it was moved from the temporary spot)
-          let test1 = fse.existsSync(path.join(appDir, 'test1.txt'))
+          const test1 = fse.existsSync(path.join(appDir, 'test1.txt'))
           assert(test1, true)
 
           // test to see if the data in the neew file is correct
-          let file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
-          let test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
+          const file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
+          const test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
           assert.strictEqual(test2, true)
           testApp.send('stop')
         })
@@ -87,7 +87,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app has started send a post request to formidable
     testApp.on('message', (params) => {
@@ -129,7 +129,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts, send a request with a url that has more params then what is allowed
     testApp.on('message', (params) => {
@@ -171,7 +171,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on server start, see if we can get an error of entity too large by sending a bunch of json data to the post
     testApp.on('message', (params) => {
@@ -215,7 +215,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error stream to see if the correct error is in the output
     testApp.stderr.on('data', (data) => {
@@ -269,7 +269,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, see if the specific error was logged
     testApp.stderr.on('data', (data) => {
@@ -319,7 +319,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, see if the specific error was logged
     testApp.stderr.on('data', (data) => {
@@ -345,7 +345,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      let test = fse.existsSync(originalPath)
+      const test = fse.existsSync(originalPath)
       assert.strictEqual(test, true, 'The temp file was deleted even though it was not suppose to be deleted')
       assert.strictEqual(removeTmpFilesErrorBool, false, 'Roosevelt attempted to delete the temp file when its not suppose to (its path was changed to a number)')
       done()
@@ -366,7 +366,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, see if the specific error was logged
     testApp.stderr.on('data', (data) => {
@@ -393,7 +393,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      let test = fse.existsSync(originalPath)
+      const test = fse.existsSync(originalPath)
       assert.strictEqual(test, true, 'Roosevelt somehow deleted a directory with fs.unlink')
       assert.strictEqual(removeTmpFilesErrorBool, true, 'Roosevelt did not throw an error while trying to fs.unlink a directory')
       done()
@@ -410,12 +410,12 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts, check the params of the app that are sent back to check if multipart is an empty object
     testApp.on('message', (params) => {
-      let test1 = typeof params.multipart
-      let test2 = Object.keys(params.multipart)
+      const test1 = typeof params.multipart
+      const test2 = Object.keys(params.multipart)
       assert.strictEqual(test1, 'object', 'Roosevelt did not default multipart to an empty object if it was not an object and it is not false')
       assert.strictEqual(test2.length, 0, 'Roosevelt did not default multipart to an empty object if it was not an object and it is not false')
       testApp.send('stop')
