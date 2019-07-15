@@ -81,13 +81,13 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the error stream, check for error specific logs
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Missing param "modelsPath"!')) {
+      if (data.includes('Missing param "modelsPath" at rooseveltConfig.modelsPath!')) {
         modelsPathMissingBool = true
       }
-      if (data.includes('Missing param "viewsPath"!')) {
+      if (data.includes('Missing param "viewsPath" at rooseveltConfig.viewsPath!')) {
         viewsPathMissingBool = true
       }
-      if (data.includes('Missing param "controllersPath"!')) {
+      if (data.includes('Missing param "controllersPath" at rooseveltConfig.controllersPath!')) {
         controllersPathMissingBool = true
       }
       if (data.includes('Issues have been detected in rooseveltConfig')) {
@@ -156,9 +156,9 @@ describe('Roosevelt Config Auditor Test', function () {
     unhookStderr()
 
     const test1 = logs[0].includes('Starting rooseveltConfig audit...')
-    const test2 = errors[0].includes('Missing param "modelsPath"!')
-    const test3 = errors[1].includes('Missing param "viewsPath"!')
-    const test4 = errors[2].includes('Missing param "controllersPath"!')
+    const test2 = errors[0].includes('Missing param "modelsPath" at rooseveltConfig.modelsPath!')
+    const test3 = errors[1].includes('Missing param "viewsPath" at rooseveltConfig.viewsPath!')
+    const test4 = errors[2].includes('Missing param "controllersPath" at rooseveltConfig.controllersPath!')
     const test5 = errors[3].includes('Issues have been detected in rooseveltConfig')
     const test6 = errors[4].includes('for the latest sample rooseveltConfig.')
     assert.strictEqual(test1, true, 'Roosevelt did not start the configAuditor')
@@ -196,13 +196,13 @@ describe('Roosevelt Config Auditor Test', function () {
     })
 
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Missing param "modelsPath"!')) {
+      if (data.includes('Missing param "modelsPath" at rooseveltConfig.modelsPath!')) {
         modelsPathMissingBool = true
       }
-      if (data.includes('Missing param "viewsPath"!')) {
+      if (data.includes('Missing param "viewsPath" at rooseveltConfig.viewsPath!')) {
         viewsPathMissingBool = true
       }
-      if (data.includes('Missing param "controllersPath"!')) {
+      if (data.includes('Missing param "controllersPath" at rooseveltConfig.controllersPath!')) {
         controllersPathMissingBool = true
       }
       if (data.includes('Issues have been detected in rooseveltConfig')) {
@@ -369,19 +369,19 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the error strean, check the console output for missing parameters
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Missing param "enable" in "htmlValidator"!')) {
+      if (data.includes('Missing param "enable" at rooseveltConfig.htmlValidator.enable!')) {
         missingEnableBool = true
       }
-      if (data.includes('Missing param "whitelist" in "css"!')) {
+      if (data.includes('Missing param "whitelist" at rooseveltConfig.css.whitelist!')) {
         missingWhiteListCSSBool = true
       }
-      if (data.includes('Extra param "warnings" found in "js", this can be removed.')) {
+      if (data.includes('Extra param "warnings" found at rooseveltConfig.js.warnings, this can be removed.')) {
         extraWarningsJSBool = true
       }
-      if (data.includes('Missing param "compiler" in "js"!')) {
+      if (data.includes('Missing param "compiler" at rooseveltConfig.js.compiler!')) {
         missingCompilerJSBool = true
       }
-      if (data.includes('Missing param "whitelist" in "js"!')) {
+      if (data.includes('Missing param "whitelist" at rooseveltConfig.js.whitelist!')) {
         missingWhiteListJSBool = true
       }
       if (data.includes('Issues have been detected in rooseveltConfig')) {
@@ -449,10 +449,10 @@ describe('Roosevelt Config Auditor Test', function () {
 
     // on the error stream, check config auditor output
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Extra param "turbo" found, this can be removed.')) {
+      if (data.includes('Extra param "turbo" found at rooseveltConfig.turbo, this can be removed.')) {
         extraTurboParamBool = true
       }
-      if (data.includes('Extra param "maxServers" found, this can be removed.')) {
+      if (data.includes('Extra param "maxServers" found at rooseveltConfig.maxServers, this can be removed.')) {
         extraMaxServersBool = true
       }
       if (data.includes('Issues have been detected in rooseveltConfig')) {
