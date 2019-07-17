@@ -1254,9 +1254,9 @@ describe('CSS Section Tests', function () {
 
   it('should minify the CSS files when the minify param is true', function (done) {
     // create clean-css minified buffers
-    let minifiedBufferA = new CleanCSS().minify(cssDataArray[0]).styles
-    let minifiedBufferB = new CleanCSS().minify(cssDataArray[1]).styles
-    let minifiedBufferC = new CleanCSS().minify(cssDataArray[2]).styles
+    const minifiedBufferA = new CleanCSS().minify(cssDataArray[0]).styles
+    const minifiedBufferB = new CleanCSS().minify(cssDataArray[1]).styles
+    const minifiedBufferC = new CleanCSS().minify(cssDataArray[2]).styles
 
     // create the app.js file
     generateTestApp({
@@ -1271,18 +1271,18 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // compare the compiled build css files to the clean-css minified buffers
     testApp.on('message', () => {
       // get the compiled css files
-      let compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
-      let compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
-      let compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      const compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
       // check if minified build files are the same compared to the css buffers
-      let test1 = compiledFileA === minifiedBufferA
-      let test2 = compiledFileB === minifiedBufferB
-      let test3 = compiledFileC === minifiedBufferC
+      const test1 = compiledFileA === minifiedBufferA
+      const test2 = compiledFileB === minifiedBufferB
+      const test3 = compiledFileC === minifiedBufferC
       // verify the minification worked
       assert.strictEqual(test1, true)
       assert.strictEqual(test2, true)
@@ -1297,10 +1297,10 @@ describe('CSS Section Tests', function () {
 
   it('should load the cleanCSS param\'s options and use them when minify param is true', function (done) {
     // create clean-css minified buffers given a set of cleanCSS options
-    let cleanOptions = { format: 'keep-breaks' }
-    let bufferA = new CleanCSS(cleanOptions).minify(cssDataArray[0]).styles
-    let bufferB = new CleanCSS(cleanOptions).minify(cssDataArray[1]).styles
-    let bufferC = new CleanCSS(cleanOptions).minify(cssDataArray[2]).styles
+    const cleanOptions = { format: 'keep-breaks' }
+    const bufferA = new CleanCSS(cleanOptions).minify(cssDataArray[0]).styles
+    const bufferB = new CleanCSS(cleanOptions).minify(cssDataArray[1]).styles
+    const bufferC = new CleanCSS(cleanOptions).minify(cssDataArray[2]).styles
 
     // create the app.js file
     generateTestApp({
@@ -1320,18 +1320,18 @@ describe('CSS Section Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // compare the compiled css files to the buffers
     testApp.on('message', () => {
       // get the compiled css files
-      let compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
-      let compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
-      let compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      const compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
       // check if build files and buffers are the same
-      let test1 = compiledFileA === bufferA
-      let test2 = compiledFileB === bufferB
-      let test3 = compiledFileC === bufferC
+      const test1 = compiledFileA === bufferA
+      const test2 = compiledFileB === bufferB
+      const test3 = compiledFileC === bufferC
       // verify the minification using cleanCSS params worked
       assert.strictEqual(test1, true)
       assert.strictEqual(test2, true)
