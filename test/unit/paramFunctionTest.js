@@ -13,7 +13,7 @@ describe('Parameter Function Tests', function () {
   const appDir = path.join(__dirname, '../app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
-  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
@@ -47,7 +47,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server has finished initialization, try to access the server or see if the message is the word that is suppose to be given back
     testApp.on('message', (message) => {
@@ -83,7 +83,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the console logs to see if the req body that will be logged out has a value or if its undefined
     testApp.stdout.on('data', (data) => {
@@ -128,7 +128,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the console logs to see if the req body that will be logged out has a value or if its undefined
     testApp.stdout.on('data', (data) => {
@@ -173,7 +173,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Testing before: undefined')) {
@@ -213,7 +213,7 @@ describe('Parameter Function Tests', function () {
     let publicDirCreationLogBool = false
 
     // create a public dir
-    let publicFolderPath = path.join(appDir, 'public')
+    const publicFolderPath = path.join(appDir, 'public')
     fse.mkdirSync(publicFolderPath)
 
     // create the app.js file
@@ -224,7 +224,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app logs, see if the specific log is outputted
     testApp.stdout.on('data', (data) => {
@@ -257,7 +257,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app logs, see if the specific log is outputted
     testApp.stdout.on('data', (data) => {
@@ -288,7 +288,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is finished initialization, post a request with some files, should get back a 500
     testApp.on('message', (params) => {
@@ -314,13 +314,13 @@ describe('Parameter Function Tests', function () {
     // bool var to hold whether or not the version public folder was made or not
     let versionPublicCreationLogBool = false
     // package.json source code
-    let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+    const packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
     // create the package.json file
     fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
     // create the version public folder
-    let Dirpath1 = path.join(appDir, 'public')
+    const Dirpath1 = path.join(appDir, 'public')
     fse.mkdirSync(Dirpath1)
-    let Dirpath2 = path.join(Dirpath1, '0.5.1')
+    const Dirpath2 = path.join(Dirpath1, '0.5.1')
     fse.mkdirSync(Dirpath2)
 
     // create the app.js file
@@ -332,7 +332,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app console logs, see if the specific creation log was made
     testApp.stdout.on('data', (data) => {
@@ -357,7 +357,7 @@ describe('Parameter Function Tests', function () {
     // bool var to hold whether or not the version public folder was made or not
     let versionPublicCreationLogBool = false
     // package.json source code
-    let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+    const packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
     // create the package.json file
     fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
 
@@ -370,7 +370,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app console logs, see if the specific creation log was made
     testApp.stdout.on('data', (data) => {
@@ -381,7 +381,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app finishes initialization, see if a folder like that exists
     testApp.on('message', () => {
-      let test = fse.existsSync(path.join(appDir, 'public/0.5.1'))
+      const test = fse.existsSync(path.join(appDir, 'public/0.5.1'))
       assert.strictEqual(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
       testApp.send('stop')
     })
@@ -405,7 +405,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/models')}`)) {
@@ -437,7 +437,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/views')}`)) {
@@ -468,7 +468,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/controllers')}`)) {
@@ -493,19 +493,19 @@ describe('Parameter Function Tests', function () {
     let symlinkCreationLogBool = false
 
     // create the other directories first
-    let staticsPath = path.join(appDir, 'statics')
+    const staticsPath = path.join(appDir, 'statics')
     fse.mkdirSync(staticsPath)
-    let buildPath = path.join(staticsPath, '.build')
+    const buildPath = path.join(staticsPath, '.build')
     fse.mkdirSync(buildPath)
-    let cssPath = path.join(buildPath, 'css')
+    const cssPath = path.join(buildPath, 'css')
     fse.mkdirSync(cssPath)
-    let jsPath = path.join(buildPath, 'js')
+    const jsPath = path.join(buildPath, 'js')
     fse.mkdirSync(jsPath)
-    let imagesPath = path.join(staticsPath, 'images')
+    const imagesPath = path.join(staticsPath, 'images')
     fse.mkdirSync(imagesPath)
 
     // create the symlinks
-    let publicPath = path.join(appDir, 'public')
+    const publicPath = path.join(appDir, 'public')
     fse.mkdirSync(publicPath)
     fse.symlinkSync(imagesPath, path.join(publicPath, 'images'), 'junction')
     fse.symlinkSync(cssPath, path.join(publicPath, 'css'), 'junction')
@@ -519,7 +519,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen to the logs and see if any of the symlinks creations were logged
     testApp.stdout.on('data', (data) => {
@@ -555,7 +555,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen to the error logs and see if one about the night being dark and full of error pops up
     testApp.stderr.on('data', (data) => {
@@ -594,7 +594,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the 404 load error was outputted
     testApp.stderr.on('data', (data) => {
@@ -617,7 +617,7 @@ describe('Parameter Function Tests', function () {
 
   it('should skip over elements that are not files when loading in controllers', function (done) {
     // reference list of routes to compare against
-    let referenceRoutes = [
+    const referenceRoutes = [
       '/controller1',
       '/controller2'
     ]
@@ -637,7 +637,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is finished with its initialization, kill it
     testApp.on('message', (routes) => {
@@ -668,12 +668,12 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app finishes initialization, test that there isn't a value of css as the first element in the symlink array
     testApp.on('message', (params) => {
-      let firstElement = params.staticsSymlinksToPublic[0]
-      let test = firstElement === 'css'
+      const firstElement = params.staticsSymlinksToPublic[0]
+      const test = firstElement === 'css'
       assert.strictEqual(test, false, 'Roosevelt made a css value in the symlink array even though it alreadly has ')
       testApp.send('stop')
     })
@@ -698,7 +698,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the symlink error was outputted
     testApp.stderr.on('data', (data) => {
@@ -721,9 +721,9 @@ describe('Parameter Function Tests', function () {
 
   it('should be able to symlink to directories ', function (done) {
     // prepare paths to folders
-    let publicPath = path.join(appDir, 'public')
-    let parentDirPath = path.join(publicPath, 'parentDir')
-    let symDirPath = path.join(parentDirPath, 'symDir')
+    const publicPath = path.join(appDir, 'public')
+    const parentDirPath = path.join(publicPath, 'parentDir')
+    const symDirPath = path.join(parentDirPath, 'symDir')
 
     // create the app.js file
     generateTestApp({
@@ -735,7 +735,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app finishes its initialization, kill it
     testApp.on('message', () => {
@@ -779,7 +779,7 @@ describe('Parameter Function Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', (data) => {
       if (data.includes('Roosevelt Express fatal error: could not load controller files from')) {

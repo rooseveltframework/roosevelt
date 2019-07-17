@@ -10,7 +10,7 @@ describe('Constructor Parameter Tests', function () {
   const appDir = path.join(__dirname, '../app/constructorParams')
   const config = require('../util/testConstructorConfig.json')
   const pkgConfig = require('../util/testPkgConfig.json')
-  let params = Object.keys(config)
+  const params = Object.keys(config)
   const pkg = {
     rooseveltConfig: pkgConfig
   }

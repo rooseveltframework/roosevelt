@@ -36,11 +36,11 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp(undefined, sOptions)
 
     // read the default config file
-    let defaults = fse.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
-    let defaultsJSON = JSON.parse(defaults)
+    const defaults = fse.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
+    const defaultsJSON = JSON.parse(defaults)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we do get back an object of params, it means that roosevelt was able to complete its initialization
     testApp.on('message', (params) => {
@@ -73,7 +73,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream check to see how many times it logs that the server starts
     testApp.stdout.on('data', (data) => {
@@ -111,7 +111,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream check to see how many times it logs that the server starts
     testApp.stdout.on('data', (data) => {
@@ -149,7 +149,7 @@ describe('Roosevelt.js Tests', function () {
     let messageRecievedBool = false
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
@@ -158,9 +158,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      let test1 = fse.existsSync(path.join(appDir, 'mvc'))
-      let test2 = fse.existsSync(path.join(appDir, 'public'))
-      let test3 = fse.existsSync(path.join(appDir, 'statics'))
+      const test1 = fse.existsSync(path.join(appDir, 'mvc'))
+      const test2 = fse.existsSync(path.join(appDir, 'public'))
+      const test3 = fse.existsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -186,7 +186,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we recieve a message from roosevelt, which is only from a callback, turn that bool to true
     testApp.on('message', () => {
@@ -195,9 +195,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      let test1 = fse.existsSync(path.join(appDir, 'mvc'))
-      let test2 = fse.existsSync(path.join(appDir, 'public'))
-      let test3 = fse.existsSync(path.join(appDir, 'statics'))
+      const test1 = fse.existsSync(path.join(appDir, 'mvc'))
+      const test2 = fse.existsSync(path.join(appDir, 'public'))
+      const test3 = fse.existsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -222,7 +222,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '1.1'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '1.1'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -256,7 +256,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--cores', '2'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '--cores', '2'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -290,7 +290,7 @@ describe('Roosevelt.js Tests', function () {
       onServerStart: `(app) => {console.log("server started")}`
     }, sOptions)
 
-    const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
@@ -329,7 +329,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', 'max'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', 'max'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check output logs to kill the app when the server instances reach the max and keep track of all the thread that are killed
     testApp.stdout.on('data', (data) => {
@@ -369,7 +369,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `${tooManyCores}`], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `${tooManyCores}`], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see how many times the app makes a server instance
     testApp.stdout.on('data', (data) => {
@@ -411,7 +411,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `0`], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `0`], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see how many times the app makes a server instance
     testApp.stdout.on('data', (data) => {
@@ -452,7 +452,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
@@ -486,7 +486,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
@@ -522,7 +522,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if a message was recieved, then it probably means that the onServerStart param has excuted and sent something
     testApp.on('message', () => {
@@ -560,7 +560,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test to see if the app is being run in production mode
     testApp.stdout.on('data', (data) => {
@@ -594,7 +594,7 @@ describe('Roosevelt.js Tests', function () {
     let serverStartedBool = false
 
     // create a dummy server that will give occupy the same port as the app
-    let server = http.createServer(function (req, res) {
+    const server = http.createServer(function (req, res) {
       res.statusCode = 200
       res.end()
     }).listen(43711, 'localhost')
@@ -607,7 +607,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
     testApp.stderr.on('data', (data) => {
       if (data.includes('Either kill that process or change this')) {
         samePortWarningBool = true
@@ -663,7 +663,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
@@ -719,7 +719,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error logs, check if any display the missing or out of date warning log
     testApp.stderr.on('data', (data) => {
@@ -745,8 +745,8 @@ describe('Roosevelt.js Tests', function () {
     let requestFinishedBool = false
 
     // copy the mvc folder to the test App
-    let pathToMVC = path.join(__dirname, '/../util/mvc')
-    let pathtoapp = path.join(appDir, '/mvc')
+    const pathToMVC = path.join(__dirname, '/../util/mvc')
+    const pathtoapp = path.join(appDir, '/mvc')
     fse.copySync(pathToMVC, pathtoapp)
 
     // generate the app.js file
@@ -757,7 +757,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (msg) => {
       // when the app finishes initialization, send a request to the server
@@ -803,7 +803,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
     testApp.stdout.on('data', (data) => {
@@ -842,7 +842,7 @@ describe('Roosevelt.js Tests', function () {
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
     testApp.stdout.on('data', (data) => {

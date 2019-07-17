@@ -9,7 +9,7 @@ const path = require('path')
 describe('package.json Parameter Tests', function () {
   const appDir = path.join(__dirname, '../app/pkgParams')
   const pkgConfig = require('../util/testPkgConfig.json')
-  let params = Object.keys(pkgConfig)
+  const params = Object.keys(pkgConfig)
   const pkg = {
     rooseveltConfig: pkgConfig
   }

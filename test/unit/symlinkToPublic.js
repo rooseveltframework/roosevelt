@@ -43,7 +43,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: []
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure js sourcePath is included
     assert(params.staticsSymlinksToPublic.includes(params.js.sourcePath))
@@ -67,7 +67,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: []
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure js output is included
     assert(params.staticsSymlinksToPublic.includes(`js: ${params.js.output}`))
@@ -88,7 +88,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: []
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure css sourcePath is included
     assert(params.staticsSymlinksToPublic.includes(params.css.sourcePath))
@@ -112,7 +112,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: []
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure css output is included
     assert(params.staticsSymlinksToPublic.includes(`css: ${params.css.output}`))
@@ -138,7 +138,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: []
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
     assert.deepStrictEqual(params.staticsSymlinksToPublic, [])
@@ -167,7 +167,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: []
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
     assert.deepStrictEqual(params.staticsSymlinksToPublic, [])
@@ -190,7 +190,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: ['js: .build/js', 'css: .build/css']
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
     assert.deepStrictEqual(params.staticsSymlinksToPublic, ['js: .build/js', 'css: .build/css'])
@@ -219,7 +219,7 @@ describe('symlinkToPublic Parameter Tests', function () {
       staticsSymlinksToPublic: ['js', 'css']
     })
 
-    let params = app.expressApp.get('params')
+    const params = app.expressApp.get('params')
 
     // ensure staticsSymlinksToPublic has not changed
     assert.deepStrictEqual(params.staticsSymlinksToPublic, ['js', 'css'])

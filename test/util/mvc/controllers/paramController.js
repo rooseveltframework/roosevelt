@@ -1,7 +1,7 @@
 module.exports = (router) => {
   router.route('/paramPost').post((req, res) => {
-    let keys = Object.keys(req.body)
-    let count = keys.length
+    const keys = Object.keys(req.body)
+    const count = keys.length
     res.send(count.toString())
   })
 
