@@ -8,6 +8,7 @@ const fse = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawsync = require('klaw-sync')
 const path = require('path')
+const CleanCSS = require('clean-css')
 
 // test app directory
 const appDir = path.join(__dirname, '../app/cssTest')
@@ -83,10 +84,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -131,10 +128,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -181,10 +174,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -233,10 +222,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -284,10 +269,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -329,10 +310,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -379,10 +356,6 @@ describe('CSS Section Tests', function () {
       css: {
         compiler: {
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -423,10 +396,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'test_module_1',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -470,10 +439,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'test_module_2',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -519,10 +484,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -567,10 +528,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -614,10 +571,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -664,10 +617,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -711,10 +660,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -767,10 +712,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -824,10 +765,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -882,10 +819,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -939,10 +872,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1002,10 +931,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1065,10 +990,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1113,10 +1034,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1164,10 +1081,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1216,10 +1129,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1272,10 +1181,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'roosevelt-less',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         },
@@ -1321,10 +1226,6 @@ describe('CSS Section Tests', function () {
         compiler: {
           nodeModule: 'custom-csspreprocessor',
           params: {
-            cleanCSS: {
-              advanced: true,
-              aggressiveMerging: true
-            },
             sourceMap: null
           }
         }
@@ -1347,6 +1248,100 @@ describe('CSS Section Tests', function () {
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(foundPreprocessor, true, 'The Roosevelt app did not use the custom css preprocessor')
+      done()
+    })
+  })
+
+  it('should minify the CSS files when the minify param is true', function (done) {
+    // create clean-css minified buffers
+    const minifiedBufferA = new CleanCSS().minify(cssDataArray[0]).styles
+    const minifiedBufferB = new CleanCSS().minify(cssDataArray[1]).styles
+    const minifiedBufferC = new CleanCSS().minify(cssDataArray[2]).styles
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less'
+        }
+      },
+      generateFolderStructure: true,
+      minify: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // compare the compiled build css files to the clean-css minified buffers
+    testApp.on('message', () => {
+      // get the compiled css files
+      const compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      // check if minified build files are the same compared to the css buffers
+      const test1 = compiledFileA === minifiedBufferA
+      const test2 = compiledFileB === minifiedBufferB
+      const test3 = compiledFileC === minifiedBufferC
+      // verify the minification worked
+      assert.strictEqual(test1, true)
+      assert.strictEqual(test2, true)
+      assert.strictEqual(test3, true)
+    })
+
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should load the cleanCSS param\'s options and use them when minify param is true', function (done) {
+    // create clean-css minified buffers given a set of cleanCSS options
+    const cleanOptions = { format: 'keep-breaks' }
+    const bufferA = new CleanCSS(cleanOptions).minify(cssDataArray[0]).styles
+    const bufferB = new CleanCSS(cleanOptions).minify(cssDataArray[1]).styles
+    const bufferC = new CleanCSS(cleanOptions).minify(cssDataArray[2]).styles
+
+    // create the app.js file
+    generateTestApp({
+      appDir: appDir,
+      css: {
+        compiler: {
+          nodeModule: 'roosevelt-less',
+          params: {
+            cleanCSS: {
+              format: 'keep-breaks'
+            }
+          }
+        }
+      },
+      generateFolderStructure: true,
+      minify: true
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // compare the compiled css files to the buffers
+    testApp.on('message', () => {
+      // get the compiled css files
+      const compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      // check if build files and buffers are the same
+      const test1 = compiledFileA === bufferA
+      const test2 = compiledFileB === bufferB
+      const test3 = compiledFileC === bufferC
+      // verify the minification using cleanCSS params worked
+      assert.strictEqual(test1, true)
+      assert.strictEqual(test2, true)
+      assert.strictEqual(test3, true)
+      // kill the app
+      testApp.send('stop')
+    })
+
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
       done()
     })
   })
