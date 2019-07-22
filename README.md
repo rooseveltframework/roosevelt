@@ -220,7 +220,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `ROOSEVELT_AUTOKILLER`:
   - Set to `on` to spawn a process to kill the HTML validator if it is running in the background and idle for more than a certain amount of time. The timeout can be configured in [app behavior params](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters).
   - Set to `off`to disable the HTML validator autokiller.
-- `ROOSEVELT_DEPLOYMENT`: If not present, Roosevelt will install its devDependencies during `npm install` to support using Roosevelt in development mode. If not present, Roosevelt will skip installing its devDependencies to shrink production builds.
+- `ROOSEVELT_DEPLOYMENT`: If not present, Roosevelt will install its devDependencies during `npm install` to support using Roosevelt in development mode. If present, Roosevelt will skip installing its devDependencies to shrink production builds.
 
 Environment variable precedence:
 
@@ -589,6 +589,7 @@ Statics parameters
 
       - Note: Your chosen Roosevelt CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
     - `params`: *[Object]* Params to send to the Roosevelt CSS preprocessor middleware if it accepts any.
+      - `cleanCSS`: *[Object]* Roosevelt uses [clean-css](https://www.npmjs.com/package/clean-css) for CSS minification. Use the cleanCSS param to configure options passed to the constructor. See the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options) for documentation on available params.
 
     - Note: The default preprocessor for a Roosevelt app created with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
 
@@ -600,10 +601,7 @@ Statics parameters
         {
           "nodeModule": "roosevelt-less",
           "params": {
-            "cleanCSS": {
-              "advanced": true,
-              "aggressiveMerging": true
-            },
+            "cleanCSS": {},
             "sourceMap": null
           }
         }
@@ -650,10 +648,7 @@ Statics parameters
         "compiler": {
           "nodeModule": "roosevelt-less",
           "params": {
-            "cleanCSS": {
-              "advanced": true,
-              "aggressiveMerging": true
-            },
+            "cleanCSS": {},
             "sourceMap": null
           }
         },
