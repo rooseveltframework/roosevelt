@@ -2,6 +2,7 @@
 
 ## Next version
 
+- Sources Roosevelt configs internally using [source-configs](https://www.npmjs.com/package/source-configs)
 - Breaking change: Moved css minification from roosevelt-less to Roosevelt using clean-css as a direct dependency. The clean-css library had an update with breaking changes so the rooseveltConfig params in "cleanCSS", 'advanced' and 'aggressiveMerging', are now outdated
 
 ## 0.14.6
