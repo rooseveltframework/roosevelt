@@ -11,8 +11,12 @@
   },
   "minify": "constructor",
   "htmlValidator": {
-    "enable": "constructor",
-    "separateProcess": "constructor",
+    "enable": false,
+    "separateProcess": {
+      "enable": true,
+      "autoKiller": true,
+      "autoKillerTimeout": 3600000
+    },
     "port": "constructor",
     "showWarnings": "constructor",
     "exceptions": {
@@ -46,9 +50,9 @@
   },
   "staticsRoot": "constructor",
   "htmlMinifier": {
-    "override": "constructor",
-    "exception_url": "constructor",
-    "htmlMinifier": "constructor"
+    "enable": "constructor",
+    "exceptionRoutes": "constructor",
+    "options": "constructor"
   },
   "css": {
     "sourcePath": "constructor",
