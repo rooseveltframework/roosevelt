@@ -283,7 +283,7 @@ App behavior parameters
 
 - `port`: The HTTP port your app will run on.
 
-  - Default: *[Number]* `43711`.
+  - Default: *[Number|String]* `43711`.
 
 - `enableCLIFlags`: Enables parsing of command line flags.
 
