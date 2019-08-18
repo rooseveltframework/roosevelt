@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "codecov": "~3.5.0",
-    "eslint": "~6.1.0",
+    "eslint": "~6.2.0",
     "eslint-plugin-mocha": "~6.0.0",
     "fkill": "~6.2.0",
     "html-validator": "~4.1.0",
