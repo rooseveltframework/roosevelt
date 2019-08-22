@@ -83,7 +83,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `viewsPath was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, 'viewsPath was not made into a directory successfully')
         done()
       }
     })
@@ -95,7 +95,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"modelsPath" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"modelsPath" was not made into a directory successfully')
         done()
       }
     })
@@ -107,7 +107,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"controllersPath" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"controllersPath" was not made into a directory successfully')
         done()
       }
     })
@@ -119,7 +119,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"staticsPath" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"staticsPath" was not made into a directory successfully')
         done()
       }
     })
@@ -131,7 +131,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"PublicFolder" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"PublicFolder" was not made into a directory successfully')
         done()
       }
     })
@@ -143,7 +143,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"js source directory" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"js source directory" was not made into a directory successfully')
         done()
       }
     })
@@ -155,7 +155,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"css source directory" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"css source directory" was not made into a directory successfully')
         done()
       }
     })
@@ -167,7 +167,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isDirectory(), true, `"image" was not made into a directory successfully`)
+        assert.strictEqual(stats.isDirectory(), true, '"image" was not made into a directory successfully')
         done()
       }
     })
@@ -179,7 +179,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isSymbolicLink(), true, `"image" was not made into a symlink successfully`)
+        assert.strictEqual(stats.isSymbolicLink(), true, '"image" was not made into a symlink successfully')
         done()
       }
     })
@@ -191,7 +191,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isSymbolicLink(), true, `"jsTest" was not made into a symlink successfully`)
+        assert.strictEqual(stats.isSymbolicLink(), true, '"jsTest" was not made into a symlink successfully')
         done()
       }
     })
@@ -203,7 +203,7 @@ describe('Folder Structure Tests', function () {
       if (err) {
         done(err)
       } else {
-        assert.strictEqual(stats.isSymbolicLink(), true, `"cssTest" was not made into a symlink successfully`)
+        assert.strictEqual(stats.isSymbolicLink(), true, '"cssTest" was not made into a symlink successfully')
         done()
       }
     })

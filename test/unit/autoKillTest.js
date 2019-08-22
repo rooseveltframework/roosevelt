@@ -28,7 +28,7 @@ describe('Roosevelt Autokill Test', function () {
     })
   })
 
-  it('should kill the validator after the app has gracefully shutdown if the validator is a separate process', function (done) {
+  it.skip('should kill the validator after the app has gracefully shutdown if the validator is a separate process', function (done) {
     let cannotConnectBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
@@ -50,7 +50,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -82,7 +82,7 @@ describe('Roosevelt Autokill Test', function () {
     }
   })
 
-  it('should restart the autokill timer if the app is still active, then once the app has gracefully shutdown it should kill the validator.', function (done) {
+  it.skip('should restart the autokill timer if the app is still active, then once the app has gracefully shutdown it should kill the validator.', function (done) {
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
@@ -105,7 +105,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 10000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -138,7 +138,7 @@ describe('Roosevelt Autokill Test', function () {
     }
   })
 
-  it('should say that its restarting auto Killer if one is running and the app is being initialized again', function (done) {
+  it.skip('should say that its restarting auto Killer if one is running and the app is being initialized again', function (done) {
     let restartAutoKillerLogBool = false
 
     // generate the test app
@@ -158,7 +158,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork an autoKiller instance
@@ -188,7 +188,7 @@ describe('Roosevelt Autokill Test', function () {
     }
   })
 
-  it('should be able to say that there is no autoKiller and that it is starting a new one if the roosevelt_validator_pid.txt file exists, but the process is already dead', function (done) {
+  it.skip('should be able to say that there is no autoKiller and that it is starting a new one if the roosevelt_validator_pid.txt file exists, but the process is already dead', function (done) {
     let noAutoKillerFromPIDBool = false
 
     // generate the test app
@@ -207,7 +207,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -255,7 +255,7 @@ describe('Roosevelt Autokill Test', function () {
     }
   })
 
-  it('should log that a validator will be created if one isn\'t running but all other logs are hidden due to verbose logs being set false.', function (done) {
+  it.skip('should log that a validator will be created if one isn\'t running but all other logs are hidden due to verbose logs being set false.', function (done) {
     let timerResetBool = false
     let htmlValidatorPortClosedBool = false
     let autoKillerStartedBool = false
@@ -273,7 +273,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process

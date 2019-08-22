@@ -36,7 +36,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -63,7 +63,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
 
           // test to see if the data in the neew file is correct
           const file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
-          const test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
+          const test2 = file1Contents === 'This is the first test document for the multipart Test. Hope this goes well'
           assert.strictEqual(test2, true)
           testApp.send('stop')
         })
@@ -80,7 +80,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
         uploadDir: appDir
       }
@@ -119,7 +119,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       bodyParser: {
         urlEncoded: {
           extended: true,
@@ -162,7 +162,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       bodyParser: {
         json: {
           limit: 10
@@ -207,7 +207,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
         multiples: false,
         maxFieldsSize: 2
@@ -263,7 +263,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -313,7 +313,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -360,7 +360,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -405,7 +405,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: true
     }, options)
 

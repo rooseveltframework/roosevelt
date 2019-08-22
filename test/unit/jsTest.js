@@ -14,9 +14,9 @@ describe('JavaScript Tests', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
 
   // sample JS source string to test the compiler with
-  const test1 = `var a = function() { return 1 + 2}`
-  const test2 = `var b = function(multin) { return multin * 4}`
-  const test3 = `var c = function(name) {console.log("Hello " + name)}`
+  const test1 = 'var a = function() { return 1 + 2}'
+  const test2 = 'var b = function(multin) { return multin * 4}'
+  const test3 = 'var c = function(name) {console.log("Hello " + name)}'
 
   // array of paths to generated static js test files
   const pathsOfStaticJS = [
@@ -297,7 +297,7 @@ describe('JavaScript Tests', function () {
     })
   })
 
-  it(`should throw a warning if the app's js compiler nodeModule is undefined`, function (done) {
+  it('should throw a warning if the app\'s js compiler nodeModule is undefined', function (done) {
     // bool var to hold whether or not the specific error message was given
     let failureToIncludeBool = false
     // generate the app.js file
@@ -335,7 +335,7 @@ describe('JavaScript Tests', function () {
     })
   })
 
-  it(`should throw a warning if the app's js compiler nodeModule is set to an incorrect or missing compiler`, function (done) {
+  it('should throw a warning if the app\'s js compiler nodeModule is set to an incorrect or missing compiler', function (done) {
     // bool var to hold whether or not the specific error message was given
     let failureToIncludeBool = false
     // generate the app.js file
@@ -491,7 +491,7 @@ describe('JavaScript Tests', function () {
 
   it('should throw an error stating that a file is not coded correctly', function (done) {
     // create a file that has js errors in it
-    const fileContent = `console.log('blah'`
+    const fileContent = 'console.log(\'blah\''
     const filePath = path.join(appDir, 'statics/js/error.js')
     fse.writeFileSync(filePath, fileContent)
     // bool var that holds whether or not Roosevelt will give a warning for a js file not coded correctly
@@ -574,7 +574,7 @@ describe('JavaScript Tests', function () {
     // when the app ends, check to see if it created the static js folder
     testApp.on('exit', () => {
       if (staticJSDirMadeBool === false) {
-        assert.fail(`Roosevelt did not create a static js directory when one wasn't present`)
+        assert.fail('Roosevelt did not create a static js directory when one wasn\'t present')
       }
       done()
     })
@@ -884,8 +884,8 @@ describe('JavaScript Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      jsCompiler: `(app) => { return { parse: (app, fileName) => { return 1 } } }`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
+      jsCompiler: '(app) => { return { parse: (app, fileName) => { return 1 } } }',
       js: {
         sourcePath: 'js',
         compiler: {
@@ -967,7 +967,7 @@ describe('JavaScript Tests', function () {
     // generate a sample .gitignore
     let addedCorrectBool = false
     let ignoredCorrectBool = true
-    const gitignoreData = `# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass\ncoverage`
+    const gitignoreData = '# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass\ncoverage'
     const pathOfGitignore = path.join(appDir, '.gitignore')
     let gitignoreFiles = []
 
