@@ -43,7 +43,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerInit: `(app) => {process.send("something")}`
+      onServerInit: '(app) => {process.send("something")}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -78,8 +78,8 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqStart: `(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}`,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onReqStart: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app and run it as a child process
@@ -123,8 +123,8 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqBeforeRoute: `(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}`,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onReqBeforeRoute: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app and run it as a child process
@@ -168,8 +168,8 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onReqAfterRoute: `(req, res) => {console.log("Testing after: " + res.Testing)}`,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onReqAfterRoute: '(req, res) => {console.log("Testing after: " + res.Testing)}',
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app and run it as a child process
@@ -220,7 +220,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -253,7 +253,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: false,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -284,7 +284,7 @@ describe('Parameter Function Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       multipart: false,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -314,7 +314,7 @@ describe('Parameter Function Tests', function () {
     // bool var to hold whether or not the version public folder was made or not
     let versionPublicCreationLogBool = false
     // package.json source code
-    const packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+    const packageSource = '{ "version": "0.5.1", "rooseveltConfig": {}}'
     // create the package.json file
     fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
     // create the version public folder
@@ -327,7 +327,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true
     }, options)
 
@@ -357,7 +357,7 @@ describe('Parameter Function Tests', function () {
     // bool var to hold whether or not the version public folder was made or not
     let versionPublicCreationLogBool = false
     // package.json source code
-    const packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+    const packageSource = '{ "version": "0.5.1", "rooseveltConfig": {}}'
     // create the package.json file
     fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
 
@@ -365,7 +365,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: false,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true
     }, options)
 
@@ -401,7 +401,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -433,7 +433,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: false,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -464,7 +464,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: false,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -515,7 +515,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -551,7 +551,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -587,7 +587,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       errorPages: {
         notFound: '404errController.js'
       }
@@ -632,7 +632,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("routes"))}`,
+      onServerStart: '(app) => {process.send(app.get("routes"))}',
       checkDependencies: false
     }, options)
 
@@ -663,7 +663,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       staticsSymlinksToPublic: ['images', 'js', 'css']
     }, options)
 
@@ -693,7 +693,7 @@ describe('Parameter Function Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       alwaysHostPublic: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       staticsSymlinksToPublic: ['symDir: staticsDir', 'symDir/subSymDir: otherStaticsDir']
     }, options)
 
@@ -730,7 +730,7 @@ describe('Parameter Function Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       alwaysHostPublic: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       staticsSymlinksToPublic: ['parentDir/symDir']
     }, options)
 
@@ -748,14 +748,14 @@ describe('Parameter Function Tests', function () {
         if (err) {
           done(err)
         } else {
-          assert.strictEqual(stats.isDirectory(), true, `parent directory of symlink not created successfully`)
+          assert.strictEqual(stats.isDirectory(), true, 'parent directory of symlink not created successfully')
         }
       })
       fse.lstat(symDirPath, (err, stats) => {
         if (err) {
           done(err)
         } else {
-          assert.strictEqual(stats.isSymbolicLink(), true, `symlink to directory not created successfully`)
+          assert.strictEqual(stats.isSymbolicLink(), true, 'symlink to directory not created successfully')
         }
       })
       done()
@@ -775,7 +775,7 @@ describe('Parameter Function Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       controllersPath: 'mvc/faviconTest.ico',
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process

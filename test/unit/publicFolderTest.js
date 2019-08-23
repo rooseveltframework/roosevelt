@@ -17,7 +17,7 @@ describe('Public Folder Tests', function () {
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // package.json source code
-  const packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+  const packageSource = '{ "version": "0.5.1", "rooseveltConfig": {}}'
 
   beforeEach(function (done) {
     // start by copying the premade mvc directory into the app directory
@@ -44,7 +44,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/faviconTest.ico'
     }, options)
 
@@ -94,7 +94,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: null
     }, options)
 
@@ -115,7 +115,7 @@ describe('Public Folder Tests', function () {
             .get('/favicon.ico')
             .expect(404, (err, res) => {
               if (err) {
-                assert.fail(`able to get the favicon.ico, even when there isn't one`)
+                assert.fail('able to get the favicon.ico, even when there isn\'t one')
                 testApp.send('stop')
               } else {
                 testApp.send('stop')
@@ -137,7 +137,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/nothingHere.ico'
     }, options)
 
@@ -165,7 +165,7 @@ describe('Public Folder Tests', function () {
             .get('/favicon.ico')
             .expect(404, (err, res) => {
               if (err) {
-                assert.fail(`able to get the favicon.ico, even when there isn't one`)
+                assert.fail('able to get the favicon.ico, even when there isn\'t one')
                 testApp.send('stop')
               } else {
                 testApp.send('stop')
@@ -189,7 +189,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true
     }, options)
 

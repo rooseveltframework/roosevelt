@@ -39,7 +39,7 @@ describe('Roosevelt Routes Tests', function () {
       viewEngine: [
         'html: teddy'
       ],
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -78,7 +78,7 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -125,7 +125,7 @@ describe('Roosevelt Routes Tests', function () {
           }
         ]
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -164,7 +164,7 @@ describe('Roosevelt Routes Tests', function () {
           }
         ]
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -203,7 +203,7 @@ describe('Roosevelt Routes Tests', function () {
           }
         ]
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -245,7 +245,7 @@ describe('Roosevelt Routes Tests', function () {
       routers: {
         controllers: 'schema.js'
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     const schema = `module.exports = [
@@ -439,7 +439,7 @@ describe('Roosevelt Routes Tests', function () {
         appDir: appDir,
         generateFolderStructure: true,
         routers: test.routers,
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork and run app.js as a child process
@@ -537,7 +537,7 @@ describe('Roosevelt Routes Tests', function () {
             }
           ]
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork and run app.js as a child process
@@ -582,7 +582,7 @@ describe('Roosevelt Routes Tests', function () {
       appDir: appDir,
       port: 9000,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -624,7 +624,7 @@ describe('Roosevelt Routes Tests', function () {
       viewEngine: [
         'html: teddy'
       ],
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -665,7 +665,7 @@ describe('Roosevelt Routes Tests', function () {
       errorPages: {
         notFound: '404test.js'
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -705,7 +705,7 @@ describe('Roosevelt Routes Tests', function () {
       errorPages: {
         internalServerError: '500test.js'
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -742,7 +742,7 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -779,7 +779,7 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       toobusy: {
         maxLagPerRequest: 10,
         lagCheckInterval: 16
@@ -829,7 +829,7 @@ describe('Roosevelt Routes Tests', function () {
       errorPages: {
         serviceUnavailable: '503test.js'
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       toobusy: {
         maxLagPerRequest: 10,
         lagCheckInterval: 16
@@ -878,7 +878,7 @@ describe('Roosevelt Routes Tests', function () {
         'html: teddy',
         'jcs: ../test/util/jcsTemplate'
       ],
-      onServerStart: `(app) => {process.send(app.get("view engine"))}`
+      onServerStart: '(app) => {process.send(app.get("view engine"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -904,7 +904,7 @@ describe('Roosevelt Routes Tests', function () {
       viewEngine: [
         'jcs: ../test/util/jcsTemplate'
       ],
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -943,7 +943,7 @@ describe('Roosevelt Routes Tests', function () {
       viewEngine: [
         'html: teddy: blah'
       ],
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -978,7 +978,7 @@ describe('Roosevelt Routes Tests', function () {
       viewEngine: [
         'html: teddyza'
       ],
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -1009,7 +1009,7 @@ describe('Roosevelt Routes Tests', function () {
       generateFolderStructure: true,
       appDir: appDir,
       viewEngine: 'html: teddy',
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -1052,7 +1052,7 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -1115,7 +1115,7 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
     }, options)
 
@@ -1179,7 +1179,7 @@ describe('Roosevelt Routes Tests', function () {
         enable: true,
         port: 43203
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
     }, options)
 
@@ -1239,7 +1239,7 @@ describe('Roosevelt Routes Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
