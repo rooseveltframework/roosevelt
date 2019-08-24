@@ -66,7 +66,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -242,7 +242,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -274,7 +274,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -315,7 +315,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -361,7 +361,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -434,7 +434,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -492,7 +492,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -542,7 +542,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -593,7 +593,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -645,7 +645,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
@@ -791,7 +791,7 @@ describe('Roosevelt Config Auditor Test', function () {
     // Add dependencies to the packageJSONSource
     packageJSONSource.dependencies = {}
     packageJSONSource.dependencies.teddy = '~0.4.0'
-    packageJSONSource.dependencies.colors = `~1.2.0`
+    packageJSONSource.dependencies.colors = '~1.2.0'
     packageJSONSource = JSON.stringify(packageJSONSource)
 
     // Create the package.json file in the app test dir

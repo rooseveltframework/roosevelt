@@ -433,7 +433,7 @@ describe('JS Bundler Tests', function () {
 
     // when the app is finished, check to see if the js bundle was made or not
     testApp.on('exit', () => {
-      assert.strictEqual(jsbundleDirCreatedBool, false, `Roosevelt made a js bundle output directory when it shouldn't as generateFolderStructure is false`)
+      assert.strictEqual(jsbundleDirCreatedBool, false, 'Roosevelt made a js bundle output directory when it shouldn\'t as generateFolderStructure is false')
       done()
     })
   })
@@ -442,7 +442,7 @@ describe('JS Bundler Tests', function () {
     // bool var to hold whether or not the incorrect syntax error was produced
     let incorrectSyntaxErrorBool = false
     // js source string of incorrect syntax
-    const jsSourceString = `function test() {`
+    const jsSourceString = 'function test() {'
     // make the js file in the static folder
     fse.writeFileSync(path.join(appDir, 'statics/js/d.js'), jsSourceString)
 

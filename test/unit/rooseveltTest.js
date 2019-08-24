@@ -68,8 +68,8 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      onServerInit: `(app) => {console.log("Server initialized")}`
+      onServerStart: '(app) => {process.send(app.get("params"))}',
+      onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -107,7 +107,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerInit: `(app) => {console.log("Server initialized")}`
+      onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -218,7 +218,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -226,13 +226,13 @@ describe('Roosevelt.js Tests', function () {
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === 1) {
           testApp.send('stop')
         }
       }
-      if (data.includes(`thread`) && data.includes(`died`)) {
+      if (data.includes('thread') && data.includes('died')) {
         processKilledInt++
       }
     })
@@ -252,7 +252,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -260,7 +260,7 @@ describe('Roosevelt.js Tests', function () {
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === 2) {
           testApp.send('stop')
@@ -287,7 +287,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
     const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -297,7 +297,7 @@ describe('Roosevelt.js Tests', function () {
       if (data.includes('development mode')) {
         devModeBool = true
       }
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === 2) {
           testApp.send('stop')
@@ -325,7 +325,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started " + process.pid)}`
+      onServerStart: '(app) => {console.log("server started " + process.pid)}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -333,7 +333,7 @@ describe('Roosevelt.js Tests', function () {
 
     // check output logs to kill the app when the server instances reach the max and keep track of all the thread that are killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === maxCores) {
           testApp.send('stop')
@@ -365,7 +365,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -407,11 +407,11 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `0`], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '0'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see how many times the app makes a server instance
     testApp.stdout.on('data', (data) => {
@@ -448,7 +448,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -482,7 +482,7 @@ describe('Roosevelt.js Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       localhostOnly: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -518,7 +518,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `something`
+      onServerStart: 'something'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -556,7 +556,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -603,7 +603,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -659,7 +659,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -714,7 +714,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       checkDependencies: false
     }, sOptions)
 
@@ -753,7 +753,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app.js file and run it as a child process

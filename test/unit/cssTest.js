@@ -244,7 +244,7 @@ describe('CSS Section Tests', function () {
       assert.strictEqual(test1, true)
       // see that the value in the css version file is correct
       const versionFileString = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
-      const versionFileNum = versionFileString.split(`'`)
+      const versionFileNum = versionFileString.split('\'')
       const test2 = packageJSON.version === versionFileNum[1]
       assert.strictEqual(test2, true)
       testApp.send('stop')
@@ -909,7 +909,7 @@ describe('CSS Section Tests', function () {
     // bool var to hold whether or not Roosevelt had console logged a specfic message
     let versionFileCreationLogBool = false
     // versionFile source String
-    const versionFileSourceString = `/* do not edit; generated automatically by Roosevelt */ @appVersion: '0.3.1';\n`
+    const versionFileSourceString = '/* do not edit; generated automatically by Roosevelt */ @appVersion: \'0.3.1\';\n'
     // write the file in the css directory
     const versionFilePath = path.join(appDir, 'statics/css/_version.less')
     fse.writeFileSync(versionFilePath, versionFileSourceString)
@@ -1219,8 +1219,8 @@ describe('CSS Section Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      cssCompiler: `(app) => { return { versionCode: (app) => { return 1 }, parse: (app, fileName) => { return 1 } } }`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
+      cssCompiler: '(app) => { return { versionCode: (app) => { return 1 }, parse: (app, fileName) => { return 1 } } }',
       css: {
         sourcePath: 'css',
         compiler: {

@@ -3,6 +3,7 @@
 ## Next version
 
 - Config auditor now checks config params on a case-by-case basis
+- Fixed a bug where not having "devDependencies" or "dependencies" objects in your app's package.json would error when using `npm install`
 - Sources Roosevelt configs internally using [source-configs](https://www.npmjs.com/package/source-configs)
 - Breaking change: Moved css minification from roosevelt-less to Roosevelt using clean-css as a direct dependency. The clean-css library had an update with breaking changes so the rooseveltConfig params in "cleanCSS", 'advanced' and 'aggressiveMerging', are now outdated
 

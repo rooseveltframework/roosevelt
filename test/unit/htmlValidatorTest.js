@@ -47,7 +47,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -69,7 +69,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -96,7 +96,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -122,7 +122,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test3, true)
             assert.strictEqual(test4, true)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -150,7 +150,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -172,7 +172,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -200,7 +200,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -222,7 +222,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -253,7 +253,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             requestHeader: 'partialtest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -275,7 +275,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, true)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -306,7 +306,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             requestHeader: 'partialtest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -328,7 +328,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -359,7 +359,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             requestHeader: 'partialtest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -382,7 +382,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -416,7 +416,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             modelValue: '_disableValidatorTest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and start it as a child process
@@ -436,7 +436,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, false)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -470,7 +470,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             modelValue: '_disableValidatorTest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and start it as a child process
@@ -492,7 +492,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             assert.strictEqual(test1, true)
             assert.strictEqual(test2, true)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -526,7 +526,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             requestHeader: 'partialtest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and start it as a child process
@@ -549,7 +549,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test2 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test2, false)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -583,7 +583,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             modelValue: '_disableValidatorTest'
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and start it as a child process
@@ -603,7 +603,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test1 = res.text.includes('HTML did not pass validation')
             assert.strictEqual(test1, true)
             // kill the validator and the app
-            fkill(`:48888`, { force: true }).then(() => {
+            fkill(':48888', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -632,7 +632,7 @@ describe('HTML Validator/Kill Validator Test', function () {
           showWarnings: false,
           port: 3000
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -652,7 +652,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             const test1 = res.status
             assert.strictEqual(test1, 200)
             // kill the validator and the app
-            fkill(`:3000`, { force: true }).then(() => {
+            fkill(':3000', { force: true }).then(() => {
               testApp.send('stop')
             }, (err) => {
               console.log(err)
@@ -681,7 +681,7 @@ describe('HTML Validator/Kill Validator Test', function () {
           },
           port: 48888
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -722,7 +722,7 @@ describe('HTML Validator/Kill Validator Test', function () {
                 assert.strictEqual(test2, true)
 
                 // kill the validator with fkill
-                fkill(`:48888`, { force: true }).then(() => {
+                fkill(':48888', { force: true }).then(() => {
                   // see that the validator is no longer listening
                   request(`http://localhost:${params.htmlValidator.port}`)
                     .get('/')
@@ -762,7 +762,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app.js file and run it as a child process
@@ -796,7 +796,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
         // on 2nd app exit, kill the validator
         testApp2.on('exit', () => {
-          fkill(`:2500`, { force: true }).then(() => {
+          fkill(':2500', { force: true }).then(() => {
             assert.strictEqual(startingHTMLValidator2Bool, false, 'The second app started a HTML Validator Server even though one was still going')
             assert.strictEqual(detachedValidatorFound2Bool, true, 'The second app was not able to find the old validator that was running from the previous app')
             assert.strictEqual(detachedValidatorListen2Bool, true, 'The second app is not listening to the validator that is currently running')
@@ -833,7 +833,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -889,7 +889,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -932,7 +932,7 @@ describe('HTML Validator/Kill Validator Test', function () {
           },
           port: 45231
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app.js file and run it as a child process
@@ -940,7 +940,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
       testApp.on('message', (params) => {
         // close the htmlValidator
-        fkill(`:45231`, { force: true }).then(() => {
+        fkill(':45231', { force: true }).then(() => {
           // request a bad page and see if the response shows that we cannot connect to the validator
           request(`http://localhost:${params.port}`)
             .get('/Broken')
@@ -984,7 +984,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app and run it as a child process
@@ -1024,7 +1024,7 @@ describe('HTML Validator/Kill Validator Test', function () {
       generateTestApp({
         appDir: appDir,
         generateFolderStructure: true,
-        onServerStart: `(app) => {process.send(app.get("params"))}`,
+        onServerStart: '(app) => {process.send(app.get("params"))}',
         htmlValidator: {
           enable: true
         }
@@ -1069,7 +1069,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app.js file and run it as a child process
@@ -1084,7 +1084,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
       // when we get a message from the app, signifying that the app is starting, kill it
       testApp.on('message', () => {
-        fkill(`:2000`, { force: true }).then(() => {
+        fkill(':2000', { force: true }).then(() => {
           done()
         }, (err) => {
           console.log(err)
@@ -1124,7 +1124,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       // fork the app.js file and run it as a child process
@@ -1173,7 +1173,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKiller: false
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -1218,7 +1218,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKillerTimeout: 3600000
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       let hadIt = false
@@ -1252,7 +1252,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKillerTimeout: 600000 // 10 minutes
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       let hadIt = false
@@ -1286,7 +1286,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             autoKillerTimeout: 10000 // 10 seconds
           }
         },
-        onServerStart: `(app) => {process.send(app.get("params"))}`
+        onServerStart: '(app) => {process.send(app.get("params"))}'
       }, options)
 
       let hadIt = false

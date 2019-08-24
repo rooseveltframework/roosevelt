@@ -50,7 +50,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -105,7 +105,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 10000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -158,7 +158,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork an autoKiller instance
@@ -207,7 +207,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -273,7 +273,7 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
