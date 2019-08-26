@@ -670,6 +670,76 @@ describe('Roosevelt Config Auditor Test', function () {
     })
   })
 
+  it('should display an error when setting a config param to an unsupported type', function (done) {
+    // bool var to see if the right logs are being logged
+    let startingConfigAuditBool = false
+    let typeErrorBool = false
+
+    // set the port to null and generate the package.json file
+    fse.ensureDirSync(appDir)
+    packageJSONSource.rooseveltConfig.port = null
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // on the output stream
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting rooseveltConfig audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    // on the error stream
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('The type of param \'port\' should be one of the supported types: number, string')) {
+        typeErrorBool = true
+      }
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.strictEqual(typeErrorBool, true, 'config Auditor is not reporting back that the param is an unsupported type')
+      done()
+    })
+  })
+
+  it('should display an error when a script is missing', function (done) {
+    // bool var to see if the right logs are being logged
+    let startingConfigAuditBool = false
+    let missingScriptBool = false
+
+    // set the css object to a number and generate the package.json file
+    fse.ensureDirSync(appDir)
+    delete packageJSONSource.scripts.clean
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+
+    // fork and run app.js as a child process
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // on the output stream
+    testApp.stdout.on('data', (data) => {
+      if (data.includes('Starting rooseveltConfig audit...')) {
+        startingConfigAuditBool = true
+      }
+    })
+
+    // on the error stream
+    testApp.stderr.on('data', (data) => {
+      if (data.includes('Missing script "clean"!')) {
+        missingScriptBool = true
+      }
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
+      assert.strictEqual(missingScriptBool, true, 'config Auditor is not reporting back that the script is missing')
+      done()
+    })
+  })
+
   it('should report that the node_modules directory is missing some packages or that some are out of date', function (done) {
     // bool var to hold that whether or not a specific warning was outputted
     let missingOrOODPackageBool = false
