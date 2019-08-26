@@ -10,8 +10,7 @@
       "warn": true,
       "error": true,
       "verbose": false
-    },
-    "_roosevelt-extra-exempt": true
+    }
   },
   "minify": true,
   "htmlValidator": {
@@ -29,9 +28,7 @@
     }
   },
   "multipart": {
-    "multiples": true,
-    "_roosevelt-extra-exempt": true,
-    "_roosevelt-missing-exempt": true
+    "multiples": true
   },
   "toobusy": {
     "maxLagPerRequest": 70,
@@ -39,13 +36,9 @@
   },
   "bodyParser": {
     "urlEncoded": {
-      "extended": true,
-      "_roosevelt-extra-exempt": true,
-      "_roosevelt-missing-exempt": true
+      "extended": true
     },
-    "json": {
-      "_roosevelt-extra-exempt": true
-    }
+    "json": {}
   },
   "frontendReload": {
     "enable": true,
@@ -75,9 +68,7 @@
       "collapseWhitespace": true,
       "collapseBooleanAttributes": true,
       "removeAttributeQuotes": true,
-      "removeEmptyAttributes": true,
-      "_roosevelt-extra-exempt": true,
-      "_roosevelt-missing-exempt": true
+      "removeEmptyAttributes": true
     }
   },
   "css": {
