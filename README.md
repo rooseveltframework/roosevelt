@@ -45,6 +45,7 @@ Table of contents
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
 - [Express middleware and other configurations automatically loaded by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-middleware-and-other-configurations-automatically-loaded-by-roosevelt)
+- [Deployment](https://github.com/rooseveltframework/roosevelt#deployment)
 - [Authoring your own CSS and JS preprocessors](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessors)
 - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
 
@@ -588,8 +589,9 @@ Statics parameters
 
       - Note: Your chosen Roosevelt CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
     - `params`: *[Object]* Params to send to the Roosevelt CSS preprocessor middleware if it accepts any.
-      - `cleanCSS`: *[Object]* Roosevelt uses [clean-css](https://www.npmjs.com/package/clean-css) for CSS minification. Use the cleanCSS param to configure options passed to the constructor. See the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options) for documentation on available params.
-
+      
+    - `cleanCSS`: *[Object]* Roosevelt uses [clean-css](https://www.npmjs.com/package/clean-css) for CSS minification. Use the cleanCSS param to configure options passed to the constructor. See the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options) for documentation on available params.
+      
     - Note: The default preprocessor for a Roosevelt app created with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what params are available.
 
         - The Roosevelt team also maintains [roosevelt-sass](https://github.com/rooseveltframework/roosevelt-sass), an alternative to roosevelt-less.
@@ -1029,6 +1031,26 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Disables `x-powered-by` and `etag`.
 - Logs HTTP requests to the console using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
+
+# Deployment
+
+Since Roosevelt includes a lot of developer facing features as dependencies it may be desireable to prune down your build for production.
+
+This can be done by targetting dependencies you want to remove with the `npm uninstall` (or `npm rm` for short) command like so:
+
+```bash
+npm rm vnu-jar --no-save
+```
+
+This will remove the largest developer dependency. Note that `--no-save` is used to ensure your package.json is not edited.
+
+Or if you want to target more than one dependency at once:
+
+```bash
+npm rm vnu-jar html-validator fkill tmp prismjs --no-save
+```
+
+Just be careful as some of what we consider developer only dependencies might also be packaged as a dependency for something else.
 
 # Authoring your own CSS and JS preprocessors
 
