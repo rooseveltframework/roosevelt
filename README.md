@@ -1009,23 +1009,25 @@ In addition to exposing a number of variables to Express and providing the MVC i
 
 # Deployment
 
-Since Roosevelt includes a lot of developer facing features as dependencies it may be desireable to prune down your build for production.
+## Removing dependencies unneeded in production
 
-This can be done by targetting dependencies you want to remove with the `npm uninstall` (or `npm rm` for short) command like so:
+In contexts where you only need to run Roosevelt in production mode, you can remove some dependencies that are only needed in development mode in order to shrink the footprint of production builds.
 
-```bash
-npm rm vnu-jar --no-save
-```
+The biggest development mode-only dependency you can remove is `vnu-jar`. To remove it, run `npm rm vnu-jar --no-save`.
 
-This will remove the largest developer dependency. Note that `--no-save` is used to ensure your package.json is not edited.
+The complete list of Roosevelt dependencies that are only needed in development mode is:
 
-Or if you want to target more than one dependency at once:
+- `fkill`
+- `html-validator`
+- `prismjs`
+- `ps-node`
+- `reload`
+- `tmp`
+- `vnu-jar`
 
-```bash
-npm rm vnu-jar html-validator fkill tmp prismjs --no-save
-```
+To remove them all, run `npm rm fkill html-validator prismjs ps-node reload tmp vnu-jar --no-save`.
 
-Just be careful as some of what we consider developer only dependencies might also be packaged as a dependency for something else.
+Be sure none of those dependencies are needed elsewhere in your app first.
 
 # Authoring your own CSS and JS preprocessors
 
