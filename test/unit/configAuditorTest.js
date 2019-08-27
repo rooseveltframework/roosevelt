@@ -21,12 +21,51 @@ describe('Roosevelt Config Auditor Test', function () {
   let packageJSONSource = {}
 
   beforeEach(function (done) {
-    // grab the contents of the default config file
-    const defaultContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/config.json')).toString('utf8'))
+    // create sample config
+    const sampleContent = {
+      modelsPath: 'mvc/models',
+      viewsPath: 'mvc/views',
+      controllersPath: 'mvc/controllers',
+      htmlValidator: {
+        enable: true,
+        separateProcess: {
+          enable: true,
+          autoKiller: true,
+          autoKillerTimeout: 3600000
+        },
+        port: 48888,
+        showWarnings: true,
+        exceptions: {
+          requestHeader: 'Partial',
+          modelValue: '_disableValidator'
+        }
+      },
+      css: {
+        sourcePath: 'css',
+        compiler: 'none',
+        whitelist: null,
+        output: '.build/css',
+        symlinkToPublic: true,
+        versionFile: null
+      },
+      js: {
+        sourcePath: 'js',
+        compiler: 'none',
+        whitelist: null,
+        blacklist: null,
+        output: '.build/js',
+        symlinkToPublic: true,
+        bundler: {
+          bundles: [],
+          output: '.bundled',
+          expose: true
+        }
+      }
+    }
     // grab the content of the script file
     const scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
-    packageJSONSource.rooseveltConfig = defaultContent
+    packageJSONSource.rooseveltConfig = sampleContent
     // separate the commands from the rest of the data in the scripts file
     packageJSONSource.scripts = {}
     const keys = Object.keys(scriptContent)
@@ -117,7 +156,7 @@ describe('Roosevelt Config Auditor Test', function () {
   it('should be able to require the configAuditor and run the function and get a response of the things that are missing', function (done) {
     // arrays to hold the responses that we would get from configAuditor
     const logs = []
-    const errors = []
+    let errors = []
 
     // hook for stdout and stderr streams
     const hookStream = function (_stream, fn) {
@@ -155,12 +194,15 @@ describe('Roosevelt Config Auditor Test', function () {
     unhookStdout()
     unhookStderr()
 
+    // Compact the errors into one string
+    errors = errors.join('\n')
+
     const test1 = logs[0].includes('Starting rooseveltConfig audit...')
-    const test2 = errors[0].includes('Missing param "modelsPath" at rooseveltConfig.modelsPath!')
-    const test3 = errors[1].includes('Missing param "viewsPath" at rooseveltConfig.viewsPath!')
-    const test4 = errors[2].includes('Missing param "controllersPath" at rooseveltConfig.controllersPath!')
-    const test5 = errors[3].includes('Issues have been detected in rooseveltConfig')
-    const test6 = errors[4].includes('for the latest sample rooseveltConfig.')
+    const test2 = errors.includes('Missing param "modelsPath" at rooseveltConfig.modelsPath!')
+    const test3 = errors.includes('Missing param "viewsPath" at rooseveltConfig.viewsPath!')
+    const test4 = errors.includes('Missing param "controllersPath" at rooseveltConfig.controllersPath!')
+    const test5 = errors.includes('Issues have been detected in rooseveltConfig')
+    const test6 = errors.includes('for the latest sample rooseveltConfig.')
     assert.strictEqual(test1, true, 'Roosevelt did not start the configAuditor')
     assert.strictEqual(test2, true, 'configAuditor did not report that the package.json file is missing a models path value')
     assert.strictEqual(test3, true, 'configAuditor did not report that the package.json file is missing a views path value')
@@ -533,46 +575,6 @@ describe('Roosevelt Config Auditor Test', function () {
     })
   })
 
-  it('should report that no errors have been found after running the config auditor', function (done) {
-    // bool var to hold whether or not the right logs were outputted
-    let startingConfigAuditBool = false
-    let noErrorsBool = false
-
-    // generate the package.json file
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
-
-    // generate the test app
-    generateTestApp({
-      appDir: appDir,
-      onServerStart: '(app) => {process.send("something")}'
-    }, options)
-
-    // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on the output stream, check for config auditor data
-    testApp.stdout.on('data', (data) => {
-      if (data.includes('Starting rooseveltConfig audit...')) {
-        startingConfigAuditBool = true
-      }
-      if (data.includes('rooseveltConfig audit completed with no errors found.')) {
-        noErrorsBool = true
-      }
-    })
-
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when the child process exits, check assertions and finish the test
-    testApp.on('exit', () => {
-      assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
-      assert.strictEqual(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
-      done()
-    })
-  })
-
   it('should not run the config Auditor if it has a cwd without a node_modules folder', function (done) {
     // bool var to hold whether or not a specific log was outputted
     let startingConfigAuditBool = false
@@ -604,7 +606,7 @@ describe('Roosevelt Config Auditor Test', function () {
   it('should be able to run the auditor if a node modules folder is located in the cwd', function (done) {
     // bool var to hold whether or not the right logs were outputted
     let startingConfigAuditBool = false
-    let noErrorsBool = false
+    let receiveOutputBool = false
 
     // generate the package.json file
     fse.ensureDirSync(appDir)
@@ -624,23 +626,28 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
-      if (data.includes('rooseveltConfig audit completed with no errors found.')) {
-        noErrorsBool = true
+    })
+
+    // on the error stream
+    testApp.stderr.on('data', (data) => {
+      // Because the sample config has missing params, just check that the config auditor completed
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
+        receiveOutputBool = true
       }
     })
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
-      assert.strictEqual(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
+      assert.strictEqual(receiveOutputBool, true, 'config Auditor did not run')
       done()
     })
   })
 
   it('should use the env var cwd if it matches the processes cwd', function (done) {
-    // bool var to see if the right logs are being logged
+    // bool var to hold whether or not the right logs were outputted
     let startingConfigAuditBool = false
-    let noErrorsBool = false
+    let receiveOutputBool = false
 
     // set env.INIT_CWD to the correct location
     process.env.INIT_CWD = appDir
@@ -657,15 +664,20 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Starting rooseveltConfig audit...')) {
         startingConfigAuditBool = true
       }
-      if (data.includes('rooseveltConfig audit completed with no errors found.')) {
-        noErrorsBool = true
+    })
+
+    // on the error stream
+    testApp.stderr.on('data', (data) => {
+      // Because the sample config has missing params, just check that the config auditor completed
+      if (data.includes('Issues have been detected in rooseveltConfig')) {
+        receiveOutputBool = true
       }
     })
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
-      assert.strictEqual(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
+      assert.strictEqual(receiveOutputBool, true, 'config Auditor did not run')
       done()
     })
   })

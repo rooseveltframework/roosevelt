@@ -3,9 +3,28 @@
 const assert = require('assert')
 const path = require('path')
 
-describe('Default Parameter Tests', function () {
-  const defaults = require('../../lib/defaults/config.json')
-  const params = Object.keys(defaults)
+describe('Parameter Loading Tests', function () {
+  const sampleJSON = {
+    port: 43711,
+    checkDependencies: true,
+    cores: 1,
+    shutdownTimeout: 30000,
+    cleanTimer: 604800000,
+    js: {
+      sourcePath: 'js',
+      compiler: 'none',
+      whitelist: null,
+      blacklist: null,
+      output: '.build/js',
+      symlinkToPublic: true,
+      bundler: {
+        bundles: [],
+        output: '.bundled',
+        expose: true
+      }
+    }
+  }
+  const params = Object.keys(sampleJSON)
   let app
 
   before(function () {
@@ -24,7 +43,7 @@ describe('Default Parameter Tests', function () {
   params.forEach((param) => {
     if (param !== 'logging' && param !== 'generateFolderStructure' && param !== 'staticsSymlinksToPublic' && param !== 'htmlValidator') {
       it(`should set correct default for param "${param}"`, function () {
-        assert.deepStrictEqual(app.expressApp.get('params')[param], defaults[param])
+        assert.deepStrictEqual(app.expressApp.get('params')[param], sampleJSON[param])
       })
     }
   })
