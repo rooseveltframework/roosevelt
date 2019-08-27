@@ -220,7 +220,6 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `ROOSEVELT_AUTOKILLER`:
   - Set to `on` to spawn a process to kill the HTML validator if it is running in the background and idle for more than a certain amount of time. The timeout can be configured in [app behavior params](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters).
   - Set to `off`to disable the HTML validator autokiller.
-- `ROOSEVELT_DEPLOYMENT`: If not present, Roosevelt will install its devDependencies during `npm install` to support using Roosevelt in development mode. If present, Roosevelt will skip installing its devDependencies to shrink production builds.
 
 Environment variable precedence:
 
