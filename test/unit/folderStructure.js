@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fs = require('fs')
 const fse = require('fs-extra')
 const klaw = require('klaw')
 const path = require('path')
@@ -79,7 +78,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "viewsPath" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').viewsPath)
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -91,7 +90,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "modelsPath" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').modelsPath)
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -103,7 +102,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "controllersPath" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').controllersPath)
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -115,7 +114,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "staticsRoot" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').staticsRoot)
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -127,7 +126,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "publicFolder" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').publicFolder)
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -139,7 +138,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "js" source directory', function (done) {
     const foldertest = path.join(app.expressApp.get('jsPath'))
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -151,7 +150,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "css" source directory', function (done) {
     const foldertest = path.join(app.expressApp.get('cssPath'))
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -163,7 +162,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "image" directory that was put in "staticsSymlinksToPublic"', function (done) {
     const foldertest = path.join(appDir, '/staticsRootTest/images')
-    fs.lstat(foldertest, (err, stats) => {
+    fse.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -175,7 +174,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "image" symlink', function (done) {
     const filetest = path.join(appDir, '/publicFolderTest/images')
-    fs.lstat(filetest, (err, stats) => {
+    fse.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -187,7 +186,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "jsTest" symlink', function (done) {
     const filetest = path.join(appDir, '/publicFolderTest/jsTest')
-    fs.lstat(filetest, (err, stats) => {
+    fse.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -199,7 +198,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "cssTest" symlink', function (done) {
     const filetest = path.join(appDir, '/publicFolderTest/cssTest')
-    fs.lstat(filetest, (err, stats) => {
+    fse.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
       } else {

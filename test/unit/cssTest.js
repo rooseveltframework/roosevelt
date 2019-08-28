@@ -3,7 +3,6 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
-const fs = require('fs')
 const fse = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawsync = require('klaw-sync')
@@ -61,7 +60,7 @@ describe('CSS Section Tests', function () {
     fse.ensureDirSync(path.join(appDir, 'statics/css'))
     // generate sample less files in statics by looping through sample CSS
     for (let x = 0; x < cssDataArray.length; x++) {
-      fs.writeFileSync(pathOfCSSStaticFilesArray[x], cssDataArray[x])
+      fse.writeFileSync(pathOfCSSStaticFilesArray[x], cssDataArray[x])
     }
   })
 
@@ -213,7 +212,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -240,10 +239,10 @@ describe('CSS Section Tests', function () {
     testApp.on('message', () => {
       // see if the file exist inside the css folder
       const versionFilePath = path.join(appDir, 'statics/css/_version.less')
-      const test1 = fs.existsSync(versionFilePath)
+      const test1 = fse.existsSync(versionFilePath)
       assert.strictEqual(test1, true)
       // see that the value in the css version file is correct
-      const versionFileString = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
+      const versionFileString = fse.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
       const versionFileNum = versionFileString.split('\'')
       const test2 = packageJSON.version === versionFileNum[1]
       assert.strictEqual(test2, true)
@@ -299,9 +298,9 @@ describe('CSS Section Tests', function () {
 
   it('should copy over the CSS files to build without changing them when the minify param is false', function (done) {
     // grab the buffers of the static files
-    const bufferOfStaticFileA = fs.readFileSync(pathOfCSSStaticFilesArray[0], 'utf8')
-    const bufferOfStaticFileB = fs.readFileSync(pathOfCSSStaticFilesArray[1], 'utf8')
-    const bufferOfStaticFileC = fs.readFileSync(pathOfCSSStaticFilesArray[2], 'utf8')
+    const bufferOfStaticFileA = fse.readFileSync(pathOfCSSStaticFilesArray[0], 'utf8')
+    const bufferOfStaticFileB = fse.readFileSync(pathOfCSSStaticFilesArray[1], 'utf8')
+    const bufferOfStaticFileC = fse.readFileSync(pathOfCSSStaticFilesArray[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -324,9 +323,9 @@ describe('CSS Section Tests', function () {
     // listen to the message and check that the build files are the same as there static counterpart
     testApp.on('message', () => {
       // grab the buffers of the *compiled* files
-      const bufferOfCompiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
-      const bufferOfCompiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
-      const bufferOfCompiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      const bufferOfCompiledFileA = fse.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const bufferOfCompiledFileB = fse.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const bufferOfCompiledFileC = fse.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
       // make the comparisons between the files in the build and the files in the static
       const test1 = bufferOfStaticFileA === bufferOfCompiledFileA
       const test2 = bufferOfStaticFileB === bufferOfCompiledFileB
@@ -703,7 +702,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -756,7 +755,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -810,7 +809,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -863,7 +862,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -922,7 +921,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -981,7 +980,7 @@ describe('CSS Section Tests', function () {
 
     // generate the package json file with basic data
     fse.ensureDirSync(path.join(appDir))
-    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
+    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
     generateTestApp({
@@ -1276,9 +1275,9 @@ describe('CSS Section Tests', function () {
     // compare the compiled build css files to the clean-css minified buffers
     testApp.on('message', () => {
       // get the compiled css files
-      const compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
-      const compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
-      const compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      const compiledFileA = fse.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const compiledFileB = fse.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const compiledFileC = fse.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
       // check if minified build files are the same compared to the css buffers
       const test1 = compiledFileA === minifiedBufferA
       const test2 = compiledFileB === minifiedBufferB
@@ -1325,9 +1324,9 @@ describe('CSS Section Tests', function () {
     // compare the compiled css files to the buffers
     testApp.on('message', () => {
       // get the compiled css files
-      const compiledFileA = fs.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
-      const compiledFileB = fs.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
-      const compiledFileC = fs.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
+      const compiledFileA = fse.readFileSync(pathOfCSSCompiledfilesArray[0], 'utf8')
+      const compiledFileB = fse.readFileSync(pathOfCSSCompiledfilesArray[1], 'utf8')
+      const compiledFileC = fse.readFileSync(pathOfCSSCompiledfilesArray[2], 'utf8')
       // check if build files and buffers are the same
       const test1 = compiledFileA === bufferA
       const test2 = compiledFileB === bufferB

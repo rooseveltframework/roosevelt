@@ -4,7 +4,6 @@ const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
 const fse = require('fs-extra')
-const fs = require('fs')
 const generateTestApp = require('../util/generateTestApp')
 const klawsync = require('klaw-sync')
 const path = require('path')
@@ -50,7 +49,7 @@ describe('JS Bundler Tests', function () {
     fse.ensureDirSync(path.join(appDir, 'statics/js'))
     // generate sample js files into statics by looping through array of sample JS source strings
     for (let x = 0; x < arrayOfPathsToStaticJS.length; x++) {
-      fs.writeFileSync(arrayOfPathsToStaticJS[x], arrayOfStaticJS[x])
+      fse.writeFileSync(arrayOfPathsToStaticJS[x], arrayOfStaticJS[x])
     }
   })
 

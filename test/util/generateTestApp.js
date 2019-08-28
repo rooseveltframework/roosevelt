@@ -1,6 +1,5 @@
 // generate app.js and deposit it into test/app
 
-const fs = require('fs')
 const fse = require('fs-extra')
 const path = require('path')
 const util = require('util')
@@ -98,5 +97,5 @@ module.exports = function (params, options) {
   fse.ensureDirSync(path.join(appDir))
 
   // generate app.js in test directory
-  fs.writeFileSync(path.join(appDir, 'app.js'), contents)
+  fse.writeFileSync(path.join(appDir, 'app.js'), contents)
 }
