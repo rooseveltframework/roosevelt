@@ -975,7 +975,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module Roosevelt uses internally. HTTP request logger middleware. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
-| `viewsPath`                          | Full path on the file system to where your app's views folder is located. |
+| `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
