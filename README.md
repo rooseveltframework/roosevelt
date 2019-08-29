@@ -538,6 +538,10 @@ This is particularly useful for setting params that can't be defined in `package
         "dirs": ["css", "images", "js"]
       }]
       ```
+  - Important limitation: When using routers to mount a sub application, it constrains the `publicFolder` of the sub app as follows:
+    1. `/paths` inherit the path of the parent, changing `http://domain/path` to `http://domain/parentApp/path`, which will likely break the sub app's static assets hosted in the `publicFolder` if they are referenced that way.
+    2. `./paths` will generally still work because they are relative, but this is often not desired in production contexts.
+    3. `http://domain/absolutePaths` will still work and is recommended if you want your app to be consumed as a sub app by another app.
 
 ## Statics parameters
 
@@ -859,7 +863,7 @@ require('roosevelt')({
 
 ## Event list
 
-- `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt.
+- `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Note: the `multipart`, `routes`, and `roosevelt:state` [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerStart(app)`: Fired when the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
@@ -966,6 +970,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `express`                            | The Express module.                                          |
 | `routes`                             | List of all routes loaded in the Express app by Roosevelt.   |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
+| `view engine`                        | Default view engine file extension, e.g. `.html`.            |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module Roosevelt uses internally. Used for handling multipart forms. |
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module Roosevelt uses internally. HTTP request logger middleware. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
@@ -979,12 +984,14 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
 | `jsCompiledOutput`                   | Full path on the file system to where your app's minified JS files are located. |
 | `jsBundledOutput`                    | Full path on the file system to where your app's bundled JS files are located. |
+| `env`                                | Either `development` or `production`.                        |
 | `params`                             | The params you sent to Roosevelt.                            |
 | `flags`                              | Command line flags sent to Roosevelt.                        |
 | `appDir`                             | The directory the main module is in.                         |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`.  |
 | `package`                            | The contents of `package.json`.                              |
+| `roosevelt:state`                    | Application state, e.g. `disconnecting` if the app is currently being shut down. |
 
 Additionally the Roosevelt constructor returns the following object:
 
