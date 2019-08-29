@@ -60,7 +60,7 @@
     "roosevelt-less": "~0.7.1",
     "roosevelt-uglify": "~0.3.1",
     "sinon": "~7.4.1",
-    "standard": "~14.0.0",
+    "standard": "~14.1.0",
     "supertest": "~4.0.2",
     "tamper": "~1.1.0",
     "teddy": "~0.4.28"
