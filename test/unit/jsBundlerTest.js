@@ -3,8 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
-const fs = require('fs')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawsync = require('klaw-sync')
 const path = require('path')
@@ -47,7 +46,7 @@ describe('JS Bundler Tests', function () {
 
   beforeEach(function () {
     // start by generating the directory to hold the static js files
-    fse.ensureDirSync(path.join(appDir, 'statics/js'))
+    fs.ensureDirSync(path.join(appDir, 'statics/js'))
     // generate sample js files into statics by looping through array of sample JS source strings
     for (let x = 0; x < arrayOfPathsToStaticJS.length; x++) {
       fs.writeFileSync(arrayOfPathsToStaticJS[x], arrayOfStaticJS[x])
@@ -282,7 +281,7 @@ describe('JS Bundler Tests', function () {
     // when the app is done with its initialization, test to see if the js bundle output directory is there or not
     testApp.on('message', (params) => {
       // check to see that the js bundle output is in the build directory or not
-      const test = fse.existsSync(pathToBuildBundleDir)
+      const test = fs.existsSync(pathToBuildBundleDir)
       assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
@@ -299,11 +298,11 @@ describe('JS Bundler Tests', function () {
 
     // make the build js bundle output bundle directory
     const dir1Path = path.join(appDir, 'statics/.build')
-    fse.mkdirsSync(dir1Path)
+    fs.mkdirsSync(dir1Path)
     const dir2Path = path.join(dir1Path, 'js')
-    fse.mkdirsSync(dir2Path)
+    fs.mkdirsSync(dir2Path)
     const dir3Path = path.join(dir2Path, '.bundled')
-    fse.mkdirsSync(dir3Path)
+    fs.mkdirsSync(dir3Path)
     // create the app.js file
     generateTestApp({
       appDir: appDir,
@@ -375,7 +374,7 @@ describe('JS Bundler Tests', function () {
 
     // when the app is done its initialization, see if the folder was made
     testApp.on('message', () => {
-      const test = fse.existsSync(pathOfBundleJSFolder)
+      const test = fs.existsSync(pathOfBundleJSFolder)
       assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
@@ -391,9 +390,9 @@ describe('JS Bundler Tests', function () {
     let jsbundleDirCreatedBool = false
     // make the js bundle output folder
     const dir1Path = path.join(appDir, 'statics/js')
-    fse.mkdirsSync(dir1Path)
+    fs.mkdirsSync(dir1Path)
     const dir2Path = path.join(dir1Path, '.bundled')
-    fse.mkdirsSync(dir2Path)
+    fs.mkdirsSync(dir2Path)
 
     // create the app.js file
     generateTestApp({
@@ -444,7 +443,7 @@ describe('JS Bundler Tests', function () {
     // js source string of incorrect syntax
     const jsSourceString = 'function test() {'
     // make the js file in the static folder
-    fse.writeFileSync(path.join(appDir, 'statics/js/d.js'), jsSourceString)
+    fs.writeFileSync(path.join(appDir, 'statics/js/d.js'), jsSourceString)
 
     // create the app.js file
     generateTestApp({
@@ -501,9 +500,9 @@ describe('JS Bundler Tests', function () {
     const js2SourceCode = `const greeting = require('greeting')
     greeting.sayHello()`
     // write one in the static js folder, and the other to a separate folder for this test
-    fse.mkdirSync(path.join(appDir, 'statics/module'))
-    fse.writeFileSync(path.join(appDir, 'statics/module/greeting.js'), js1SourceCode)
-    fse.writeFileSync(path.join(appDir, 'statics/js/salutation.js'), js2SourceCode)
+    fs.mkdirSync(path.join(appDir, 'statics/module'))
+    fs.writeFileSync(path.join(appDir, 'statics/module/greeting.js'), js1SourceCode)
+    fs.writeFileSync(path.join(appDir, 'statics/js/salutation.js'), js2SourceCode)
 
     // generate the app.js file
     generateTestApp({
@@ -589,7 +588,7 @@ describe('JS Bundler Tests', function () {
 
     // when the app finishes initailization, make sure that the file is not made
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/js/.bundled/bundle.js'))
+      const test = fs.existsSync(path.join(appDir, 'statics/js/.bundled/bundle.js'))
       assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })
@@ -638,7 +637,7 @@ describe('JS Bundler Tests', function () {
 
     // when the app finishes initailization, check to make sure that the file was not made
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/.build/js/.bundled/bundle.js'))
+      const test = fs.existsSync(path.join(appDir, 'statics/.build/js/.bundled/bundle.js'))
       assert.strictEqual(test, false)
       testApp.kill('SIGINT')
     })

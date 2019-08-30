@@ -4,7 +4,7 @@ const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fkill = require('fkill')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const path = require('path')
@@ -19,7 +19,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
   beforeEach(function (done) {
     // copy the mvc dir from util to the test app
-    fse.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 

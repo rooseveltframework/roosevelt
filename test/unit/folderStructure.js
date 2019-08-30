@@ -2,8 +2,7 @@
 
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fs = require('fs')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const klaw = require('klaw')
 const path = require('path')
 
@@ -15,7 +14,7 @@ describe('Folder Structure Tests', function () {
 
   // initialize the test-app
   before(function () {
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
 
     app = require('../../roosevelt')({
       appDir: appDir,

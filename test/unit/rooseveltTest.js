@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const os = require('os')
@@ -36,7 +36,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp(undefined, sOptions)
 
     // read the default config file
-    const defaults = fse.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
+    const defaults = fs.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
     const defaultsJSON = JSON.parse(defaults)
 
     // fork the app and run it as a child process
@@ -158,9 +158,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      const test1 = fse.existsSync(path.join(appDir, 'mvc'))
-      const test2 = fse.existsSync(path.join(appDir, 'public'))
-      const test3 = fse.existsSync(path.join(appDir, 'statics'))
+      const test1 = fs.existsSync(path.join(appDir, 'mvc'))
+      const test2 = fs.existsSync(path.join(appDir, 'public'))
+      const test3 = fs.existsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -195,9 +195,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      const test1 = fse.existsSync(path.join(appDir, 'mvc'))
-      const test2 = fse.existsSync(path.join(appDir, 'public'))
-      const test3 = fse.existsSync(path.join(appDir, 'statics'))
+      const test1 = fs.existsSync(path.join(appDir, 'mvc'))
+      const test2 = fs.existsSync(path.join(appDir, 'public'))
+      const test3 = fs.existsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -642,7 +642,7 @@ describe('Roosevelt.js Tests', function () {
     }
 
     // set up the node_modules and the package.json file
-    fse.mkdirSync(appDir)
+    fs.mkdirSync(appDir)
     let packageJSONSource = {
       dependencies: {
         colors: '~1.2.0',
@@ -651,9 +651,9 @@ describe('Roosevelt.js Tests', function () {
     }
 
     packageJSONSource = JSON.stringify(packageJSONSource)
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
     spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
     generateTestApp({
@@ -697,7 +697,7 @@ describe('Roosevelt.js Tests', function () {
     }
 
     // set up the node_modules and the package.json file
-    fse.mkdirSync(appDir)
+    fs.mkdirSync(appDir)
     let packageJSONSource = {
       dependencies: {
         colors: '~1.2.0',
@@ -706,9 +706,9 @@ describe('Roosevelt.js Tests', function () {
     }
 
     packageJSONSource = JSON.stringify(packageJSONSource)
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
     spawnSync(npmName, ['install', 'teddy@3.0.0'], { cwd: appDir })
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
     generateTestApp({
@@ -747,7 +747,7 @@ describe('Roosevelt.js Tests', function () {
     // copy the mvc folder to the test App
     const pathToMVC = path.join(__dirname, '/../util/mvc')
     const pathtoapp = path.join(appDir, '/mvc')
-    fse.copySync(pathToMVC, pathtoapp)
+    fs.copySync(pathToMVC, pathtoapp)
 
     // generate the app.js file
     generateTestApp({

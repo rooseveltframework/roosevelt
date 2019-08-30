@@ -1,6 +1,6 @@
 module.exports = (filepath, options, callback) => {
-  const fse = require('fs-extra')
-  fse.readFile(filepath, (err, content) => {
+  const fs = require('fs-extra')
+  fs.readFile(filepath, (err, content) => {
     if (err) {
       return callback(err)
     }
