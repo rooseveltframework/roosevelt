@@ -6,7 +6,7 @@ const express = require('express')
 const cluster = require('cluster')
 const path = require('path')
 const os = require('os')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
@@ -95,7 +95,7 @@ module.exports = function (params) {
         // if the string ends with a dot and 3 alphanumeric characters (including _)
         // then we assume it's a filepath.
         if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-          httpsOptions.pfx = fse.readFileSync(authInfoPath.p12.p12Path)
+          httpsOptions.pfx = fs.readFileSync(authInfoPath.p12.p12Path)
         } else { // if the string doesn't end that way, we assume it's an encrypted string
           httpsOptions.pfx = authInfoPath.p12.p12Path
         }
@@ -114,7 +114,7 @@ module.exports = function (params) {
           if (isCertString(authInfoPath.authCertAndKey.cert)) {
             httpsOptions.cert = authInfoPath.authCertAndKey.cert
           } else {
-            httpsOptions.cert = fse.readFileSync(authInfoPath.authCertAndKey.cert)
+            httpsOptions.cert = fs.readFileSync(authInfoPath.authCertAndKey.cert)
           }
 
           reloadHttpsOptions.certAndKey.cert = httpsOptions.cert
@@ -124,7 +124,7 @@ module.exports = function (params) {
           if (isCertString(authInfoPath.authCertAndKey.key)) {
             httpsOptions.key = authInfoPath.authCertAndKey.key
           } else {
-            httpsOptions.key = fse.readFileSync(authInfoPath.authCertAndKey.key)
+            httpsOptions.key = fs.readFileSync(authInfoPath.authCertAndKey.key)
           }
 
           reloadHttpsOptions.certAndKey.key = httpsOptions.key
@@ -136,7 +136,7 @@ module.exports = function (params) {
         if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
           httpsOptions.ca = httpsParams.caCert
         } else { // it's a file path to the file, so read file
-          httpsOptions.ca = fse.readFileSync(httpsParams.caCert)
+          httpsOptions.ca = fs.readFileSync(httpsParams.caCert)
         }
       } else if (httpsParams.caCert instanceof Array) {
         httpsOptions.ca = []
@@ -144,7 +144,7 @@ module.exports = function (params) {
         httpsParams.caCert.forEach(function (certOrPath) {
           let certStr = certOrPath
           if (!isCertString(certOrPath)) {
-            certStr = fse.readFileSync(certOrPath)
+            certStr = fs.readFileSync(certOrPath)
           }
           httpsOptions.ca.push(certStr)
         })

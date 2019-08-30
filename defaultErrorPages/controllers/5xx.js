@@ -1,7 +1,7 @@
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const path = require('path')
 const template = require('es6-template-strings')
-const errorPage = fse.readFileSync(path.join(__dirname, '../views/5xx.html'))
+const errorPage = fs.readFileSync(path.join(__dirname, '../views/5xx.html'))
 
 module.exports = function (app, err, req, res) {
   const status = err.status || 500

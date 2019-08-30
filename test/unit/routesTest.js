@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
@@ -16,7 +16,7 @@ describe('Roosevelt Routes Tests', function () {
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
-    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -255,7 +255,7 @@ describe('Roosevelt Routes Tests', function () {
       }
     ]`
 
-    fse.outputFileSync(path.join(appDir, 'mvc/controllers/schema.js'), schema)
+    fs.outputFileSync(path.join(appDir, 'mvc/controllers/schema.js'), schema)
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -433,7 +433,7 @@ describe('Roosevelt Routes Tests', function () {
     let warnBool = false
     let rooseveltLogOutput
     it(test.logName, function (done) {
-      fse.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body { color: red; }')
+      fs.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body { color: red; }')
       // generate the test app
       generateTestApp({
         appDir: appDir,
@@ -524,7 +524,7 @@ describe('Roosevelt Routes Tests', function () {
     it(test.logName, function (done) {
       let location
       let errorBool
-      fse.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body { color: red; }')
+      fs.outputFileSync(path.join(appDir, 'statics/css/style.css'), 'body { color: red; }')
       // generate the test app
       generateTestApp({
         appDir: appDir,
@@ -656,7 +656,7 @@ describe('Roosevelt Routes Tests', function () {
 
   it('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', function (done) {
     // copy the custom 404 controller into to the mvc folder
-    fse.copyFileSync(path.join(__dirname, '../util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
+    fs.copyFileSync(path.join(__dirname, '../util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
 
     // generate the test app
     generateTestApp({
@@ -1233,7 +1233,7 @@ describe('Roosevelt Routes Tests', function () {
     let controllerErrorLogBool = false
 
     // copy the ico file into the controller directory
-    fse.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
+    fs.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
 
     // generate the test app
     generateTestApp({

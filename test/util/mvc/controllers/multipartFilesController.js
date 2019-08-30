@@ -1,5 +1,5 @@
 module.exports = (router) => {
-  const fse = require('fs-extra')
+  const fs = require('fs-extra')
   const path = require('path')
   router.route('/multipartTest').post((req, res) => {
     const test = {}
@@ -14,7 +14,7 @@ module.exports = (router) => {
 
     // copy the files to another location located inside the app itself
     // copy file 1
-    fse.copyFileSync(req.files[keys[0]].path, path.join(__dirname, '../../test1.txt'))
+    fs.copyFileSync(req.files[keys[0]].path, path.join(__dirname, '../../test1.txt'))
 
     // send back the test Object
     res.send(test)
@@ -45,12 +45,12 @@ module.exports = (router) => {
 
     // going through each key, delete the file
     for (let x = 0; x < keys.length; x++) {
-      fse.removeSync(req.files[keys[x]].path)
+      fs.removeSync(req.files[keys[x]].path)
     }
 
     // check whether or not the files still exists
     for (let x = 0; x < keys.length; x++) {
-      const fileTest = fse.existsSync(req.files[keys[x]].path)
+      const fileTest = fs.existsSync(req.files[keys[x]].path)
       test.existenceTest.push(fileTest)
     }
     res.send(test)
@@ -75,8 +75,8 @@ module.exports = (router) => {
     const keys = Object.keys(req.files)
     const path = req.files[keys[0]].path
     // delete the file and replace it with a directory, which should get an error on unlink
-    fse.removeSync(path)
-    fse.mkdirSync(path)
+    fs.removeSync(path)
+    fs.mkdirSync(path)
     test.path = path
     res.send(test)
   })

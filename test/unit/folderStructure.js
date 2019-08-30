@@ -2,7 +2,7 @@
 
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const klaw = require('klaw')
 const path = require('path')
 
@@ -14,7 +14,7 @@ describe('Folder Structure Tests', function () {
 
   // initialize the test-app
   before(function () {
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
 
     app = require('../../roosevelt')({
       appDir: appDir,
@@ -78,7 +78,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "viewsPath" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').viewsPath)
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -90,7 +90,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "modelsPath" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').modelsPath)
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -102,7 +102,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "controllersPath" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').controllersPath)
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -114,7 +114,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "staticsRoot" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').staticsRoot)
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -126,7 +126,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "publicFolder" directory', function (done) {
     const foldertest = path.join(appDir, app.expressApp.get('params').publicFolder)
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -138,7 +138,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "js" source directory', function (done) {
     const foldertest = path.join(app.expressApp.get('jsPath'))
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -150,7 +150,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate "css" source directory', function (done) {
     const foldertest = path.join(app.expressApp.get('cssPath'))
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -162,7 +162,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "image" directory that was put in "staticsSymlinksToPublic"', function (done) {
     const foldertest = path.join(appDir, '/staticsRootTest/images')
-    fse.lstat(foldertest, (err, stats) => {
+    fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -174,7 +174,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "image" symlink', function (done) {
     const filetest = path.join(appDir, '/publicFolderTest/images')
-    fse.lstat(filetest, (err, stats) => {
+    fs.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -186,7 +186,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "jsTest" symlink', function (done) {
     const filetest = path.join(appDir, '/publicFolderTest/jsTest')
-    fse.lstat(filetest, (err, stats) => {
+    fs.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
       } else {
@@ -198,7 +198,7 @@ describe('Folder Structure Tests', function () {
 
   it('should generate the "cssTest" symlink', function (done) {
     const filetest = path.join(appDir, '/publicFolderTest/cssTest')
-    fse.lstat(filetest, (err, stats) => {
+    fs.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
       } else {

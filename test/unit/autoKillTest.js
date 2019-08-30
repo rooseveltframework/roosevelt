@@ -4,7 +4,7 @@ const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fkill = require('fkill')
 const fork = require('child_process').fork
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const os = require('os')
@@ -226,7 +226,7 @@ describe('Roosevelt Autokill Test', function () {
 
     function startSecondApp () {
       const PIDFilePath = path.join(os.tmpdir(), 'roosevelt_validator_pid.txt')
-      const content = fse.readFileSync(PIDFilePath).toString('utf8')
+      const content = fs.readFileSync(PIDFilePath).toString('utf8')
       const PID = parseInt(content)
       fkill(PID, { force: true }).then(() => {
         // create a second App
