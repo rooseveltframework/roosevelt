@@ -4,7 +4,7 @@ const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const configAuditor = require('../../lib/scripts/configAuditor')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const os = require('os')
 const path = require('path')
@@ -22,14 +22,14 @@ describe('Roosevelt Config Auditor Test', function () {
 
   beforeEach(function (done) {
     // grab the contents of the default config file
-    let defaultContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/config.json')).toString('utf8'))
+    const defaultContent = JSON.parse(fs.readFileSync(path.join(__dirname, '../../lib/defaults/config.json')).toString('utf8'))
     // grab the content of the script file
-    let scriptContent = JSON.parse(fse.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
+    const scriptContent = JSON.parse(fs.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
     packageJSONSource.rooseveltConfig = defaultContent
     // separate the commands from the rest of the data in the scripts file
     packageJSONSource.scripts = {}
-    let keys = Object.keys(scriptContent)
+    const keys = Object.keys(scriptContent)
     for (let x = 0; x < keys.length; x++) {
       packageJSONSource.scripts[keys[x]] = scriptContent[keys[x]].value
     }
@@ -57,20 +57,20 @@ describe('Roosevelt Config Auditor Test', function () {
     let error2Bool = false
 
     // write the package.json file
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     delete packageJSONSource.rooseveltConfig.modelsPath
     delete packageJSONSource.rooseveltConfig.viewsPath
     delete packageJSONSource.rooseveltConfig.controllersPath
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -116,13 +116,13 @@ describe('Roosevelt Config Auditor Test', function () {
 
   it('should be able to require the configAuditor and run the function and get a response of the things that are missing', function (done) {
     // arrays to hold the responses that we would get from configAuditor
-    let logs = []
-    let errors = []
+    const logs = []
+    const errors = []
 
     // hook for stdout and stderr streams
-    let hookStream = function (_stream, fn) {
+    const hookStream = function (_stream, fn) {
       // reference default write method
-      let oldWrite = _stream.write
+      const oldWrite = _stream.write
       // _stream now write with our shiny function
       _stream.write = fn
 
@@ -133,20 +133,20 @@ describe('Roosevelt Config Auditor Test', function () {
     }
 
     // hook up standard output
-    let unhookStdout = hookStream(process.stdout, function (string, encoding, fd) {
+    const unhookStdout = hookStream(process.stdout, function (string, encoding, fd) {
       logs.push(string)
     })
-    let unhookStderr = hookStream(process.stderr, function (string, encoding, fd) {
+    const unhookStderr = hookStream(process.stderr, function (string, encoding, fd) {
       errors.push(string)
     })
 
     // make the appDir folder
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     // add the package.json file to the appDir folder
     delete packageJSONSource.rooseveltConfig.modelsPath
     delete packageJSONSource.rooseveltConfig.viewsPath
     delete packageJSONSource.rooseveltConfig.controllersPath
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // use the configAuditor's audit method
     configAuditor.audit(appDir)
@@ -155,12 +155,12 @@ describe('Roosevelt Config Auditor Test', function () {
     unhookStdout()
     unhookStderr()
 
-    let test1 = logs[0].includes('Starting rooseveltConfig audit...')
-    let test2 = errors[0].includes('Missing param "modelsPath"!')
-    let test3 = errors[1].includes('Missing param "viewsPath"!')
-    let test4 = errors[2].includes('Missing param "controllersPath"!')
-    let test5 = errors[3].includes('Issues have been detected in rooseveltConfig')
-    let test6 = errors[4].includes('for the latest sample rooseveltConfig.')
+    const test1 = logs[0].includes('Starting rooseveltConfig audit...')
+    const test2 = errors[0].includes('Missing param "modelsPath"!')
+    const test3 = errors[1].includes('Missing param "viewsPath"!')
+    const test4 = errors[2].includes('Missing param "controllersPath"!')
+    const test5 = errors[3].includes('Issues have been detected in rooseveltConfig')
+    const test6 = errors[4].includes('for the latest sample rooseveltConfig.')
     assert.strictEqual(test1, true, 'Roosevelt did not start the configAuditor')
     assert.strictEqual(test2, true, 'configAuditor did not report that the package.json file is missing a models path value')
     assert.strictEqual(test3, true, 'configAuditor did not report that the package.json file is missing a views path value')
@@ -180,14 +180,14 @@ describe('Roosevelt Config Auditor Test', function () {
     let error2Bool = false
 
     // write the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     delete packageJSONSource.rooseveltConfig.modelsPath
     delete packageJSONSource.rooseveltConfig.viewsPath
     delete packageJSONSource.rooseveltConfig.controllersPath
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('Starting rooseveltConfig audit...')) {
@@ -230,23 +230,23 @@ describe('Roosevelt Config Auditor Test', function () {
     let startingConfigAuditBool = false
 
     // write the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     delete packageJSONSource.rooseveltConfig.modelsPath
     delete packageJSONSource.rooseveltConfig.viewsPath
     delete packageJSONSource.rooseveltConfig.controllersPath
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // create a public folder inside the app Directory
-    fse.ensureDir(path.join(appDir, 'public'))
+    fs.ensureDir(path.join(appDir, 'public'))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -274,11 +274,11 @@ describe('Roosevelt Config Auditor Test', function () {
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs to see if it would log out that the config audtior is starting
     testApp.stdout.on('data', (data) => {
@@ -305,17 +305,17 @@ describe('Roosevelt Config Auditor Test', function () {
     }
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.ensureDirSync(appDir)
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs to see if it would log out that the config audtior is starting
     testApp.stdout.on('data', (data) => {
@@ -342,22 +342,22 @@ describe('Roosevelt Config Auditor Test', function () {
     let extraWarningsJSBool = false
 
     // write the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     delete packageJSONSource.rooseveltConfig.htmlValidator.enable
     delete packageJSONSource.rooseveltConfig.css.whitelist
     packageJSONSource.rooseveltConfig.js.warnings = true
     delete packageJSONSource.rooseveltConfig.js.compiler
     delete packageJSONSource.rooseveltConfig.js.whitelist
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error strean, check the console output for missing parameters
     testApp.stderr.on('data', (data) => {
@@ -418,19 +418,19 @@ describe('Roosevelt Config Auditor Test', function () {
     let startingConfigAuditBool = false
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     packageJSONSource.rooseveltConfig.turbo = true
     packageJSONSource.rooseveltConfig.maxServers = 4
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check
     testApp.stdout.on('data', (data) => {
@@ -477,18 +477,18 @@ describe('Roosevelt Config Auditor Test', function () {
     let startingConfigAuditBool = false
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     packageJSONSource.rooseveltConfig.logging.extraParam = true
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check
     testApp.stdout.on('data', (data) => {
@@ -527,18 +527,18 @@ describe('Roosevelt Config Auditor Test', function () {
     let startingConfigAuditBool = false
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     delete packageJSONSource.rooseveltConfig.multipart.multiples
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check
     testApp.stdout.on('data', (data) => {
@@ -578,18 +578,18 @@ describe('Roosevelt Config Auditor Test', function () {
     let error2Bool = false
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
     packageJSONSource.scripts.clean = 'node ./node_modules/roosevelt/is_not_correct.js'
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check to see if the config auditor is running
     testApp.stdout.on('data', (data) => {
@@ -631,17 +631,17 @@ describe('Roosevelt Config Auditor Test', function () {
     let noErrorsBool = false
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.ensureDirSync(appDir)
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
-      onServerStart: `(app) => {process.send("something")}`
+      onServerStart: '(app) => {process.send("something")}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for config auditor data
     testApp.stdout.on('data', (data) => {
@@ -670,14 +670,14 @@ describe('Roosevelt Config Auditor Test', function () {
     let startingConfigAuditBool = false
 
     // create a node_modules directory in the test app
-    fse.ensureDirSync(appDir)
-    fse.mkdirSync(path.join(appDir, 'node_modules'))
+    fs.ensureDirSync(appDir)
+    fs.mkdirSync(path.join(appDir, 'node_modules'))
 
     // set env.INIT_CWD to a location that does not have a node_modules folder
     process.env.INIT_CWD = path.join(appDir, '../util')
 
     // fork the configAuditor.js file and run it as a child process
-    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { 'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output stream to see if the config auditor is running
     testApp.stdout.on('data', (data) => {
@@ -699,17 +699,17 @@ describe('Roosevelt Config Auditor Test', function () {
     let noErrorsBool = false
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.ensureDirSync(appDir)
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // set env.INIT_CWD to the correct location
     process.env.INIT_CWD = appDir
 
     // create a node_modules folder
-    fse.ensureDirSync(path.join(appDir, 'node_modules'))
+    fs.ensureDirSync(path.join(appDir, 'node_modules'))
 
     // fork and run app.js as a child process
-    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream
     testApp.stdout.on('data', (data) => {
@@ -738,11 +738,11 @@ describe('Roosevelt Config Auditor Test', function () {
     process.env.INIT_CWD = appDir
 
     // generate the package.json file
-    fse.ensureDirSync(appDir)
-    fse.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
+    fs.ensureDirSync(appDir)
+    fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork and run app.js as a child process
-    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { 'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream
     testApp.stdout.on('data', (data) => {
@@ -778,25 +778,25 @@ describe('Roosevelt Config Auditor Test', function () {
     }
 
     // set up the node_modules and the package.json file
-    fse.ensureDirSync(appDir)
+    fs.ensureDirSync(appDir)
 
     // Add dependencies to the packageJSONSource
     packageJSONSource.dependencies = {}
     packageJSONSource.dependencies.teddy = '~0.4.0'
-    packageJSONSource.dependencies.colors = `~1.2.0`
+    packageJSONSource.dependencies.colors = '~1.2.0'
     packageJSONSource = JSON.stringify(packageJSONSource)
 
     // Create the package.json file in the app test dir
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // Install an old version of teddy
     spawnSync(npmName, ['install', 'teddy@0.3.0'], { cwd: appDir })
 
     // rewrite the package.json file reflecting the newer version of teddy
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // fork the auditor and run it as a child process
-    let testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { 'cwd': appDir, 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error stream, check for missing dependency output
     testApp.stderr.on('data', data => {

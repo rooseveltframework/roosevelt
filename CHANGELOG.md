@@ -2,7 +2,16 @@
 
 ## Next version
 
-- Fixed a bug which required the folder name of a roosevelt fork/clone to match exactly "roosevelt" to run tests in it successfully
+- Fixed a bug where not having "devDependencies" or "dependencies" objects in your app's package.json would error when using `npm install`
+- Sources Roosevelt configs internally using [source-configs](https://www.npmjs.com/package/source-configs)
+- Breaking change: Moved css minification from roosevelt-less to Roosevelt using clean-css as a direct dependency. The clean-css library had an update with breaking changes so the rooseveltConfig params in "cleanCSS", 'advanced' and 'aggressiveMerging', are now outdated
+- Re-reverted most changes in 0.14.1 to fix [#713](https://github.com/rooseveltframework/roosevelt/issues/713).
+
+## 0.14.6
+
+- Fixed a bug that caused `devDependencies` of Roosevelt to be removed if `npm i` was run more than once.
+- Fixed a bug that caused the automated testing to break if your clone of Roosevelt was not named "roosevelt."
+- Various dependencies bumped.
 
 ## 0.14.5
 

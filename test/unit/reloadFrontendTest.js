@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
@@ -12,11 +12,11 @@ describe('Reload Frontend Tests', function () {
   const appDir = path.join(__dirname, '../app/reloadFrontendTest')
 
   // options to pass into test app generator
-  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
-    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -39,11 +39,11 @@ describe('Reload Frontend Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
@@ -83,11 +83,11 @@ describe('Reload Frontend Tests', function () {
           }
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
@@ -127,11 +127,11 @@ describe('Reload Frontend Tests', function () {
           }
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
@@ -154,11 +154,11 @@ describe('Reload Frontend Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
@@ -190,11 +190,11 @@ describe('Reload Frontend Tests', function () {
         port: 9857,
         verbose: false
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stdout.on('data', (data) => {
@@ -225,11 +225,11 @@ describe('Reload Frontend Tests', function () {
         port: 'invalid',
         verbose: false
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stderr.on('data', (data) => {
@@ -260,11 +260,11 @@ describe('Reload Frontend Tests', function () {
         httpsPort: 'invalid',
         verbose: false
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stderr.on('data', (data) => {
@@ -289,11 +289,11 @@ describe('Reload Frontend Tests', function () {
         port: 43711,
         force: true
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // process.stdout
     testApp.stderr.on('data', (data) => {
@@ -313,11 +313,11 @@ describe('Reload Frontend Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
@@ -328,7 +328,7 @@ describe('Reload Frontend Tests', function () {
             testApp.send('stop')
           }
           // Should now have script tag containing reload.js
-          assert.strictEqual(res.text.includes(`<script src='/reloadHttp/reload.js'></script>`), true)
+          assert.strictEqual(res.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'), true)
 
           testApp.send('stop')
         })

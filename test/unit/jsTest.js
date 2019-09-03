@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
 const path = require('path')
@@ -14,38 +14,38 @@ describe('JavaScript Tests', function () {
   const appDir = path.join(__dirname, '../app/jsTest')
 
   // sample JS source string to test the compiler with
-  const test1 = `var a = function() { return 1 + 2}`
-  const test2 = `var b = function(multin) { return multin * 4}`
-  const test3 = `var c = function(name) {console.log("Hello " + name)}`
+  const test1 = 'var a = function() { return 1 + 2}'
+  const test2 = 'var b = function(multin) { return multin * 4}'
+  const test3 = 'var c = function(name) {console.log("Hello " + name)}'
 
   // array of paths to generated static js test files
-  let pathsOfStaticJS = [
+  const pathsOfStaticJS = [
     path.join(appDir, 'statics/js/a.js'),
     path.join(appDir, 'statics/js/b.js'),
     path.join(appDir, 'statics/js/c.js')
   ]
   // array of paths to generated compiled js test files
-  let pathsOfCompiledJS = [
+  const pathsOfCompiledJS = [
     path.join(appDir, 'statics/.build/js/a.js'),
     path.join(appDir, 'statics/.build/js/b.js'),
     path.join(appDir, 'statics/.build/js/c.js')
   ]
   // array to hold sample JS string data that will be written to a file
-  let staticJSFiles = [
+  const staticJSFiles = [
     test1,
     test2,
     test3
   ]
 
   // options to pass into generateTestApp
-  let options = { rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'initServer', stopServer: true }
 
   beforeEach(function () {
     // start by generating a statics folder in the roosevelt test app directory
-    fse.ensureDirSync(path.join(appDir, 'statics/js'))
+    fs.ensureDirSync(path.join(appDir, 'statics/js'))
     // generate sample js files in statics by looping through smaple JS source strings
     for (let x = 0; x < pathsOfStaticJS.length; x++) {
-      fse.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
+      fs.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
     }
   })
 
@@ -75,14 +75,14 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // create a fork of the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // look into the .build folder to see if all the files were compiled and if there is any extras
       const compiledJS = path.join(path.join(appDir, 'statics/.build/js'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
-        let test = pathsOfCompiledJS.includes(file.path)
+        const test = pathsOfCompiledJS.includes(file.path)
         assert.strictEqual(test, true)
       })
       testApp.send('stop')
@@ -95,7 +95,7 @@ describe('JavaScript Tests', function () {
 
   it('should only compile files that are whitelisted', function (done) {
     //  array that holds the paths for the generated whitelist compiled files
-    let pathOfWhiteListedFiles = [
+    const pathOfWhiteListedFiles = [
       path.join(appDir, 'statics/.build/js/a.js'),
       path.join(appDir, 'statics/.build/js/c.js')
     ]
@@ -113,14 +113,14 @@ describe('JavaScript Tests', function () {
       }
     }, options)
     // create a fork of app.js and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // test to see that only the whitelisted file was compiled
       const compiledJS = path.join(path.join(appDir, 'statics/.build/js'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
-        let test = pathOfWhiteListedFiles.includes(file.path)
+        const test = pathOfWhiteListedFiles.includes(file.path)
         assert.strictEqual(test, true)
       })
       testApp.send('stop')
@@ -133,9 +133,9 @@ describe('JavaScript Tests', function () {
 
   it('should minify all files except for those that are blacklisted', function (done) {
     // get the buffer(string data) of the static files
-    let staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
-    let staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
-    let staticJSFilesC = fse.readFileSync(pathsOfStaticJS[2], 'utf8')
+    const staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
+    const staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
+    const staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -152,17 +152,17 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // create a fork of app.js and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // get the buffer(string data) of the compiled files
-      let compiledJSFilesA = fse.readFileSync(pathsOfCompiledJS[0], 'utf8')
-      let compiledJSFilesB = fse.readFileSync(pathsOfCompiledJS[1], 'utf8')
-      let compiledJSFilesC = fse.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      const compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      const compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      const compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
       // test if the buffer from the compiled is the same as their static counterpart
-      let test1 = staticJSFilesA === compiledJSFilesA
-      let test2 = staticJSFilesB === compiledJSFilesB
-      let test3 = staticJSFilesC === compiledJSFilesC
+      const test1 = staticJSFilesA === compiledJSFilesA
+      const test2 = staticJSFilesB === compiledJSFilesB
+      const test3 = staticJSFilesC === compiledJSFilesC
       assert.strictEqual(test1, false)
       assert.strictEqual(test2, false)
       assert.strictEqual(test3, true)
@@ -176,7 +176,7 @@ describe('JavaScript Tests', function () {
 
   it('should make the output compiled folder with the new name and put all the compiled JS in it', function (done) {
     // array of paths to generated compile js files inside the altered output directory
-    let pathsOfAlteredCompiledJS = [
+    const pathsOfAlteredCompiledJS = [
       path.join(appDir, 'statics/.build/jsCompiledTest/a.js'),
       path.join(appDir, 'statics/.build/jsCompiledTest/b.js'),
       path.join(appDir, 'statics/.build/jsCompiledTest/c.js')
@@ -197,14 +197,14 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // create a fork of app.js and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // test to see if the folder exist and if the compiled files are there with no extras
       const compiledJS = path.join(path.join(appDir, 'statics/.build/jsCompiledTest'))
       const compiledJSArray = klawSync(compiledJS)
       compiledJSArray.forEach((file) => {
-        let test = pathsOfAlteredCompiledJS.includes(file.path)
+        const test = pathsOfAlteredCompiledJS.includes(file.path)
         assert.strictEqual(test, true)
       })
       testApp.send('stop')
@@ -217,7 +217,7 @@ describe('JavaScript Tests', function () {
 
   it('should make the compiled whitelist file take the name of the delimiter that is passed into it', function (done) {
     // array that holds the path of the delimiter file
-    let delimiterOutputArray = [
+    const delimiterOutputArray = [
       path.join(appDir, 'statics/.build/js/test/something.js')
     ]
     // create the app.js file
@@ -235,14 +235,14 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // create a fork of app.js and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // grab the folder of where the output should be and check inside it to see if only the whitelist file was compiled and named appropriately
-      let pathOfCompiledDLJS = path.join(appDir, 'statics/.build/js/test')
-      let CompiledDLJSArray = klawSync(pathOfCompiledDLJS)
+      const pathOfCompiledDLJS = path.join(appDir, 'statics/.build/js/test')
+      const CompiledDLJSArray = klawSync(pathOfCompiledDLJS)
       CompiledDLJSArray.forEach((file) => {
-        let test = delimiterOutputArray.includes(file.path)
+        const test = delimiterOutputArray.includes(file.path)
         assert.strictEqual(test, true)
       })
       testApp.send('stop')
@@ -255,9 +255,9 @@ describe('JavaScript Tests', function () {
 
   it('should copy over the JS files to build without changing them when the minify param is false', function (done) {
     // get the buffer (string data) of the static files
-    let staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
-    let staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
-    let staticJSFilesC = fse.readFileSync(pathsOfStaticJS[2], 'utf8')
+    const staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
+    const staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
+    const staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -274,17 +274,17 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // create a fork of app.js and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // get the buffer (string data) of the compiled files
-      let compiledJSFilesA = fse.readFileSync(pathsOfCompiledJS[0], 'utf8')
-      let compiledJSFilesB = fse.readFileSync(pathsOfCompiledJS[1], 'utf8')
-      let compiledJSFilesC = fse.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      const compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      const compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      const compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
       // make tests to compare the buffer in between the static and compiled files
-      let test1 = staticJSFilesA === compiledJSFilesA
-      let test2 = staticJSFilesB === compiledJSFilesB
-      let test3 = staticJSFilesC === compiledJSFilesC
+      const test1 = staticJSFilesA === compiledJSFilesA
+      const test2 = staticJSFilesB === compiledJSFilesB
+      const test3 = staticJSFilesC === compiledJSFilesC
       // test these comparisons
       assert.strictEqual(test1, true)
       assert.strictEqual(test2, true)
@@ -297,7 +297,7 @@ describe('JavaScript Tests', function () {
     })
   })
 
-  it(`should throw a warning if the app's js compiler nodeModule is undefined`, function (done) {
+  it('should throw a warning if the app\'s js compiler nodeModule is undefined', function (done) {
     // bool var to hold whether or not the specific error message was given
     let failureToIncludeBool = false
     // generate the app.js file
@@ -313,7 +313,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // catch for the specific error of the app failing to include js compiler
     testApp.stderr.on('data', (data) => {
@@ -335,7 +335,7 @@ describe('JavaScript Tests', function () {
     })
   })
 
-  it(`should throw a warning if the app's js compiler nodeModule is set to an incorrect or missing compiler`, function (done) {
+  it('should throw a warning if the app\'s js compiler nodeModule is set to an incorrect or missing compiler', function (done) {
     // bool var to hold whether or not the specific error message was given
     let failureToIncludeBool = false
     // generate the app.js file
@@ -352,7 +352,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // catch for the specific error of the app failing to include js compiler
     testApp.stderr.on('data', (data) => {
@@ -392,7 +392,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test the error log to see if we get an error that states that the file in the whitelist array does not exist
     testApp.stderr.on('data', (data) => {
@@ -432,7 +432,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // test the error log to see if the specific error had been written
     testApp.stderr.on('data', (data) => {
@@ -457,8 +457,8 @@ describe('JavaScript Tests', function () {
 
   it('should skip compiling a file if the path is a directory', function (done) {
     // make a directory inside the static js folder
-    let filePathName = path.join(appDir, 'statics/js/testDir')
-    fse.mkdirSync(filePathName)
+    const filePathName = path.join(appDir, 'statics/js/testDir')
+    fs.mkdirSync(filePathName)
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -473,12 +473,12 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when server starts, see if a file or directory of testDir was made on the build
     testApp.on('message', () => {
-      let testFilePath = path.join(appDir, 'statics/.build/js/testDir')
-      let test = fse.existsSync(testFilePath)
+      const testFilePath = path.join(appDir, 'statics/.build/js/testDir')
+      const test = fs.existsSync(testFilePath)
       assert.strictEqual(test, false)
     })
 
@@ -489,9 +489,9 @@ describe('JavaScript Tests', function () {
 
   it('should throw an error stating that a file is not coded correctly', function (done) {
     // create a file that has js errors in it
-    let fileContent = `console.log('blah'`
-    let filePath = path.join(appDir, 'statics/js/error.js')
-    fse.writeFileSync(filePath, fileContent)
+    const fileContent = 'console.log(\'blah\''
+    const filePath = path.join(appDir, 'statics/js/error.js')
+    fs.writeFileSync(filePath, fileContent)
     // bool var that holds whether or not Roosevelt will give a warning for a js file not coded correctly
     let fileCodedIncorrectlyBool = false
 
@@ -509,7 +509,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the specific error has popped up
     testApp.stderr.on('data', (data) => {
@@ -534,7 +534,7 @@ describe('JavaScript Tests', function () {
 
   it('should create the statics js directory if it does not exist at the point of compiling', function (done) {
     // get rid of the js folder that was copied over
-    fse.removeSync(path.join(appDir, 'statics/js'))
+    fs.removeSync(path.join(appDir, 'statics/js'))
 
     // bool var to check that a static js dir is being made
     let staticJSDirMadeBool = false
@@ -554,7 +554,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see if the source dir was made
     testApp.stdout.on('data', (data) => {
@@ -571,7 +571,7 @@ describe('JavaScript Tests', function () {
     // when the app ends, check to see if it created the static js folder
     testApp.on('exit', () => {
       if (staticJSDirMadeBool === false) {
-        assert.fail(`Roosevelt did not create a static js directory when one wasn't present`)
+        assert.fail('Roosevelt did not create a static js directory when one wasn\'t present')
       }
       done()
     })
@@ -579,7 +579,7 @@ describe('JavaScript Tests', function () {
 
   it('should not try to make the js static folder if generatefolderstructure is false', function (done) {
     // get rid of the js folder that was copied over
-    fse.removeSync(path.join(appDir, 'statics/js'))
+    fs.removeSync(path.join(appDir, 'statics/js'))
 
     // generate the app.js file
     generateTestApp({
@@ -595,12 +595,12 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is about to end, check to see if the js static file was made or not
     testApp.on('exit', () => {
       // js static folder
-      let test = fse.existsSync(path.join(appDir, 'statics/js'))
+      const test = fs.existsSync(path.join(appDir, 'statics/js'))
       assert.strictEqual(test, false)
       done()
     })
@@ -621,15 +621,15 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is about to end, check to see if the build or js output folder were made
     testApp.on('exit', () => {
       // build folder
-      let test = fse.existsSync(path.join(appDir, 'statics/.build'))
+      const test = fs.existsSync(path.join(appDir, 'statics/.build'))
       assert.strictEqual(test, false)
       // output folder
-      let test2 = fse.existsSync(path.join(appDir, 'statics/.build/js'))
+      const test2 = fs.existsSync(path.join(appDir, 'statics/.build/js'))
       assert.strictEqual(test2, false)
       done()
     })
@@ -639,10 +639,10 @@ describe('JavaScript Tests', function () {
     // bool var to see if the js compiled output directory was made or not
     let jsOutputDirCreateBool = false
     // create the js compiled output directory
-    let compiledpath = path.join(appDir, 'statics/.build')
-    let compiledpath2 = path.join(appDir, 'statics/.build/jsBuildTest')
-    fse.mkdirSync(compiledpath)
-    fse.mkdirSync(compiledpath2)
+    const compiledpath = path.join(appDir, 'statics/.build')
+    const compiledpath2 = path.join(appDir, 'statics/.build/jsBuildTest')
+    fs.mkdirSync(compiledpath)
+    fs.mkdirSync(compiledpath2)
 
     // generate the app.js file
     generateTestApp({
@@ -659,7 +659,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the logs to see if the js compiled output directory gets made or not
     testApp.stdout.on('data', (data) => {
@@ -686,11 +686,11 @@ describe('JavaScript Tests', function () {
     // bool var to hold whether or not one of the files was compiled into the build folder
     let compiledFileMadeBool = false
     // make the compiled file using uglify
-    let result = uglify.minify(test1, {})
-    let newJs = result.code
+    const result = uglify.minify(test1, {})
+    const newJs = result.code
     // write it to the compile file
-    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
-    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
+    fs.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fs.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
 
     // generate the app.js file
     generateTestApp({
@@ -706,7 +706,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on log output, check that Roosevelt does not log out that it had make a new a.js file in the js output folder
     testApp.stdout.on('data', (data) => {
@@ -732,7 +732,7 @@ describe('JavaScript Tests', function () {
   it('should throw an error if the node module passed in js compiler is not compatible or out of date with Roosevelt', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
-    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
+    fs.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
 
     // generate the app.js file
     generateTestApp({
@@ -748,7 +748,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error output, see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -764,7 +764,7 @@ describe('JavaScript Tests', function () {
 
     // when the app is about to end, check that the error was hit
     testApp.on('exit', () => {
-      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
+      fs.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
       }
@@ -775,7 +775,7 @@ describe('JavaScript Tests', function () {
   it('should throw an error if the node module provided to the js compiler has a parse function but does not provide the functionality that is required from a js compiler', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
-    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
+    fs.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
 
     // generate the app.js file
     generateTestApp({
@@ -791,7 +791,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on error output, see if the specific error was given
     testApp.stderr.on('data', (data) => {
@@ -807,7 +807,7 @@ describe('JavaScript Tests', function () {
 
     // when the app is about to end, check that the error was hit
     testApp.on('exit', () => {
-      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
+      fs.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
       }
@@ -820,9 +820,9 @@ describe('JavaScript Tests', function () {
     let compiledJSCreatedBool = false
 
     // create the three files
-    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/a.js'))
-    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/b.js'))
-    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/c.js'))
+    fs.ensureFileSync(path.join(appDir, 'statics/.build/js/a.js'))
+    fs.ensureFileSync(path.join(appDir, 'statics/.build/js/b.js'))
+    fs.ensureFileSync(path.join(appDir, 'statics/.build/js/c.js'))
 
     // generate the app.js file
     generateTestApp({
@@ -838,7 +838,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the logs to see if any of the compiled files were made
     testApp.stdout.on('data', (data) => {
@@ -869,8 +869,8 @@ describe('JavaScript Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      jsCompiler: `(app) => { return { parse: (app, fileName) => { return 1 } } }`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
+      jsCompiler: '(app) => { return { parse: (app, fileName) => { return 1 } } }',
       js: {
         sourcePath: 'js',
         compiler: {
@@ -882,7 +882,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (data) => {
       if (data.includes('using your custom JS preprocessor')) {
@@ -899,18 +899,18 @@ describe('JavaScript Tests', function () {
 
   it('should read files for compiler to ignore from .gitignore', function (done) {
     // sample gitignore pattern for test app to ignore
-    let gitignoreData = 'Thumbs.db'
-    let pathOfGitignore = path.join(appDir, '.gitignore')
+    const gitignoreData = 'Thumbs.db'
+    const pathOfGitignore = path.join(appDir, '.gitignore')
     let test = false
 
     // generate .dat file to be ignored by compiler
-    let randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
-    let pathOfDataFile = path.join(appDir, 'statics', 'js', 'Thumbs.db')
+    const randomData = '100 1000 100 0101 100 1100 100 1100 100 1111'
+    const pathOfDataFile = path.join(appDir, 'statics', 'js', 'Thumbs.db')
 
     // write data to .gitignore file created in test app directory
-    fse.ensureDirSync(path.join(appDir))
-    fse.writeFileSync(pathOfGitignore, gitignoreData)
-    fse.writeFileSync(pathOfDataFile, randomData)
+    fs.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(pathOfGitignore, gitignoreData)
+    fs.writeFileSync(pathOfDataFile, randomData)
 
     // generate a test app
     generateTestApp({
@@ -926,7 +926,7 @@ describe('JavaScript Tests', function () {
     }, options)
 
     // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.on('message', () => {
       // test to see if the folder exists and that the dat file is not in it
@@ -948,13 +948,13 @@ describe('JavaScript Tests', function () {
     // generate a sample .gitignore
     let addedCorrectBool = false
     let ignoredCorrectBool = true
-    let gitignoreData = `# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass\ncoverage`
-    let pathOfGitignore = path.join(appDir, '.gitignore')
+    const gitignoreData = '# comment should be ignored\n*.pid\nignoreThis.js\nnode_modules\nskipstyles.css\n\nthisToo.less\nandThis.sass\ncoverage'
+    const pathOfGitignore = path.join(appDir, '.gitignore')
     let gitignoreFiles = []
 
     // write to gitignore
-    fse.ensureDirSync(path.join(appDir))
-    fse.writeFileSync(pathOfGitignore, gitignoreData)
+    fs.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(pathOfGitignore, gitignoreData)
     gitignoreFiles = gitignoreScanner(pathOfGitignore)
 
     gitignoreFiles.forEach((file) => {
@@ -975,15 +975,15 @@ describe('JavaScript Tests', function () {
     // bool variable to check if the app logged that there was a stale file
     let staleLoggedBool = false
     // date variable to set a.js to
-    let date = new Date('Thu Aug 20 2015 15:10:36 GMT+0800 (EST)')
+    const date = new Date('Thu Aug 20 2015 15:10:36 GMT+0800 (EST)')
 
     // make the compiled file using uglify
-    let result = uglify.minify(test1, {})
-    let newJs = result.code
+    const result = uglify.minify(test1, {})
+    const newJs = result.code
     // write it to the compile file
-    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
-    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
-    fse.utimesSync(path.join(appDir, 'statics/.build/js', 'a.js'), date, date)
+    fs.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fs.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
+    fs.utimesSync(path.join(appDir, 'statics/.build/js', 'a.js'), date, date)
 
     // generate the app.js file
     generateTestApp({
@@ -998,7 +998,7 @@ describe('JavaScript Tests', function () {
       }
     }, options)
 
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', data => {
       if (data.includes('There are stale')) {
@@ -1029,7 +1029,7 @@ describe('JavaScript Tests', function () {
       cleanTimer: null
     }, options)
 
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stderr.on('data', data => {
       if (data.includes('Unable to parse cleanTimer Roosevelt parameter')) {

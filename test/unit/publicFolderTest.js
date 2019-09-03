@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klaw = require('klaw')
 const path = require('path')
@@ -14,14 +14,14 @@ describe('Public Folder Tests', function () {
   const appDir = path.join(__dirname, '../app/publicFolderTest')
 
   // options to pass into generateTestApp
-  let options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // package.json source code
-  let packageSource = `{ "version": "0.5.1", "rooseveltConfig": {}}`
+  const packageSource = '{ "version": "0.5.1", "rooseveltConfig": {}}'
 
   beforeEach(function (done) {
     // start by copying the premade mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -38,18 +38,18 @@ describe('Public Folder Tests', function () {
 
   it('should allow for a custom favicon and GET that favicon on request', function (done) {
     // copy the favicon to the images folder within the static folder
-    fse.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
+    fs.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
 
     // generate the test app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/faviconTest.ico'
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts,
     testApp.on('message', () => {
@@ -71,12 +71,12 @@ describe('Public Folder Tests', function () {
                 testApp.send('stop')
               }
               // convert buffer to base64
-              let faviconData = res.body.toString('base64')
+              const faviconData = res.body.toString('base64')
               // get the base64 buffer of the favicon that we should be using in util
-              let data = fse.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
-              let encodedImageData = Buffer.from(data, 'binary').toString('base64')
+              const data = fs.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
+              const encodedImageData = Buffer.from(data, 'binary').toString('base64')
               // check if both buffers are the same (they should be)
-              let test = faviconData === encodedImageData
+              const test = faviconData === encodedImageData
               assert.strictEqual(test, true)
               testApp.send('stop')
             })
@@ -94,12 +94,12 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: null
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server starts, send a request to the server
     testApp.on('message', () => {
@@ -115,7 +115,7 @@ describe('Public Folder Tests', function () {
             .get('/favicon.ico')
             .expect(404, (err, res) => {
               if (err) {
-                assert.fail(`able to get the favicon.ico, even when there isn't one`)
+                assert.fail('able to get the favicon.ico, even when there isn\'t one')
                 testApp.send('stop')
               } else {
                 testApp.send('stop')
@@ -137,12 +137,12 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/nothingHere.ico'
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the error stream, check for an incorrect favicon log
     testApp.stderr.on('data', (data) => {
@@ -165,7 +165,7 @@ describe('Public Folder Tests', function () {
             .get('/favicon.ico')
             .expect(404, (err, res) => {
               if (err) {
-                assert.fail(`able to get the favicon.ico, even when there isn't one`)
+                assert.fail('able to get the favicon.ico, even when there isn\'t one')
                 testApp.send('stop')
               } else {
                 testApp.send('stop')
@@ -183,18 +183,18 @@ describe('Public Folder Tests', function () {
 
   it('should set the name of folder inside of public to the version inside of package.json', function (done) {
     // write the package json file with the source code from above
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageSource)
 
     // generate the app
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true
     }, options)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the server message back on start up, look for if the public file was changed to the version number
     testApp.on('message', () => {

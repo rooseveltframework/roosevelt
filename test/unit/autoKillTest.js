@@ -4,7 +4,7 @@ const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fkill = require('fkill')
 const fork = require('child_process').fork
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const os = require('os')
@@ -50,11 +50,11 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -105,11 +105,11 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 10000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -158,14 +158,14 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork an autoKiller instance
-    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [48888, 60000, 'true'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    fork(path.join(__dirname, '../../lib/scripts/autoKillValidator.js'), [48888, 60000, 'true'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -207,11 +207,11 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', data => {
@@ -226,11 +226,11 @@ describe('Roosevelt Autokill Test', function () {
 
     function startSecondApp () {
       const PIDFilePath = path.join(os.tmpdir(), 'roosevelt_validator_pid.txt')
-      let content = fse.readFileSync(PIDFilePath).toString('utf8')
-      let PID = parseInt(content)
+      const content = fs.readFileSync(PIDFilePath).toString('utf8')
+      const PID = parseInt(content)
       fkill(PID, { force: true }).then(() => {
         // create a second App
-        const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+        const testApp2 = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
         // check the console logs to see if our message was outputted
         testApp2.stdout.on('data', (data) => {
@@ -273,11 +273,11 @@ describe('Roosevelt Autokill Test', function () {
           autoKillerTimeout: 1000
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { 'stdio': ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream, check for specific logs
     testApp.stdout.on('data', (data) => {
@@ -307,7 +307,7 @@ describe('Roosevelt Autokill Test', function () {
         assert.strictEqual(cannotConnectBool, false, 'The auto Killer somehow kept on connecting with the app even thought it closed alreadly')
         assert.strictEqual(htmlValidatorPortClosedBool, false, 'The auto Killer did not kill the html Validator after the app was closed')
         // options to pass into the http GET request
-        let options = {
+        const options = {
           url: 'http://localhost',
           method: 'GET',
           port: 42312,

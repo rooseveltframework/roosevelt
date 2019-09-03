@@ -2,28 +2,24 @@
 
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fs = require('fs')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const path = require('path')
 
 describe('package.json Parameter Tests', function () {
   const appDir = path.join(__dirname, '../app/pkgParams')
   const pkgConfig = require('../util/testPkgConfig.json')
-  let params = Object.keys(pkgConfig)
+  const params = Object.keys(pkgConfig)
   const pkg = {
     rooseveltConfig: pkgConfig
   }
   let app
 
   before(function () {
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(pkg))
     app = require('../../roosevelt')({
       appDir: appDir,
-      enableCLIFlags: false,
-      logging: {
-        params: { disable: ['LOADED_MOCHA_OPTS'] }
-      }
+      enableCLIFlags: false
     })
   })
 
