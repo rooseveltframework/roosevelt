@@ -46,7 +46,7 @@
     "source-configs": "~0.2.0",
     "tmp": "~0.1.0",
     "toobusy-js": "~0.5.1",
-    "vnu-jar": "~19.6.7"
+    "vnu-jar": "~19.9.0"
   },
   "devDependencies": {
     "codecov": "~3.5.0",
