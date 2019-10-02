@@ -135,12 +135,16 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run prod`
     - `npm run p`
     - `npm start`
-  - Script is short for: `node app.js --production-mode`
+  - Script is short for: `nodemon app.js --production-mode`
 - `npm run development`: Runs the app in development mode.
   - Default shorthands:
     - `npm run dev`
     - `npm run d`
-  - Script is short for: `node app.js --development-mode`
+  - Script is short for: `nodemon app.js --development-mode`
+- `npm run proddev`: Runs the app in production mode, but with the public folder hosted by the Roosevelt app. This is useful for doing development in production mode without having to stage a complex simulation of your production environment, which would likely include hosting static files via another web server better-suited to serving statics like Apache or nginx. 
+  - Default shorthands:
+    - `npm run pd`
+  - Script is short for: `nodemon app.js --host-public`
 - `npm run kill-validator`: Finds the HTML validator process and kills it if it is running.
   - Default shorthand:
     - `npm run kv`
