@@ -87,6 +87,14 @@
     "value": "lint-staged",
     "priority": "ignore"
   },
+  "proddev": {
+    "value": "nodemon app.js --host-public",
+    "priority": "ignore"
+  },
+  "pd": {
+    "value": "nodemon app.js --host-public",
+    "priority": "ignore"
+  },
   "test": {
     "value": "npm run lint",
     "priority": "warning"
