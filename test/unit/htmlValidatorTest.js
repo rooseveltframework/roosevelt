@@ -849,11 +849,6 @@ describe('HTML Validator/Kill Validator Test', function () {
         }
       })
 
-      // once app.js finishes initialization, kill it
-      testApp.on('message', () => {
-        testApp.send('stop')
-      })
-
       // once the server made by app.js is done, kill the dummy server
       testApp.on('exit', () => {
         server.close()
@@ -900,11 +895,6 @@ describe('HTML Validator/Kill Validator Test', function () {
         if (data.includes('Another process that is not the HTMLValidator is using this port already. Quiting the initialization of your app')) {
           twoProcessToPortsBool = true
         }
-      })
-
-      // when app.js finishes initialization, kill it
-      testApp.on('message', () => {
-        testApp.send('stop')
       })
 
       // as app.js is closing, close the dummy server
