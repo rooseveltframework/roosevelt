@@ -6,9 +6,7 @@ const configAuditor = require('../../lib/scripts/configAuditor')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
-const os = require('os')
 const path = require('path')
-const { spawnSync } = require('child_process')
 
 describe('Roosevelt Config Auditor Test', function () {
   // path to the test app Directory
@@ -758,56 +756,6 @@ describe('Roosevelt Config Auditor Test', function () {
     testApp.on('exit', () => {
       assert.strictEqual(startingConfigAuditBool, true, 'Roosevelt did not start the config Auditor')
       assert.strictEqual(noErrorsBool, true, 'config Auditor is reporting back that there is an error even though the package.json file does not have one')
-      done()
-    })
-  })
-
-  it('should report that the node_modules directory is missing some packages or that some are out of date', function (done) {
-    // bool var to hold that whether or not a specific warning was outputted
-    let missingOrOODPackageBool = false
-
-    // set env.INIT_CWD to the correct location
-    process.env.INIT_CWD = appDir
-
-    // command for npm
-    let npmName
-    if (os.platform() === 'win32') {
-      npmName = 'npm.cmd'
-    } else {
-      npmName = 'npm'
-    }
-
-    // set up the node_modules and the package.json file
-    fs.ensureDirSync(appDir)
-
-    // Add dependencies to the packageJSONSource
-    packageJSONSource.dependencies = {}
-    packageJSONSource.dependencies.teddy = '~0.4.0'
-    packageJSONSource.dependencies.colors = '~1.2.0'
-    packageJSONSource = JSON.stringify(packageJSONSource)
-
-    // Create the package.json file in the app test dir
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-
-    // Install an old version of teddy
-    spawnSync(npmName, ['install', 'teddy@0.3.0'], { cwd: appDir })
-
-    // rewrite the package.json file reflecting the newer version of teddy
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-
-    // fork the auditor and run it as a child process
-    const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on the error stream, check for missing dependency output
-    testApp.stderr.on('data', data => {
-      if (data.includes('Missing Dependency')) {
-        missingOrOODPackageBool = true
-      }
-    })
-
-    // when the child process exits, check assertions and finish the test
-    testApp.on('exit', () => {
-      assert.strictEqual(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
       done()
     })
   })
