@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const os = require('os')
@@ -36,7 +36,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp(undefined, sOptions)
 
     // read the default config file
-    const defaults = fse.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
+    const defaults = fs.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
     const defaultsJSON = JSON.parse(defaults)
 
     // fork the app and run it as a child process
@@ -47,7 +47,6 @@ describe('Roosevelt.js Tests', function () {
       assert.strictEqual(params.port, defaultsJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
       assert.strictEqual(params.viewEngine, defaultsJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
       assert.strictEqual(params.favicon, defaultsJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
-      testApp.send('stop')
     })
 
     // finish the test on exit
@@ -68,8 +67,8 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      onServerInit: `(app) => {console.log("Server initialized")}`
+      onServerStart: '(app) => {process.send(app.get("params"))}',
+      onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -107,7 +106,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerInit: `(app) => {console.log("Server initialized")}`
+      onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -158,9 +157,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      const test1 = fse.existsSync(path.join(appDir, 'mvc'))
-      const test2 = fse.existsSync(path.join(appDir, 'public'))
-      const test3 = fse.existsSync(path.join(appDir, 'statics'))
+      const test1 = fs.existsSync(path.join(appDir, 'mvc'))
+      const test2 = fs.existsSync(path.join(appDir, 'public'))
+      const test3 = fs.existsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -195,9 +194,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      const test1 = fse.existsSync(path.join(appDir, 'mvc'))
-      const test2 = fse.existsSync(path.join(appDir, 'public'))
-      const test3 = fse.existsSync(path.join(appDir, 'statics'))
+      const test1 = fs.existsSync(path.join(appDir, 'mvc'))
+      const test2 = fs.existsSync(path.join(appDir, 'public'))
+      const test3 = fs.existsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -218,7 +217,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -226,13 +225,13 @@ describe('Roosevelt.js Tests', function () {
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === 1) {
           testApp.send('stop')
         }
       }
-      if (data.includes(`thread`) && data.includes(`died`)) {
+      if (data.includes('thread') && data.includes('died')) {
         processKilledInt++
       }
     })
@@ -252,7 +251,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -260,7 +259,7 @@ describe('Roosevelt.js Tests', function () {
 
     // check the output to kill the app when the amount of server instances equal to the amount of cores used and keep track of the amount of threads killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === 2) {
           testApp.send('stop')
@@ -287,7 +286,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started")}`
+      onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
     const testApp = fork(path.join(appDir, 'app.js'), ['-dc', '2'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -297,7 +296,7 @@ describe('Roosevelt.js Tests', function () {
       if (data.includes('development mode')) {
         devModeBool = true
       }
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === 2) {
           testApp.send('stop')
@@ -325,7 +324,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {console.log("server started " + process.pid)}`
+      onServerStart: '(app) => {console.log("server started " + process.pid)}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -333,7 +332,7 @@ describe('Roosevelt.js Tests', function () {
 
     // check output logs to kill the app when the server instances reach the max and keep track of all the thread that are killed
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`server started`)) {
+      if (data.includes('server started')) {
         serverStartInt++
         if (serverStartInt === maxCores) {
           testApp.send('stop')
@@ -365,7 +364,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -407,11 +406,11 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', `0`], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+    const testApp = fork(path.join(appDir, 'app.js'), ['--dev', '-c', '0'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the output logs to see how many times the app makes a server instance
     testApp.stdout.on('data', (data) => {
@@ -448,7 +447,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -482,7 +481,7 @@ describe('Roosevelt.js Tests', function () {
       appDir: appDir,
       generateFolderStructure: true,
       localhostOnly: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -518,7 +517,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `something`
+      onServerStart: 'something'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -556,7 +555,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -603,7 +602,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -642,7 +641,7 @@ describe('Roosevelt.js Tests', function () {
     }
 
     // set up the node_modules and the package.json file
-    fse.mkdirSync(appDir)
+    fs.mkdirSync(appDir)
     let packageJSONSource = {
       dependencies: {
         colors: '~1.2.0',
@@ -651,15 +650,15 @@ describe('Roosevelt.js Tests', function () {
     }
 
     packageJSONSource = JSON.stringify(packageJSONSource)
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
     spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -697,7 +696,7 @@ describe('Roosevelt.js Tests', function () {
     }
 
     // set up the node_modules and the package.json file
-    fse.mkdirSync(appDir)
+    fs.mkdirSync(appDir)
     let packageJSONSource = {
       dependencies: {
         colors: '~1.2.0',
@@ -706,15 +705,15 @@ describe('Roosevelt.js Tests', function () {
     }
 
     packageJSONSource = JSON.stringify(packageJSONSource)
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
     spawnSync(npmName, ['install', 'teddy@3.0.0'], { cwd: appDir })
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       checkDependencies: false
     }, sOptions)
 
@@ -747,13 +746,13 @@ describe('Roosevelt.js Tests', function () {
     // copy the mvc folder to the test App
     const pathToMVC = path.join(__dirname, '/../util/mvc')
     const pathtoapp = path.join(appDir, '/mvc')
-    fse.copySync(pathToMVC, pathtoapp)
+    fs.copySync(pathToMVC, pathtoapp)
 
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
     // fork the app.js file and run it as a child process

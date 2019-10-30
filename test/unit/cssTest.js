@@ -3,8 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fork = require('child_process').fork
-const fs = require('fs')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawsync = require('klaw-sync')
 const path = require('path')
@@ -58,7 +57,7 @@ const pathOfCSSCompiledfilesArray = [
 describe('CSS Section Tests', function () {
   beforeEach(function () {
     // start by generating a static folder in the roosevelt test app directory
-    fse.ensureDirSync(path.join(appDir, 'statics/css'))
+    fs.ensureDirSync(path.join(appDir, 'statics/css'))
     // generate sample less files in statics by looping through sample CSS
     for (let x = 0; x < cssDataArray.length; x++) {
       fs.writeFileSync(pathOfCSSStaticFilesArray[x], cssDataArray[x])
@@ -212,7 +211,7 @@ describe('CSS Section Tests', function () {
     }
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -244,7 +243,7 @@ describe('CSS Section Tests', function () {
       assert.strictEqual(test1, true)
       // see that the value in the css version file is correct
       const versionFileString = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
-      const versionFileNum = versionFileString.split(`'`)
+      const versionFileNum = versionFileString.split('\'')
       const test2 = packageJSON.version === versionFileNum[1]
       assert.strictEqual(test2, true)
       testApp.send('stop')
@@ -387,7 +386,7 @@ describe('CSS Section Tests', function () {
   it('should throw an error if the css preprocessor passed in is not compatible with Roosevelt (does not have parse function)', function (done) {
     // bool var to hold whether or not a specific error was thrown by Roosevelt
     let incompatibleProcessorErrorBool = false
-    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
+    fs.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
 
     // create the app.js file
     generateTestApp({
@@ -416,12 +415,11 @@ describe('CSS Section Tests', function () {
     // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
-      testApp.send('stop')
     })
 
     // on exit, see if the error was given
     testApp.on('exit', () => {
-      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
+      fs.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
       assert.strictEqual(incompatibleProcessorErrorBool, true, 'Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
       done()
     })
@@ -430,7 +428,7 @@ describe('CSS Section Tests', function () {
   it('should throw an error if the css preprocessor passed in is not compatible with Roosevelt (it has the parse method, but it does not have the correct arguments)', function (done) {
     // bool var to hold whether or not a specific error was thrown by Roosevelt
     let incompatibleProcessorErrorBool = false
-    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
+    fs.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
 
     // create the app.js file
     generateTestApp({
@@ -460,12 +458,11 @@ describe('CSS Section Tests', function () {
     // Roosevelt quits the entire process if it runs into this error, so it should not finish initialization
     testApp.on('message', () => {
       assert.fail('app was able to finish initialization when its CSS preprocessor is imcompatible with it')
-      testApp.send('stop')
     })
 
     // on exit, see if the error was given
     testApp.on('exit', () => {
-      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
+      fs.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
       assert.strictEqual(incompatibleProcessorErrorBool, true, 'Roosevelt did not throw an error when its CSS preprocessor is imcompatible with it')
       done()
     })
@@ -475,7 +472,7 @@ describe('CSS Section Tests', function () {
     // bool var to see if the specific Roosevelt log is given
     let madeCSSDirectoryBool = false
     // get rid of the css folder that was generated before the test
-    fse.removeSync(path.join(appDir, 'statics/css'))
+    fs.removeSync(path.join(appDir, 'statics/css'))
 
     // create the app.js file
     generateTestApp({
@@ -503,7 +500,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, check that the directory is ther
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/css'))
+      const test = fs.existsSync(path.join(appDir, 'statics/css'))
       assert.strictEqual(test, true)
       testApp.send('stop')
     })
@@ -519,7 +516,7 @@ describe('CSS Section Tests', function () {
     // bool var to see if the specific Roosevelt log is given
     let madeCSSDirectoryBool = false
     // get rid of the css folder that was generated before the test
-    fse.removeSync(path.join(appDir, 'statics/css'))
+    fs.removeSync(path.join(appDir, 'statics/css'))
 
     // create the app.js file
     generateTestApp({
@@ -547,9 +544,8 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, check that the directory is not there
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/css'))
+      const test = fs.existsSync(path.join(appDir, 'statics/css'))
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check whether or not the specific log was given
@@ -607,8 +603,8 @@ describe('CSS Section Tests', function () {
     // create the compiled css folder before the creation of the app.js file
     const dir1Path = path.join(appDir, 'statics/.build')
     const dir2Path = path.join(dir1Path, 'css')
-    fse.mkdirSync(dir1Path)
-    fse.mkdirSync(dir2Path)
+    fs.mkdirSync(dir1Path)
+    fs.mkdirSync(dir2Path)
 
     // create the app.js file
     generateTestApp({
@@ -679,9 +675,8 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, check that the folder was not made
     testApp.on('message', () => {
-      const test = fse.existsSync(cssBuildDirPath)
+      const test = fs.existsSync(cssBuildDirPath)
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check that the specific log was given
@@ -702,7 +697,7 @@ describe('CSS Section Tests', function () {
     }
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -755,7 +750,7 @@ describe('CSS Section Tests', function () {
     }
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -809,7 +804,7 @@ describe('CSS Section Tests', function () {
     }
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -862,7 +857,7 @@ describe('CSS Section Tests', function () {
     }
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -909,10 +904,10 @@ describe('CSS Section Tests', function () {
     // bool var to hold whether or not Roosevelt had console logged a specfic message
     let versionFileCreationLogBool = false
     // versionFile source String
-    const versionFileSourceString = `/* do not edit; generated automatically by Roosevelt */ @appVersion: '0.3.1';\n`
+    const versionFileSourceString = '/* do not edit; generated automatically by Roosevelt */ @appVersion: \'0.3.1\';\n'
     // write the file in the css directory
     const versionFilePath = path.join(appDir, 'statics/css/_version.less')
-    fse.writeFileSync(versionFilePath, versionFileSourceString)
+    fs.writeFileSync(versionFilePath, versionFileSourceString)
 
     // contents of sample package.json file to use for testing css versionFile
     const packageJSON = {
@@ -921,7 +916,7 @@ describe('CSS Section Tests', function () {
     }
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -977,10 +972,10 @@ describe('CSS Section Tests', function () {
     // write the file in the css directory
     const versionFileSourceString = ''
     const versionFilePath = path.join(appDir, 'statics/css/_version.less')
-    fse.writeFileSync(versionFilePath, versionFileSourceString)
+    fs.writeFileSync(versionFilePath, versionFileSourceString)
 
     // generate the package json file with basic data
-    fse.ensureDirSync(path.join(appDir))
+    fs.ensureDirSync(path.join(appDir))
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSON))
 
     // create the app.js file
@@ -1009,11 +1004,6 @@ describe('CSS Section Tests', function () {
       if (data.includes('writing new versioned CSS file to reflect new version')) {
         versionFileCreationLogBool = true
       }
-    })
-
-    // when the app finishes initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     // when the app is going to exit, see if the creation versionFile log was made
@@ -1054,9 +1044,8 @@ describe('CSS Section Tests', function () {
 
     // when the app is finished initialization, check to see if the file is there
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/.build/css/d.less'))
+      const test = fs.existsSync(path.join(appDir, 'statics/.build/css/d.less'))
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     // when the app is about to exit, see if the error was thrown
@@ -1072,7 +1061,7 @@ describe('CSS Section Tests', function () {
 
     // create the directory in the statics css dir
     const dirPath = path.join(appDir, 'statics/css/dir')
-    fse.mkdirSync(dirPath)
+    fs.mkdirSync(dirPath)
 
     // create the app.js file
     generateTestApp({
@@ -1101,7 +1090,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, check to see that a file of the directory was not made
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/.build/css/dir'))
+      const test = fs.existsSync(path.join(appDir, 'statics/.build/css/dir'))
       assert.strictEqual(test, false)
       testApp.send('stop')
     })
@@ -1120,7 +1109,7 @@ describe('CSS Section Tests', function () {
     // create three files
     const sourceCode = ''
     const pathForThumbs = path.join(appDir, 'statics/css/Thumbs.db')
-    fse.writeFileSync(pathForThumbs, sourceCode)
+    fs.writeFileSync(pathForThumbs, sourceCode)
 
     // create the app.js file
     generateTestApp({
@@ -1149,7 +1138,7 @@ describe('CSS Section Tests', function () {
 
     // when the app finishes initialization, check to see that a file of the directory was not made
     testApp.on('message', () => {
-      const test = fse.existsSync(path.join(appDir, 'statics/.build/css/Thumbs.db'))
+      const test = fs.existsSync(path.join(appDir, 'statics/.build/css/Thumbs.db'))
       assert.strictEqual(test, false)
       testApp.send('stop')
     })
@@ -1168,11 +1157,11 @@ describe('CSS Section Tests', function () {
     // make the file first
     const sourceCode = ''
     const buildDirPath = path.join(appDir, 'statics/.build')
-    fse.mkdirSync(buildDirPath)
+    fs.mkdirSync(buildDirPath)
     const buildDirPath2 = path.join(appDir, 'statics/.build/css')
-    fse.mkdirSync(buildDirPath2)
+    fs.mkdirSync(buildDirPath2)
     const fileCompiledPath = path.join(buildDirPath2, 'a.css')
-    fse.writeFileSync(fileCompiledPath, sourceCode)
+    fs.writeFileSync(fileCompiledPath, sourceCode)
 
     // create the app.js file
     generateTestApp({
@@ -1219,8 +1208,8 @@ describe('CSS Section Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
-      cssCompiler: `(app) => { return { versionCode: (app) => { return 1 }, parse: (app, fileName) => { return 1 } } }`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
+      cssCompiler: '(app) => { return { versionCode: (app) => { return 1 }, parse: (app, fileName) => { return 1 } } }',
       css: {
         sourcePath: 'css',
         compiler: {
@@ -1239,10 +1228,6 @@ describe('CSS Section Tests', function () {
       if (data.includes('using your custom CSS preprocessor')) {
         foundPreprocessor = true
       }
-    })
-
-    testApp.on('message', () => {
-      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test

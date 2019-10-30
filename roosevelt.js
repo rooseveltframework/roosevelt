@@ -6,7 +6,7 @@ const express = require('express')
 const cluster = require('cluster')
 const path = require('path')
 const os = require('os')
-const fs = require('fs')
+const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {

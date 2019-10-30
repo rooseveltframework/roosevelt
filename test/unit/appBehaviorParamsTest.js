@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
@@ -13,7 +13,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
-    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -36,7 +36,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -58,12 +58,12 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
           assert(res.body.lengthTest, true)
 
           // test to see if the file exists (testing to see if it was moved from the temporary spot)
-          const test1 = fse.existsSync(path.join(appDir, 'test1.txt'))
+          const test1 = fs.existsSync(path.join(appDir, 'test1.txt'))
           assert(test1, true)
 
           // test to see if the data in the neew file is correct
-          const file1Contents = fse.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
-          const test2 = file1Contents === `This is the first test document for the multipart Test. Hope this goes well`
+          const file1Contents = fs.readFileSync(path.join(appDir, 'test1.txt')).toString('utf8')
+          const test2 = file1Contents === 'This is the first test document for the multipart Test. Hope this goes well'
           assert.strictEqual(test2, true)
           testApp.send('stop')
         })
@@ -80,7 +80,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
         uploadDir: appDir
       }
@@ -119,7 +119,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       bodyParser: {
         urlEncoded: {
           extended: true,
@@ -162,7 +162,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       bodyParser: {
         json: {
           limit: 10
@@ -207,7 +207,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
         multiples: false,
         maxFieldsSize: 2
@@ -263,7 +263,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -313,7 +313,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -345,7 +345,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      const test = fse.existsSync(originalPath)
+      const test = fs.existsSync(originalPath)
       assert.strictEqual(test, true, 'The temp file was deleted even though it was not suppose to be deleted')
       assert.strictEqual(removeTmpFilesErrorBool, false, 'Roosevelt attempted to delete the temp file when its not suppose to (its path was changed to a number)')
       done()
@@ -360,7 +360,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: {
       }
     }, options)
@@ -393,7 +393,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
 
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
-      const test = fse.existsSync(originalPath)
+      const test = fs.existsSync(originalPath)
       assert.strictEqual(test, true, 'Roosevelt somehow deleted a directory with fs.unlink')
       assert.strictEqual(removeTmpFilesErrorBool, true, 'Roosevelt did not throw an error while trying to fs.unlink a directory')
       done()
@@ -405,7 +405,7 @@ describe('Roosevelt Multipart/Formidable Section Test', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`,
+      onServerStart: '(app) => {process.send(app.get("params"))}',
       multipart: true
     }, options)
 

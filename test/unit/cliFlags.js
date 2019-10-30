@@ -33,8 +33,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'development')
       })
 
       testApp.on('exit', () => {
@@ -46,8 +45,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'development')
       })
 
       testApp.on('exit', () => {
@@ -59,8 +57,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-d'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'development')
       })
 
       testApp.on('exit', () => {
@@ -72,8 +69,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'production')
       })
 
       testApp.on('exit', () => {
@@ -85,8 +81,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'production')
       })
 
       testApp.on('exit', () => {
@@ -98,8 +93,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-p'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'production')
       })
 
       testApp.on('exit', () => {
@@ -112,7 +106,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -125,7 +118,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -138,7 +130,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -151,7 +142,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -164,7 +154,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -177,7 +166,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -190,7 +178,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -203,7 +190,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -216,7 +202,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -229,7 +214,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -243,7 +227,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.alwaysHostPublic, true)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -256,7 +239,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.alwaysHostPublic, true)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -269,7 +251,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.alwaysHostPublic, true)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -282,7 +263,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -295,7 +275,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -308,7 +287,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -321,7 +299,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -334,7 +311,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -347,7 +323,6 @@ describe('Command Line Tests', function () {
 
     testApp.on('message', params => {
       assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -360,10 +335,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--enable-validator', '--attach-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -375,10 +349,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--disable-validator', '--attach-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -390,10 +363,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--disable-validator', '--background-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -405,10 +377,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--enable-validator', '--background-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -420,10 +391,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--disable-validator', '--background-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -435,10 +405,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--enable-validator', '--attach-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -450,10 +419,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--disable-validator', '--attach-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -465,10 +433,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--enable-validator', '--background-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -480,9 +447,8 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--production-mode', '--enable-validator'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -496,10 +462,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-dha'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -511,10 +476,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-had'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -526,10 +490,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-rda'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -541,10 +504,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-dbh'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -556,10 +518,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-brd'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -571,10 +532,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-prb'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -586,10 +546,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-rbp'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -601,10 +560,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-bhp'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -616,10 +574,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-hpa'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -631,10 +588,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-par'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
+        assert.strictEqual(params._env, 'production')
         assert.strictEqual(params.htmlValidator.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -649,7 +605,6 @@ describe('Command Line Tests', function () {
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
         assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
         assert.strictEqual(params.alwaysHostPublic, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -663,7 +618,6 @@ describe('Command Line Tests', function () {
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
         assert.strictEqual(params.alwaysHostPublic, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -677,8 +631,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode', '--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'development')
       })
 
       testApp.on('exit', () => {
@@ -690,8 +643,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--prod', '--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'production')
       })
 
       testApp.on('exit', () => {
@@ -704,7 +656,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -717,7 +668,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -730,7 +680,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.enable, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -743,7 +692,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -755,10 +703,9 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['-dpabhr'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'development')
+        assert.strictEqual(params._env, 'development')
         assert.strictEqual(params.htmlValidator.enable, true)
         assert.strictEqual(params.htmlValidator.separateProcess.enable, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -771,7 +718,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, true)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -784,7 +730,6 @@ describe('Command Line Tests', function () {
 
       testApp.on('message', params => {
         assert.strictEqual(params.htmlValidator.separateProcess.autoKiller, false)
-        testApp.send('stop')
       })
 
       testApp.on('exit', () => {
@@ -816,8 +761,7 @@ describe('Command Line Tests', function () {
       const testApp = fork(path.join(appDir, 'app.js'), ['--development-mode'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
       testApp.on('message', params => {
-        assert.strictEqual(params['_env'], 'production')
-        testApp.send('stop')
+        assert.strictEqual(params._env, 'production')
       })
 
       testApp.on('exit', () => {

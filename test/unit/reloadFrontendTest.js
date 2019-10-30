@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
@@ -16,7 +16,7 @@ describe('Reload Frontend Tests', function () {
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
-    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -39,7 +39,7 @@ describe('Reload Frontend Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -83,7 +83,7 @@ describe('Reload Frontend Tests', function () {
           }
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -127,7 +127,7 @@ describe('Reload Frontend Tests', function () {
           }
         }
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -154,7 +154,7 @@ describe('Reload Frontend Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -190,7 +190,7 @@ describe('Reload Frontend Tests', function () {
         port: 9857,
         verbose: false
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -225,7 +225,7 @@ describe('Reload Frontend Tests', function () {
         port: 'invalid',
         verbose: false
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -260,7 +260,7 @@ describe('Reload Frontend Tests', function () {
         httpsPort: 'invalid',
         verbose: false
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -289,7 +289,7 @@ describe('Reload Frontend Tests', function () {
         port: 43711,
         force: true
       },
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -313,7 +313,7 @@ describe('Reload Frontend Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
-      onServerStart: `(app) => {process.send(app.get("params"))}`
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork the app.js file and run it as a child process
@@ -328,7 +328,7 @@ describe('Reload Frontend Tests', function () {
             testApp.send('stop')
           }
           // Should now have script tag containing reload.js
-          assert.strictEqual(res.text.includes(`<script src='/reloadHttp/reload.js'></script>`), true)
+          assert.strictEqual(res.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'), true)
 
           testApp.send('stop')
         })

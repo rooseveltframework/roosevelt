@@ -1,5 +1,5 @@
 module.exports = router => {
-  const model = require(`models/teddyModel`)
+  const model = require('models/teddyModel')
 
   router.route('/minify').get((req, res) => {
     res.render('teddyTest', model)
