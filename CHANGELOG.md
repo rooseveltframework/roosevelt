@@ -1,4 +1,5 @@
 # Roosevelt Changelog
+- Updated Roosevelt to check non-dev dependencies when Roosevelt app is ran
 
 ## 0.15.0
 
