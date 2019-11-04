@@ -1,15 +1,17 @@
 # Roosevelt Changelog
 
-## 0.15.0
+## Next version
 
 - Auditor now checks config params on a case-by-case basis
-- Updated Roosevelt to check non-dev dependencies when Roosevelt app is ran
+
+## 0.15.0
+
 - Moved CSS minification from [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) to Roosevelt using `clean-css` as a direct dependency. The `clean-css` library had an update with breaking changes so the `rooseveltConfig` params in `advanced` and `aggressiveMerging` in `cleanCSS` are now outdated.
 - New default script `npm run proddev`: Runs the app in production mode, but with the public folder hosted by the Roosevelt app. This is useful for doing development in production mode without having to stage a complex simulation of your production environment, which would likely include hosting static files via another web server better-suited to serving statics like Apache or nginx.
 - Roosevelt now sources configs internally using [source-configs](https://github.com/rooseveltframework/source-configs).
 - Validator will now be disabled if `HTTP_PROXY` or `HTTPS_PROXY` are set but localhost is not in `NO_PROXY`.
-- Fixed a bug where not having `devDependencies` or `dependencies` objects in your app's package.json would throw errors when installing dependencies.
-- Re-reverted most changes in 0.14.1 to fix buggy behavior with `devDependencies` in npm installs.
+- Fixed a bug where not having `devDependencies` or `dependencies` objects in your app's package.json would throw errors when installing dependencies. Accordingly re-reverted most changes in 0.14.1 to fix buggy behavior with `devDependencies` in npm installs.
+- The `check-dependencies` call will now only apply to production dependencies.
 - Some internal refactoring to clean things up.
 - Various dependencies bumped.
 
