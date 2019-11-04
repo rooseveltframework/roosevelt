@@ -2,7 +2,7 @@
 
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')

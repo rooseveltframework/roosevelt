@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klawSync = require('klaw-sync')
 const path = require('path')
@@ -42,10 +42,10 @@ describe('JavaScript Tests', function () {
 
   beforeEach(function () {
     // start by generating a statics folder in the roosevelt test app directory
-    fse.ensureDirSync(path.join(appDir, 'statics/js'))
+    fs.ensureDirSync(path.join(appDir, 'statics/js'))
     // generate sample js files in statics by looping through smaple JS source strings
     for (let x = 0; x < pathsOfStaticJS.length; x++) {
-      fse.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
+      fs.writeFileSync(pathsOfStaticJS[x], staticJSFiles[x])
     }
   })
 
@@ -133,9 +133,9 @@ describe('JavaScript Tests', function () {
 
   it('should minify all files except for those that are blacklisted', function (done) {
     // get the buffer(string data) of the static files
-    const staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
-    const staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
-    const staticJSFilesC = fse.readFileSync(pathsOfStaticJS[2], 'utf8')
+    const staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
+    const staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
+    const staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -156,9 +156,9 @@ describe('JavaScript Tests', function () {
 
     testApp.on('message', () => {
       // get the buffer(string data) of the compiled files
-      const compiledJSFilesA = fse.readFileSync(pathsOfCompiledJS[0], 'utf8')
-      const compiledJSFilesB = fse.readFileSync(pathsOfCompiledJS[1], 'utf8')
-      const compiledJSFilesC = fse.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      const compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      const compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      const compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
       // test if the buffer from the compiled is the same as their static counterpart
       const test1 = staticJSFilesA === compiledJSFilesA
       const test2 = staticJSFilesB === compiledJSFilesB
@@ -255,9 +255,9 @@ describe('JavaScript Tests', function () {
 
   it('should copy over the JS files to build without changing them when the minify param is false', function (done) {
     // get the buffer (string data) of the static files
-    const staticJSFilesA = fse.readFileSync(pathsOfStaticJS[0], 'utf8')
-    const staticJSFilesB = fse.readFileSync(pathsOfStaticJS[1], 'utf8')
-    const staticJSFilesC = fse.readFileSync(pathsOfStaticJS[2], 'utf8')
+    const staticJSFilesA = fs.readFileSync(pathsOfStaticJS[0], 'utf8')
+    const staticJSFilesB = fs.readFileSync(pathsOfStaticJS[1], 'utf8')
+    const staticJSFilesC = fs.readFileSync(pathsOfStaticJS[2], 'utf8')
 
     // create the app.js file
     generateTestApp({
@@ -278,9 +278,9 @@ describe('JavaScript Tests', function () {
 
     testApp.on('message', () => {
       // get the buffer (string data) of the compiled files
-      const compiledJSFilesA = fse.readFileSync(pathsOfCompiledJS[0], 'utf8')
-      const compiledJSFilesB = fse.readFileSync(pathsOfCompiledJS[1], 'utf8')
-      const compiledJSFilesC = fse.readFileSync(pathsOfCompiledJS[2], 'utf8')
+      const compiledJSFilesA = fs.readFileSync(pathsOfCompiledJS[0], 'utf8')
+      const compiledJSFilesB = fs.readFileSync(pathsOfCompiledJS[1], 'utf8')
+      const compiledJSFilesC = fs.readFileSync(pathsOfCompiledJS[2], 'utf8')
       // make tests to compare the buffer in between the static and compiled files
       const test1 = staticJSFilesA === compiledJSFilesA
       const test2 = staticJSFilesB === compiledJSFilesB
@@ -404,7 +404,6 @@ describe('JavaScript Tests', function () {
     // the app should not be able to initialize if it has this specific whitelist error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -459,7 +458,7 @@ describe('JavaScript Tests', function () {
   it('should skip compiling a file if the path is a directory', function (done) {
     // make a directory inside the static js folder
     const filePathName = path.join(appDir, 'statics/js/testDir')
-    fse.mkdirSync(filePathName)
+    fs.mkdirSync(filePathName)
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
@@ -479,9 +478,8 @@ describe('JavaScript Tests', function () {
     // when server starts, see if a file or directory of testDir was made on the build
     testApp.on('message', () => {
       const testFilePath = path.join(appDir, 'statics/.build/js/testDir')
-      const test = fse.existsSync(testFilePath)
+      const test = fs.existsSync(testFilePath)
       assert.strictEqual(test, false)
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -493,7 +491,7 @@ describe('JavaScript Tests', function () {
     // create a file that has js errors in it
     const fileContent = 'console.log(\'blah\''
     const filePath = path.join(appDir, 'statics/js/error.js')
-    fse.writeFileSync(filePath, fileContent)
+    fs.writeFileSync(filePath, fileContent)
     // bool var that holds whether or not Roosevelt will give a warning for a js file not coded correctly
     let fileCodedIncorrectlyBool = false
 
@@ -523,7 +521,6 @@ describe('JavaScript Tests', function () {
     // the app should not be able to initialize if this specific error was thrown
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     // when the app is about to exit, check if the error was logged
@@ -537,7 +534,7 @@ describe('JavaScript Tests', function () {
 
   it('should create the statics js directory if it does not exist at the point of compiling', function (done) {
     // get rid of the js folder that was copied over
-    fse.removeSync(path.join(appDir, 'statics/js'))
+    fs.removeSync(path.join(appDir, 'statics/js'))
 
     // bool var to check that a static js dir is being made
     let staticJSDirMadeBool = false
@@ -582,7 +579,7 @@ describe('JavaScript Tests', function () {
 
   it('should not try to make the js static folder if generatefolderstructure is false', function (done) {
     // get rid of the js folder that was copied over
-    fse.removeSync(path.join(appDir, 'statics/js'))
+    fs.removeSync(path.join(appDir, 'statics/js'))
 
     // generate the app.js file
     generateTestApp({
@@ -600,15 +597,10 @@ describe('JavaScript Tests', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     // when the app is about to end, check to see if the js static file was made or not
     testApp.on('exit', () => {
       // js static folder
-      const test = fse.existsSync(path.join(appDir, 'statics/js'))
+      const test = fs.existsSync(path.join(appDir, 'statics/js'))
       assert.strictEqual(test, false)
       done()
     })
@@ -631,18 +623,13 @@ describe('JavaScript Tests', function () {
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     // when the app is about to end, check to see if the build or js output folder were made
     testApp.on('exit', () => {
       // build folder
-      const test = fse.existsSync(path.join(appDir, 'statics/.build'))
+      const test = fs.existsSync(path.join(appDir, 'statics/.build'))
       assert.strictEqual(test, false)
       // output folder
-      const test2 = fse.existsSync(path.join(appDir, 'statics/.build/js'))
+      const test2 = fs.existsSync(path.join(appDir, 'statics/.build/js'))
       assert.strictEqual(test2, false)
       done()
     })
@@ -654,8 +641,8 @@ describe('JavaScript Tests', function () {
     // create the js compiled output directory
     const compiledpath = path.join(appDir, 'statics/.build')
     const compiledpath2 = path.join(appDir, 'statics/.build/jsBuildTest')
-    fse.mkdirSync(compiledpath)
-    fse.mkdirSync(compiledpath2)
+    fs.mkdirSync(compiledpath)
+    fs.mkdirSync(compiledpath2)
 
     // generate the app.js file
     generateTestApp({
@@ -702,8 +689,8 @@ describe('JavaScript Tests', function () {
     const result = uglify.minify(test1, {})
     const newJs = result.code
     // write it to the compile file
-    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
-    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
+    fs.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fs.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
 
     // generate the app.js file
     generateTestApp({
@@ -745,7 +732,7 @@ describe('JavaScript Tests', function () {
   it('should throw an error if the node module passed in js compiler is not compatible or out of date with Roosevelt', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
-    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
+    fs.outputFileSync(path.join(__dirname, '../../node_modules/test_module_1/index.js'), 'module.exports = function () {}')
 
     // generate the app.js file
     generateTestApp({
@@ -773,12 +760,11 @@ describe('JavaScript Tests', function () {
     // the app should not be able to initailize with this specific error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     // when the app is about to end, check that the error was hit
     testApp.on('exit', () => {
-      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
+      fs.removeSync(path.join(__dirname, '../../node_modules/test_module_1'))
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
       }
@@ -789,7 +775,7 @@ describe('JavaScript Tests', function () {
   it('should throw an error if the node module provided to the js compiler has a parse function but does not provide the functionality that is required from a js compiler', function (done) {
     // bool var to hold whether or not the warning saying that the node module provided in js compiler does not works with Roosevelt was thrown
     let incompatibleParserWarnBool = false
-    fse.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
+    fs.outputFileSync(path.join(__dirname, '../../node_modules/test_module_2/index.js'), 'let parse = function (arg1) { }\nmodule.exports.parse = parse')
 
     // generate the app.js file
     generateTestApp({
@@ -817,12 +803,11 @@ describe('JavaScript Tests', function () {
     // app should not be able to initialize with this specific error
     testApp.on('message', () => {
       assert.fail('app was able to initialize even though it should not have')
-      testApp.send('stop')
     })
 
     // when the app is about to end, check that the error was hit
     testApp.on('exit', () => {
-      fse.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
+      fs.removeSync(path.join(__dirname, '../../node_modules/test_module_2'))
       if (incompatibleParserWarnBool === false) {
         assert.fail('Roosevelt did not catch that the node module provided into the js compiler is not compatible or is out of date')
       }
@@ -835,9 +820,9 @@ describe('JavaScript Tests', function () {
     let compiledJSCreatedBool = false
 
     // create the three files
-    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/a.js'))
-    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/b.js'))
-    fse.ensureFileSync(path.join(appDir, 'statics/.build/js/c.js'))
+    fs.ensureFileSync(path.join(appDir, 'statics/.build/js/a.js'))
+    fs.ensureFileSync(path.join(appDir, 'statics/.build/js/b.js'))
+    fs.ensureFileSync(path.join(appDir, 'statics/.build/js/c.js'))
 
     // generate the app.js file
     generateTestApp({
@@ -905,10 +890,6 @@ describe('JavaScript Tests', function () {
       }
     })
 
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
     // when the child process exits, check assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(foundPreprocessor, true, 'The Roosevelt app did not use the custom js preprocessor')
@@ -927,9 +908,9 @@ describe('JavaScript Tests', function () {
     const pathOfDataFile = path.join(appDir, 'statics', 'js', 'Thumbs.db')
 
     // write data to .gitignore file created in test app directory
-    fse.ensureDirSync(path.join(appDir))
-    fse.writeFileSync(pathOfGitignore, gitignoreData)
-    fse.writeFileSync(pathOfDataFile, randomData)
+    fs.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(pathOfGitignore, gitignoreData)
+    fs.writeFileSync(pathOfDataFile, randomData)
 
     // generate a test app
     generateTestApp({
@@ -972,8 +953,8 @@ describe('JavaScript Tests', function () {
     let gitignoreFiles = []
 
     // write to gitignore
-    fse.ensureDirSync(path.join(appDir))
-    fse.writeFileSync(pathOfGitignore, gitignoreData)
+    fs.ensureDirSync(path.join(appDir))
+    fs.writeFileSync(pathOfGitignore, gitignoreData)
     gitignoreFiles = gitignoreScanner(pathOfGitignore)
 
     gitignoreFiles.forEach((file) => {
@@ -1000,9 +981,9 @@ describe('JavaScript Tests', function () {
     const result = uglify.minify(test1, {})
     const newJs = result.code
     // write it to the compile file
-    fse.ensureDirSync(path.join(appDir, 'statics/.build/js'))
-    fse.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
-    fse.utimesSync(path.join(appDir, 'statics/.build/js', 'a.js'), date, date)
+    fs.ensureDirSync(path.join(appDir, 'statics/.build/js'))
+    fs.writeFileSync(path.join(appDir, 'statics/.build/js', 'a.js'), newJs)
+    fs.utimesSync(path.join(appDir, 'statics/.build/js', 'a.js'), date, date)
 
     // generate the app.js file
     generateTestApp({

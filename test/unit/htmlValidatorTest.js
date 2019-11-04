@@ -4,7 +4,7 @@ const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const fkill = require('fkill')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const path = require('path')
@@ -19,7 +19,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
   beforeEach(function (done) {
     // copy the mvc dir from util to the test app
-    fse.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -849,11 +849,6 @@ describe('HTML Validator/Kill Validator Test', function () {
         }
       })
 
-      // once app.js finishes initialization, kill it
-      testApp.on('message', () => {
-        testApp.send('stop')
-      })
-
       // once the server made by app.js is done, kill the dummy server
       testApp.on('exit', () => {
         server.close()
@@ -900,11 +895,6 @@ describe('HTML Validator/Kill Validator Test', function () {
         if (data.includes('Another process that is not the HTMLValidator is using this port already. Quiting the initialization of your app')) {
           twoProcessToPortsBool = true
         }
-      })
-
-      // when app.js finishes initialization, kill it
-      testApp.on('message', () => {
-        testApp.send('stop')
       })
 
       // as app.js is closing, close the dummy server

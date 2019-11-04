@@ -8,15 +8,6 @@
     "value": "cd ./node_modules/roosevelt && npm install --only=dev",
     "priority": "ignore"
   },
-  "dev-prune": {
-    "value": "cd ./node_modules/roosevelt && npm prune --production",
-    "priority": "error",
-    "inspect": true
-  },
-  "dp": {
-    "value": "cd ./node_modules/roosevelt && npm prune --production",
-    "priority": "ignore"
-  },
   "start": {
     "value": "nodemon app.js --production-mode",
     "priority": "ignore"
@@ -94,6 +85,14 @@
   },
   "pc": {
     "value": "lint-staged",
+    "priority": "ignore"
+  },
+  "proddev": {
+    "value": "nodemon app.js --host-public",
+    "priority": "ignore"
+  },
+  "pd": {
+    "value": "nodemon app.js --host-public",
     "priority": "ignore"
   },
   "test": {

@@ -3,7 +3,7 @@
 const assert = require('assert')
 const cleanupTestApp = require('../util/cleanupTestApp')
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const generateTestApp = require('../util/generateTestApp')
 const klaw = require('klaw')
 const path = require('path')
@@ -21,7 +21,7 @@ describe('Public Folder Tests', function () {
 
   beforeEach(function (done) {
     // start by copying the premade mvc directory into the app directory
-    fse.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -38,7 +38,7 @@ describe('Public Folder Tests', function () {
 
   it('should allow for a custom favicon and GET that favicon on request', function (done) {
     // copy the favicon to the images folder within the static folder
-    fse.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
+    fs.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
 
     // generate the test app
     generateTestApp({
@@ -73,7 +73,7 @@ describe('Public Folder Tests', function () {
               // convert buffer to base64
               const faviconData = res.body.toString('base64')
               // get the base64 buffer of the favicon that we should be using in util
-              const data = fse.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
+              const data = fs.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
               const encodedImageData = Buffer.from(data, 'binary').toString('base64')
               // check if both buffers are the same (they should be)
               const test = faviconData === encodedImageData
@@ -183,7 +183,7 @@ describe('Public Folder Tests', function () {
 
   it('should set the name of folder inside of public to the version inside of package.json', function (done) {
     // write the package json file with the source code from above
-    fse.writeFileSync(path.join(appDir, 'package.json'), packageSource)
+    fs.writeFileSync(path.join(appDir, 'package.json'), packageSource)
 
     // generate the app
     generateTestApp({

@@ -6,7 +6,7 @@ const express = require('express')
 const cluster = require('cluster')
 const path = require('path')
 const os = require('os')
-const fs = require('fs')
+const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 
 module.exports = function (params) {
@@ -50,7 +50,7 @@ module.exports = function (params) {
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
   if (app.get('params').checkDependencies) {
-    const output = require('check-dependencies').sync({ packageDir: app.get('appDir') })
+    const output = require('check-dependencies').sync({ packageDir: app.get('appDir'), scopeList: ['dependencies'] })
     if (!output.depsWereOk) {
       const mainError = output.error[output.error.length - 1]
       if (mainError.includes('npm install')) {
