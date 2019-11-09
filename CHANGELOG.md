@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.15.1
+
+- Fixed bug causing apps to crash in dev mode.
+- Various dependencies bumped.
+
 ## 0.15.0
 
 - Moved CSS minification from [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less) to Roosevelt using `clean-css` as a direct dependency. The `clean-css` library had an update with breaking changes so the `rooseveltConfig` params in `advanced` and `aggressiveMerging` in `cleanCSS` are now outdated.
