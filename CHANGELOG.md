@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Introduced Views Bundler: A tool to expose templates to the client to be used for client-side rendering.
 
 ## 0.15.1
 

@@ -108,5 +108,14 @@
   ],
   "versionedPublic": false,
   "alwaysHostPublic": false,
-  "routers": false
+  "routers": false,
+  "clientViews": {
+    "whitelist": {},
+    "blacklist": [],
+    "output": ".build/templates",
+    "exposeAll": false,
+    "defaultBundle": "bundle.js",
+    "minify": true,
+    "minifyOptions": {}
+  }
 }
