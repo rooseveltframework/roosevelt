@@ -3,6 +3,7 @@
 ## Next version
 
 - Added a button to the validation error page to display the page anyway and another button to disable the validator entirely until the server restarts.
+- Fixed bug with frontend reload causing it to inject the script tag in the wrong location in some situations.
 
 ## 0.15.1
 
