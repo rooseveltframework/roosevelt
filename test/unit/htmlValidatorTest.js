@@ -1301,7 +1301,7 @@ describe('HTML Validator/Kill Validator Test', function () {
 
     it('should disable htmlValidator param if /disableValidator route is hit', function (done) {
       // initialize test app
-      const app = roosevelt({
+      const testapp = roosevelt({
         appDir: appDir,
         logging: {
           methods: {
@@ -1316,7 +1316,7 @@ describe('HTML Validator/Kill Validator Test', function () {
         onServerStart: onServerStart
       })
 
-      app.startServer()
+      testapp.startServer()
 
       function onServerInit (app) {
         app.set('env', 'development')
@@ -1332,6 +1332,7 @@ describe('HTML Validator/Kill Validator Test', function () {
             } else {
               assert.strictEqual(app.get('params').htmlValidator.enable, false)
             }
+            testapp.stopServer('close')
             done()
           })
       }
