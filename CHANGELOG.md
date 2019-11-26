@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Added a button to the validation error page to display the page anyway and another button to disable the validator entirely until the server restarts.
 
 ## 0.15.1
 
