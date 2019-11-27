@@ -59,7 +59,7 @@
     "eslint": "~6.7.1",
     "eslint-plugin-mocha": "~6.2.2",
     "husky": "~3.1.0",
-    "lint-staged": "~9.4.3",
+    "lint-staged": "~9.5.0",
     "mocha": "~6.2.2",
     "nyc": "~14.1.1",
     "proxyquire": "~2.1.3",
