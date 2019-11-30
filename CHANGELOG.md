@@ -3,6 +3,15 @@
 ## Next version
 
 - Auditor now checks config params on a case-by-case basis
+- Added a button to the validation error page to display the page anyway and another button to disable the validator entirely until the server restarts.
+- Fixed bug with frontend reload causing it to inject the script tag in the wrong location in some situations.
+- Various dependencies bumped.
+- CI improvements.
+
+## 0.15.1
+
+- Fixed bug causing apps to crash in dev mode.
+- Various dependencies bumped.
 
 ## 0.15.0
 
