@@ -263,6 +263,8 @@ describe('Roosevelt Config Auditor Test', function () {
     let errorPagesExtraBool = false
     let frontendReloadExtraBool = false
     let htmlMinifierExtraBool = false
+    let loggingExtraBool = false
+    let methodsExtraBool = false
     let htmlValidatorExtraBool = false
     let separateProcessExtraBool = false
     let exceptionsExtraBool = false
@@ -281,6 +283,8 @@ describe('Roosevelt Config Auditor Test', function () {
     packageJSONSource.rooseveltConfig.htmlValidator.extraParam = true
     packageJSONSource.rooseveltConfig.htmlValidator.separateProcess.extraParam = true
     packageJSONSource.rooseveltConfig.htmlValidator.exceptions.extraParam = true
+    packageJSONSource.rooseveltConfig.logging.extraParam = true
+    packageJSONSource.rooseveltConfig.logging.methods.extraParam = true
     packageJSONSource.rooseveltConfig.js.extraParam = true
     packageJSONSource.rooseveltConfig.js.bundler.extraParam = true
     packageJSONSource.rooseveltConfig.toobusy.extraParam = true
@@ -322,6 +326,12 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Extra param "extraParam" found in rooseveltConfig.htmlMinifier, this can be removed.')) {
         htmlMinifierExtraBool = true
       }
+      if (data.includes('Extra param "extraParam" found in rooseveltConfig.logging, this can be removed.')) {
+        loggingExtraBool = true
+      }
+      if (data.includes('Extra param "extraParam" found in rooseveltConfig.logging.methods, this can be removed.')) {
+        methodsExtraBool = true
+      }
       if (data.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator, this can be removed.')) {
         htmlValidatorExtraBool = true
       }
@@ -355,6 +365,8 @@ describe('Roosevelt Config Auditor Test', function () {
       assert.strictEqual(errorPagesExtraBool, true, 'configAuditor did not report that the package.json file has an extra param in `rooseveltConfig.errorPages`')
       assert.strictEqual(frontendReloadExtraBool, true, 'configAuditor did not report that the package.json file has an extra param in `rooseveltConfig.frontendReload`')
       assert.strictEqual(htmlMinifierExtraBool, true, 'configAuditor did not report that the package.json file has an extra param in `rooseveltConfig.htmlMinifier`')
+      assert.strictEqual(loggingExtraBool, false, 'configAuditor reported that the package.json file has an extra param in `rooseveltConfig.logging` when it should have been ignored')
+      assert.strictEqual(methodsExtraBool, false, 'configAuditor reported that the package.json file has an extra param in `rooseveltConfig.logging.methods` when it should have been ignored')
       assert.strictEqual(htmlValidatorExtraBool, true, 'configAuditor did not report that the package.json file has an extra param in `rooseveltConfig.htmlValidator`')
       assert.strictEqual(separateProcessExtraBool, true, 'configAuditor did not report that the package.json file has an extra param in `rooseveltConfig.htmlValidator.separateProcess`')
       assert.strictEqual(exceptionsExtraBool, true, 'configAuditor did not report that the package.json file has an extra param in `rooseveltConfig.htmlValidator.exceptions`')
