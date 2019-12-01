@@ -836,6 +836,60 @@ This is particularly useful for setting parameters that can't be defined in `pac
     - `1 month`: `2419200000`
   - Set to `0`, `null`, or anything that isn't a number to disable the check entirely.
 
+- `clientViews`: *[Object]* options for template files to be exposed to Frontend JS
+
+  - `whitelist`: *[Object]* A map which will expose templates to clientside JS. Each entry is an array of templates which will be saved in the module defined in the key.
+
+      - the contents of the bundle array's can be any type of templating language or plain old HTML which will be sent down to the client for usage.
+
+      - Example:
+        ```json
+        // the input files are found in the directory defined in the "viewsPath" config.
+        {
+          "mainLayouts.js": ["baseLayout.html", "footer.html"],
+          "forms.js": ["forms/formTemplate.html"],
+        }
+        ```
+
+  - `output`: *[string]* Subdirectory within the statics root to define where to save the client view bundles.
+
+    - Default: *[string]* `".build/templates"`
+
+  - `minify`: *[Boolean]* option to minify templates when being processed
+
+    - Default: *[Boolean]* `true`
+
+  - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)
+
+    - Falls back to `htmlMinifier.options` if empty
+
+  - `exposeAll`: *[Boolean]* option to expose all templates down to the client. This will exclude templates that have `<!-- roosevelt-blacklist -->` at the top of the file or those listed in the `blacklist` property of `clientViews`
+
+    - Default: *[Boolean]* `false`
+
+  - `blacklist`: *[Array<String>]* Array of files / folders excluded when `exposeAll` is on.
+
+    - **Note**: Anything that is in the blacklist or that has a `<!-- roosevelt-blacklist -->` tag will never be added to any whitelist
+
+    - Default: *[Array<String>]* `[]`
+
+  - `defaultBundle`: *[String]* Filename for default location of templates if not specified with the `<!-- roosevelt-whitelist <filepath> -->` tag at the top of any template
+
+    - Default: *[String]* `"bundle.js"`
+
+  - Default: *[Object]*
+    ```json
+      "clientViews": {
+        "whitelist": {},
+        "output": ".build/templates",
+        "minify": true,
+        "minifyOptions": {},
+        "exposeAll": false,
+        "blacklist": [],
+        "defaultBundle": "bundle.js"
+      }
+    ```
+
 ## Public folder parameters
 
 - `publicFolder`: All files and folders in this directory will be exposed as static files.
@@ -891,6 +945,8 @@ require('roosevelt')({
 - `onReqAfterRoute(req, res)`: Fired after the request ends.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+- `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client
+  - `template`: A string containing a template written in any templating engine (Teddy, Pug, Handlebars, etc) 
 
 # Making controller files
 
@@ -990,6 +1046,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
+| `clientViewsBundledOutput`           | Full path on the file system to where your app's client exposed views folder is located |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
 | `cssPath`                            | Full path on the file system to where your app's CSS source files are located. |
