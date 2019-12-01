@@ -9,6 +9,7 @@ const generateTestApp = require('../util/generateTestApp')
 const http = require('http')
 const path = require('path')
 const request = require('supertest')
+const roosevelt = require('../../roosevelt')
 
 describe('HTML Validator/Kill Validator Test', function () {
   // location of the test app
@@ -1296,6 +1297,45 @@ describe('HTML Validator/Kill Validator Test', function () {
         assert.strictEqual(hadIt, true, 'Human readable times (seconds) did not output on autokiller instantiation')
         done()
       })
+    })
+
+    it('should disable htmlValidator param if /disableValidator route is hit', function (done) {
+      // initialize test app
+      const testapp = roosevelt({
+        appDir: appDir,
+        logging: {
+          methods: {
+            http: false,
+            info: false,
+            warn: false,
+            verbose: false
+          }
+        },
+        generateFolderStructure: true,
+        onServerInit: onServerInit,
+        onServerStart: onServerStart
+      })
+
+      testapp.startServer()
+
+      function onServerInit (app) {
+        app.set('env', 'development')
+      }
+
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .post('/disableValidator')
+          .expect(302, (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              assert.strictEqual(app.get('params').htmlValidator.enable, false)
+            }
+            testapp.stopServer('close')
+            done()
+          })
+      }
     })
   })
 })

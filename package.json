@@ -55,16 +55,16 @@
     "vnu-jar": "~19.9.4"
   },
   "devDependencies": {
+    "c8": "~6.0.1",
     "codecov": "~3.6.1",
-    "eslint": "~6.6.0",
-    "eslint-plugin-mocha": "~6.2.1",
-    "husky": "~3.0.9",
-    "lint-staged": "~9.4.2",
+    "eslint": "~6.7.1",
+    "eslint-plugin-mocha": "~6.2.2",
+    "husky": "~3.1.0",
+    "lint-staged": "~9.5.0",
     "mocha": "~6.2.2",
-    "nyc": "~14.1.1",
     "proxyquire": "~2.1.3",
-    "roosevelt-less": "~0.7.1",
-    "roosevelt-uglify": "~0.3.1",
+    "roosevelt-less": "~0.8.0",
+    "roosevelt-uglify": "~0.3.2",
     "sinon": "~7.5.0",
     "standard": "~14.3.1",
     "supertest": "~4.0.2",
@@ -108,11 +108,12 @@
     ]
   },
   "scripts": {
-    "codecov": "./node_modules/.bin/codecov",
-    "coverage": "nyc mocha --timeout 125000 test/unit",
+    "codecov": "codecov",
+    "coverage": "c8 --reporter=text --reporter=lcov mocha --timeout 125000 test/unit",
     "lint": "standard && eslint ./test/unit",
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "test": "mocha --timeout 125000 test/unit"
+    "test": "mocha --timeout 125000 test/unit",
+    "test-debug": "mocha --inspect-brk --timeout 125000 test/unit"
   },
   "lint-staged": {
     "*.js": "standard"
@@ -121,5 +122,9 @@
     "hooks": {
       "pre-commit": "lint-staged && eslint ./test/unit"
     }
+  },
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/kethinov"
   }
 }
