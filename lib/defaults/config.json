@@ -110,11 +110,11 @@
   "alwaysHostPublic": false,
   "routers": false,
   "clientViews": {
-    "whitelist": {},
-    "blacklist": [],
-    "output": ".build/templates",
     "exposeAll": false,
+    "blacklist": [],
+    "whitelist": {},
     "defaultBundle": "bundle.js",
+    "output": ".build/templates",
     "minify": true,
     "minifyOptions": {}
   }
