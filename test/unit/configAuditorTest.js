@@ -72,6 +72,15 @@ describe('Roosevelt Config Auditor Test', function () {
       cores: 1,
       shutdownTimeout: 30000,
       cleanTimer: 604800000,
+      clientViews: {
+        whitelist: {},
+        output: '.build/templates',
+        minify: true,
+        minifyOptions: {},
+        exposeAll: false,
+        blacklist: [],
+        defaultBundle: 'bundle.js'
+      },
       https: false,
       modelsPath: 'mvc/models',
       viewsPath: 'mvc/views',
