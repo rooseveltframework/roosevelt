@@ -458,20 +458,20 @@ This is particularly useful for setting parameters that can't be defined in `pac
     - `port`: The port your app will run a HTTPS server on.
       - Default: *[Number]* `43733`.
     - `authInfoPath`: *[Object]* Specify either the paths where the _server_ certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-      - Default: `undefined`
+      - Default: `undefined`.
       - Object members:
         - `p12`: *[Object]* Parameter used when the _server_ certificate/key is in PKCS#12 format.
           - Object members:
             - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (.p12/.pfx) _or_ a PKCS#12-formatted string or buffer (i.e. the result of fs.readFileSync(/path/to/file/example.p12))
-              - Default: `undefined`
+              - Default: `undefined`.
             - `passphrase`: *[String]* The password used to encrypt the PKCS#12-formatted file or string.
               - Default: `undefined`.
         - `authCertAndKey`: *[Object]* Parameter used when the _server_ certificate and key are in separate PEM-encoded files.
           - Object members:
             - `cert`: *[String]* Either the path to a PEM-encoded certificate file (.crt, .cer, etc.) or a PEM-encoded certificate string.
-              - Default: `undefined`
+              - Default: `undefined`.
             - `key`: *[String]* Either the path to a PEM-encoded key file (.crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-              - Default: `undefined`
+              - Default: `undefined`.
     - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. _This certificate (chain) will be used to verify **client** certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are **not** signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt)_.
       - Default: `undefined`.
     - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
@@ -559,6 +559,7 @@ This is particularly useful for setting parameters that can't be defined in `pac
 - `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
 
   - Default: *[String]* `"statics"`.
+  
 - `htmlMinifier`: How you want Roosevelt to minify your HTML:
 
   - `enable`: *[Boolean]* Enable HTML minification.
@@ -566,7 +567,7 @@ This is particularly useful for setting parameters that can't be defined in `pac
   - Note: Minification is automatically disabled in development mode.
 
   - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
-  - `options`: *[Object]* Parameter to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
+  - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
   - Default: *[Object]*
 
       ```json
@@ -831,10 +832,58 @@ This is particularly useful for setting parameters that can't be defined in `pac
 - `cleanTimer`: Time in milliseconds to allow before considering files in CSS/JS compile directories stale and recommending running `npm run clean`.
   - Default: *[Number]* `604800000` (1 week)
   - Useful time conversions to `milliseconds` to configure this parameter with:
-    - `1 day`: `86400000`
-    - `1 week`: `604800000`
-    - `1 month`: `2419200000`
+    - `1 day`: `86400000`.
+    - `1 week`: `604800000`.
+    - `1 month`: `2419200000`.
   - Set to `0`, `null`, or anything that isn't a number to disable the check entirely.
+
+- `clientViews`: *[Object]* Allows you to expose view code to frontend JS for client-side templating.
+
+  - `exposeAll`: *[Boolean]* Option to expose all templates. This will exclude templates that have `<!-- roosevelt-blacklist -->` at the top of the file or those listed in the `blacklist` property of `clientViews`.
+
+    - Default: *[Boolean]* `false`.
+
+  - `blacklist`: *[Array]* of *[Strings]* List of files or folders excluded when `exposeAll` is on.
+  
+    - Default: *[Array]* of *[Strings]* `[]`.
+    - Note: Anything that is in the blacklist or that has a `<!-- roosevelt-blacklist -->` tag will never be added to any whitelist.
+  
+  - `whitelist`: *[Object]* List of JS files to create mapped to which view files to expose.
+  
+      - Default: *[Object]* of *[Arrays]* `{}`.
+
+      - Example:
+      ```json
+        {
+        "mainLayouts.js": ["baseLayout.html", "footer.html"],
+          "forms.js": ["forms/formTemplate.html"]
+      }
+      ```
+
+  - `defaultBundle`: *[String]* File name for the default location of templates if not specified with the `<!-- roosevelt-whitelist <filepath> -->` tag at the top of any template.
+
+    - Default: *[String]* `"bundle.js"`.
+
+  - `output`: *[String]* Subdirectory within `staticsRoot` to define where to save the view JS bundles.
+  - Default: *[String]* `".build/templates"`.
+  - `minify`: *[Boolean]* Option to minify templates that are exposed via this feature.
+  - Default: *[Boolean]* `true`.
+  - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
+  - Uses the params you set in `htmlMinifier.options` if empty.
+  
+- Default: *[Object]*
+  
+  ```json
+      "clientViews": {
+        "exposeAll": false,
+        "blacklist": [],
+        "whitelist": {},
+        "defaultBundle": "bundle.js",
+        "output": ".build/templates",
+        "minify": true,
+        "minifyOptions": {}
+      }
+  ```
 
 ## Public folder parameters
 
@@ -891,6 +940,8 @@ require('roosevelt')({
 - `onReqAfterRoute(req, res)`: Fired after the request ends.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
+- `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client
+  - `template`: A string containing a template written in any templating engine (Teddy, Pug, Handlebars, etc) 
 
 # Making controller files
 
@@ -990,6 +1041,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
+| `clientViewsBundledOutput`           | Full path on the file system to where your app's client exposed views folder is located |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
 | `cssPath`                            | Full path on the file system to where your app's CSS source files are located. |
@@ -1107,6 +1159,7 @@ Lastly, in order to activate the custom preprocessor feature, alter `package.jso
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.14.x](https://github.com/rooseveltframework/roosevelt/blob/16e5e59083cecf2e2395e6d77d0cc5db0d0f7342/README.md)*
 - *[0.13.x](https://github.com/rooseveltframework/roosevelt/blob/a308aff84d1415c3325b781f371fd3c3c915946c/README.md)*
 - *[0.12.x](https://github.com/rooseveltframework/roosevelt/blob/59b00cab727bc754e1bcaf2d1df6d76e54630dc4/README.md)*
 - *[0.11.x](https://github.com/rooseveltframework/roosevelt/blob/df3f4f60a08215fcbae7b5c9765623bb46c2cd2c/README.md)*
