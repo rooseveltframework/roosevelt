@@ -35,18 +35,21 @@ describe('Roosevelt.js Tests', function () {
     sOptions.method = 'initServer'
     generateTestApp(undefined, sOptions)
 
-    // read the default config file
-    const defaults = fs.readFileSync(path.join(appDir, '../../../lib/defaults/config.json')).toString('utf8')
-    const defaultsJSON = JSON.parse(defaults)
+    const sampleJSON = {
+      port: 43711,
+      viewEngine: 'none',
+      favicon: 'none'
+    }
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // if we do get back an object of params, it means that roosevelt was able to complete its initialization
     testApp.on('message', (params) => {
-      assert.strictEqual(params.port, defaultsJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
-      assert.strictEqual(params.viewEngine, defaultsJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
-      assert.strictEqual(params.favicon, defaultsJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
+      assert.strictEqual(params.port, sampleJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
+      assert.strictEqual(params.viewEngine, sampleJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
+      assert.strictEqual(params.favicon, sampleJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
+      testApp.send('stop')
     })
 
     // finish the test on exit

@@ -282,7 +282,7 @@ This is particularly useful for setting parameters that can't be defined in `pac
 
 - `port`: The HTTP port your app will run on.
 
-  - Default: *[Number]* `43711`.
+  - Default: *[Number|String]* `43711`.
 
 - `enableCLIFlags`: Enables parsing of command line flags.
 
