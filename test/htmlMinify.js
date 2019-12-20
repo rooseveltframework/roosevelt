@@ -2,14 +2,14 @@
 
 const assert = require('assert')
 const path = require('path')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const fs = require('fs-extra')
 const { minify } = require('html-minifier')
 const request = require('supertest')
-const roosevelt = require('../../roosevelt')
+const roosevelt = require('../roosevelt')
 
 describe('HTML Minification Tests', function () {
-  const appDir = path.join(__dirname, '../app/htmlMinifier')
+  const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
     appDir: appDir,
     logging: {
@@ -39,9 +39,9 @@ describe('HTML Minification Tests', function () {
   // generate test app directory structure
   beforeEach(function () {
     fs.ensureDirSync(path.join(appDir, 'mvc'))
-    fs.copySync(path.join(__dirname, '../util/mvc/controllers/htmlMinifier.js'), path.join(appDir, 'mvc/controllers/htmlMinifier.js'))
-    fs.copySync(path.join(__dirname, '../util/mvc/models/teddyModel.js'), path.join(appDir, 'mvc/models/teddyModel.js'))
-    fs.copySync(path.join(__dirname, '../util/mvc/views/teddyTest.html'), path.join(appDir, 'mvc/views/teddyTest.html'))
+    fs.copySync(path.join(__dirname, './util/mvc/controllers/htmlMinifier.js'), path.join(appDir, 'mvc/controllers/htmlMinifier.js'))
+    fs.copySync(path.join(__dirname, './util/mvc/models/teddyModel.js'), path.join(appDir, 'mvc/models/teddyModel.js'))
+    fs.copySync(path.join(__dirname, './util/mvc/views/teddyTest.html'), path.join(appDir, 'mvc/views/teddyTest.html'))
   })
 
   // wipe out test app after each test

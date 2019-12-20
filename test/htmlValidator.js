@@ -1,8 +1,8 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const appCleaner = require('./util/appCleaner.js')
-const appGenerator = require('./util/appGenerator.js')
+const appCleaner = require('./util/appCleaner')
+const appGenerator = require('./util/appGenerator')
 const execa = require('execa')
 const http = require('http')
 const path = require('path')

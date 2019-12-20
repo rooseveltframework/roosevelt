@@ -1,13 +1,13 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const fork = require('child_process').fork
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 
 describe('Command Line Tests', function () {
-  const appDir = path.join(__dirname, '../app/cliFlags')
+  const appDir = path.join(__dirname, 'app/cliFlags')
 
   const options = { rooseveltPath: '../../../roosevelt', stopServer: true }
 
@@ -739,7 +739,7 @@ describe('Command Line Tests', function () {
   })
 
   describe('CLI special cases', function () {
-    const appDir = path.join(__dirname, '../app/cliSpecial')
+    const appDir = path.join(__dirname, 'app/cliSpecial')
     const options = { rooseveltPath: '../../../roosevelt', stopServer: true }
 
     afterEach(function (done) {

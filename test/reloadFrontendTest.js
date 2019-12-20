@@ -1,22 +1,22 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
 describe('Reload Frontend Tests', function () {
-  const appDir = path.join(__dirname, '../app/reloadFrontendTest')
+  const appDir = path.join(__dirname, 'app/reloadFrontendTest')
 
   // options to pass into test app generator
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
-    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 

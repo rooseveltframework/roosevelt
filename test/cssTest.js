@@ -1,16 +1,16 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const fork = require('child_process').fork
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const klawsync = require('klaw-sync')
 const path = require('path')
 const CleanCSS = require('clean-css')
 
 // test app directory
-const appDir = path.join(__dirname, '../app/cssTest')
+const appDir = path.join(__dirname, 'app/cssTest')
 
 // sample CSS array to test the compiler with
 const cssDataArray = [

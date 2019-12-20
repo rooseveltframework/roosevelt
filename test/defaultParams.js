@@ -28,7 +28,7 @@ describe('Parameter Loading Tests', function () {
   let app
 
   before(function () {
-    app = require('../../roosevelt')({
+    app = require('../roosevelt')({
       appDir: path.join(__dirname, '../app/defaultParams'),
       logging: {
         methods: {

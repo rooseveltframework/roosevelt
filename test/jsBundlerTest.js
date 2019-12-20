@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const klawsync = require('klaw-sync')
 const path = require('path')
 
@@ -21,7 +21,7 @@ describe('JS Bundler Tests', function () {
     return weeks * 40 * 18
   }`
   // path to the directory of the test app
-  const appDir = path.join(__dirname, '../app/jsBundlerTest')
+  const appDir = path.join(__dirname, 'app/jsBundlerTest')
   // array of paths to the generated static JS files
   const arrayOfPathsToStaticJS = [
     path.join(appDir, 'statics/js/a.js'),

@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const http = require('http')
 const os = require('os')
 const path = require('path')
@@ -13,7 +13,7 @@ const { spawnSync } = require('child_process')
 
 describe('Roosevelt.js Tests', function () {
   // directory for the test app
-  const appDir = path.join(__dirname, '../app/rooseveltTest').replace('/\\/g', '/')
+  const appDir = path.join(__dirname, 'app/rooseveltTest').replace('/\\/g', '/')
 
   // options to pass into test app generator
   let sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
@@ -747,7 +747,7 @@ describe('Roosevelt.js Tests', function () {
     let requestFinishedBool = false
 
     // copy the mvc folder to the test App
-    const pathToMVC = path.join(__dirname, '/../util/mvc')
+    const pathToMVC = path.join(__dirname, '/./util/mvc')
     const pathtoapp = path.join(appDir, '/mvc')
     fs.copySync(pathToMVC, pathtoapp)
 

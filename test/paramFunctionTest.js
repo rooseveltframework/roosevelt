@@ -1,23 +1,23 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
 describe('Parameter Function Tests', function () {
   // path to the app Directory
-  const appDir = path.join(__dirname, '../app/paramFunctionTest')
+  const appDir = path.join(__dirname, 'app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // start by copying the alreadly made mvc directory into the app directory
-    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, 'util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -263,6 +263,11 @@ describe('Parameter Function Tests', function () {
       }
     })
 
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
     // when the app is about to exit, check if the specific log was outputted
     testApp.on('exit', () => {
       assert.strictEqual(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
@@ -286,7 +291,7 @@ describe('Parameter Function Tests', function () {
     testApp.on('message', (params) => {
       request(`http://localhost:${params.port}`)
         .post('/simpleMultipart')
-        .attach('test1', path.join(appDir, '../../util/text1.txt'))
+        .attach('test1', path.join(appDir, '../.././util/text1.txt'))
         .expect(500, (err, res) => {
           if (err) {
             assert.fail(err)
@@ -372,6 +377,7 @@ describe('Parameter Function Tests', function () {
 
     // when the app finishes initialization, see if a folder like that exists
     testApp.on('message', () => {
+      testApp.send('stop')
       const test = fs.existsSync(path.join(appDir, 'public/0.5.1'))
       assert.strictEqual(test, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
     })
@@ -435,6 +441,11 @@ describe('Parameter Function Tests', function () {
       }
     })
 
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
     testApp.on('exit', () => {
       assert.strictEqual(viewsDirectoryCreationLogBool, false, 'Roosevelt created a views folder even though generateFolderStrucutre is false')
       done()
@@ -459,6 +470,11 @@ describe('Parameter Function Tests', function () {
       if (data.includes(`making new directory ${path.join(appDir, 'mvc/controllers')}`)) {
         controllersDirectoryCreationLogBool = true
       }
+    })
+
+    // when the app finishes its initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test
@@ -525,7 +541,7 @@ describe('Parameter Function Tests', function () {
     let controllerErrorLogBool = false
 
     // put the err Controller into the mvc
-    fs.copyFileSync(path.join(appDir, '../../util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
+    fs.copyFileSync(path.join(appDir, '../.././util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
 
     // create the app.js file
     generateTestApp({
@@ -561,7 +577,7 @@ describe('Parameter Function Tests', function () {
     let error404LoadLogBool = false
 
     // copy the 404 error page to the mvc
-    fs.copyFileSync(path.join(appDir, '../../util/404errController.js'), path.join(appDir, 'mvc/controllers/404errController.js'))
+    fs.copyFileSync(path.join(appDir, '../.././util/404errController.js'), path.join(appDir, 'mvc/controllers/404errController.js'))
 
     // create the app.js file
     generateTestApp({
@@ -603,7 +619,7 @@ describe('Parameter Function Tests', function () {
     ]
 
     // copy the mvc over to the app
-    fs.copySync(path.join(appDir, '../../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(appDir, '../.././util/mvc'), path.join(appDir, 'mvc'))
 
     // make a directory in the mvc
     fs.mkdirSync(path.join(appDir, 'mvc/controllers/test'))
@@ -748,7 +764,7 @@ describe('Parameter Function Tests', function () {
 
     // copy over an existing file over to the test app directory
     fs.ensureDirSync(appDir)
-    fs.copyFileSync(path.join(appDir, '../../util/faviconTest.ico'), path.join(appDir, 'mvc/faviconTest.ico'))
+    fs.copyFileSync(path.join(appDir, '../.././util/faviconTest.ico'), path.join(appDir, 'mvc/faviconTest.ico'))
 
     // create the app.js file
     generateTestApp({

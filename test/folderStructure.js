@@ -1,14 +1,14 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const fs = require('fs-extra')
 const klaw = require('klaw')
 const path = require('path')
 
 describe('Folder Structure Tests', function () {
   // set the test app directory
-  const appDir = path.join(__dirname, '../app/folderStructureTest')
+  const appDir = path.join(__dirname, 'app/folderStructureTest')
   let app
   let expectedFolders
 
@@ -16,7 +16,7 @@ describe('Folder Structure Tests', function () {
   before(function () {
     fs.ensureDirSync(path.join(appDir))
 
-    app = require('../../roosevelt')({
+    app = require('../roosevelt')({
       appDir: appDir,
       enableCLIFlags: false,
       generateFolderStructure: true,

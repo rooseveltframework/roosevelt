@@ -1,17 +1,17 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const klawSync = require('klaw-sync')
 const path = require('path')
 const uglify = require('uglify-js')
-const gitignoreScanner = require('../../lib/tools/gitignoreScanner')
+const gitignoreScanner = require('../lib/tools/gitignoreScanner')
 
 describe('JavaScript Tests', function () {
-  const appDir = path.join(__dirname, '../app/jsTest')
+  const appDir = path.join(__dirname, 'app/jsTest')
 
   // sample JS source string to test the compiler with
   const test1 = 'var a = function() { return 1 + 2}'

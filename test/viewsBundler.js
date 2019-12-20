@@ -1,9 +1,9 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const generateTestApp = require('../util/generateTestApp')
-const cleanupTestApp = require('../util/cleanupTestApp')
-const fsr = require('../../lib/tools/fsr')()
+const generateTestApp = require('./util/generateTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
+const fsr = require('../lib/tools/fsr')()
 const { fork } = require('child_process')
 const fse = require('fs-extra')
 const path = require('path')
@@ -19,7 +19,7 @@ const minifyOptions = {
 }
 
 describe('Views Bundler Tests', function () {
-  const appDir = path.join(__dirname, '../app/viewsBundler')
+  const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
     <!-- roosevelt-whitelist output.js -->
@@ -34,7 +34,7 @@ describe('Views Bundler Tests', function () {
 
   const blacklistedTemplate = `
     <!-- roosevelt-blacklist -->
-    <p>This is in a blacklist</p>  
+    <p>This is in a blacklist</p>
   `
 
   const pathOfTemplates = [
