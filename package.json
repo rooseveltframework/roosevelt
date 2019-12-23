@@ -110,11 +110,11 @@
   },
   "scripts": {
     "codecov": "codecov",
-    "coverage": "c8 --reporter=text --reporter=lcov mocha --timeout 20000 test/*.js",
+    "coverage": "c8 --reporter=text --reporter=lcov mocha --timeout 40000 test/*.js",
     "lint": "standard && eslint test/*.js",
     "postinstall": "node ./lib/scripts/configAuditor.js",
-    "test": "mocha --timeout 20000 test/*.js",
-    "test-debug": "mocha --inspect-brk --timeout 20000 test/*.js"
+    "test": "mocha --timeout 40000 test/*.js",
+    "test-debug": "mocha --inspect-brk --timeout 40000 test/*.js"
   },
   "lint-staged": {
     "*.js": "standard"
