@@ -286,6 +286,7 @@ describe('validator usage', () => {
       ],
       htmlValidator: {
         enable: true,
+        port: 9000,
         showWarnings: false,
         exceptions: {
           requestHeader: 'partial',
@@ -336,6 +337,9 @@ describe('validator usage', () => {
     (async () => {
       // stop the server
       context.app.httpServer.close()
+
+      // eliminate the --development-mode flag
+      process.argv.pop()
 
       // kill the validator
       await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
@@ -557,6 +561,9 @@ describe('validator auto killer', () => {
 
         // kill any stray validators
         await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+
+        // eliminate --development-mode flag
+        process.argv.pop()
 
         done()
       })
