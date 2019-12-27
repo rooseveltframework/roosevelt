@@ -37,7 +37,7 @@ describe('Multipart forms with formidable', () => {
     roosevelt({
       appDir: appDir,
       generateFolderStructure: true,
-      port: 40002,
+      port: 40003,
       logging: {
         methods: {
           http: false,

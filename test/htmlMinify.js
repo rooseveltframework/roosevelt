@@ -12,6 +12,7 @@ describe('HTML Minification Tests', function () {
   const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
     appDir: appDir,
+    port: 40002,
     logging: {
       methods: {
         http: false,
