@@ -23,7 +23,7 @@ before(done => {
 
 after(done => {
   (async () => {
-    // kill any validators running on the system before tests start
+    // kill any stray validators
     await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
 
     done()
@@ -278,6 +278,9 @@ describe('validator usage', () => {
           warn: false,
           error: false
         }
+      },
+      toobusy: {
+        maxLagPerRequest: 700
       },
       frontendReload: {
         enable: false

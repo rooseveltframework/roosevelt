@@ -12,8 +12,7 @@ module.exports = params => {
     const app = require('../../../roosevelt.js')(
       ${util.inspect(params.config)}
     )
-    app.${params.method}()
-    console.log('init done')`
+    app.${params.method}()`
 
   // add a ipc listener for incrementing time with sinon
   /*
