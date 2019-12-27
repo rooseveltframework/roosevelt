@@ -76,11 +76,6 @@ describe('Views Bundler Tests', function () {
   it('properly expose template files in a whitelist', function (done) {
     generateTestApp({
       appDir,
-      // logging: {
-      //   params: {
-      //     disable: 'DEVELOPMENT'
-      //   }
-      // },
       clientViews: {
         whitelist: {
           'output.js': ['a.html']
@@ -89,20 +84,15 @@ describe('Views Bundler Tests', function () {
       generateFolderStructure: true
     }, options)
 
-    // console.log(process.env)
-
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     testApp.stdout.on('data', (result) => {
-      console.log(result.toString())
       if (serverStarted(result)) {
         assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -129,8 +119,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -152,8 +140,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -203,8 +189,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -230,8 +214,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -259,8 +241,6 @@ describe('Views Bundler Tests', function () {
       testApp.send('stop')
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -286,8 +266,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -318,8 +296,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -360,8 +336,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -445,8 +419,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -520,8 +492,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -556,8 +526,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -602,8 +570,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -646,8 +612,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -683,8 +647,6 @@ describe('Views Bundler Tests', function () {
         testApp.send('stop')
       }
     })
-
-    outputStderr(testApp)
 
     testApp.on('exit', () => {
       done()
@@ -722,8 +684,6 @@ describe('Views Bundler Tests', function () {
       }
     })
 
-    outputStderr(testApp)
-
     testApp.on('exit', () => {
       done()
     })
@@ -753,8 +713,4 @@ function assertFilesExist (appDir, templatePath, pathOfExposedTemplates) {
     const test = pathOfExposedTemplates.includes(file.path)
     assert.strictEqual(test, true)
   })
-}
-
-function outputStderr (testApp) {
-  testApp.stderr.on('data', (result) => console.log(result.toString()))
 }

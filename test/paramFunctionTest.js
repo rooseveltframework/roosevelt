@@ -275,37 +275,6 @@ describe('Parameter Function Tests', function () {
     })
   })
 
-  it('should not be using Multipart middleware if the param is set to false', function (done) {
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      multipart: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}'
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app is finished initialization, post a request with some files, should get back a 500
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
-        .post('/simpleMultipart')
-        .attach('test1', path.join(appDir, '../.././util/text1.txt'))
-        .expect(500, (err, res) => {
-          if (err) {
-            assert.fail(err)
-          }
-          testApp.send('stop')
-        })
-    })
-
-    // when the child process exits, finish the test
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
   it('should not make a folder that has the version number if one exists', function (done) {
     // bool var to hold whether or not the version public folder was made or not
     let versionPublicCreationLogBool = false

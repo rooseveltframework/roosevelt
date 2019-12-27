@@ -270,6 +270,7 @@ describe('validator usage', () => {
     // spin up the roosevelt app
     roosevelt({
       generateFolderStructure: false,
+      port: 40001,
       logging: {
         methods: {
           http: false,
@@ -336,15 +337,15 @@ describe('validator usage', () => {
   after(done => {
     (async () => {
       // stop the server
-      context.app.httpServer.close()
+      context.app.httpServer.close(async () => {
+        // eliminate the --development-mode flag
+        process.argv.pop()
 
-      // eliminate the --development-mode flag
-      process.argv.pop()
+        // kill the validator
+        await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
 
-      // kill the validator
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
-
-      done()
+        done()
+      })
     })()
   })
 
@@ -353,9 +354,10 @@ describe('validator usage', () => {
    */
   it('invalid HTML should trigger an error page', done => {
     // request a page with bad html
-    request('localhost:43711')
+    request(context.app)
       .get('/invalid')
-      .expect(500, (err, res) => {
+      .expect(500)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -372,9 +374,10 @@ describe('validator usage', () => {
 
   it('valid HTML should load normally', done => {
     // request a page with valid html
-    request('localhost:43711')
+    request(context.app)
       .get('/valid')
-      .expect(200, (err, res) => {
+      .expect(200)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -394,9 +397,10 @@ describe('validator usage', () => {
     params.showWarnings = true
 
     // request a page with invalid html
-    request('localhost:43711')
+    request(context.app)
       .get('/invalid')
-      .expect(500, (err, res) => {
+      .expect(500)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -413,9 +417,10 @@ describe('validator usage', () => {
 
   it('invalid HTML should be ignored when exception response header is set', done => {
     // request a page with invalid html and exception res header set
-    request('localhost:43711')
+    request(context.app)
       .get('/exceptionHeader')
-      .expect(200, (err, res) => {
+      .expect(200)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -429,10 +434,11 @@ describe('validator usage', () => {
 
   it('invalid HTML should be ignored when exception request header is set', done => {
     // request a page with invalid html and exception req header set
-    request('localhost:43711')
+    request(context.app)
       .get('/invalid')
       .set('partial', true)
-      .expect(200, (err, res) => {
+      .expect(200)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -446,9 +452,10 @@ describe('validator usage', () => {
 
   it('validator should still function on res.renders without models', done => {
     // request a page with invalid html and exception model value set
-    request('localhost:43711')
+    request(context.app)
       .get('/noModel')
-      .expect(500, (err, res) => {
+      .expect(500)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -462,9 +469,10 @@ describe('validator usage', () => {
 
   it('invalid HTML should be ignored when exception model value is set', done => {
     // request a page with invalid html and exception model value set
-    request('localhost:43711')
+    request(context.app)
       .get('/exceptionModel')
-      .expect(200, (err, res) => {
+      .expect(200)
+      .end((err, res) => {
         if (err) {
           throw err
         } else {
@@ -476,14 +484,20 @@ describe('validator usage', () => {
       })
   })
 
+  /**
+   * This test commits the cardinal sin of polluting the environment by killing the validator
+   * Any new tests in that category should go before this one
+   * This is better than having to start/kill another instance of the validator just to hit one line
+   */
   it('error page should report problems with validator', done => {
     (async () => {
       await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
 
       // request a page with invalid html and exception model value set
-      request('localhost:43711')
+      request(context.app)
         .get('/invalid')
-        .expect(500, (err, res) => {
+        .expect(500)
+        .end((err, res) => {
           if (err) {
             throw err
           } else {
