@@ -208,7 +208,11 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
+  /**
+   * TODO: A Full audit on the multithreading feature per issue #819
+   * When done all cores related tests should be moved into their own separate file
+   */
+  it.skip('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
     // reset sOptions
     sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
@@ -246,7 +250,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
+  it.skip('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
 
@@ -280,7 +284,7 @@ describe('Roosevelt.js Tests', function () {
     }
   })
 
-  it('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
+  it.skip('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let devModeBool = false
@@ -318,7 +322,7 @@ describe('Roosevelt.js Tests', function () {
     }
   })
 
-  it('should use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
+  it.skip('should use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
     // int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
     const maxCores = os.cpus().length
@@ -353,7 +357,7 @@ describe('Roosevelt.js Tests', function () {
     }
   })
 
-  it('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
+  it.skip('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
     // reset sOptions
     sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
@@ -400,7 +404,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should make the app default to one core if the number of cores the user asked is less or equal to zero', function (done) {
+  it.skip('should make the app default to one core if the number of cores the user asked is less or equal to zero', function (done) {
     // bool var to hold whether a specific error was logged, how many cpu cores this enviroment has, and a var to hold what one above the amount of cores that exists
     let defaultCoresLogBool = false
     let serverStartInt = 0
