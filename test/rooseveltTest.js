@@ -204,6 +204,10 @@ describe('Roosevelt.js Tests', function () {
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
       assert.strictEqual(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
+
+      // reset sOptions
+      sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+
       done()
     })
   })
