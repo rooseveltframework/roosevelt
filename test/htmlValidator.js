@@ -132,11 +132,15 @@ describe('validator init', () => {
   it('validator should complain when Java is missing', done => {
     (async () => {
       // spin up the app with a wiped out path
-      const { stderr } = await execa.node(path.join(__dirname, 'app/validatorInit/app.js'), ['--development-mode'], { env: { PATH: '' } })
+      try {
+        const { stderr } = await execa.node(path.join(__dirname, 'app/validatorInit/app.js'), ['--development-mode'], { env: { PATH: '' } })
 
-      // check for the java error
-      if (!stderr.includes('You must install Java to continue')) {
-        assert.fail('Roosevelt did not complain that Java was missing')
+        // check for the java error
+        if (!stderr.includes('You must install Java to continue')) {
+          assert.fail('Roosevelt did not complain that Java was missing')
+        }
+      } catch (err) {
+        assert.fail(err)
       }
 
       done()
