@@ -35,18 +35,14 @@ module.exports = function (params) {
 
   // expose initial vars
   app.set('express', express)
-  app.set('params', params)
 
   // source user supplied params
-  app = require('./lib/sourceParams')(app)
+  app = require('./lib/sourceParams')(app, params)
 
-  // Store updated params back into local variable
+  // store updated params back into local variable
   params = app.get('params')
 
-  // get and expose logger
-  const Logger = require('roosevelt-logger')
-  const logger = new Logger(params.logging)
-  app.set('logger', logger)
+  const logger = app.get('logger')
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
   if (app.get('params').checkDependencies) {
