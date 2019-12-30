@@ -6,9 +6,14 @@
 - Introduced views bundler: An API that allows you to expose view code to frontend JS for client-side templating.
 - Added a button to the validation error page to display the page anyway and another button to disable the validator entirely until the server restarts.
 - Fixed bug with frontend reload causing it to inject the script tag in the wrong location in some situations.
+- Fixed bug where router would cause app routes to fail when no controller files exist.
+- Fixed bug where auto build scanner would crash the app when generateFolderStructure is false.
 - Fixed bug which resulted in a cryptic error if a Roosevelt app was moved to another directory.
+- Complete rewrite of HTML validator and related helper scripts.
+- Refactored multipart middlware.
 - Various dependencies bumped.
 - CI improvements.
+- Many rewritten tests.
 
 ## 0.15.1
 

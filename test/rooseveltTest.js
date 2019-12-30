@@ -1,10 +1,10 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const http = require('http')
 const os = require('os')
 const path = require('path')
@@ -13,7 +13,7 @@ const { spawnSync } = require('child_process')
 
 describe('Roosevelt.js Tests', function () {
   // directory for the test app
-  const appDir = path.join(__dirname, '../app/rooseveltTest').replace('/\\/g', '/')
+  const appDir = path.join(__dirname, 'app/rooseveltTest').replace('/\\/g', '/')
 
   // options to pass into test app generator
   let sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
@@ -204,11 +204,19 @@ describe('Roosevelt.js Tests', function () {
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
       assert.strictEqual(messageRecievedBool, false, 'Roosevelt send back a message that was on the callback, even though one was not given')
+
+      // reset sOptions
+      sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+
       done()
     })
   })
 
-  it('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
+  /**
+   * TODO: A Full audit on the multithreading feature per issue #819
+   * When done all cores related tests should be moved into their own separate file
+   */
+  it.skip('should allow the user to change the amount of cores that the app will run on ("-c")', function (done) {
     // reset sOptions
     sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
@@ -246,7 +254,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
+  it.skip('should allow the user to change the amount of cores that the app will run on ("--cores")', function (done) {
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
 
@@ -280,7 +288,7 @@ describe('Roosevelt.js Tests', function () {
     }
   })
 
-  it('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
+  it.skip('should change the app to put it into dev mode and run on 2 cores ("-dc 2")', function (done) {
     // int vars to hold how many times a server was started and how many times a thread was killed
     let serverStartInt = 0
     let devModeBool = false
@@ -318,7 +326,7 @@ describe('Roosevelt.js Tests', function () {
     }
   })
 
-  it('should use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
+  it.skip('should use the max amount of cpu cores if the user passes in the command line argument "-c max"', function (done) {
     // int vars to hold how many times a server was started, how many cpu cores this enviroment has and how many times a process was killed
     let serverStartInt = 0
     const maxCores = os.cpus().length
@@ -353,7 +361,7 @@ describe('Roosevelt.js Tests', function () {
     }
   })
 
-  it('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
+  it.skip('should default to one core if the number of cores the user asked is more than what the enviroment has', function (done) {
     // reset sOptions
     sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
@@ -400,7 +408,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should make the app default to one core if the number of cores the user asked is less or equal to zero', function (done) {
+  it.skip('should make the app default to one core if the number of cores the user asked is less or equal to zero', function (done) {
     // bool var to hold whether a specific error was logged, how many cpu cores this enviroment has, and a var to hold what one above the amount of cores that exists
     let defaultCoresLogBool = false
     let serverStartInt = 0
@@ -747,7 +755,7 @@ describe('Roosevelt.js Tests', function () {
     let requestFinishedBool = false
 
     // copy the mvc folder to the test App
-    const pathToMVC = path.join(__dirname, '/../util/mvc')
+    const pathToMVC = path.join(__dirname, '/./util/mvc')
     const pathtoapp = path.join(appDir, '/mvc')
     fs.copySync(pathToMVC, pathtoapp)
 

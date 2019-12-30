@@ -1,17 +1,17 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const klaw = require('klaw')
 const path = require('path')
 const request = require('supertest')
 
 describe('Public Folder Tests', function () {
   // path to the directory where the test app is located
-  const appDir = path.join(__dirname, '../app/publicFolderTest')
+  const appDir = path.join(__dirname, 'app/publicFolderTest')
 
   // options to pass into generateTestApp
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
@@ -21,7 +21,7 @@ describe('Public Folder Tests', function () {
 
   beforeEach(function (done) {
     // start by copying the premade mvc directory into the app directory
-    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -38,7 +38,7 @@ describe('Public Folder Tests', function () {
 
   it('should allow for a custom favicon and GET that favicon on request', function (done) {
     // copy the favicon to the images folder within the static folder
-    fs.copySync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
+    fs.copySync(path.join(__dirname, './util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
 
     // generate the test app
     generateTestApp({
@@ -73,7 +73,7 @@ describe('Public Folder Tests', function () {
               // convert buffer to base64
               const faviconData = res.body.toString('base64')
               // get the base64 buffer of the favicon that we should be using in util
-              const data = fs.readFileSync(path.join(__dirname, '../util/faviconTest.ico'))
+              const data = fs.readFileSync(path.join(__dirname, './util/faviconTest.ico'))
               const encodedImageData = Buffer.from(data, 'binary').toString('base64')
               // check if both buffers are the same (they should be)
               const test = faviconData === encodedImageData

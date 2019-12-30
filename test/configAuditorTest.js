@@ -1,16 +1,16 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
-const configAuditor = require('../../lib/scripts/configAuditor')
+const cleanupTestApp = require('./util/cleanupTestApp')
+const configAuditor = require('../lib/scripts/configAuditor')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 
 describe('Roosevelt Config Auditor Test', function () {
   // path to the test app Directory
-  const appDir = path.join(__dirname, '../app/configAuditorTest')
+  const appDir = path.join(__dirname, 'app/configAuditorTest')
 
   // options to pass into test app generator
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
@@ -133,7 +133,7 @@ describe('Roosevelt Config Auditor Test', function () {
       routers: false
     }
     // grab the content of the script file
-    const scriptContent = JSON.parse(fs.readFileSync(path.join(__dirname, '../../lib/defaults/scripts.json')).toString('utf8'))
+    const scriptContent = JSON.parse(fs.readFileSync(path.join(__dirname, '../lib/defaults/scripts.json')).toString('utf8'))
     // add the defaultContent to packageJSONSource
     packageJSONSource.rooseveltConfig = sampleContent
     // separate the commands from the rest of the data in the scripts file
@@ -562,6 +562,11 @@ describe('Roosevelt Config Auditor Test', function () {
       }
     })
 
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
+    })
+
     // when the child process exits, check for assertions and finish the test
     testApp.on('exit', () => {
       assert.strictEqual(rooseveltAuditStartedBool, false, 'the config Auditor was still started even though there is no package.json file in the app Directory')
@@ -597,6 +602,11 @@ describe('Roosevelt Config Auditor Test', function () {
       if (data.includes('Starting rooseveltConfig audit...')) {
         rooseveltAuditStartedBool = true
       }
+    })
+
+    // when the app finishes initialization, kill it
+    testApp.on('message', () => {
+      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -809,7 +819,7 @@ describe('Roosevelt Config Auditor Test', function () {
     fs.mkdirSync(path.join(appDir, 'node_modules'))
 
     // set env.INIT_CWD to a location that does not have a node_modules folder
-    process.env.INIT_CWD = path.join(appDir, '../util')
+    process.env.INIT_CWD = path.join(appDir, './util')
 
     // fork the configAuditor.js file and run it as a child process
     const testApp = fork(path.join(appDir, '../../../lib/scripts/configAuditor.js'), [], { cwd: appDir, stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })

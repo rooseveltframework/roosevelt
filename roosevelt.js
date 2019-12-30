@@ -238,7 +238,7 @@ module.exports = function (params) {
     }
 
     function validateHTML () {
-      if (app.get('env') === 'development') {
+      if (app.get('env') === 'development' && params.htmlValidator.enable) {
         require('./lib/htmlValidator')(app, scanBuiltFiles)
       } else {
         scanBuiltFiles()
@@ -246,7 +246,11 @@ module.exports = function (params) {
     }
 
     function scanBuiltFiles () {
-      require('./lib/tools/buildScanner')(app, mapRoutes)
+      if (params.generateFolderStructure) {
+        require('./lib/tools/buildScanner')(app, mapRoutes)
+      } else {
+        mapRoutes()
+      }
     }
 
     function mapRoutes () {

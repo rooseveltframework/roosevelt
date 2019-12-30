@@ -1,22 +1,22 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('../util/generateTestApp')
+const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
 describe('Roosevelt Routes Tests', function () {
-  const appDir = path.join(__dirname, '../app/routesTest')
+  const appDir = path.join(__dirname, 'app/routesTest')
 
   // options to pass into test app generator
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function (done) {
     // copy the mvc directory into the test app directory for each test
-    fs.copySync(path.join(__dirname, '../util/mvc'), path.join(appDir, 'mvc'))
+    fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
     done()
   })
 
@@ -656,7 +656,7 @@ describe('Roosevelt Routes Tests', function () {
 
   it('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', function (done) {
     // copy the custom 404 controller into to the mvc folder
-    fs.copyFileSync(path.join(__dirname, '../util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
+    fs.copyFileSync(path.join(__dirname, './util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
 
     // generate the test app
     generateTestApp({
@@ -1233,7 +1233,7 @@ describe('Roosevelt Routes Tests', function () {
     let controllerErrorLogBool = false
 
     // copy the ico file into the controller directory
-    fs.copyFileSync(path.join(__dirname, '../util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
+    fs.copyFileSync(path.join(__dirname, './util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
 
     // generate the test app
     generateTestApp({

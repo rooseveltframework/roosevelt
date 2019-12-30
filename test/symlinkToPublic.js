@@ -1,12 +1,12 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('../util/cleanupTestApp')
+const cleanupTestApp = require('./util/cleanupTestApp')
 const path = require('path')
-const roosevelt = require('../../roosevelt')
+const roosevelt = require('../roosevelt')
 
 describe('symlinkToPublic Parameter Tests', function () {
-  const appDir = path.join(__dirname, '../app/symlinkToPublic')
+  const appDir = path.join(__dirname, 'app/symlinkToPublic')
   const appConfig = {
     appDir: appDir,
     logging: {
