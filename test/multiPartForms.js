@@ -114,9 +114,12 @@ describe('Multipart forms with formidable', () => {
         assert(text, 'This is a cool test file')
 
         // check that tmp directory is empty
-        assert(isEmpty(tmpDir), true, 'tmp directory was not emptied')
-
-        done()
+        const checkTmp = setInterval(() => {
+          if (isEmpty(tmpDir)) {
+            clearInterval(checkTmp)
+            done()
+          }
+        }, 50)
       })
   })
 
@@ -142,9 +145,12 @@ describe('Multipart forms with formidable', () => {
         assert(text2, 'This is another cool test file')
 
         // check that tmp directory is empty
-        assert(isEmpty(tmpDir), true, 'tmp directory was not emptied')
-
-        done()
+        const checkTmp = setInterval(() => {
+          if (isEmpty(tmpDir)) {
+            clearInterval(checkTmp)
+            done()
+          }
+        }, 50)
       })
   })
 
