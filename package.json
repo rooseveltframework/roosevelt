@@ -53,7 +53,7 @@
     "source-configs": "~0.2.1",
     "tamper": "~1.1.0",
     "toobusy-js": "~0.5.1",
-    "vnu-jar": "~19.9.4"
+    "vnu-jar": "~20.1.0"
   },
   "devDependencies": {
     "c8": "~7.0.0",
