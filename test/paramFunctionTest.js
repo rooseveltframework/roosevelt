@@ -205,43 +205,6 @@ describe('Parameter Function Tests', function () {
     })
   })
 
-  it('should not make a public directory if one exists', function (done) {
-    // bool var to see if the Roosevelt making the public dir is logged
-    let publicDirCreationLogBool = false
-
-    // create a public dir
-    const publicFolderPath = path.join(appDir, 'public')
-    fs.mkdirSync(publicFolderPath)
-
-    // create the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: '(app) => {process.send(app.get("params"))}'
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the app logs, see if the specific log is outputted
-    testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'public')}`)) {
-        publicDirCreationLogBool = true
-      }
-    })
-
-    // when the app finishes initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when the app is about to exit, check if the specific log was outputted
-    testApp.on('exit', () => {
-      assert.strictEqual(publicDirCreationLogBool, false, 'Roosevelt made a public Directory even though one exists alreadly')
-      done()
-    })
-  })
-
   it('should not make a public directory if generateFolderStructure is false', function (done) {
     // bool var to see if the Roosevelt making the public dir is logged
     let publicDirCreationLogBool = false
@@ -354,38 +317,6 @@ describe('Parameter Function Tests', function () {
     // when the app is about to exit, check if the specific log was made
     testApp.on('exit', () => {
       assert.strictEqual(versionPublicCreationLogBool, false, 'Roosevelt made the version public folder even though generateFolderStrucutre is false')
-      done()
-    })
-  })
-
-  it('should not make a models Directory again if generateFolderStructure is false', function (done) {
-    // bool to hold whether or not the view Directory creation log was given
-    let modelDirectoryCreationLogBool = false
-
-    // create the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      onServerStart: '(app) => {process.send(app.get("params"))}'
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'mvc/models')}`)) {
-        modelDirectoryCreationLogBool = true
-      }
-    })
-
-    // when the app finishes its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when the child process exits, check assertions and finish the test
-    testApp.on('exit', () => {
-      assert.strictEqual(modelDirectoryCreationLogBool, false, 'Roosevelt created a models folder even though generateFolderStrucutre is false')
       done()
     })
   })
@@ -723,42 +654,6 @@ describe('Parameter Function Tests', function () {
           assert.strictEqual(stats.isSymbolicLink(), true, 'symlink to directory not created successfully')
         }
       })
-      done()
-    })
-  })
-
-  it('should throw, catch and display an error if the controllersPath passed to roosevelt is not a dictionary', function (done) {
-    // bool var to hold whether or not a specific error log was outputted
-    let loadControllerFilesFailBool = false
-
-    // copy over an existing file over to the test app directory
-    fs.ensureDirSync(appDir)
-    fs.copyFileSync(path.join(appDir, '../.././util/faviconTest.ico'), path.join(appDir, 'mvc/faviconTest.ico'))
-
-    // create the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      controllersPath: 'mvc/faviconTest.ico',
-      onServerStart: '(app) => {process.send(app.get("params"))}'
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('Roosevelt Express fatal error: could not load controller files from')) {
-        loadControllerFilesFailBool = true
-      }
-    })
-
-    testApp.on('message', (params) => {
-      testApp.send('stop')
-    })
-
-    // when the child process exits, check assertions and finish the test
-    testApp.on('exit', () => {
-      assert.strictEqual(loadControllerFilesFailBool, true, 'Roosevelt did not throw an error on how the controllersPath is not a path to a directory')
       done()
     })
   })

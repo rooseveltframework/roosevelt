@@ -142,7 +142,7 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run dev`
     - `npm run d`
   - Script is short for: `nodemon app.js --development-mode`
-- `npm run proddev`: Runs the app in production mode, but with the public folder hosted by the Roosevelt app. This is useful for doing development in production mode without having to stage a complex simulation of your production environment, which would likely include hosting static files via another web server better-suited to serving statics like Apache or nginx. 
+- `npm run proddev`: Runs the app in production mode, but with the public folder hosted by the Roosevelt app. This is useful for doing development in production mode without having to stage a complex simulation of your production environment, which would likely include hosting static files via another web server better-suited to serving statics like Apache or nginx.
   - Default shorthands:
     - `npm run pd`
   - Script is short for: `nodemon app.js --host-public`
@@ -277,6 +277,36 @@ require('roosevelt')({
 ```
 
 This is particularly useful for setting parameters that can't be defined in `package.json` such as event handlers (see below).
+
+In addition, all parameters support [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) style variables. For example:
+
+```json
+{
+  "port": 4000,
+  "https": {
+    "port": "${port + 1}"
+  },
+  "css": {
+    "sourcePath": "css",
+    "output": ".build/${css.sourcePath}",
+  }
+}
+```
+
+Resolves to:
+
+```json
+{
+  "port": 4000,
+  "https": {
+    "port": 4001
+  },
+  "css": {
+    "sourcePath": "css",
+    "output": ".build/css",
+  }
+}
+```
 
 ## App behavior parameters
 
@@ -549,6 +579,7 @@ This is particularly useful for setting parameters that can't be defined in `pac
         "dirs": ["css", "images", "js"]
       }]
       ```
+
   - Important limitation: When using routers to mount a sub application, it constrains the `publicFolder` of the sub app as follows:
     1. `/paths` inherit the path of the parent, changing `http://domain/path` to `http://domain/parentApp/path`, which will likely break the sub app's static assets hosted in the `publicFolder` if they are referenced that way.
     2. `./paths` will generally still work because they are relative, but this is often not desired in production contexts.
@@ -559,7 +590,7 @@ This is particularly useful for setting parameters that can't be defined in `pac
 - `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
 
   - Default: *[String]* `"statics"`.
-  
+
 - `htmlMinifier`: How you want Roosevelt to minify your HTML:
 
   - `enable`: *[Boolean]* Enable HTML minification.
@@ -844,15 +875,15 @@ This is particularly useful for setting parameters that can't be defined in `pac
     - Default: *[Boolean]* `false`.
 
   - `blacklist`: *[Array]* of *[Strings]* List of files or folders excluded when `exposeAll` is on.
-  
+
     - Default: *[Array]* of *[Strings]* `[]`.
     - Note: Anything that is in the blacklist or that has a `<!-- roosevelt-blacklist -->` tag will never be added to any whitelist.
-  
-  - `whitelist`: *[Object]* List of JS files to create mapped to which view files to expose.
-  
-      - Default: *[Object]* of *[Arrays]* `{}`.
 
-      - Example:
+  - `whitelist`: *[Object]* List of JS files to create mapped to which view files to expose.
+
+    - Default: *[Object]* of *[Arrays]* `{}`.
+    - Example:
+
       ```json
         {
         "mainLayouts.js": ["baseLayout.html", "footer.html"],
@@ -870,9 +901,9 @@ This is particularly useful for setting parameters that can't be defined in `pac
   - Default: *[Boolean]* `true`.
   - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
   - Uses the params you set in `htmlMinifier.options` if empty.
-  
+
 - Default: *[Object]*
-  
+
   ```json
       "clientViews": {
         "exposeAll": false,
@@ -941,7 +972,7 @@ require('roosevelt')({
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client
-  - `template`: A string containing a template written in any templating engine (Teddy, Pug, Handlebars, etc) 
+  - `template`: A string containing a template written in any templating engine (Teddy, Pug, Handlebars, etc)
 
 # Making controller files
 

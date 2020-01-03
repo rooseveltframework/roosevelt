@@ -10,7 +10,7 @@ const path = require('path')
 const uglify = require('uglify-js')
 const gitignoreScanner = require('../lib/tools/gitignoreScanner')
 
-describe('JavaScript Tests', function () {
+describe('jsCompiler', function () {
   const appDir = path.join(__dirname, 'app/jsTest')
 
   // sample JS source string to test the compiler with
@@ -631,53 +631,6 @@ describe('JavaScript Tests', function () {
       // output folder
       const test2 = fs.existsSync(path.join(appDir, 'statics/.build/js'))
       assert.strictEqual(test2, false)
-      done()
-    })
-  })
-
-  it('should not make the js compiled output directory if one alreadly exists', function (done) {
-    // bool var to see if the js compiled output directory was made or not
-    let jsOutputDirCreateBool = false
-    // create the js compiled output directory
-    const compiledpath = path.join(appDir, 'statics/.build')
-    const compiledpath2 = path.join(appDir, 'statics/.build/jsBuildTest')
-    fs.mkdirSync(compiledpath)
-    fs.mkdirSync(compiledpath2)
-
-    // generate the app.js file
-    generateTestApp({
-      appDir: appDir,
-      generateFolderStructure: true,
-      js: {
-        output: '.build/jsBuildTest',
-        compiler: {
-          nodeModule: 'roosevelt-uglify',
-          showWarnings: false,
-          params: {}
-        }
-      }
-    }, options)
-
-    // fork the app.js file and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // check the logs to see if the js compiled output directory gets made or not
-    testApp.stdout.on('data', (data) => {
-      if (data.includes(`making new directory ${path.join(appDir, 'statics/.build/jsBuildTest')}`)) {
-        jsOutputDirCreateBool = true
-      }
-    })
-
-    // when app is done with its initialization, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when app is killed, check if the js compiled output directory was made by roosevelt
-    testApp.on('exit', () => {
-      if (jsOutputDirCreateBool) {
-        assert.fail('Roosevelt made a folder for js output even when on existed alreadly')
-      }
       done()
     })
   })

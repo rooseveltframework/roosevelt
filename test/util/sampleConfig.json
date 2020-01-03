@@ -1,0 +1,118 @@
+{
+  "port": "value",
+  "generateFolderStructure": false,
+  "localhostOnly": "value",
+  "logging": {
+    "methods": {
+      "http": false,
+      "info": false,
+      "warn": false,
+      "verbose": false,
+      "custom1": true,
+      "custom2": {
+        "type": "info"
+      },
+      "custom3": {
+        "enable": true
+      },
+      "custom4": {
+        "enable": true,
+        "type": "error"
+      },
+      "custom5": {
+        "enable": false
+      },
+      "custom6": false
+    }
+  },
+  "minify": "value",
+  "htmlValidator": {
+    "enable": false,
+    "separateProcess": {
+      "enable": "value",
+      "autoKiller": "value",
+      "autoKillerTimeout": "value"
+    },
+    "port": "value",
+    "showWarnings": "value",
+    "exceptions": {
+      "requestHeader": "value",
+      "modelValue": "value"
+    }
+  },
+  "multipart": {
+    "multiples": "value"
+  },
+  "toobusy": {
+    "maxLagPerRequest": "value",
+    "lagCheckInterval": "value"
+  },
+  "shutdownTimeout": "value",
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": "value"
+    },
+    "json": "value"
+  },
+  "https": "value",
+  "modelsPath": "value",
+  "viewsPath": "value",
+  "controllersPath": "value",
+  "viewEngine": "none",
+  "errorPages": {
+    "notFound": "value",
+    "internalServerError": "value",
+    "serviceUnavailable": "value"
+  },
+  "staticsRoot": "value",
+  "htmlMinifier": {
+    "enable": "value",
+    "exceptionRoutes": "value",
+    "options": "value"
+  },
+  "css": {
+    "sourcePath": "value",
+    "compiler": "value",
+    "whitelist": "value",
+    "output": "value",
+    "symlinkToPublic": "value",
+    "versionFile": "value"
+  },
+  "js": {
+    "sourcePath": "value",
+    "compiler": "value",
+    "whitelist": "value",
+    "blacklist": "value",
+    "output": "value",
+    "symlinkToPublic": "value",
+    "bundler": {
+      "bundles": "value",
+      "output": "value",
+      "expose": "value"
+    }
+  },
+  "staticsSymlinksToPublic": "value",
+  "publicFolder": "value",
+  "favicon": "value",
+  "versionedPublic": "value",
+  "alwaysHostPublic": "value",
+  "checkDependencies": "value",
+  "cores": "value",
+  "frontendReload": {
+    "enable": "value",
+    "port": "value",
+    "httpsPort": "value",
+    "verbose": "value"
+  },
+  "routers": "value",
+  "cleanTimer": "value",
+  "clientViews": {
+    "exposeAll": "value",
+    "blacklist": "value",
+    "whitelist": "value",
+    "defaultBundle": "value",
+    "output": "value",
+    "minify": "value",
+    "minifyOptions": "value"
+  }
+}
