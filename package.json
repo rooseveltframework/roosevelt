@@ -50,7 +50,7 @@
     "reload": "~3.0.3",
     "roosevelt-logger": "~0.2.2",
     "serve-favicon": "~2.5.0",
-    "source-configs": "~0.2.1",
+    "source-configs": "~0.3.0",
     "tamper": "~1.1.0",
     "toobusy-js": "~0.5.1",
     "vnu-jar": "~20.1.0"
