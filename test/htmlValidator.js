@@ -33,7 +33,7 @@ after(done => {
 /**
  * validator start up tests
  */
-describe('validator init', () => {
+describe.only('validator init', () => {
   before(() => {
     // generate a roosevelt app to run
     appGenerator({
@@ -68,13 +68,13 @@ describe('validator init', () => {
   after(done => {
     (async () => {
       // wipe out the test app directory
-      await appCleaner('validatorInit')
+      // await appCleaner('validatorInit')
 
       done()
     })()
   })
 
-  it('validator should persist when configured as a separate process and be killable via kill script', done => {
+  it.only('validator should persist when configured as a separate process and be killable via kill script', done => {
     (async () => {
       try {
         // spin up the app
@@ -82,6 +82,8 @@ describe('validator init', () => {
       } catch (err) {
         assert.fail(err)
       }
+
+      console.log('after the start')
 
       await checkDetached()
       await killValidator()
@@ -91,6 +93,7 @@ describe('validator init', () => {
 
     // check that the validator is still running
     async function checkDetached () {
+      console.log('checking...')
       return new Promise(resolve => {
         // check for the existence of the validator process
         ps.lookup({
@@ -110,6 +113,7 @@ describe('validator init', () => {
     // run the killValidator script and check that validator was actually killed
     async function killValidator () {
       // run the killValidator script
+      console.log('killing...')
       await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
 
       // prove that the validator has actually been killed
@@ -264,11 +268,9 @@ describe('validator usage', () => {
   }
 
   before(done => {
-    // pass the development mode flag
-    process.argv.push('--development-mode')
-
     // spin up the roosevelt app
     roosevelt({
+      mode: 'development',
       generateFolderStructure: false,
       port: 40001,
       logging: {
@@ -341,9 +343,6 @@ describe('validator usage', () => {
     (async () => {
       // stop the server
       context.app.httpServer.close(async () => {
-        // eliminate the --development-mode flag
-        process.argv.pop()
-
         // kill the validator
         await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
 
@@ -518,7 +517,7 @@ describe('validator usage', () => {
  * auto killer tests
  */
 describe('validator auto killer', () => {
-  it('auto killer process should kill validator after 1 second', done => {
+  it.only('auto killer process should kill validator after 1 second', done => {
     ;(async () => {
       // spawn an instance of the html validator
       const validator = execa('java', ['-Xss1024k', '-XX:ErrorFile=' + os.tmpdir() + '/java_error%p.log', '-cp', vnu, 'nu.validator.servlet.Main', 9999])
@@ -546,11 +545,9 @@ describe('validator auto killer', () => {
       // spawn an instance of the auto killer script
       const autokiller = execa('node', [path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 30000, 'true'])
 
-      // add dev mode flag to cli
-      process.argv.push('--development-mode')
-
       // start up a roosevelt app
       roosevelt({
+        mode: 'development',
         generateFolderStructure: false,
         logging: {
           methods: {
@@ -578,9 +575,6 @@ describe('validator auto killer', () => {
 
         // kill any stray validators
         await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
-
-        // eliminate --development-mode flag
-        process.argv.pop()
 
         done()
       })
