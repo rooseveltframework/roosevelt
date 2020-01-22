@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const cleanupTestApp = require('./util/cleanupTestApp')
-const configAuditor = require('../lib/scripts/configAuditor')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
