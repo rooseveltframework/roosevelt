@@ -1,5 +1,6 @@
 {
   "port": "value",
+  "mode": "production",
   "generateFolderStructure": false,
   "localhostOnly": "value",
   "logging": {
@@ -54,7 +55,11 @@
     },
     "json": "value"
   },
-  "https": "value",
+  "https": {
+    "enable" : "value",
+    "force": "value",
+    "port": "value"
+  },
   "modelsPath": "value",
   "viewsPath": "value",
   "controllersPath": "value",
@@ -75,20 +80,15 @@
     "compiler": "value",
     "whitelist": "value",
     "output": "value",
-    "symlinkToPublic": "value",
+    "symlinkSrcToPublic": "value",
     "versionFile": "value"
   },
   "js": {
     "sourcePath": "value",
-    "compiler": "value",
-    "whitelist": "value",
-    "blacklist": "value",
-    "output": "value",
-    "symlinkToPublic": "value",
-    "bundler": {
-      "bundles": "value",
-      "output": "value",
-      "expose": "value"
+    "symlinkSrcToPublic": "value",
+    "webpack": {
+      "enable": "value",
+      "bundles": "value"
     }
   },
   "staticsSymlinksToPublic": "value",
@@ -99,8 +99,8 @@
   "checkDependencies": "value",
   "cores": "value",
   "frontendReload": {
-    "enable": "value",
-    "port": "value",
+    "enable": false,
+    "port": 9000,
     "httpsPort": "value",
     "verbose": "value"
   },

@@ -49,12 +49,12 @@ const pathOfCSSStaticFilesArray = [
 
 // array of paths for compiled css files
 const pathOfCSSCompiledfilesArray = [
-  path.join(appDir, 'statics/.build/css/a.css'),
-  path.join(appDir, 'statics/.build/css/b.css'),
-  path.join(appDir, 'statics/.build/css/c.css')
+  path.join(appDir, 'public/css/a.css'),
+  path.join(appDir, 'public/css/b.css'),
+  path.join(appDir, 'public/css/c.css')
 ]
 
-describe('CSS Section Tests', function () {
+describe('css', function () {
   beforeEach(function () {
     // start by generating a static folder in the roosevelt test app directory
     fs.ensureDirSync(path.join(appDir, 'statics/css'))
@@ -96,7 +96,7 @@ describe('CSS Section Tests', function () {
     // on the message being sent back from the initialized app, test to see that they are there
     testApp.on('message', () => {
       // look for the folder
-      const pathToCompiledFolder = path.join(appDir, 'statics/.build/css')
+      const pathToCompiledFolder = path.join(appDir, 'public/css')
       const cssCompiledArray = klawsync(pathToCompiledFolder)
       // look at each file and see that it checks out with the test array
       cssCompiledArray.forEach((file) => {
@@ -116,8 +116,8 @@ describe('CSS Section Tests', function () {
   it('should only compile the files that are in the whitelisted parameter', function (done) {
     // array for whitelisted files
     const pathOfWhiteListedArray = [
-      path.join(appDir, 'statics/.build/css/b.css'),
-      path.join(appDir, 'statics/.build/css/c.css')
+      path.join(appDir, 'public/css/b.css'),
+      path.join(appDir, 'public/css/c.css')
     ]
 
     // create the app.js file
@@ -141,7 +141,7 @@ describe('CSS Section Tests', function () {
     // on the message being sent back from the initialized app, test to see that the whitelist files were compiled
     testApp.on('message', () => {
       // look for the folder
-      const pathToCompiledFolder = path.join(appDir, 'statics/.build/css')
+      const pathToCompiledFolder = path.join(appDir, 'public/css')
       const cssCompiledArray = klawsync(pathToCompiledFolder)
       // look at each file and see that it checks out with the test array
       cssCompiledArray.forEach((file) => {
@@ -161,9 +161,9 @@ describe('CSS Section Tests', function () {
   it('should rename the folder for compiled output based on the css output parameter', function (done) {
     // path to CSS custom directory compiled files
     const pathOfCSSCustomDirCompiledfilesArray = [
-      path.join(appDir, 'statics/.build/cssCompiledTest/a.css'),
-      path.join(appDir, 'statics/.build/cssCompiledTest/b.css'),
-      path.join(appDir, 'statics/.build/cssCompiledTest/c.css')
+      path.join(appDir, 'public/cssCompiledTest/a.css'),
+      path.join(appDir, 'public/cssCompiledTest/b.css'),
+      path.join(appDir, 'public/cssCompiledTest/c.css')
     ]
 
     // create the app.js file
@@ -176,7 +176,7 @@ describe('CSS Section Tests', function () {
             sourceMap: null
           }
         },
-        output: '.build/cssCompiledTest'
+        output: 'cssCompiledTest'
       },
       generateFolderStructure: true
     }, options)
@@ -186,7 +186,7 @@ describe('CSS Section Tests', function () {
 
     // when the server is initialized, look to see if the folder exist and if the files are there
     testApp.on('message', () => {
-      const pathOfCSSCompiledFolder = path.join(appDir, 'statics/.build/cssCompiledTest')
+      const pathOfCSSCompiledFolder = path.join(appDir, 'public/cssCompiledTest')
       const cssCompiledArray = klawsync(pathOfCSSCompiledFolder)
       // go through each file to see if their pathname matches with the changed array above and that there are no extras
       cssCompiledArray.forEach((file) => {
@@ -258,7 +258,7 @@ describe('CSS Section Tests', function () {
   it('should make the compiled whitelist file using the delimiter that is passed into it as its name', function (done) {
     // make an array that holds the custom directory compiled CSS file
     const pathOfCustomDirCompiledCSSArray = [
-      path.join(appDir, 'statics/.build/css/test/blah.css')
+      path.join(appDir, 'public/css/test/blah.css')
     ]
 
     // create the app.js file
@@ -281,7 +281,7 @@ describe('CSS Section Tests', function () {
 
     // wait for a message to test if the file is in the right position
     testApp.on('message', () => {
-      const pathOfCompiledDLCSS = path.join(appDir, 'statics/.build/css/test')
+      const pathOfCompiledDLCSS = path.join(appDir, 'public/css/test')
       const CompiledDLCSSArray = klawsync(pathOfCompiledDLCSS)
       CompiledDLCSSArray.forEach((file) => {
         const test = pathOfCustomDirCompiledCSSArray.includes(file.path)
@@ -601,7 +601,7 @@ describe('CSS Section Tests', function () {
     let cssCompiledDirMadeBool = false
 
     // path to the build folder
-    const cssBuildDirPath = path.join(appDir, 'statics/.build/css')
+    const cssBuildDirPath = path.join(appDir, 'public/css')
 
     // create the app.js file
     generateTestApp({
@@ -998,7 +998,7 @@ describe('CSS Section Tests', function () {
 
     // when the app is finished initialization, check to see if the file is there
     testApp.on('message', () => {
-      const test = fs.existsSync(path.join(appDir, 'statics/.build/css/d.less'))
+      const test = fs.existsSync(path.join(appDir, 'public/css/d.less'))
       assert.strictEqual(test, false)
     })
 
@@ -1037,14 +1037,14 @@ describe('CSS Section Tests', function () {
 
     // check the output logs to see if Roosevelt made a compiled file out of the directory
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`writing new CSS file ${path.join(appDir, 'statics/.build/css/dir')}`)) {
+      if (data.includes(`writing new CSS file ${path.join(appDir, 'public/css/dir')}`)) {
         cssFileMadeLogBool = true
       }
     })
 
     // when the app finishes initialization, check to see that a file of the directory was not made
     testApp.on('message', () => {
-      const test = fs.existsSync(path.join(appDir, 'statics/.build/css/dir'))
+      const test = fs.existsSync(path.join(appDir, 'public/css/dir'))
       assert.strictEqual(test, false)
       testApp.send('stop')
     })
@@ -1085,14 +1085,14 @@ describe('CSS Section Tests', function () {
 
     // check the output logs to see if Roosevelt made a compiled file out of the directory
     testApp.stdout.on('data', (data) => {
-      if (data.includes(`writing new CSS file ${path.join(appDir, 'statics/.build/css/Thumbs.db')}`)) {
+      if (data.includes(`writing new CSS file ${path.join(appDir, 'public/css/Thumbs.db')}`)) {
         cssFileMadeLogBool = true
       }
     })
 
     // when the app finishes initialization, check to see that a file of the directory was not made
     testApp.on('message', () => {
-      const test = fs.existsSync(path.join(appDir, 'statics/.build/css/Thumbs.db'))
+      const test = fs.existsSync(path.join(appDir, 'public/css/Thumbs.db'))
       assert.strictEqual(test, false)
       testApp.send('stop')
     })
@@ -1110,9 +1110,9 @@ describe('CSS Section Tests', function () {
 
     // make the file first
     const sourceCode = ''
-    const buildDirPath = path.join(appDir, 'statics/.build')
+    const buildDirPath = path.join(appDir, 'public')
     fs.mkdirSync(buildDirPath)
-    const buildDirPath2 = path.join(appDir, 'statics/.build/css')
+    const buildDirPath2 = path.join(appDir, 'public/css')
     fs.mkdirSync(buildDirPath2)
     const fileCompiledPath = path.join(buildDirPath2, 'a.css')
     fs.writeFileSync(fileCompiledPath, sourceCode)

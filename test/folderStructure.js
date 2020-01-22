@@ -6,7 +6,7 @@ const fs = require('fs-extra')
 const klaw = require('klaw')
 const path = require('path')
 
-describe('Folder Structure Tests', function () {
+describe('directory creation', function () {
   // set the test app directory
   const appDir = path.join(__dirname, 'app/folderStructureTest')
   let app
@@ -45,21 +45,20 @@ describe('Folder Structure Tests', function () {
 
     expectedFolders = [
       appDir,
-      path.join(appDir, '/mvc'),
-      path.join(appDir, '/mvc/viewsTest'),
-      path.join(appDir, '/mvc/modelsTest'),
-      path.join(appDir, '/mvc/controllersTest'),
-      path.join(appDir, '/staticsRootTest'),
-      path.join(appDir, '/staticsRootTest/jsTest'),
-      path.join(appDir, '/staticsRootTest/cssTest'),
-      path.join(appDir, '/staticsRootTest/images'),
-      path.join(appDir, '/staticsRootTest/.build/js'),
-      path.join(appDir, '/staticsRootTest/.build/css'),
-      path.join(appDir, '/staticsRootTest/.build'),
-      path.join(appDir, '/publicFolderTest'),
-      path.join(appDir, '/publicFolderTest/images'),
-      path.join(appDir, '/publicFolderTest/jsTest'),
-      path.join(appDir, '/publicFolderTest/cssTest')
+      path.join(appDir, 'mvc'),
+      path.join(appDir, 'mvc/viewsTest'),
+      path.join(appDir, 'mvc/modelsTest'),
+      path.join(appDir, 'mvc/controllersTest'),
+      path.join(appDir, 'staticsRootTest'),
+      path.join(appDir, 'staticsRootTest/jsTest'),
+      path.join(appDir, 'staticsRootTest/cssTest'),
+      path.join(appDir, 'staticsRootTest/images'),
+      path.join(appDir, 'publicFolderTest/js'),
+      path.join(appDir, 'publicFolderTest/css'),
+      path.join(appDir, 'publicFolderTest'),
+      path.join(appDir, 'publicFolderTest/images'),
+      path.join(appDir, 'publicFolderTest/jsTest'),
+      path.join(appDir, 'publicFolderTest/cssTest')
     ]
 
     app.initServer(function () {})
@@ -113,7 +112,7 @@ describe('Folder Structure Tests', function () {
   })
 
   it('should generate "staticsRoot" directory', function (done) {
-    const foldertest = path.join(appDir, app.expressApp.get('params').staticsRoot)
+    const foldertest = app.expressApp.get('params').staticsRoot
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -125,7 +124,7 @@ describe('Folder Structure Tests', function () {
   })
 
   it('should generate "publicFolder" directory', function (done) {
-    const foldertest = path.join(appDir, app.expressApp.get('params').publicFolder)
+    const foldertest = app.expressApp.get('params').publicFolder
     fs.lstat(foldertest, (err, stats) => {
       if (err) {
         done(err)
@@ -197,7 +196,7 @@ describe('Folder Structure Tests', function () {
   })
 
   it('should generate the "cssTest" symlink', function (done) {
-    const filetest = path.join(appDir, '/publicFolderTest/cssTest')
+    const filetest = path.join(appDir, 'publicFolderTest/cssTest')
     fs.lstat(filetest, (err, stats) => {
       if (err) {
         done(err)
@@ -208,14 +207,14 @@ describe('Folder Structure Tests', function () {
     })
   })
 
-  it('should set "cssPath" express variable to absolute path of "css.sourcePath"', function () {
-    const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').css.sourcePath)
+  it('should source "cssPath" express variable from "css.sourcePath" param', function () {
+    const folderCheck = app.expressApp.get('params').css.sourcePath
     const test = folderCheck === app.expressApp.get('cssPath')
     assert.strictEqual(test, true, 'the path given by the combined paths and the path given by cssPath do not match')
   })
 
-  it('should set "jsPath" express variable to absolute path of "js.sourcePath"', function () {
-    const folderCheck = path.join(appDir, app.expressApp.get('params').staticsRoot, app.expressApp.get('params').js.sourcePath)
+  it('should source "jsPath" express variable from "js.sourcePath" param', function () {
+    const folderCheck = app.expressApp.get('params').js.sourcePath
     const test = folderCheck === app.expressApp.get('jsPath')
     assert.strictEqual(test, true, 'the path given by the combined paths and the path given by jsPath do not match')
   })

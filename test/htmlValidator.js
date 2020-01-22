@@ -15,7 +15,7 @@ const vnu = require('vnu-jar')
 before(done => {
   (async () => {
     // kill any validators running on the system before tests start
-    await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+    await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
     done()
   })()
@@ -24,7 +24,7 @@ before(done => {
 after(done => {
   (async () => {
     // kill any stray validators
-    await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+    await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
     done()
   })()
@@ -33,13 +33,14 @@ after(done => {
 /**
  * validator start up tests
  */
-describe.only('validator init', () => {
+describe('validator init', () => {
   before(() => {
     // generate a roosevelt app to run
     appGenerator({
       location: 'validatorInit',
       method: 'initServer',
       config: {
+        mode: 'development',
         generateFolderStructure: false,
         frontendReload: {
           enable: false
@@ -59,7 +60,7 @@ describe.only('validator init', () => {
   afterEach(done => {
     (async () => {
       // kill any stray validators
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+      await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
       done()
     })()
@@ -68,13 +69,13 @@ describe.only('validator init', () => {
   after(done => {
     (async () => {
       // wipe out the test app directory
-      // await appCleaner('validatorInit')
+      await appCleaner('validatorInit')
 
       done()
     })()
   })
 
-  it.only('validator should persist when configured as a separate process and be killable via kill script', done => {
+  it('validator should persist when configured as a separate process and be killable via kill script', done => {
     (async () => {
       try {
         // spin up the app
@@ -82,8 +83,6 @@ describe.only('validator init', () => {
       } catch (err) {
         assert.fail(err)
       }
-
-      console.log('after the start')
 
       await checkDetached()
       await killValidator()
@@ -93,7 +92,6 @@ describe.only('validator init', () => {
 
     // check that the validator is still running
     async function checkDetached () {
-      console.log('checking...')
       return new Promise(resolve => {
         // check for the existence of the validator process
         ps.lookup({
@@ -113,8 +111,7 @@ describe.only('validator init', () => {
     // run the killValidator script and check that validator was actually killed
     async function killValidator () {
       // run the killValidator script
-      console.log('killing...')
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+      await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
       // prove that the validator has actually been killed
       return new Promise(resolve => {
@@ -344,7 +341,7 @@ describe('validator usage', () => {
       // stop the server
       context.app.httpServer.close(async () => {
         // kill the validator
-        await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+        await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
         done()
       })
@@ -493,7 +490,7 @@ describe('validator usage', () => {
    */
   it('error page should report problems with validator', done => {
     (async () => {
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+      await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
       // request a page with invalid html and exception model value set
       request(context.app)
@@ -517,14 +514,14 @@ describe('validator usage', () => {
  * auto killer tests
  */
 describe('validator auto killer', () => {
-  it.only('auto killer process should kill validator after 1 second', done => {
+  it('auto killer process should kill validator after 1 second', done => {
     ;(async () => {
       // spawn an instance of the html validator
       const validator = execa('java', ['-Xss1024k', '-XX:ErrorFile=' + os.tmpdir() + '/java_error%p.log', '-cp', vnu, 'nu.validator.servlet.Main', 9999])
       const validatorPID = validator.pid
 
       // spawn an instance of the auto killer script
-      await execa('node', [path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 1000, 'true'])
+      await execa.node(path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 1000, 'true')
 
       // prove that the validator has actually been killed
       ps.lookup({ pid: validatorPID }, (err, result) => {
@@ -543,7 +540,7 @@ describe('validator auto killer', () => {
       let autokillerPID
 
       // spawn an instance of the auto killer script
-      const autokiller = execa('node', [path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 30000, 'true'])
+      const autokiller = execa.node(path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 30000, 'true')
 
       // start up a roosevelt app
       roosevelt({
@@ -574,7 +571,7 @@ describe('validator auto killer', () => {
         await killAgain()
 
         // kill any stray validators
-        await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+        await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
         done()
       })

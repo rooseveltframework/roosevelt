@@ -22,33 +22,25 @@ describe('ENV Parameter Tests', function () {
   let app
 
   it('should change the enable param to true', function (done) {
-    const temp = process.env.ROOSEVELT_VALIDATOR
     process.env.ROOSEVELT_VALIDATOR = 'detached'
-    app = roosevelt({
-      ...appConfig
-    })
+    app = roosevelt(appConfig)
     assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.enable, true)
-    process.env.ROOSEVELT_VALIDATOR = temp
+    delete process.env.ROOSEVELT_VALIDATOR
     done()
   })
 
   it('should change the enable param to false', function (done) {
-    const temp = process.env.ROOSEVELT_VALIDATOR
     process.env.ROOSEVELT_VALIDATOR = 'attached'
-    app = roosevelt({
-      ...appConfig
-    })
+    app = roosevelt(appConfig)
     assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.enable, false)
-    process.env.ROOSEVELT_VALIDATOR = temp
+    delete process.env.ROOSEVELT_VALIDATOR
     done()
   })
 
   it('should disable validator if HTTP_PROXY is set and NO_PROXY does not contain localhost', function (done) {
     process.env.HTTP_PROXY = true
     process.env.NO_PROXY = 'hsdfhjsdf hdsfjhsdf dhf sdhjfhsd fhjsdf dshjfhs'
-    app = roosevelt({
-      ...appConfig
-    })
+    app = roosevelt(appConfig)
     assert.strictEqual(app.expressApp.get('params').htmlValidator.enable, false)
     delete process.env.HTTP_PROXY
     delete process.env.NO_PROXY
@@ -58,9 +50,7 @@ describe('ENV Parameter Tests', function () {
   it('should disable validator if HTTPS_PROXY is set and NO_PROXY does not contain localhost', function (done) {
     process.env.HTTPS_PROXY = true
     process.env.NO_PROXY = 'blah'
-    app = roosevelt({
-      ...appConfig
-    })
+    app = roosevelt(appConfig)
     assert.strictEqual(app.expressApp.get('params').htmlValidator.enable, false)
     delete process.env.HTTPS_PROXY
     delete process.env.NO_PROXY
@@ -69,33 +59,26 @@ describe('ENV Parameter Tests', function () {
 
   it('should change the https.port param to 45678', function (done) {
     process.env.HTTPS_PORT = 45678
-    app = roosevelt({
-      ...appConfig
-    })
-    assert.strictEqual(app.expressApp.get('params').https.port, '45678')
+
+    app = roosevelt(appConfig)
+    assert.strictEqual(app.expressApp.get('params').https.port, 45678)
     delete process.env.HTTPS_PORT
     done()
   })
 
   it('should set validator autokiller param to true for separate processes', function (done) {
-    const temp = process.env.ROOSEVELT_AUTOKILLER
     process.env.ROOSEVELT_AUTOKILLER = 'on'
-    app = roosevelt({
-      ...appConfig
-    })
+    app = roosevelt(appConfig)
     assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.autoKiller, true)
-    process.env.ROOSEVELT_AUTOKILLER = temp
+    delete process.env.ROOSEVELT_AUTOKILLER
     done()
   })
 
   it('should set validator autokiller param to false for separate processes', function (done) {
-    const temp = process.env.ROOSEVELT_AUTOKILLER
     process.env.ROOSEVELT_AUTOKILLER = 'off'
-    app = roosevelt({
-      ...appConfig
-    })
+    app = roosevelt(appConfig)
     assert.strictEqual(app.expressApp.get('params').htmlValidator.separateProcess.autoKiller, false)
-    process.env.ROOSEVELT_AUTOKILLER = temp
+    delete process.env.ROOSEVELT_AUTOKILLER
     done()
   })
 })
