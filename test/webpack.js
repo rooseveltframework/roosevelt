@@ -7,7 +7,7 @@ const fsr = require('../lib/tools/fsr')()
 const path = require('path')
 const roosevelt = require('../roosevelt')
 
-describe.only('webpack', () => {
+describe('webpack', () => {
   const appDir = path.join(__dirname, 'app/webpack')
   const webpackConfig = [
     {

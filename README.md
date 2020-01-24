@@ -717,10 +717,6 @@ Resolves to:
 
   - `output`: Subdirectory within `publicFolder` where compiled CSS files will be written to.
 
-  - `symlinkSrcToPublic`: *[Boolean]* When enabled Roosevelt will automatically add your CSS `sourcePath` to the `staticsSymlinksToPublic` parameter.
-
-    - Note: This feature is automatically disabled when css compiler is in use.
-
   - `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`.
 
     - Default: `null`.
