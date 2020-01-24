@@ -56,9 +56,13 @@
     "json": "value"
   },
   "https": {
-    "enable" : "value",
+    "enable" : false,
     "force": "value",
-    "port": "value"
+    "port": "value",
+    "authInfoPath": "value",
+    "caCert": "value",
+    "requestCert": "value",
+    "rejectUnauthorized": "value"
   },
   "modelsPath": "value",
   "viewsPath": "value",
@@ -80,12 +84,10 @@
     "compiler": "value",
     "whitelist": "value",
     "output": "value",
-    "symlinkSrcToPublic": "value",
     "versionFile": "value"
   },
   "js": {
     "sourcePath": "value",
-    "symlinkSrcToPublic": "value",
     "webpack": {
       "enable": "value",
       "bundles": "value"

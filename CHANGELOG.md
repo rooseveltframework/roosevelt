@@ -2,6 +2,17 @@
 
 ## Next version
 
+- Replace browserify with webpack.
+- Eliminated concept of separate JS compilers in favor of webpack.
+- API changes:
+  - Removed `symlinkToPublic`, `compiler`, `output`, `whitelist`, and `blacklist` params from `js`.
+  - Replaced `js.bundles` with `js.webpack`.
+  - Removed `css.symlinkToPublic`.
+  - `css.output` is now relative to `publicFolder` instead of `staticsRoot`.
+  - `clientViews.output` is now relative to `publicFolder` instead of `staticsRoot`.
+  - Removed `cleanTimer` (Obsolete in absense of .build).
+- Source-configs integration is now more tightly knit.
+- Config auditor no longer complains about missing params.
 - Auditor now checks config params on a case-by-case basis.
 - ES6 style variables can now be used in roosevelt config.
 - Introduced views bundler: An API that allows you to expose view code to frontend JS for client-side templating.

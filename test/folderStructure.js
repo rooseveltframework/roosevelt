@@ -39,7 +39,8 @@ describe('directory creation', function () {
       },
       staticsSymlinksToPublic: [
         'images',
-        'jsTest'
+        'jsTest',
+        'cssTest'
       ]
     })
 

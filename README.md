@@ -12,8 +12,8 @@ Some notable features:
 - Default directory structure is simple, but easily configured.
 - Concise default [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - Uses [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than popular alternatives. Can be configured to use any templating system that supports Express.
-- [LESS](http://lesscss.org) and [UglifyJS](http://lisperator.net/uglifyjs/) preconfigured out of the box to intelligently minify your external facing CSS and JS files. Other preprocessors are supported via wrapper modules.
-- Built-in, easy to use interface to [browserify](http://browserify.org) bundling for frontend JS modularization using the Node.js module `exports` and `require` syntax.
+- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external facing CSS files. Other preprocessors are supported via wrapper modules.
+- Built-in, easy to use interface for [webpack](https://webpack.js.org/) bundling for frontend JS modularization.
 - Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
 - Automatic HTML validation in development mode of your post-server rendered HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; -ms-interpolation-mode: nearest-neighbor;'>
 
@@ -253,7 +253,6 @@ The default `.gitignore` file contains many common important things to ignore, h
 Some notable things ignored by default and why:
 
 - `public`: It's recommended that you don't create files in this folder manually, but instead use the `staticsSymlinksToPublic` parameter detailed below to expose folders in your `statics` directory via auto-generated symlinks.
-- `.build`: By default Roosevelt will compile LESS and JS files down to minified versions in `statics/.build` when the server starts. As such, it's not recommended to place files in the build directory manually.
 - `node_modules`: This folder will be auto-generated when you run the `npm i` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally not recommended to commit the `node_modules` folder to git.
 
 # Configure your app with parameters
@@ -769,82 +768,72 @@ Resolves to:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to a build directory when the app is started.
 
-  - `symlinkSrcToPublic`: *[Boolean]* When enabled Roosevelt will automatically add your JS `sourcePath` directory to the `staticsSymlinksToPublic` parameter.
+  - `webpack`: Parameters related to bundling JS with [webpack](https://webpack.js.org/):
 
-    - Note: This feature is automatically disabled when the webpack bundler is in use.
+    - `enable`: Enable webpack bundling.
 
-  - `bundler`: Parameters related to bundling JS with [browserify](http://browserify.org):
-
-    - Note: Use of browserify in Roosevelt is optional. If no bundles are defined here, the browserify step will be skipped.
-
-    - `bundles`: *[Array]* Declare one or more source JS files in your `sourcePath` to be browserify bundles via its [bundle method](https://github.com/substack/node-browserify#browserifyfiles--opts).
+    - `bundles`: *[Array]* Declare one or more webpack configurations to bundle JS with.
 
       - `env`: *[String]* Bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
 
-      - `params`: *[Object]* The [browserify parameters](https://github.com/browserify/browserify#methods) to send to browserify. If it is not set, these default parameters will be sent: `{"paths": <your jsPath>}`.
+      - `config`: *[Object]* or *[String]* The [webpack configuration](https://webpack.js.org/configuration/) to send to webpack. Can also be a path to a [webpack config file](https://webpack.js.org/configuration/#use-different-config-file) relative to the app directory.
 
       - Examples: *[Array]* of *[Objects]*
 
-        - Browserify bundle example declaring one bundle:
+        - Webpack bundle example declaring one bundle:
 
           ```json
           [
             {
-              "outputFile": "bundle.js",
-              "files": [
-                "landingPage.js",
-                "main.js",
-                "etc.js"
-              ],
-              "params": {
-                "someOpt":
-                "someValue"
+              "config": {
+                "entry": "${js.sourcePath}/main.js",
+                "output": {
+                  "path": "${publicFolder}/js",
+                  "filename": "bundle.js"
+                }
               }
             }
           ]
           ```
 
-          - Browserify bundle example declaring one bundle only used in `dev` mode:
+          - Webpack bundle example declaring one bundle only used in `dev` mode:
 
               ```json
               [
                 {
-                  "outputFile": "bundle.js",
                   "env": "dev",
-                  "files": [
-                    "landingPage.js",
-                    "main.js",
-                    "etc.js"
-                  ],
-                  "params": {
-                    "someOpt": "someValue"
+                  "config": {
+                    "entry": "${js.sourcePath}/main.js",
+                    "output": {
+                      "path": "${publicFolder}/js",
+                      "filename": "bundle.js"
+                    }
                   }
                 }
               ]
               ```
 
-          - Browserify bundle example declaring multiple bundles:
+          - Webpack bundle example declaring multiple bundles:
 
               ```json
               [
                 {
-                  "outputFile": "bundle1.js",
-                  "files": [
-                    "landingPage.js",
-                    "main.js",
-                    "etc.js"
-                  ],
-                  "params": {
-                    "someOpt": "someValue"
+                  "config": {
+                    "entry": "${js.sourcePath}/main.js",
+                    "output": {
+                      "path": "${publicFolder}/js",
+                      "filename": "bundle.js"
+                    }
                   }
                 },
                 {
-                  "outputFile": "bundle2.js",
-                  "files": [
-                    "somethingElse.js",
-                    "anotherThing.js",
-                    "etc.js"
-                  ]
+                  "config": {
+                    "entry": "${js.sourcePath}/moreStuff.js",
+                    "output": {
+                      "path": "${publicFolder}/js",
+                      "filename": "bundle2.js"
+                    }
+                  }
                 },
                 etc...
               ]
@@ -857,10 +846,9 @@ Resolves to:
       ```json
       {
         "sourcePath": "js",
-        "webpackBundles": {
+        "webpack": {
+          "enable": false,
           "bundles": [],
-          "output": ".bundled",
-          "expose": true
         }
       }
       ```
@@ -949,13 +937,11 @@ Resolves to:
 
   - Default: *[Array]* of *[Strings]*
 
-      ```json
-      [
-        "css: .build/css",
-        "images",
-        "js: .build/js"
-      ]
-      ```
+    ```json
+    [
+      "images"
+    ]
+    ```
 
 - `versionedPublic`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version.
 
@@ -1114,7 +1100,7 @@ Additionally the Roosevelt constructor returns the following object:
 | `expressApp`             | *[Object]* The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
 | `httpServer`             | *[Object]* The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
 | `httpsServer`            | *[Object]* The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
-| `initServer`             | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. |
+| `initServer`             | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. Takes an optional callback. |
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 | `stopServer`             | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
 
@@ -1148,7 +1134,7 @@ The complete list of Roosevelt dependencies that are only needed in development 
 - `tamper`
 - `vnu-jar`
 
-To remove them all, run `npm rm fkill html-validator prismjs ps-node reload tmp vnu-jar --no-save`.
+To remove them all, run `npm rm execa fkill html-validator pid-from-port prismjs ps-node reload tamper vnu-jar --no-save`.
 
 Be sure none of those dependencies are needed elsewhere in your app first.
 
@@ -1186,7 +1172,7 @@ API:
 
 Lastly, in order to activate the custom preprocessor feature, alter `package.json` to declare the compiler `nodeModule` to be `custom`:
 
-```js
+```json
 "css": {
   "compiler": {
     "nodeModule": "custom",

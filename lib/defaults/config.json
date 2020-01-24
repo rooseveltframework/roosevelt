@@ -53,7 +53,11 @@
   "https": {
     "enable": false,
     "force": false,
-    "port": 43733
+    "port": 43733,
+    "authInfoPath": null,
+    "caCert": null,
+    "requestCert": null,
+    "rejectUnauthorized": null
   },
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
@@ -81,12 +85,10 @@
     "compiler": "none",
     "whitelist": null,
     "output": "css",
-    "symlinkSrcToPublic": true,
     "versionFile": null
   },
   "js": {
     "sourcePath": "js",
-    "symlinkSrcToPublic": true,
     "webpack": {
       "enable": false,
       "bundles": []
@@ -94,9 +96,7 @@
   },
   "publicFolder": "public",
   "favicon": "none",
-  "staticsSymlinksToPublic": [
-    "images"
-  ],
+  "staticsSymlinksToPublic": [],
   "versionedPublic": false,
   "alwaysHostPublic": false,
   "clientViews": {
