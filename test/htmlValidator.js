@@ -521,7 +521,7 @@ describe('validator auto killer', () => {
       const validatorPID = validator.pid
 
       // spawn an instance of the auto killer script
-      await execa.node(path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 1000, 'true')
+      await execa('node', [path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 1000, 'true'])
 
       // prove that the validator has actually been killed
       ps.lookup({ pid: validatorPID }, (err, result) => {
@@ -540,7 +540,7 @@ describe('validator auto killer', () => {
       let autokillerPID
 
       // spawn an instance of the auto killer script
-      const autokiller = execa.node(path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 30000, 'true')
+      const autokiller = execa('node', [path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 30000, 'true'])
 
       // start up a roosevelt app
       roosevelt({
@@ -571,7 +571,7 @@ describe('validator auto killer', () => {
         await killAgain()
 
         // kill any stray validators
-        await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
+        await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
 
         done()
       })
