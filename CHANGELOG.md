@@ -4,10 +4,15 @@
 
 - Replace browserify with webpack.
 - Eliminated concept of separate JS compilers in favor of webpack.
+- Eliminated concept of css preprocessor middleware modules in favor of built-in support for less, sass, and stylus.
 - API changes:
   - Removed `symlinkToPublic`, `compiler`, `output`, `whitelist`, and `blacklist` params from `js`.
   - Replaced `js.bundles` with `js.webpack`.
   - Removed `css.symlinkToPublic`.
+  - Replaced `css.compiler.params.CleanCSS` with `css.minifier`.
+  - Added `css.compiler.enable`.
+  - Replaced `css.compiler.nodeModule` with `css.compiler.module`.
+  - Replaced `css.compiler.params` with `css.compiler.options`.
   - `css.output` is now relative to `publicFolder` instead of `staticsRoot`.
   - `clientViews.output` is now relative to `publicFolder` instead of `staticsRoot`.
   - Removed `cleanTimer` (Obsolete in absense of .build).
