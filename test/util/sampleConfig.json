@@ -81,7 +81,15 @@
   },
   "css": {
     "sourcePath": "value",
-    "compiler": "value",
+    "compiler": {
+      "enable": "value",
+      "module": "value",
+      "options": "value"
+    },
+    "minifier": {
+      "enable": "value",
+      "options": "value"
+    },
     "whitelist": "value",
     "output": "value",
     "versionFile": "value"

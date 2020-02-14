@@ -683,33 +683,25 @@ Resolves to:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and written to a build directory when the app is started.
 
-  - `compiler`: *[Object]* Which Roosevelt CSS preprocessor middleware (if any) to use.
+  - `compiler`: *[Object]* Which CSS preprocessor (if any) to use.
 
-    - `nodeModule`: *[String]* Node module name of the Roosevelt CSS preprocessor middleware you wish to use.
+    - `enable`: *[Boolean]* Whether or not to use a preprocessor.
 
-      - Note: Your chosen Roosevelt CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
+    - `module`: *[String]* Node module name of the CSS preprocessor you wish to use.
 
-    - `params`: *[Object]* Parameters to send to the Roosevelt CSS preprocessor middleware if it accepts any.
+      - Note: Currently [less](http://lesscss.org/), [node-sass](https://sass-lang.com/), and [stylus](http://stylus-lang.com/) are supported.
 
-    - `cleanCSS`: *[Object]* Roosevelt uses [clean-css](https://www.npmjs.com/package/clean-css) for CSS minification. Use the cleanCSS parameter to configure options passed to the constructor. See the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options) for documentation on available parameters.
+      - Note: Your chosen CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
 
-    - Note: The default preprocessor for a Roosevelt app created with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) is [roosevelt-less](https://github.com/rooseveltframework/roosevelt-less), which is marked as a dependency in `package.json` on freshly generated Roosevelt apps. See [roosevelt-less usage](https://github.com/rooseveltframework/roosevelt-less#usage) for details on what parameters are available.
+    - `options`: *[Object]* Parameters to send to the CSS preprocessor if it accepts any.
 
-    - The Roosevelt team also maintains [roosevelt-sass](https://github.com/rooseveltframework/roosevelt-sass), an alternative to roosevelt-less.
+  - `minifier`: *[Object]* Parameters for [clean-css](https://www.npmjs.com/package/clean-css).
 
-    - [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt) default configuration: *[Object]*
+    - `enable`: *[Boolean]* Whether or not to minify css.
 
-        ```json
-        {
-          "nodeModule": "roosevelt-less",
-          "params": {
-            "cleanCSS": {},
-            "sourceMap": null
-          }
-        }
-        ```
+      - Note: Can also be controlled by the `minify` param, which is disabled in development mode.
 
-    - Bare Roosevelt default (when an app is created without the generator): *[String]* `none`. Can also be set to `null` to use no CSS compiler.
+    - `options`: *[Object]* Parameters to pass to cleancss, a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
 
   - `whitelist`: Array of CSS files to whitelist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
 
@@ -748,11 +740,13 @@ Resolves to:
       {
         "sourcePath": "css",
         "compiler": {
-          "nodeModule": "roosevelt-less",
-          "params": {
-            "cleanCSS": {},
-            "sourceMap": null
-          }
+          "enable" : false,
+          "module": "less",
+          "options": {}
+        },
+        "minifier": {
+          "enable": true,
+          "options": {}
         },
         "whitelist": null,
         "output": "css",
@@ -1136,11 +1130,7 @@ Be sure none of those dependencies are needed elsewhere in your app first.
 
 # Authoring your own CSS preprocessors
 
-There are two ways to replace Roosevelt's default CSS preprocessors with another one.
-
-The first way is to swap out the default `roosevelt-less` CSS preprocessor module for something else, e.g. `roosevelt-sass` or a custom module that you've created.
-
-You can also define your own preprocessors on the fly at start time in Roosevelt's constructor like so:
+In addition to Roosevelt's built-in support for the less, sass, and stylus preprocessors you can also define your own preprocessors on the fly at start time in Roosevelt's constructor like so:
 
 ```js
 let app = require('roosevelt')({
@@ -1149,7 +1139,7 @@ let app = require('roosevelt')({
       versionCode: app => {
         // write code to return the version of your app here
       },
-      parse: (app, fileName) => {
+      parse: (app, filePath) => {
         // write code to preprocess CSS here
       }
     }
@@ -1164,16 +1154,9 @@ API:
     - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
   - `parse(app, fileName)`: Function to preprocess CSS.
     - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-    - `fileName`: Name of file to compile.
+    - `filePath`: The path to the file being compiled.
 
-Lastly, in order to activate the custom preprocessor feature, alter `package.json` to declare the compiler `nodeModule` to be `custom`:
-
-```json
-"css": {
-  "compiler": {
-    "nodeModule": "custom",
-  [...]
-```
+Note: When a custom preprocessor is defined in this way it will override the selected preprocessor specified in `css.compiler.module`.
 
 # Documentation for previous versions of Roosevelt
 

@@ -82,7 +82,15 @@
   },
   "css": {
     "sourcePath": "css",
-    "compiler": "none",
+    "compiler": {
+      "enable": false,
+      "module": "less",
+      "options": {}
+    },
+    "minifier": {
+      "enable" : true,
+      "options": {}
+    },
     "whitelist": null,
     "output": "css",
     "versionFile": null
