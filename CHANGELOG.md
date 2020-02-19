@@ -9,15 +9,15 @@
   - Removed `symlinkToPublic`, `compiler`, `output`, `whitelist`, and `blacklist` params from `js`.
   - Replaced `js.bundles` with `js.webpack`.
   - Removed `css.symlinkToPublic`.
-  - Replaced `css.compiler.params.CleanCSS` with `css.minifier`.
+  - Replaced `css.compiler.params.cleanCSS` with `css.minifier`.
   - Added `css.compiler.enable`.
   - Replaced `css.compiler.nodeModule` with `css.compiler.module`.
   - Replaced `css.compiler.params` with `css.compiler.options`.
   - `css.output` is now relative to `publicFolder` instead of `staticsRoot`.
   - `clientViews.output` is now relative to `publicFolder` instead of `staticsRoot`.
-  - Removed `cleanTimer` (Obsolete in absense of .build).
+  - Removed `cleanTimer` (Obsolete in absense of `.build`).
 - App cleaner has been removed.
-- Source-configs integration is now more tightly knit.
+- `source-configs` integration is now more tightly knit.
 - Config auditor no longer complains about missing params.
 - Auditor now checks config params on a case-by-case basis.
 - ES6 style variables can now be used in roosevelt config.

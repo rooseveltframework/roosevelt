@@ -12,8 +12,8 @@ Some notable features:
 - Default directory structure is simple, but easily configured.
 - Concise default [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - Uses [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than popular alternatives. Can be configured to use any templating system that supports Express.
-- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external facing CSS files. There's also built-in support for sass and stylus, and with some extra configurating any preprocessor can be used.
-- Built-in, easy to use interface for [webpack](https://webpack.js.org/) bundling for frontend JS modularization.
+- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external facing CSS files. There's also built-in support for [Sass](https://sass-lang.com), and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
+- Built-in, easy to use interface for creating [Webpack](https://webpack.js.org/) bundles for modularizing and minifying your frontend JS.
 - Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
 - Automatic HTML validation in development mode of your post-server rendered HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; -ms-interpolation-mode: nearest-neighbor;'>
 
@@ -695,13 +695,13 @@ Resolves to:
 
     - `options`: *[Object]* Parameters to send to the CSS preprocessor if it accepts any.
 
-  - `minifier`: *[Object]* Parameters for [clean-css](https://www.npmjs.com/package/clean-css).
+  - `minifier`: *[Object]* Params pertaining to CSS minifcation.
 
     - `enable`: *[Boolean]* Whether or not to minify css.
 
       - Note: Can also be controlled by the `minify` param, which is disabled in development mode.
 
-    - `options`: *[Object]* Parameters to pass to cleancss, a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
+    - `options`: *[Object]* Parameters to pass to the CSS minifier [clean-css](https://www.npmjs.com/package/clean-css), a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
 
   - `whitelist`: Array of CSS files to whitelist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
 
@@ -758,15 +758,15 @@ Resolves to:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to a build directory when the app is started.
 
-  - `webpack`: Parameters related to bundling JS with [webpack](https://webpack.js.org/):
+  - `webpack`: Parameters related to bundling JS with [Webpack](https://webpack.js.org/):
 
-    - `enable`: Enable webpack bundling.
+    - `enable`: Enable Webpack bundling.
 
-    - `bundles`: *[Array]* Declare one or more webpack configurations to bundle JS with.
+    - `bundles`: *[Array]* Declare one or more Webpack configurations to bundle JS with.
 
       - `env`: *[String]* Bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
 
-      - `config`: *[Object]* or *[String]* The [webpack configuration](https://webpack.js.org/configuration/) to send to webpack. Can also be a path to a [webpack config file](https://webpack.js.org/configuration/#use-different-config-file) relative to the app directory.
+      - `config`: *[Object]* or *[String]* The [Webpack configuration](https://webpack.js.org/configuration/) to send to Webpack. Can also be a path to a [Webpack config file](https://webpack.js.org/configuration/#use-different-config-file) relative to the app directory.
 
       - Examples: *[Array]* of *[Objects]*
 
@@ -913,7 +913,7 @@ Resolves to:
 
 ## Public folder parameters
 
-- `publicFolder`: All files and folders in this directory will be exposed as static files when `alwaysHostPublic` is enabled.
+- `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `alwaysHostPublic` is enabled.
 
   - Default: *[String]* `"public"`.
 
@@ -1130,7 +1130,7 @@ Be sure none of those dependencies are needed elsewhere in your app first.
 
 # Authoring your own CSS preprocessors
 
-In addition to Roosevelt's built-in support for the less, sass, and stylus preprocessors you can also define your own preprocessors on the fly at start time in Roosevelt's constructor like so:
+In addition to Roosevelt's built-in support for the LESS, Sass, and Stylus preprocessors you can also define your own preprocessors on the fly at start time in Roosevelt's constructor like so:
 
 ```js
 let app = require('roosevelt')({
