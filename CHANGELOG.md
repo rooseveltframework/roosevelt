@@ -2,6 +2,10 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.16.0
+
 - Replaced browserify with webpack. **This has significant breaking API changes. You will need to totally rewrite your JS bundles from browserify bundles to webpack bundles to upgrade to this version of Roosevelt. It is also recommended that you remove all references to old build artifacts such as `.build` and `.bundled` in your application as well from package.json, .gitignore, etc.**
 - Eliminated concept of separate JS compilers in favor of declaring this via your webpack config. Note: webpack defaults to minifying JS using terser.
 - Eliminated concept of CSS preprocessor middleware modules in favor of built-in support for LESS, Sass, and Stylus. Other CSS preprocessors can be used as well with a bit of extra configuration.
@@ -20,14 +24,14 @@
 - `source-configs` integration is now more tightly knit.
 - Config auditor no longer complains about missing params.
 - Auditor now checks config params on a case-by-case basis.
-- ES6 style variables can now be used in roosevelt config.
+- ES6 style variables can now be used in `rooseveltConfig` referencing other `rooseveltConfig` entries.
 - Introduced views bundler: An API that allows you to expose view code to frontend JS for client-side templating.
 - Added a button to the validation error page to display the page anyway and another button to disable the validator entirely until the server restarts.
 - Fixed bug with frontend reload causing it to inject the script tag in the wrong location in some situations.
-- Fixed bug where router would cause app routes to fail when no controller files exist.
-- Fixed bug where auto build scanner would crash the app when generateFolderStructure is false.
+- Fixed bug where `router` would cause app routes to fail when no controller files exist.
+- Fixed bug where auto build scanner would crash the app when `generateFolderStructure` is false.
 - Fixed bug which resulted in a cryptic error if a Roosevelt app was moved to another directory.
-- Fixed bug where symlink failed errors would appear when generateFolderStructure is false.
+- Fixed bug where symlink failed errors would appear when `generateFolderStructure` is false.
 - Complete rewrite of HTML validator and related helper scripts.
 - Refactored multipart middlware.
 - Various dependencies bumped.
