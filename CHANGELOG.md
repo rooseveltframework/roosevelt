@@ -16,6 +16,7 @@
   - `css.output` is now relative to `publicFolder` instead of `staticsRoot`.
   - `clientViews.output` is now relative to `publicFolder` instead of `staticsRoot`.
   - Removed `cleanTimer` (Obsolete in absense of .build).
+- App cleaner has been removed.
 - Source-configs integration is now more tightly knit.
 - Config auditor no longer complains about missing params.
 - Auditor now checks config params on a case-by-case basis.
