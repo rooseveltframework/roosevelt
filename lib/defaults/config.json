@@ -1,0 +1,119 @@
+{
+  "port": 43711,
+  "mode": "production",
+  "enableCLIFlags": true,
+  "generateFolderStructure": false,
+  "localhostOnly": true,
+  "logging": {
+    "methods": {
+      "http": true,
+      "info": true,
+      "warn": true,
+      "error": true,
+      "verbose": false
+    }
+  },
+  "minify": true,
+  "htmlValidator": {
+    "enable": true,
+    "separateProcess": {
+      "enable": true,
+      "autoKiller": true,
+      "autoKillerTimeout": 3600000
+    },
+    "port": 48888,
+    "showWarnings": true,
+    "exceptions": {
+      "requestHeader": "Partial",
+      "modelValue": "_disableValidator"
+    }
+  },
+  "multipart": {
+    "multiples": true
+  },
+  "toobusy": {
+    "maxLagPerRequest": 70,
+    "lagCheckInterval": 500
+  },
+  "bodyParser": {
+    "urlEncoded": {
+      "extended": true
+    },
+    "json": {}
+  },
+  "frontendReload": {
+    "enable": true,
+    "port": 9856,
+    "httpsPort": 9857,
+    "verbose": false
+  },
+  "checkDependencies": true,
+  "cores": 1,
+  "shutdownTimeout": 30000,
+  "https": {
+    "enable": false,
+    "force": false,
+    "port": 43733,
+    "authInfoPath": null,
+    "caCert": null,
+    "requestCert": null,
+    "rejectUnauthorized": null
+  },
+  "modelsPath": "mvc/models",
+  "viewsPath": "mvc/views",
+  "viewEngine": "none",
+  "controllersPath": "mvc/controllers",
+  "errorPages": {
+    "notFound": "404.js",
+    "internalServerError": "5xx.js",
+    "serviceUnavailable": "503.js"
+  },
+  "routers": false,
+  "staticsRoot": "statics",
+  "htmlMinifier": {
+    "enable": true,
+    "exceptionRoutes": false,
+    "options": {
+      "collapseWhitespace": true,
+      "collapseBooleanAttributes": true,
+      "removeAttributeQuotes": true,
+      "removeEmptyAttributes": true
+    }
+  },
+  "css": {
+    "sourcePath": "css",
+    "compiler": {
+      "enable": false,
+      "module": "less",
+      "options": {}
+    },
+    "minifier": {
+      "enable" : true,
+      "options": {}
+    },
+    "whitelist": null,
+    "output": "css",
+    "versionFile": null
+  },
+  "js": {
+    "sourcePath": "js",
+    "webpack": {
+      "enable": false,
+      "bundles": []
+    }
+  },
+  "publicFolder": "public",
+  "favicon": "none",
+  "staticsSymlinksToPublic": [],
+  "versionedPublic": false,
+  "alwaysHostPublic": false,
+  "clientViews": {
+    "whitelist": {},
+    "blacklist": {},
+    "output": "templates",
+    "exposeAll": false,
+    "defaultBundle": "bundle.js",
+    "minify": true,
+    "minifyOptions": {}
+  }
+}

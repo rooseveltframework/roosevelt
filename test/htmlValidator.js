@@ -15,7 +15,7 @@ const vnu = require('vnu-jar')
 before(done => {
   (async () => {
     // kill any validators running on the system before tests start
-    await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+    await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
     done()
   })()
@@ -24,7 +24,7 @@ before(done => {
 after(done => {
   (async () => {
     // kill any stray validators
-    await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+    await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
     done()
   })()
@@ -40,6 +40,7 @@ describe('validator init', () => {
       location: 'validatorInit',
       method: 'initServer',
       config: {
+        mode: 'development',
         generateFolderStructure: false,
         frontendReload: {
           enable: false
@@ -59,7 +60,7 @@ describe('validator init', () => {
   afterEach(done => {
     (async () => {
       // kill any stray validators
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+      await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
       done()
     })()
@@ -110,7 +111,7 @@ describe('validator init', () => {
     // run the killValidator script and check that validator was actually killed
     async function killValidator () {
       // run the killValidator script
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+      await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
       // prove that the validator has actually been killed
       return new Promise(resolve => {
@@ -264,11 +265,9 @@ describe('validator usage', () => {
   }
 
   before(done => {
-    // pass the development mode flag
-    process.argv.push('--development-mode')
-
     // spin up the roosevelt app
     roosevelt({
+      mode: 'development',
       generateFolderStructure: false,
       port: 40001,
       logging: {
@@ -341,11 +340,8 @@ describe('validator usage', () => {
     (async () => {
       // stop the server
       context.app.httpServer.close(async () => {
-        // eliminate the --development-mode flag
-        process.argv.pop()
-
         // kill the validator
-        await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+        await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
         done()
       })
@@ -494,7 +490,7 @@ describe('validator usage', () => {
    */
   it('error page should report problems with validator', done => {
     (async () => {
-      await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
+      await execa.node(path.join(__dirname, '../lib/scripts/killValidator.js'))
 
       // request a page with invalid html and exception model value set
       request(context.app)
@@ -546,11 +542,9 @@ describe('validator auto killer', () => {
       // spawn an instance of the auto killer script
       const autokiller = execa('node', [path.join(__dirname, '../lib/scripts/autoKillValidator.js'), 30000, 'true'])
 
-      // add dev mode flag to cli
-      process.argv.push('--development-mode')
-
       // start up a roosevelt app
       roosevelt({
+        mode: 'development',
         generateFolderStructure: false,
         logging: {
           methods: {
@@ -578,9 +572,6 @@ describe('validator auto killer', () => {
 
         // kill any stray validators
         await execa('node', [path.join(__dirname, '../lib/scripts/killValidator.js')])
-
-        // eliminate --development-mode flag
-        process.argv.pop()
 
         done()
       })

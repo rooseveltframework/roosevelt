@@ -44,7 +44,7 @@ describe('Views Bundler Tests', function () {
   ]
 
   const pathOfExposedTemplates = [
-    path.join(appDir, 'statics/.build/templates/output.js')
+    path.join(appDir, 'public/templates/output.js')
   ]
 
   const staticTemplates = [
@@ -88,7 +88,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
+        assertFilesExist(appDir, 'public/templates', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
@@ -114,7 +114,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesExist(appDir, 'statics/.build/templates', pathOfExposedTemplates)
+        assertFilesExist(appDir, 'public/templates', pathOfExposedTemplates)
         testApp.send('stop')
       }
     })
@@ -135,7 +135,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'statics/.build/templates')
+        assertFilesNotCreated(appDir, 'public/templates')
 
         testApp.send('stop')
       }
@@ -157,7 +157,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'statics/.build/templates')
+        assertFilesNotCreated(appDir, 'public/templates')
 
         testApp.send('stop')
       }
@@ -183,7 +183,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'statics/.build/templates')
+        assertFilesNotCreated(appDir, 'public/templates')
 
         testApp.send('stop')
       }
@@ -209,7 +209,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'statics/.build/templates')
+        assertFilesNotCreated(appDir, 'public/templates')
 
         testApp.send('stop')
       }
@@ -261,7 +261,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'statics/.build/templates')
+        assertFilesNotCreated(appDir, 'public/templates')
 
         testApp.send('stop')
       }
@@ -274,7 +274,7 @@ describe('Views Bundler Tests', function () {
 
   it('should save a file to a specific location when the output folder option is modified', function (done) {
     const customPathArray = [
-      path.join(appDir, 'statics/js/output.js')
+      path.join(appDir, 'public/js/output.js')
     ]
 
     generateTestApp({
@@ -292,7 +292,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        assertFilesExist(appDir, 'statics/js', customPathArray)
+        assertFilesExist(appDir, 'public/js', customPathArray)
         testApp.send('stop')
       }
     })
@@ -317,7 +317,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
@@ -358,7 +358,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
@@ -399,7 +399,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
@@ -441,7 +441,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
@@ -482,7 +482,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
@@ -513,7 +513,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
@@ -548,7 +548,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
@@ -590,7 +590,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
@@ -630,7 +630,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
@@ -666,7 +666,7 @@ describe('Views Bundler Tests', function () {
 
     testApp.stdout.on('data', (result) => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'statics/.build/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
 
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 

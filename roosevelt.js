@@ -9,7 +9,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 
-module.exports = function (params) {
+module.exports = params => {
   params = params || {} // ensure params are an object
 
   // appDir is either specified by the user or sourced from the parent require
@@ -37,15 +37,18 @@ module.exports = function (params) {
   app.set('express', express)
 
   // source user supplied params
-  app = require('./lib/sourceParams')(app, params)
+  params = require('./lib/sourceParams')(params, app)
 
-  // store updated params back into local variable
-  params = app.get('params')
+  // use existence of public folder to determine first run
+  if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {
+    // run the param audit
+    require('./lib/scripts/configAuditor').audit(params.appDir)
+  }
 
   const logger = app.get('logger')
 
   // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
-  if (app.get('params').checkDependencies) {
+  if (params.checkDependencies) {
     const output = require('check-dependencies').sync({ packageDir: app.get('appDir'), scopeList: ['dependencies'] })
     if (!output.depsWereOk) {
       const mainError = output.error[output.error.length - 1]
@@ -57,18 +60,17 @@ module.exports = function (params) {
 
   const appName = app.get('appName')
   const appEnv = app.get('env')
-  const flags = app.get('flags')
 
   logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
   // if running in prod, warn why public static assets don't load
   if (appEnv === 'production') {
-    if (!app.get('params').alwaysHostPublic) {
+    if (!params.alwaysHostPublic) {
       logger.warn('📁', 'In production mode Roosevelt defaults to not exposing the public folder. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "alwaysHostPublic" to true or pass the "--host-public" command line flag.')
     }
   }
 
-  const httpsParams = app.get('params').https
+  const httpsParams = params.https
 
   // let's try setting up the servers with user-supplied params
   if (!httpsParams.force) {
@@ -168,12 +170,12 @@ module.exports = function (params) {
   app.use(require('cookie-parser')())
 
   // enable favicon support
-  if (app.get('params').favicon !== 'none' && app.get('params').favicon !== null) {
-    faviconPath = path.join(app.get('appDir'), app.get('params').staticsRoot, app.get('params').favicon)
+  if (params.favicon !== 'none' && params.favicon !== null) {
+    faviconPath = path.join(params.staticsRoot, params.favicon)
     if (fsr.fileExists(faviconPath)) {
       app.use(require('serve-favicon')(faviconPath))
     } else {
-      logger.warn(`Favicon ${app.get('params').favicon} does not exist. Please ensure the "favicon" param is configured correctly.`)
+      logger.warn(`Favicon ${params.favicon} does not exist. Please ensure the "favicon" param is configured correctly.`)
     }
   }
 
@@ -226,24 +228,12 @@ module.exports = function (params) {
     }
 
     function bundleJs () {
-      require('./lib/jsBundler')(app, compileJs)
-    }
-
-    function compileJs () {
-      require('./lib/jsCompiler')(app, validateHTML)
+      require('./lib/jsBundler')(app, validateHTML)
     }
 
     function validateHTML () {
       if (app.get('env') === 'development' && params.htmlValidator.enable) {
-        require('./lib/htmlValidator')(app, scanBuiltFiles)
-      } else {
-        scanBuiltFiles()
-      }
-    }
-
-    function scanBuiltFiles () {
-      if (params.generateFolderStructure) {
-        require('./lib/tools/buildScanner')(app, mapRoutes)
+        require('./lib/htmlValidator')(app, mapRoutes)
       } else {
         mapRoutes()
       }
@@ -315,7 +305,7 @@ module.exports = function (params) {
       } else {
         process.exit()
       }
-    }, app.get('params').shutdownTimeout)
+    }, params.shutdownTimeout)
 
     app.set('roosevelt:state', 'disconnecting')
     logger.info('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
@@ -368,7 +358,7 @@ module.exports = function (params) {
   function startHttpServer () {
     // determine number of CPUs to use
     const max = os.cpus().length
-    const cores = flags.cores
+    const cores = params.cores
 
     if (cores) {
       if (cores === 'max') {
@@ -381,7 +371,7 @@ module.exports = function (params) {
     }
 
     // shut down the process if both the htmlValidator and the app are trying to use the same port
-    if (app.get('params').port === app.get('params').htmlValidator.port) {
+    if (params.port === params.htmlValidator.port) {
       logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`)
       process.exit(1)
     }
@@ -426,8 +416,8 @@ module.exports = function (params) {
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
     } else {
-      if (!app.get('params').https.force) {
-        serverPush(httpServer, app.get('params').port, 'HTTP')
+      if (!params.https.force) {
+        serverPush(httpServer, params.port, 'HTTP')
         if (httpReloadPromise) {
           httpReloadPromise.then(httpReload => {
             httpReload.startWebSocketServer().then(() => {
