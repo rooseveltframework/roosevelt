@@ -4,7 +4,7 @@
 
 - Replaced browserify with webpack. **This has significant breaking API changes. You will need to totally rewrite your JS bundles from browserify bundles to webpack bundles to upgrade to this version of Roosevelt. It is also recommended that you remove all references to old build artifacts such as `.build` and `.bundled` in your application as well from package.json, .gitignore, etc.**
 - Eliminated concept of separate JS compilers in favor of declaring this via your webpack config. Note: webpack defaults to minifying JS using terser.
-- Eliminated concept of css preprocessor middleware modules in favor of built-in support for less, sass, and stylus.
+- Eliminated concept of CSS preprocessor middleware modules in favor of built-in support for LESS, Sass, and Stylus. Other CSS preprocessors can be used as well with a bit of extra configuration.
 - API changes:
   - Removed `symlinkToPublic`, `compiler`, `output`, `whitelist`, and `blacklist` params from `js`.
   - Replaced `js.bundles` with `js.webpack`.
