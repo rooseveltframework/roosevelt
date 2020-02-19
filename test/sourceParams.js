@@ -28,7 +28,7 @@ describe('sourceParams', () => {
       'onReqAfterRoute',
       'onClientViewsProcess',
       'cssCompiler',
-      'staticsPrefix'
+      'unversionedPublic'
     ]
 
     afterEach(done => {

@@ -12,7 +12,7 @@ Some notable features:
 - Default directory structure is simple, but easily configured.
 - Concise default [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - Uses [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than popular alternatives. Can be configured to use any templating system that supports Express.
-- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external facing CSS files. Other preprocessors are supported via wrapper modules.
+- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external facing CSS files. There's also built-in support for sass and stylus, and with some extra configurating any preprocessor can be used.
 - Built-in, easy to use interface for [webpack](https://webpack.js.org/) bundling for frontend JS modularization.
 - Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
 - Automatic HTML validation in development mode of your post-server rendered HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; -ms-interpolation-mode: nearest-neighbor;'>
