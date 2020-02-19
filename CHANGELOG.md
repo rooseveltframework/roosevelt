@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Replace browserify with webpack.
+- Replaced browserify with webpack. **This has significant breaking API changes. You will need to totally rewrite your JS bundles from browserify bundles to webpack bundles to upgrade to this version of Roosevelt. It is also recommended that you remove all references to old build artifacts such as `.build` and `.bundled` in your application as well from package.json, .gitignore, etc.**
 - Eliminated concept of separate JS compilers in favor of webpack.
 - Eliminated concept of css preprocessor middleware modules in favor of built-in support for less, sass, and stylus.
 - API changes:
