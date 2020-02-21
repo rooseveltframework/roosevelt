@@ -1,13 +1,4 @@
 {
-  "dev-install": {
-    "value": "cd ./node_modules/roosevelt && npm install --only=dev",
-    "priority": "error",
-    "inspect": true
-  },
-  "di": {
-    "value": "cd ./node_modules/roosevelt && npm install --only=dev",
-    "priority": "ignore"
-  },
   "start": {
     "value": "nodemon app.js --production-mode",
     "priority": "ignore"
@@ -45,15 +36,6 @@
     "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
     "priority": "ignore"
   },
-  "clean": {
-    "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
-    "priority": "error",
-    "inspect": true
-  },
-  "c": {
-    "value": "node ./node_modules/roosevelt/lib/scripts/appCleanup.js",
-    "priority": "ignore"
-  },
   "config-audit": {
     "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "error",
@@ -77,14 +59,6 @@
   },
   "l": {
     "value": "npm run standard && npm run stylelint",
-    "priority": "ignore"
-  },
-  "precommit": {
-    "value": "lint-staged",
-    "priority": "ignore"
-  },
-  "pc": {
-    "value": "lint-staged",
     "priority": "ignore"
   },
   "proddev": {
