@@ -274,6 +274,54 @@ describe('sourceParams', () => {
       assert.deepStrictEqual(appConfig.mode, 'development')
     })
 
+    it('should enable alwaysHostPublic via --host-public', () => {
+      // add the cli flag
+      process.argv.push('--host-public')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'production',
+        alwaysHostPublic: false,
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.alwaysHostPublic, true)
+    })
+
+    it('should enable alwaysHostPublic via --statics', () => {
+      // add the cli flag
+      process.argv.push('--statics')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'production',
+        alwaysHostPublic: false,
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.alwaysHostPublic, true)
+    })
+
+    it('should enable alwaysHostPublic via -s', () => {
+      // add the cli flag
+      process.argv.push('--statics')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'production',
+        alwaysHostPublic: false,
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.alwaysHostPublic, true)
+    })
+
     it('should enable html validator via --enable-validator', () => {
       // add the cli flag
       process.argv.push('--enable-validator')
