@@ -447,7 +447,7 @@ describe('config auditor', function () {
 
     // generate the package.json file
     fs.ensureDirSync(appDir)
-    packageJSONSource.scripts.clean = 'node ./node_modules/roosevelt/is_not_correct.js'
+    packageJSONSource.scripts['config-audit'] = 'node ./node_modules/roosevelt/is_not_correct.js'
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // generate the test app
@@ -468,7 +468,7 @@ describe('config auditor', function () {
 
     // on the error stream check to see
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Detected outdated script "clean". Update contents to "node ./node_modules/roosevelt/lib/scripts/appCleanup.js" to restore functionality.')) {
+      if (data.includes('Detected outdated script "config-audit". Update contents to "node ./node_modules/roosevelt/lib/scripts/configAuditor.js" to restore functionality.')) {
         cleanNotUpToDateBool = true
       }
       if (data.includes('Issues have been detected in rooseveltConfig')) {
@@ -632,7 +632,7 @@ describe('config auditor', function () {
 
     // set the css object to a number and generate the package.json file
     fs.ensureDirSync(appDir)
-    delete packageJSONSource.scripts.clean
+    delete packageJSONSource.scripts['config-audit']
     fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(packageJSONSource))
 
     // fork and run app.js as a child process
@@ -647,7 +647,7 @@ describe('config auditor', function () {
 
     // on the error stream
     testApp.stderr.on('data', (data) => {
-      if (data.includes('Missing script "clean"!')) {
+      if (data.includes('Missing script "config-audit"!')) {
         missingScriptBool = true
       }
     })

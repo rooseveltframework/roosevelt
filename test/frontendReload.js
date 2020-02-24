@@ -137,7 +137,9 @@ describe('Reload Frontend Tests', function () {
     testApp.stdout.on('data', (data) => {
       if (data.includes('Frontend reload HTTPS server is listening on port') || data.includes('Frontend reload HTTP server is listening on port')) {
         foundReload++
-        testApp.send('stop')
+        if (foundReload === 2) {
+          testApp.send('stop')
+        }
       }
     })
 
