@@ -52,7 +52,7 @@
     "source-configs": "~0.3.3",
     "tamper": "~1.1.0",
     "toobusy-js": "~0.5.1",
-    "vnu-jar": "~20.1.2",
+    "vnu-jar": "~20.2.0",
     "webpack": "~4.41.6"
   },
   "devDependencies": {
