@@ -2,7 +2,12 @@
 
 ## Next version
 
-- Put your changes here...
+## 0.16.1
+
+- Stopped the config auditor from complaining about obsolete scripts.
+- Fixed cases where some CLI flags weren't being applied to config.
+- Test fixes.
+- Various dependencies bumped.
 
 ## 0.16.0
 
