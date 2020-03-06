@@ -130,7 +130,7 @@ describe('sourceParams', () => {
         https: {
           port: '${(port + 1)}' // eslint-disable-line
         },
-        multipart: {
+        formidable: {
           multiples: '${versionedPublic}' // eslint-disable-line
         },
         css: {
@@ -166,7 +166,7 @@ describe('sourceParams', () => {
       assert.deepStrictEqual(appConfig.css.whitelist[0], path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'partial param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.staticsSymlinksToPublic[0], path.join(appConfig.staticsRoot, 'coolJavaScript'), 'param variable within array not parsed correctly')
       assert.deepStrictEqual(appConfig.js.webpack.bundles[0].output, path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'deeply nested param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.multipart.multiples, true, 'true param variable not parsed correctly')
+      assert.deepStrictEqual(appConfig.formidable.multiples, true, 'true param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.alwaysHostPublic, false, 'false param variable not parsed correctly')
     })
   })

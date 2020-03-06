@@ -2,6 +2,9 @@
 
 ## Next version
 
+- Rename `multipart` param to `formidable`.
+- Update internal usage of formidable api.
+
 ## 0.16.1
 
 - Stopped the config auditor from complaining about obsolete scripts.

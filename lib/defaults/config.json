@@ -28,7 +28,7 @@
       "modelValue": "_disableValidator"
     }
   },
-  "multipart": {
+  "formidable": {
     "multiples": true
   },
   "toobusy": {

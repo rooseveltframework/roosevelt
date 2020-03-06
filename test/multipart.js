@@ -50,7 +50,7 @@ describe('multipart/formidable', () => {
         enable: false
       },
       // set some stingy limitations to easily test the config takes effect
-      multipart: {
+      formidable: {
         uploadDir: tmpDir,
         multiples: false,
         maxFieldsSize: 2
