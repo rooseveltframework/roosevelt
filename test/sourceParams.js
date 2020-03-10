@@ -114,6 +114,47 @@ describe('sourceParams', () => {
       }
     })
 
+    it('should set params from rooseveltConfig.json', () => {
+      // set app directory
+      const appDir = path.join(__dirname, 'app/sourceParams')
+
+      // build roosevelt config from sample
+      const configJson = {
+        ...sampleConfig,
+        enableCLIFlags: false
+      }
+
+      // create app directory
+      fs.ensureDirSync(path.join(appDir))
+
+      // generate rooseveltConfig.json with sample config
+      fs.writeJSONSync(path.join(appDir, 'rooseveltConfig.json'), configJson)
+
+      // initialize roosevelt
+      const app = require('../roosevelt')({
+        appDir: appDir
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      // do some param post-processing that matches what we expect from roosevelt
+      configJson.staticsRoot = path.join(appDir, configJson.staticsRoot)
+      configJson.publicFolder = (path.join(appDir, configJson.publicFolder))
+      configJson.css.sourcePath = path.join(configJson.staticsRoot, configJson.css.sourcePath)
+      configJson.css.output = path.join(configJson.publicFolder, configJson.css.output)
+      configJson.js.sourcePath = path.join(configJson.staticsRoot, configJson.js.sourcePath)
+      configJson.clientViews.output = path.join(configJson.staticsRoot, configJson.clientViews.output)
+
+      // for each param, test that its value is set in roosevelt
+      for (const key in appConfig) {
+        const param = appConfig[key]
+
+        if (!blacklist.includes(key)) {
+          assert.deepStrictEqual(param, configJson[key], `${key} was not correctly set`)
+        }
+      }
+    })
+
     it('should resolve variables in params', () => {
       // build roosevelt config with lots of variables
       const config = {

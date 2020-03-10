@@ -2,6 +2,7 @@
 
 ## Next version
 
+- Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root.
 - Rename `multipart` param to `formidable`.
 - Update internal usage of formidable api.
 

@@ -265,17 +265,21 @@ require('roosevelt')().startServer();
 
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
 
-Also, while it is recommended that you pass parameters to Roosevelt via `package.json` under `"rooseveltConfig"`, you can also pass parameters programmatically via Roosevelt's constructor like so:
+There are multiple ways to pass a configuration to Roosevelt:
 
-```js
-require('roosevelt')({
+- A `rooseveltConfig.json` file located in the root directory of your app.
+- Via package.json under `"rooseveltConfig"`.
+- Programmatically via Roosevelt's constructor like so:
+
+  ```js
+  require('roosevelt')({
   paramName: 'paramValue',
   param2:    'value2',
   etc:       'etc'
-}).startServer();
-```
+  }).startServer();
+  ```
 
-This is particularly useful for setting parameters that can't be defined in `package.json` such as event handlers (see below).
+  - This is particularly useful for setting parameters that can't be defined in `package.json` or `rooseveltConfig.json` such as event handlers (see below).
 
 In addition, all parameters support [template literal](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals) style variables. For example:
 
