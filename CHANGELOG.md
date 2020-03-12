@@ -2,6 +2,9 @@
 
 ## Next version
 
+- Refactor internal fsr module.
+- Replace `staticsSymlinksToPublic` with `symlinks`.
+
 ## 0.16.1
 
 - Stopped the config auditor from complaining about obsolete scripts.

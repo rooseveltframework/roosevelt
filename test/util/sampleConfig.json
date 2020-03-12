@@ -101,7 +101,7 @@
       "bundles": "value"
     }
   },
-  "staticsSymlinksToPublic": "value",
+  "symlinks": "value",
   "publicFolder": "value",
   "favicon": "value",
   "versionedPublic": "value",

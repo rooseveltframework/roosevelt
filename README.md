@@ -252,7 +252,7 @@ The default `.gitignore` file contains many common important things to ignore, h
 
 Some notable things ignored by default and why:
 
-- `public`: It's recommended that you don't create files in this folder manually, but instead use the `staticsSymlinksToPublic` parameter detailed below to expose folders in your `statics` directory via auto-generated symlinks.
+- `public`: It's recommended that you don't create files in this folder manually, but instead use the `statics` parameter detailed below to expose folders in your `statics` directory via auto-generated symlinks.
 - `node_modules`: This folder will be auto-generated when you run the `npm i` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally not recommended to commit the `node_modules` folder to git.
 
 # Configure your app with parameters
@@ -923,13 +923,24 @@ Resolves to:
 
   - Bare Roosevelt default (when an app is created without the generator): *[String]* `none`. Can also be set to `null` to use no favicon.
 
-- `staticsSymlinksToPublic`: Array of folders from `staticsRoot` to make symlinks to in your public folder, formatted as either `"linkName: linkTarget"` (whitespace optional) or simply `"linkName"` if the link target has the same name as the desired link name.
+- `symlinks`: *[Array]* Declare one or more symlinks to be generated at run time.
 
-  - Default: *[Array]* of *[Strings]*
+  - `source`: *[String]* Path to be linked to.
+
+    - Note: Will not attempt to generate a symlink to a source path that does not exist.
+
+  - `dest`: *[String]* Path to place symlink
+
+    - Note: If this destination path already exists it will not be overwritten.
+
+  - Default: *[Array]* of *[Objects]*
 
     ```json
     [
-      "images"
+      {
+        "source": "${staticsRoot}/images",
+        "dest": "${pubicFolder}/images"
+      }
     ]
     ```
 
