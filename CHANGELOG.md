@@ -2,6 +2,13 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.16.2
+
+- Added deprecation check for old compiler sub modules.
+- Various dependencies bumped.
+
 ## 0.16.1
 
 - Stopped the config auditor from complaining about obsolete scripts.
