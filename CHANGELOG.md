@@ -2,8 +2,13 @@
 
 ## Next version
 
-- Refactor internal fsr module.
-- Replace `staticsSymlinksToPublic` with `symlinks`.
+- Refactored internal `fsr` module.
+- Replaced `staticsSymlinksToPublic` with `symlinks`.
+
+## 0.16.2
+
+- Added deprecation check for old compiler sub modules.
+- Various dependencies bumped.
 
 ## 0.16.1
 
