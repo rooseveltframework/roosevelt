@@ -41,7 +41,7 @@
       "modelValue": "value"
     }
   },
-  "multipart": {
+  "formidable": {
     "multiples": "value"
   },
   "toobusy": {
