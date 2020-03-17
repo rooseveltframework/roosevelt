@@ -2,6 +2,8 @@
 
 ## Next version
 
+- Refactored internal `fsr` module.
+- Replaced `staticsSymlinksToPublic` with `symlinks`.
 - Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root.
 - Renamed `multipart` param to `formidable`.
 - Updated internal usage of formidable API.

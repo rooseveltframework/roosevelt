@@ -104,7 +104,7 @@
   },
   "publicFolder": "public",
   "favicon": "none",
-  "staticsSymlinksToPublic": [],
+  "symlinks": [],
   "versionedPublic": false,
   "alwaysHostPublic": false,
   "clientViews": {

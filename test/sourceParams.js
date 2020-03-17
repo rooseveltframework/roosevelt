@@ -190,8 +190,11 @@ describe('sourceParams', () => {
             ]
           }
         },
-        staticsSymlinksToPublic: [
-          '${js.sourcePath}' // eslint-disable-line
+        symlinks: [
+          {
+            source: '${js.sourcePath}', // eslint-disable-line
+            dest: '${publicFolder}/js', // eslint-disable-line
+          }
         ],
         versionedPublic: true,
         alwaysHostPublic: '${enableCLIFlags}' // eslint-disable-line
@@ -205,7 +208,8 @@ describe('sourceParams', () => {
       // check against various scenarios
       assert.deepStrictEqual(appConfig.https.port, 4001, 'number param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.css.whitelist[0], path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'partial param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.staticsSymlinksToPublic[0], path.join(appConfig.staticsRoot, 'coolJavaScript'), 'param variable within array not parsed correctly')
+      assert.deepStrictEqual(appConfig.symlinks[0].source, path.join(appConfig.staticsRoot, 'coolJavaScript'), 'param variable within array not parsed correctly')
+      assert.deepStrictEqual(appConfig.symlinks[0].dest, path.join(appConfig.publicFolder, 'js'), 'param variable within array not parsed correctly')
       assert.deepStrictEqual(appConfig.js.webpack.bundles[0].output, path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'deeply nested param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.formidable.multiples, true, 'true param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.alwaysHostPublic, false, 'false param variable not parsed correctly')
