@@ -21,13 +21,14 @@ describe('sourceParams', () => {
     // blacklist certain params from auto checking
     const blacklist = [
       'appDir',
+      'cssCompiler',
+      'onClientViewsProcess',
+      'onReqAfterRoute',
+      'onReqBeforeRoute',
+      'onReqStart',
       'onServerInit',
       'onServerStart',
-      'onReqStart',
-      'onReqBeforeRoute',
-      'onReqAfterRoute',
-      'onClientViewsProcess',
-      'cssCompiler',
+      'routePrefix',
       'unversionedPublic'
     ]
 
@@ -863,6 +864,42 @@ describe('sourceParams', () => {
       const appConfig = app.expressApp.get('params')
 
       assert.deepStrictEqual(appConfig.mode, 'production')
+    })
+
+    it('should prepend / to routePrefix param', () => {
+      // initialize roosevelt with weird mode value
+      const app = require('../roosevelt')({
+        ...config,
+        routePrefix: 'foo'
+      })
+
+      const prefix = app.expressApp.get('params').routePrefix
+
+      assert.deepStrictEqual(prefix, '/foo')
+    })
+
+    it('should eliminate trailing / from routePrefix param', () => {
+      // initialize roosevelt with weird mode value
+      const app = require('../roosevelt')({
+        ...config,
+        routePrefix: 'foo/'
+      })
+
+      const prefix = app.expressApp.get('params').routePrefix
+
+      assert.deepStrictEqual(prefix, '/foo')
+    })
+
+    it('should default routePrefix to empty string if set to nonstring value', () => {
+      // initialize roosevelt with weird mode value
+      const app = require('../roosevelt')({
+        ...config,
+        routePrefix: []
+      })
+
+      const prefix = app.expressApp.get('params').routePrefix
+
+      assert.deepStrictEqual(prefix, '')
     })
   })
 })

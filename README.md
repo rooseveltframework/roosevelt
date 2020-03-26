@@ -606,50 +606,13 @@ Resolves to:
 
     - Default: *[String]* `"503.js"`.
 
-- `routers`: *[Object]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) to create for groups of controllers or static files. If none are defined, Roosevelt will default to creating one single global router with the route prefix `/` that all controllers and all static files will be routed through.
+- `routePrefix`: *[String]* A subdirectory to mount your application to. Applies to all routes and static files.
 
-  - Object members:
+  - Example: When set to `"foo"` a route bound to `/` will be responded to at `/foo/`.
 
-    - `controllers`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of controller routes.
+  - Note: This prefix is exposed via the `routePrefix` express variable which can be handy for resolving the absolute paths to statics programmatically.
 
-      - `prefix`: *[String]* The URL path prefix for the router to use.
-
-      - `files`: *[Array]* List of files or directories in `controllersPath` that will be mounted to this route.
-
-      - Default: *[Boolean]* `false`.
-
-      - **Note**: `controllers` can also be a *[String]* that represents a schema file within the controllers directory. That file should define and export the list of Express Routers the same way as you would within the `rooseveltConfig`.
-
-      - Example usage:
-
-      ```json
-      [{
-        "prefix": "/something",
-        "files": ["controller.js", "directory"]
-      }]
-      ```
-
-    - `public`: *[Array]* List of [Express Routers](https://expressjs.com/en/guide/routing.html#express-router) which can be used to (among other things) prefix a whole series of static files into a series of public routes.
-
-      - `prefix`: *[String]* The URL path prefix for the public directory to use.
-
-      - `dirs`: *[Array]* List of directories in `publicFolder` that will be mounted to this route.
-
-      - Default: *[Boolean]* `false`.
-
-      - Example usage:
-
-      ```json
-      [{
-        "prefix": "/something",
-        "dirs": ["css", "images", "js"]
-      }]
-      ```
-
-  - Important limitation: When using routers to mount a sub application, it constrains the `publicFolder` of the sub app as follows:
-    1. `/paths` inherit the path of the parent, changing `http://domain/path` to `http://domain/parentApp/path`, which will likely break the sub app's static assets hosted in the `publicFolder` if they are referenced that way.
-    2. `./paths` will generally still work because they are relative, but this is often not desired in production contexts.
-    3. `http://domain/absolutePaths` will still work and is recommended if you want your app to be consumed as a sub app by another app.
+  - Default: `null`.
 
 ## Statics parameters
 
@@ -1007,8 +970,6 @@ module.exports = (router, app) => { // router is an Express router and app is th
 };
 ```
 
-**Note:** If custom routers are being used, the [res.redirect()](https://expressjs.com/en/api.html#res.redirect) method will prepend the prefix to redirects that are relative to the hostname. To override this setting pass `true` as the last argument.
-
 Sometimes it is also useful to separate controller logic from your routing. This can be done by creating a reusable controller module.
 
 An example would be creating a reusable controller for "404 Not Found" pages:
@@ -1075,6 +1036,8 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | Express variable                     | Description                                                  |
 | ------------------------------------ | ------------------------------------------------------------ |
 | `express`                            | The Express module.                                          |
+| `router`                             | Instance of router module used by Roosevelt.                 |
+| `routePrefix`                        | Prefix appended to routes via the `routePrefix` param. Will be `''` if not set. |
 | `routes`                             | List of all routes loaded in the Express app by Roosevelt.   |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
@@ -1091,7 +1054,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `jsPath`                             | Full path on the file system to where your app's JS source files are located. |
 | `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
 | `env`                                | Either `development` or `production`.                        |
-| `params`                             | The parameters you sent to Roosevelt.                            |
+| `params`                             | The parameters you sent to Roosevelt.                        |
 | `appDir`                             | The directory the main module is in.                         |
 | `appName`                            | The name of your app derived from `package.json`. Uses "Roosevelt Express" if no name is supplied. |
 | `appVersion`                         | The version number of your app derived from `package.json`.  |

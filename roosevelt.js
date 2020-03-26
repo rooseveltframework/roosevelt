@@ -19,6 +19,7 @@ module.exports = params => {
   const servers = []
   const connections = {}
   let app = express() // initialize express
+  const router = express.Router() // initialize router
   let httpServer
   let httpsServer
   let httpsOptions
@@ -35,6 +36,7 @@ module.exports = params => {
 
   // expose initial vars
   app.set('express', express)
+  app.set('router', router)
 
   // source user supplied params
   params = require('./lib/sourceParams')(params, app)

@@ -68,7 +68,7 @@
     "internalServerError": "5xx.js",
     "serviceUnavailable": "503.js"
   },
-  "routers": false,
+  "routePrefix": null,
   "staticsRoot": "statics",
   "htmlMinifier": {
     "enable": true,

@@ -23,6 +23,7 @@ function isEmpty (dir) {
 
 describe('multipart/formidable', () => {
   const appDir = path.join(__dirname, 'app/multipartForms')
+  const context = {}
   const tmpDir = path.join(appDir, 'tmp')
   const completeDir = path.join(appDir, 'complete')
 
@@ -55,8 +56,10 @@ describe('multipart/formidable', () => {
         multiples: false,
         maxFieldsSize: 2
       },
-      onServerStart: app => {
-        app.route('/multipart').post((req, res) => {
+      onServerInit: app => {
+        const router = app.get('router')
+
+        router.route('/multipart').post((req, res) => {
           const files = req.files
 
           // move files to 'complete' directory
@@ -72,7 +75,8 @@ describe('multipart/formidable', () => {
           // send a response
           res.status(200).send('done')
         })
-
+      },
+      onServerStart: app => {
         // bind app to test context
         context.app = app
 
