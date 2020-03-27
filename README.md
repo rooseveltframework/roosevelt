@@ -608,9 +608,10 @@ Resolves to:
 
 - `routePrefix`: *[String]* A subdirectory to mount your application to. Applies to all routes and static files.
 
-  - Example: When set to `"foo"` a route bound to `/` will be responded to at `/foo/`.
+  - Example: When set to `"foo"` a route bound to `/` will be instead be bound to `/foo/`.
 
-  - Note: This prefix is exposed via the `routePrefix` express variable which can be handy for resolving the absolute paths to statics programmatically.
+  - Note: This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
+    - TODO: show example of this.
 
   - Default: `null`.
 
