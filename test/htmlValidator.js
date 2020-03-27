@@ -300,34 +300,37 @@ describe('validator usage', () => {
           autoKiller: false
         }
       },
-      onServerStart: app => {
+      onServerInit: app => {
+        const router = app.get('router')
+
         // add route to invalid html
-        app.get('/invalid', (req, res) => {
+        router.get('/invalid', (req, res) => {
           res.send(context.badHTML)
         })
 
         // add route to invalid html with partial header
-        app.get('/exceptionHeader', (req, res) => {
+        router.get('/exceptionHeader', (req, res) => {
           res.set('partial', true)
 
           res.send(context.badHTML)
         })
 
         // add a route to invalid html that responds with a res.render without a model supplied
-        app.get('/noModel', (req, res) => {
+        router.get('/noModel', (req, res) => {
           res.render(path.join(__dirname, 'util/mvc/views/invalidHTML.html'))
         })
 
         // add route to invalid html that responds with a res.render and supplies a model with exception value set
-        app.get('/exceptionModel', (req, res) => {
+        router.get('/exceptionModel', (req, res) => {
           res.render(path.join(__dirname, 'util/mvc/views/invalidHTML.html'), { _disableValidator: true })
         })
 
         // add a route to valid html
-        app.get('/valid', (req, res) => {
+        router.get('/valid', (req, res) => {
           res.send(context.goodHTML)
         })
-
+      },
+      onServerStart: app => {
         // bind app to test context
         context.app = app
 

@@ -114,7 +114,6 @@
     "httpsPort": "value",
     "verbose": "value"
   },
-  "routers": "value",
   "cleanTimer": "value",
   "clientViews": {
     "exposeAll": "value",

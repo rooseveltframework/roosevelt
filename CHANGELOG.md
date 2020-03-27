@@ -7,6 +7,9 @@
 - Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root.
 - Renamed `multipart` param to `formidable`.
 - Updated internal usage of formidable API.
+- Replaced `routers` param with a simplified `routePrefix` param which defines a subfolder to mount the app to.
+- Added `router` Express variable that opens up access to internally used router instance.
+- Added `routePrefix` Express variable that exposes currently used routePrefix or an empty string if not used.
 
 ## 0.16.2
 
