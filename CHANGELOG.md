@@ -1,15 +1,16 @@
 # Roosevelt Changelog
 
-## Next version
+## 0.17.0 (next version)
 
-- Refactored internal `fsr` module.
-- Replaced `staticsSymlinksToPublic` with `symlinks`.
-- Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root.
-- Renamed `multipart` param to `formidable`.
-- Updated internal usage of formidable API.
-- Replaced `routers` param with a simplified `routePrefix` param which defines a subfolder to mount the app to.
+- Breaking: Replaced `staticsSymlinksToPublic` with `symlinks`.
+- Breaking: Replaced `routers` param with a simplified `routePrefix` param which defines a subfolder to mount the app to.
+- Breaking: Renamed `multipart` param to `formidable`.
+- Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root instead of from a rooseveltConfig object in package.json.
 - Added `router` Express variable that opens up access to internally used router instance.
 - Added `routePrefix` Express variable that exposes currently used routePrefix or an empty string if not used.
+- Refactored internal `fsr` module.
+- Updated internal usage of formidable API.
+- Various dependencies bumped.
 
 ## 0.16.2
 
