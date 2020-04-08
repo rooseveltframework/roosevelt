@@ -612,7 +612,7 @@ Resolves to:
 
   - Note: This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
 
-    - Example: An image located at `images/teddy.jpg` can be resolved in a prefix agnostic way via `` `${app.get('routePrefix')/images/teddy.jpg}` ``.
+    - Example: An image located at `/images/teddy.jpg` can be resolved in a prefix agnostic way via `` `${app.get('routePrefix')/images/teddy.jpg}` ``.
 
   - Default: `null`.
 
