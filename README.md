@@ -611,7 +611,8 @@ Resolves to:
   - Example: When set to `"foo"` a route bound to `/` will be instead be bound to `/foo/`.
 
   - Note: This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
-    - TODO: show example of this.
+
+    - Example: An image located at `/images/teddy.jpg` can be resolved in a prefix agnostic way via `` `${app.get('routePrefix')/images/teddy.jpg}` ``.
 
   - Default: `null`.
 
