@@ -1,6 +1,10 @@
 # Roosevelt Changelog
 
-## 0.17.0 (next version)
+## Next version
+
+- Put your changes here...
+
+## 0.17.0
 
 - Breaking: Replaced `staticsSymlinksToPublic` with `symlinks`.
 - Breaking: Replaced `routers` param with a simplified `routePrefix` param which defines a subfolder to mount the app to.
@@ -8,10 +12,11 @@
 - Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root instead of from a rooseveltConfig object in package.json.
 - Added `router` Express variable that opens up access to internally used router instance.
 - Added `routePrefix` Express variable that exposes currently used routePrefix or an empty string if not used.
+- Fixed bug where changes CSS files were not be written to the output directory.
 - Refactored internal `fsr` module.
 - Updated internal usage of formidable API.
+- Internal changes to stabilize the automated tests.
 - Various dependencies bumped.
-- Fixed bug where changes CSS files were not be written to the output directory.
 
 ## 0.16.2
 
