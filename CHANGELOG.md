@@ -11,6 +11,7 @@
 - Refactored internal `fsr` module.
 - Updated internal usage of formidable API.
 - Various dependencies bumped.
+- Fixed bug where changes CSS files were not be written to the output directory.
 
 ## 0.16.2
 
