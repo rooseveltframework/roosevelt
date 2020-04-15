@@ -908,7 +908,7 @@ Resolves to:
     [
       {
         "source": "${staticsRoot}/images",
-        "dest": "${pubicFolder}/images"
+        "dest": "${publicFolder}/images"
       }
     ]
     ```

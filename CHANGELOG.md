@@ -12,7 +12,7 @@
 - Added ability to configure Roosevelt via a rooseveltConfig.json config file placed in app root instead of from a rooseveltConfig object in package.json.
 - Added `router` Express variable that opens up access to internally used router instance.
 - Added `routePrefix` Express variable that exposes currently used routePrefix or an empty string if not used.
-- Fixed bug where changes CSS files were not be written to the output directory.
+- Fixed bug where changes to CSS files were not being written to the output directory.
 - Refactored internal `fsr` module.
 - Updated internal usage of formidable API.
 - Internal changes to stabilize the automated tests.
