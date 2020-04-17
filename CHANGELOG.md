@@ -2,7 +2,8 @@
 
 ## Next version
 
-- Put your changes here...
+- Fixed a CSS bug where CSS files were still not being written due to a file existence check.
+- Fixed a CSS bug where empty CSS files were being written because their LESS equivalent would never generate CSS in that particular file.
 
 ## 0.17.0
 
