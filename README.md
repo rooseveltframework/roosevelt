@@ -68,13 +68,21 @@ Once you have a sane development environment, you can proceed with the standard 
 
 The [Roosevelt app generator](https://github.com/rooseveltframework/generator-roosevelt) is a command line script based on [Yeoman](http://yeoman.io) that can create a sample Roosevelt app for you.
 
-To use it, first globally install Yeoman and the Yeoman-based Roosevelt app generator:
+To use it, simply run the following command:
+
+```bash
+npx mkroosevelt
+```
+
+Then follow the prompts.
+
+You can also optionally install the app generator to your system if you like so that it doesn't need to be refetched from npm each time you want to create a new app. To do that, first globally install Yeoman and the Yeoman-based Roosevelt app generator:
 
 ```bash
 npm i -g yo generator-roosevelt
 ```
 
-Create a Roosevelt app using the Roosevelt app generator:
+Then create a Roosevelt app using the Roosevelt app generator:
 
 ```bash
 yo roosevelt
@@ -82,7 +90,7 @@ yo roosevelt
 
 Then follow the prompts.
 
-Afterward, `cd` to your app's directory and install dependencies:
+After creating your app, `cd` to your app's directory and install dependencies:
 
 ```bash
 npm i
