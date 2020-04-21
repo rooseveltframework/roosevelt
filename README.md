@@ -12,7 +12,7 @@ Some notable features:
 - Default directory structure is simple, but easily configured.
 - Concise default [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
 - Uses [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than popular alternatives. Can be configured to use any templating system that supports Express.
-- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external facing CSS files. There's also built-in support for [Sass](https://sass-lang.com), and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
+- [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external-facing CSS files. There's also built-in support for [Sass](https://sass-lang.com), and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
 - Built-in, easy to use interface for creating [Webpack](https://webpack.js.org/) bundles for modularizing and minifying your frontend JS.
 - Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
 - Automatic HTML validation in development mode of your post-server rendered HTML using a local instance of the [Nu HTML Checker](https://www.npmjs.com/package/vnu-jar). <img src='http://i.imgur.com/s4YUHNG.png' alt='' title='All life begins with Nu and ends with Nu...' width='16' height='16' style='image-rendering: -moz-crisp-edges; image-rendering: -o-crisp-edges; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; -ms-interpolation-mode: nearest-neighbor;'>
@@ -47,7 +47,7 @@ Some notable features:
 - [Express middleware and other configurations automatically loaded by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-middleware-and-other-configurations-automatically-loaded-by-roosevelt)
 - [Deployment](https://github.com/rooseveltframework/roosevelt#deployment)
   - [Removing dependencies unneeded in production](https://github.com/rooseveltframework/roosevelt#removing-dependencies-unneeded-in-production)
-- [Authoring your own CSS and JS preprocessors](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessors)
+- [Supplying your own CSS and JS preprocessors](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessors)
 - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
 
 # Create and run a Roosevelt app
@@ -56,8 +56,8 @@ First you will need to install [Node.js](http://nodejs.org). Both the current an
 
 Some important caveats to note:
 
-- nvm is not available on Windows. Windows users should try out [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nvs](https://github.com/jasongin/nvs).
-- It is also recommended that Windows users use a terminal that supports emojis, such as [cmder](http://cmder.net/), at least until Microsoft [rolls out this planned update to cmd.exe](https://arstechnica.com/gadgets/2018/07/microsoft-is-making-the-windows-command-line-a-lot-better/).
+- nvm is not available on Windows. Windows users should try out [recommended alternatives](https://github.com/nvm-sh/nvm#important-notes).
+- It is also recommended that Windows users use a terminal that supports emojis, such as [Microsoft's new terminal](https://github.com/Microsoft/Terminal).
 - Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
 The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
@@ -1116,7 +1116,7 @@ To remove them all, run `npm rm execa fkill html-validator pid-from-port prismjs
 
 Be sure none of those dependencies are needed elsewhere in your app first.
 
-# Authoring your own CSS preprocessors
+# Supplying your own CSS preprocessors
 
 In addition to Roosevelt's built-in support for the LESS, Sass, and Stylus preprocessors you can also define your own preprocessors on the fly at start time in Roosevelt's constructor like so:
 
