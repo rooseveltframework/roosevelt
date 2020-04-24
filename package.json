@@ -53,7 +53,7 @@
     "tamper": "~1.1.0",
     "toobusy-js": "~0.5.1",
     "vnu-jar": "~20.3.16",
-    "webpack": "~4.42.1"
+    "webpack": "~4.43.0"
   },
   "devDependencies": {
     "c8": "~7.1.0",
