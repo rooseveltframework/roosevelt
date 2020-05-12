@@ -47,10 +47,7 @@ describe('config auditor', () => {
       method: 'initServer',
       config: {
         mode: 'development',
-        generateFolderStructure: false,
-        htmlValidator: {
-          enable: false
-        }
+        generateFolderStructure: false
       }
     })
 
@@ -77,16 +74,10 @@ describe('config auditor', () => {
     pkgJson.rooseveltConfig.frontendReload.extraParam = true
     pkgJson.rooseveltConfig.htmlMinifier.extraParam = true
     pkgJson.rooseveltConfig.htmlValidator.extraParam = true
-    pkgJson.rooseveltConfig.htmlValidator.separateProcess.extraParam = true
-    pkgJson.rooseveltConfig.htmlValidator.exceptions.extraParam = true
     pkgJson.rooseveltConfig.logging.extraParam = true
     pkgJson.rooseveltConfig.js.extraParam = true
     pkgJson.rooseveltConfig.js.webpack.extraParam = true
     pkgJson.rooseveltConfig.toobusy.extraParam = true
-
-    // botch some scripts
-    delete pkgJson.scripts['config-audit']
-    pkgJson.scripts['kill-validator'] = 'node /roosevelt/lol/wrong/place.js'
 
     // write package.json to app directory
     fs.ensureDirSync(path.join(appDir))
@@ -105,13 +96,39 @@ describe('config auditor', () => {
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlMinifier,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.logging,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator,'))
-    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator.separateProcess,'))
-    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator.exceptions,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js.webpack,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.toobusy,'))
-    assert(stderr.includes('Detected outdated script "kill-validator"'))
+  })
+
+  it('should detect and complain about a missing script', async () => {
+    // delete a script
+    delete pkgJson.scripts['config-audit']
+
+    // write package.json to app directory
+    fs.ensureDirSync(path.join(appDir))
+    fs.writeJSONSync(path.join(appDir, 'package.json'), pkgJson)
+
+    // spin up the auditor script
+    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+
+    // check stderr to ensure it found the problem
     assert(stderr.includes('Missing script "config-audit"'))
+  })
+
+  it('should detect and complain about an outdated script', async () => {
+    // botch a script
+    pkgJson.scripts['config-audit'] = 'node /roosevelt/lol/wrong/place.js'
+
+    // write package.json to app directory
+    fs.ensureDirSync(path.join(appDir))
+    fs.writeJSONSync(path.join(appDir, 'package.json'), pkgJson)
+
+    // spin up the auditor script
+    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+
+    // check stderr to ensure it found the problem
+    assert(stderr.includes('Detected outdated script "config-audit"'))
   })
 
   it('should detect and complain about a wide variety of problems in rooseveltConfig.json', async () => {
@@ -124,8 +141,6 @@ describe('config auditor', () => {
     configFile.frontendReload.extraParam = true
     configFile.htmlMinifier.extraParam = true
     configFile.htmlValidator.extraParam = true
-    configFile.htmlValidator.separateProcess.extraParam = true
-    configFile.htmlValidator.exceptions.extraParam = true
     configFile.logging.extraParam = true
     configFile.js.extraParam = true
     configFile.js.webpack.extraParam = true
@@ -148,8 +163,6 @@ describe('config auditor', () => {
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlMinifier,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.logging,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator,'))
-    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator.separateProcess,'))
-    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator.exceptions,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js.webpack,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.toobusy,'))

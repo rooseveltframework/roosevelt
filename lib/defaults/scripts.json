@@ -27,15 +27,6 @@
     "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
-  "kill-validator": {
-    "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
-    "priority": "error",
-    "inspect": true
-  },
-  "kv": {
-    "value": "node ./node_modules/roosevelt/lib/scripts/killValidator.js",
-    "priority": "ignore"
-  },
   "config-audit": {
     "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "error",

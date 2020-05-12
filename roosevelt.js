@@ -48,20 +48,22 @@ module.exports = params => {
   }
 
   const logger = app.get('logger')
-
-  // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
-  if (params.checkDependencies) {
-    const output = require('check-dependencies').sync({ packageDir: app.get('appDir'), scopeList: ['dependencies'] })
-    if (!output.depsWereOk) {
-      const mainError = output.error[output.error.length - 1]
-      if (mainError.includes('npm install')) {
-        logger.warn('📦', 'Currently installed npm dependencies do not match the versions that are specified in package.json! You may need to run npm i or npm ci')
-      }
-    }
-  }
-
   const appName = app.get('appName')
   const appEnv = app.get('env')
+
+  // warn the user if there are any dependencies that are missing or out of date for the user, or to make a package.json file if they don't have one
+  if (params.checkDependencies && appEnv === 'development') {
+    // run check-dependencies if it's installed
+    try {
+      const output = require('check-dependencies').sync({ packageDir: app.get('appDir'), scopeList: ['dependencies'] })
+      if (!output.depsWereOk) {
+        const mainError = output.error[output.error.length - 1]
+        if (mainError.includes('npm install')) {
+          logger.warn('📦', 'Currently installed npm dependencies do not match the versions that are specified in package.json! You may need to run npm i or npm ci')
+        }
+      }
+    } catch {}
+  }
 
   logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
@@ -235,10 +237,12 @@ module.exports = params => {
 
     function validateHTML () {
       if (app.get('env') === 'development' && params.htmlValidator.enable) {
-        require('./lib/htmlValidator')(app, mapRoutes)
-      } else {
-        mapRoutes()
+        // instantiate the validator if it's installed
+        try {
+          require('express-html-validator')(app, params.htmlValidator)
+        } catch {}
       }
+      mapRoutes()
     }
 
     function mapRoutes () {

@@ -8,7 +8,7 @@ const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
-describe('Reload Frontend Tests', function () {
+describe.skip('Reload Frontend Tests', function () {
   const appDir = path.join(__dirname, 'app/reloadFrontendTest')
 
   // options to pass into test app generator
