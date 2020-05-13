@@ -2,7 +2,35 @@
 
 ## Next version
 
-- Put your changes here...
+- Replaced the vnu-jar based HTML validator with express-html-validator 🎉.
+  - Roosevelt no longer does any background process management as a result.
+- Moved all developer facing dependencies to optionalDependencies.
+  - They can be omitted from installion when using `npm i --no-optional`.
+- Refactored frontend reload implementation.
+- check-dependencies now only runs in dev mode.
+- API changes:
+  - Removed `separateProcess` from `htmlValidator`.
+  - Removed `port` from `htmlValidator`.
+  - Removed `showWarnings` from `htmlValidator`.
+  - Added `validatorConfig` to `htmlValidator` which respresents a set of rules for the validator to check for.
+    - Rules can also be set in a `.htmlValidate.json` placed in the app root.
+  - Removed `verbose` from `frontendReload`.
+    - These logs are now controlled by the general verbose logging param.
+  - Removed `ROOSEVELT_VALIDATOR` environment variable.
+  - Removed `ROOSEVELT_AUTOKILLER` environment variable.
+  - Removed `--attach-validator` and `-a` cli flags.
+  - Removed `--background-validator` and `-b` cli flags.
+  - Removed `--disable-validator-autokiller`, `--no-autokiller`, and `-n` cli flags.
+  - Removed `--enable-validator-autokiller`, `--html-validator-autokiller`, and `-k` cli flags.
+- Removed dependencies:
+  - execa
+  - fkill
+  - html-validator
+  - prismjs
+  - ps-node
+  - tamper
+  - vnu-jar
+- Various dependencies bumped.
 
 ## 0.17.1
 

@@ -1,47 +1,37 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const path = require('path')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe.skip('validator usage', () => {
-  // establish test context
-  const context = {
-    // invalid html to test against
-    badHTML: `
-      <!DOCTYPE html
-      <html lang='en'>
-        <head>
-          <meta charset='utf-8'>
-          <title>TitleX</title>
-          <script type="text/javascript" ></script>
-        </head>
-        <body>
-            <section>
-            </section>
-            <article>
-              <p>cool text</p>
-            </article>
-          <h1>headingX
-          <p>sentence1X</p>
-          <p>sentence2X</p>
-        </body>
-      </html>`,
+describe.only('validator usage', () => {
+  // invalid html to test against
+  const invalidHTML = `
+    <!DOCTYPE html>
+    <html lang='en'>
+      <head>
+        <meta charset='utf-8'>
+      </head>
+      <body
+        <h1>hello</h1>
+      </body>
+    </html>`
 
-    // valid html to test against
-    goodHTML: `
-      <!DOCTYPE html>
-      <html lang='en'>
-        <head>
-          <meta charset='utf-8'>
-          <title>Title</title>
-        </head>
-        <body>
-          <h1>awesome html</h1>
-        </body>
-      </html>`
-  }
+  // valid html to test against
+  const validHTML = `
+    <!DOCTYPE html>
+    <html lang='en'>
+      <head>
+        <meta charset='utf-8'>
+        <title>Valid</title>
+      </head>
+      <body>
+        <h1>hello</h1>
+      </body>
+    </html>`
+
+  // open up testing context
+  const context = {}
 
   before(done => {
     // spin up the roosevelt app
@@ -57,8 +47,8 @@ describe.skip('validator usage', () => {
           error: false
         }
       },
-      toobusy: {
-        maxLagPerRequest: 700
+      htmlValidator: {
+        enable: true
       },
       frontendReload: {
         enable: false
@@ -68,29 +58,12 @@ describe.skip('validator usage', () => {
 
         // add route to invalid html
         router.get('/invalid', (req, res) => {
-          res.send(context.badHTML)
-        })
-
-        // add route to invalid html with partial header
-        router.get('/exceptionHeader', (req, res) => {
-          res.set('partial', true)
-
-          res.send(context.badHTML)
-        })
-
-        // add a route to invalid html that responds with a res.render without a model supplied
-        router.get('/noModel', (req, res) => {
-          res.render(path.join(__dirname, 'util/mvc/views/invalidHTML.html'))
-        })
-
-        // add route to invalid html that responds with a res.render and supplies a model with exception value set
-        router.get('/exceptionModel', (req, res) => {
-          res.render(path.join(__dirname, 'util/mvc/views/invalidHTML.html'), { _disableValidator: true })
+          res.send(invalidHTML)
         })
 
         // add a route to valid html
         router.get('/valid', (req, res) => {
-          res.send(context.goodHTML)
+          res.send(validHTML)
         })
       },
       onServerStart: app => {
@@ -105,5 +78,21 @@ describe.skip('validator usage', () => {
   after(() => {
     // stop the server
     context.app.httpServer.close()
+  })
+
+  it('should respond with error page on invalid html', async () => {
+    const res = await request(context.app)
+      .get('/invalid')
+      .expect(500)
+
+    assert(res.text.includes('HTML did not pass validator'))
+  })
+
+  it('should respond normally to valid html', async () => {
+    const res = await request(context.app)
+      .get('/valid')
+      .expect(200)
+
+    assert(!res.text.includes('HTML did not pass validator'))
   })
 })

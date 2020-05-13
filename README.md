@@ -131,14 +131,6 @@ To do that:
 
 Roosevelt apps created with the app generator come with the following notable [npm scripts](https://docs.npmjs.com/misc/scripts) prepopulated in [package.json](https://docs.npmjs.com/files/package.json):
 
-- `npm run dev-install`: Installs Roosevelt with its devDependencies to support running Roosevelt in development mode.
-  - Default shorthands:
-    - `npm run di`
-  - Script is short for: `cd ./node_modules/roosevelt && npm install --only=dev`
-- `npm run dev-prune`: Removes Roosevelt's devDependencies to support deploying Roosevelt apps with smaller production builds. Note: can prevent being able to run Roosevelt in development mode.
-  - Default shorthands:
-    - `npm run dp`
-  - Script is short for: `cd ./node_modules/roosevelt && npm prune --production`
 - `npm run production`: Runs the app in production mode.
   - Default shorthands:
     - `npm run prod`
@@ -366,7 +358,7 @@ Resolves to:
 
         - Allowed values: *[String]* `info`, `warn`, or `error`.
 
-- `minify`: Enables HTML minification as well as the minification step in supporting CSS and JS compilers.
+- `minify`: Enables HTML and CSS minification.
 
   - Default: *[Boolean]* `true`.
 
@@ -790,7 +782,6 @@ Resolves to:
         "enable": true,
         "port": 9856,
         "httpsPort": 9857,
-        "verbose": false
       }
       ```
 
@@ -1039,6 +1030,8 @@ Additionally the Roosevelt constructor returns the following object:
 | `expressApp`             | *[Object]* The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
 | `httpServer`             | *[Object]* The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
 | `httpsServer`            | *[Object]* The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
+| `reloadHttpServer`       | *[Object]* The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
+| `reloadHttpsServer`       | *[Object]* The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `initServer`             | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. Takes an optional callback. |
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 | `stopServer`             | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
@@ -1059,23 +1052,13 @@ In addition to exposing a number of variables to Express and providing the MVC i
 
 In contexts where you only need to run Roosevelt in production mode, you can remove some dependencies that are only needed in development mode in order to shrink the footprint of production builds.
 
-The biggest development mode-only dependency you can remove is `vnu-jar`. To remove it, run `npm rm vnu-jar --no-save`.
-
 The complete list of Roosevelt dependencies that are only needed in development mode is:
 
-- `execa`
-- `fkill`
-- `html-validator`
-- `pid-from-port`
-- `prismjs`
-- `ps-node`
+- `check-dependencies`
+- `express-html-validator`
 - `reload`
-- `tamper`
-- `vnu-jar`
 
-To remove them all, run `npm rm execa fkill html-validator pid-from-port prismjs ps-node reload tamper vnu-jar --no-save`.
-
-Be sure none of those dependencies are needed elsewhere in your app first.
+These dependencies can be ommitted from your build by running `npm i --no-optional`
 
 # Supplying your own CSS preprocessors
 

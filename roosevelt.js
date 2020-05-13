@@ -80,10 +80,11 @@ module.exports = params => {
   if (!httpsParams.force) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
+  }
 
-    if (params.frontendReload.enable && appEnv === 'development') {
-      httpReloadPromise = require('reload')(app, { route: '/reloadHttp', port: params.frontendReload.port, verbose: params.frontendReload.verbose, webSocketServerWaitStart: true })
-    }
+  // configure reload HTTP server
+  if (appEnv === 'development' && params.frontendReload.enable) {
+    httpReloadPromise = configReloadServer('HTTP')
   }
 
   if (httpsParams.enable) {
@@ -153,8 +154,9 @@ module.exports = params => {
       }
     }
 
-    if (params.frontendReload.enable && appEnv === 'development') {
-      httpsReloadPromise = require('reload')(app, { route: '/reloadHttps', port: params.frontendReload.httpsPort || params.frontendReload.port, verbose: params.frontendReload.verbose, forceWss: true, https: reloadHttpsOptions, webSocketServerWaitStart: true })
+    // configure reload HTTPS server
+    if (appEnv === 'development' && params.frontendReload.enable) {
+      httpsReloadPromise = configReloadServer('HTTPS')
     }
 
     httpsOptions.requestCert = httpsParams.requestCert
@@ -361,7 +363,7 @@ module.exports = params => {
   }
 
   // start server
-  function startHttpServer () {
+  async function startHttpServer () {
     // determine number of CPUs to use
     const max = os.cpus().length
     const cores = params.cores
@@ -383,7 +385,7 @@ module.exports = params => {
     }
 
     function serverPush (server, serverPort, serverFormat) {
-      servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(` ${serverFormat}`, serverPort)).on('error', (err) => {
+      servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
         if (err.message.includes('EADDRINUSE')) {
           logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`)
         }
@@ -393,9 +395,33 @@ module.exports = params => {
     }
 
     const lock = {}
-    const startupCallback = function (proto, port) {
-      return function () {
+    function startupCallback (proto, port) {
+      return async function () {
         logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
+
+        // spin up reload http(s) service if enabled in dev mode
+        if (appEnv === 'development' && params.frontendReload.enable === true) {
+          try {
+            let reloadServer
+            const config = params.frontendReload
+
+            // get reload ready and bind instance to express variable
+            if (proto === 'HTTP') {
+              reloadServer = await httpReloadPromise
+              app.set('reloadHttpServer', reloadServer)
+            } else {
+              reloadServer = await httpsReloadPromise
+              app.set('reloadHttpsServer', reloadServer)
+            }
+
+            // spin up the reload server
+            await reloadServer.startWebSocketServer()
+            logger.log('🎧', `Frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`.bold)
+          } catch (e) {
+            logger.error(e)
+          }
+        }
+
         if (!Object.isFrozen(lock)) {
           Object.freeze(lock)
           // fire user-defined onServerStart event
@@ -424,34 +450,39 @@ module.exports = params => {
     } else {
       if (!params.https.force) {
         serverPush(httpServer, params.port, 'HTTP')
-        if (httpReloadPromise) {
-          httpReloadPromise.then(httpReload => {
-            httpReload.startWebSocketServer().then(() => {
-              logger.log('🎧', `Frontend reload HTTP server is listening on port ${params.frontendReload.port}`.bold)
-            })
-          }).catch(function (err) {
-            logger.error(('Reload was unable to initialize - ' + err.toString()).red)
-          })
-        }
       }
       if (httpsParams.enable) {
         serverPush(httpsServer, httpsParams.port, 'HTTPS')
-        if (httpsReloadPromise) {
-          httpsReloadPromise.then(httpsReload => {
-            httpsReload.startWebSocketServer().then(() => {
-              logger.log('🎧', `Frontend reload HTTPS server is listening on port ${params.frontendReload.httpsPort || params.frontendReload.port}`.bold)
-            }).catch(function (err) {
-              logger.error((`Reload was unable to start - ${err.toString()}`).red)
-            })
-          }).catch(function (err) {
-            logger.error(('Reload was unable to initialize - ' + err.toString()).red)
-          })
-        }
       }
 
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
     }
+  }
+  /**
+   * Start reload http(s) service
+   * @param {String} proto - Which protocol to start
+   * @returns {object} - Reload server instance
+   */
+  function configReloadServer (proto) {
+    const reload = require('reload')
+    const config = {
+      verbose: !!params.logging.methods.verbose,
+      webSocketServerWaitStart: true
+    }
+
+    if (proto === 'HTTP') {
+      config.route = '/reloadHttp'
+      config.port = params.frontendReload.port
+    } else {
+      config.route = '/reloadHttps'
+      config.port = params.frontendReload.httpsPort
+      config.forceWss = true
+      config.https = reloadHttpsOptions
+    }
+
+    const reloadInstance = reload(app, config)
+    return reloadInstance
   }
 
   function startServer () {
