@@ -1058,7 +1058,7 @@ The complete list of Roosevelt dependencies that are only needed in development 
 - `express-html-validator`
 - `reload`
 
-These dependencies can be ommitted from your build by running `npm i --no-optional`
+These dependencies can be omitted from your build by running `npm i --no-optional`
 
 # Supplying your own CSS preprocessors
 
