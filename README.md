@@ -364,7 +364,7 @@ Resolves to:
 
   - Note: Automatically disabled during development mode.
 
-- `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/zrrrzzt/html-validator#usage):
+- `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/rooseveltframework/express-html-validator#configuration):
 
   - `enable`: *[Boolean]* Enables or disables the built-in HTML validator.
 
