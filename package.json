@@ -59,7 +59,7 @@
     "c8": "~7.1.2",
     "codecov": "~3.6.5",
     "eslint": "~7.0.0",
-    "eslint-plugin-mocha": "~6.3.0",
+    "eslint-plugin-mocha": "~7.0.0",
     "husky": "~4.2.5",
     "less": "~3.11.1",
     "lint-staged": "~10.2.2",
