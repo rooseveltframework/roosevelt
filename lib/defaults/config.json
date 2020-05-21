@@ -16,17 +16,11 @@
   "minify": true,
   "htmlValidator": {
     "enable": true,
-    "separateProcess": {
-      "enable": true,
-      "autoKiller": true,
-      "autoKillerTimeout": 3600000
-    },
-    "port": 48888,
-    "showWarnings": true,
     "exceptions": {
       "requestHeader": "Partial",
       "modelValue": "_disableValidator"
-    }
+    },
+    "validatorConfig": {}
   },
   "formidable": {
     "multiples": true

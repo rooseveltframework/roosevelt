@@ -668,6 +668,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir: appDir,
+      mode: 'development',
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -724,6 +725,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir: appDir,
       generateFolderStructure: true,
+      mode: 'development',
       onServerStart: '(app) => {process.send(app.get("params"))}',
       checkDependencies: false
     }, sOptions)

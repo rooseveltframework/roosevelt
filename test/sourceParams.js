@@ -475,381 +475,52 @@ describe('sourceParams', () => {
 
       assert.deepStrictEqual(appConfig.htmlValidator.enable, false)
     })
-
-    it('should enable html validator separate process via --background-validator', () => {
-      // add the cli flag
-      process.argv.push('--background-validator')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_VALIDATOR = 'attached'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.enable, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_VALIDATOR
-    })
-
-    it('should enable html validator separate process via -b', () => {
-      // add the cli flag
-      process.argv.push('-b')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_VALIDATOR = 'attached'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.enable, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_VALIDATOR
-    })
-
-    it('should disable html validator separate process via --attach-validator', () => {
-      // add the cli flag
-      process.argv.push('--attach-validator')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_VALIDATOR = 'detached'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.enable, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_VALIDATOR
-    })
-
-    it('should disable html validator separate process via -a', () => {
-      // add the cli flag
-      process.argv.push('-a')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_VALIDATOR = 'detached'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.enable, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_VALIDATOR
-    })
-
-    it('should enable html validator autokiller via --enable-validator-autokiller', () => {
-      // add the cli flag
-      process.argv.push('--enable-validator-autokiller')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'off'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
-
-    it('should enable html validator autokiller via --html-validator-autokiller', () => {
-      // add the cli flag
-      process.argv.push('--html-validator-autokiller')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'off'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
-
-    it('should enable html validator autokiller via -k', () => {
-      // add the cli flag
-      process.argv.push('-k')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'off'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
-
-    it('should disable html validator autokiller via --disable-validator-autokiller', () => {
-      // add the cli flag
-      process.argv.push('--disable-validator-autokiller')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'on'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
-
-    it('should disable html validator autokiller via --no-autokiller', () => {
-      // add the cli flag
-      process.argv.push('--no-autokiller')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'on'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
-
-    it('should disable html validator autokiller via -n', () => {
-      // add the cli flag
-      process.argv.push('-n')
-
-      // set inverse environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'on'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
   })
 
   describe('environment variables', () => {
-    it('should enable html validator separate process when ROOOSEVELT_VALIDATOR === \'detached\'', () => {
-      // set environment variable
-      process.env.ROOSEVELT_VALIDATOR = 'detached'
+    const appConfig = {
+      appDir: path.join(__dirname, '../app/envParams'),
+      enableCLIFlags: false,
+      logging: {
+        methods: {
+          http: false,
+          info: false,
+          warn: false
+        }
+      },
+      https: {
+        port: 12345
+      }
+    }
+    let app
 
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.enable, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_VALIDATOR
+    it('should disable validator if HTTP_PROXY is set and NO_PROXY does not contain localhost', function (done) {
+      process.env.HTTP_PROXY = true
+      process.env.NO_PROXY = 'hsdfhjsdf hdsfjhsdf dhf sdhjfhsd fhjsdf dshjfhs'
+      app = require('../roosevelt')(appConfig)
+      assert.strictEqual(app.expressApp.get('params').htmlValidator.enable, false)
+      delete process.env.HTTP_PROXY
+      delete process.env.NO_PROXY
+      done()
     })
 
-    it('should disable html validator separate process when ROOOSEVELT_VALIDATOR === \'attached\'', () => {
-      // set environment variable
-      process.env.ROOSEVELT_VALIDATOR = 'attached'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.enable, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_VALIDATOR
+    it('should disable validator if HTTPS_PROXY is set and NO_PROXY does not contain localhost', function (done) {
+      process.env.HTTPS_PROXY = true
+      process.env.NO_PROXY = 'blah'
+      app = require('../roosevelt')(appConfig)
+      assert.strictEqual(app.expressApp.get('params').htmlValidator.enable, false)
+      delete process.env.HTTPS_PROXY
+      delete process.env.NO_PROXY
+      done()
     })
 
-    it('should enable html validator autokiller when ROOOSEVELT_AUTOKILLER === \'on\'', () => {
-      // set environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'on'
+    it('should change the https.port param to 45678', function (done) {
+      process.env.HTTPS_PORT = 45678
 
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: false
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, true)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
-    })
-
-    it('should enable html validator autokiller when ROOOSEVELT_AUTOKILLER === \'off\'', () => {
-      // set environment variable
-      process.env.ROOSEVELT_AUTOKILLER = 'off'
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'development',
-        htmlValidator: {
-          enable: true,
-          separateProcess: {
-            enable: true,
-            autoKiller: true
-          }
-        },
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.htmlValidator.separateProcess.autoKiller, false)
-
-      // remove env var
-      delete process.env.ROOSEVELT_AUTOKILLER
+      app = require('../roosevelt')(appConfig)
+      assert.strictEqual(app.expressApp.get('params').https.port, 45678)
+      delete process.env.HTTPS_PORT
+      done()
     })
   })
 

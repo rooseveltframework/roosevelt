@@ -29,17 +29,11 @@
   "minify": "value",
   "htmlValidator": {
     "enable": false,
-    "separateProcess": {
-      "enable": "value",
-      "autoKiller": "value",
-      "autoKillerTimeout": "value"
-    },
-    "port": "value",
-    "showWarnings": "value",
     "exceptions": {
       "requestHeader": "value",
       "modelValue": "value"
-    }
+    },
+    "validatorConfig": "value"
   },
   "formidable": {
     "multiples": "value"

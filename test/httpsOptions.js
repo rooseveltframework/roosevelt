@@ -32,7 +32,7 @@ describe('HTTPS Server Options Tests', function () {
   }
 
   before(function () {
-    app = proxyquire('../../roosevelt', { https: stubHttps, http: stubHttp })
+    app = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
   })
 
   // reset stubs after each
