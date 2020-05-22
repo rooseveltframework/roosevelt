@@ -1092,6 +1092,7 @@ Note: When a custom preprocessor is defined in this way it will override the sel
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.17.x](https://github.com/rooseveltframework/roosevelt/blob/18eae61db07704e5cbf02cbb4e0a998f7e34fa2c/README.md)*
 - *[0.16.x](https://github.com/rooseveltframework/roosevelt/blob/b33046c0281084a2dc0cde26dc38c2a538484c57/README.md)*
 - *[0.15.x](https://github.com/rooseveltframework/roosevelt/blob/1b5680c67ed79a2285b536d735c526413613eb9b/README.md)*
 - *[0.14.x](https://github.com/rooseveltframework/roosevelt/blob/16e5e59083cecf2e2395e6d77d0cc5db0d0f7342/README.md)*
