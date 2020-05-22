@@ -2,6 +2,10 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.18.0
+
 - Replaced the vnu-jar based HTML validator with express-html-validator 🎉.
   - Roosevelt no longer does any background process management as a result.
 - Moved all developer facing dependencies to optionalDependencies.
