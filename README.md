@@ -60,8 +60,6 @@ Some important caveats to note:
 - It is also recommended that Windows users use a terminal that supports emojis, such as [Microsoft's new terminal](https://github.com/Microsoft/Terminal).
 - Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/getting-started/fixing-npm-permissions). As such, use of nvm is strongly recommended.
 
-The [Java JDK](http://www.oracle.com/technetwork/java/javase/downloads/index.html) is also required for development work. The JDK is required for the local HTML validator feature.
-
 Once you have a sane development environment, you can proceed with the standard install procedure below.
 
 ## Using the Roosevelt app generator
