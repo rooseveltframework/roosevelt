@@ -105,11 +105,6 @@ module.exports = params => {
 
         reloadHttpsOptions.p12 = {}
         reloadHttpsOptions.p12.p12Path = httpsOptions.pfx
-
-        if (authInfoPath.p12.passphrase) {
-          httpsOptions.passphrase = authInfoPath.p12.passphrase
-          reloadHttpsOptions.p12.passphrase = httpsOptions.passphrase
-        }
       } else if (authInfoPath.authCertAndKey) {
         reloadHttpsOptions.certAndKey = {}
 
@@ -132,6 +127,12 @@ module.exports = params => {
 
           reloadHttpsOptions.certAndKey.key = httpsOptions.key
         }
+      }
+
+      // set passphrase if in use
+      if (httpsParams.passphrase) {
+        httpsOptions.passphrase = httpsParams.passphrase
+        reloadHttpsOptions.passphrase = httpsParams.passphrase
       }
     }
     if (httpsParams.caCert) {

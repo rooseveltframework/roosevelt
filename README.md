@@ -484,10 +484,6 @@ Resolves to:
 
               - Default: `undefined`.
 
-            - `passphrase`: *[String]* The password used to encrypt the PKCS#12-formatted file or string.
-
-              - Default: `undefined`.
-
         - `authCertAndKey`: *[Object]* Parameter used when the _server_ certificate and key are in separate PEM-encoded files.
 
           - Object members:
@@ -499,6 +495,10 @@ Resolves to:
             - `key`: *[String]* Either the path to a PEM-encoded key file (.crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
 
               - Default: `undefined`.
+
+    - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
+
+      - Default: `undefined`.
 
     - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. _This certificate (chain) will be used to verify **client** certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are **not** signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt)_.
 

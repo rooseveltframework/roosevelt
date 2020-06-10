@@ -54,6 +54,7 @@
     "force": "value",
     "port": "value",
     "authInfoPath": "value",
+    "passphrase": "value",
     "caCert": "value",
     "requestCert": "value",
     "rejectUnauthorized": "value"

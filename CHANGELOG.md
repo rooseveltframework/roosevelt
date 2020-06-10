@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Changed `passphrase` option from `https.p12.passphrase` to `https.passphrase` so it can be used for certAndKey configurations as well.
 
 ## 0.18.0
 

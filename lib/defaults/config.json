@@ -49,6 +49,7 @@
     "force": false,
     "port": 43733,
     "authInfoPath": null,
+    "passphrase": null,
     "caCert": null,
     "requestCert": null,
     "rejectUnauthorized": null
