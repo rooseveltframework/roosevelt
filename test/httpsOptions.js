@@ -91,11 +91,11 @@ describe('HTTPS Server Options Tests', function () {
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
     assert(typeof stubHttpsServer.args[0][0].key === 'undefined', 'https.Server had key when using p12')
     assert(stubHttpsServer.args[0][0].pfx.toString() === p12text, 'https.Server p12 file did not match file at config p12 file path')
-    assert(stubHttpsServer.args[0][0].passphrase === config.https.authInfoPath.p12.passphrase, 'https.Server passphrase did not match config passphrase')
+    assert(stubHttpsServer.args[0][0].passphrase === config.https.passphrase, 'https.Server passphrase did not match config passphrase')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and p12.passphrase is set', function () {
+  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', function () {
     const p12text = fs.readFileSync(path.join(appDir, '../.././util/certs/test.p12'), 'utf8')
     config.https.authInfoPath.p12.p12Path = p12text
     app({ appDir: appDir, ...config })
@@ -104,7 +104,7 @@ describe('HTTPS Server Options Tests', function () {
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
     assert(typeof stubHttpsServer.args[0][0].key === 'undefined', 'https.Server had key when using p12')
     assert(stubHttpsServer.args[0][0].pfx.toString() === p12text, 'https.Server p12 file did not match supplied')
-    assert(stubHttpsServer.args[0][0].passphrase === config.https.authInfoPath.p12.passphrase, 'https.Server passphrase did not match supplied')
+    assert(stubHttpsServer.args[0][0].passphrase === config.https.passphrase, 'https.Server passphrase did not match supplied')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
