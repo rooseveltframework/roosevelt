@@ -2,7 +2,13 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.18.1
+
 - Changed `passphrase` option from `https.p12.passphrase` to `https.passphrase` so it can be used for certAndKey configurations as well.
+- CI improvements.
+- Various dependencies bumped.
 
 ## 0.18.0
 
