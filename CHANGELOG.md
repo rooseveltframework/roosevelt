@@ -6,8 +6,9 @@
 
 ## 0.18.2
 
-- Secured express app by setting helmet middleware
-- Replaced body-parser middleware with express integration
+- Added [helmet](https://github.com/helmetjs/helmet) middleware to improve security by default.
+- Replaced `body-parser` middleware with native Express integration.
+- Various dependencies bumped.
 
 ## 0.18.1
 
