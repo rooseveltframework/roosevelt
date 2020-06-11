@@ -24,7 +24,6 @@
   "engineStrict": true,
   "dependencies": {
     "app-module-path": "~2.2.0",
-    "body-parser": "~1.19.0",
     "clean-css": "~4.2.3",
     "colors": "~1.4.0",
     "compression": "~1.7.4",
@@ -33,6 +32,7 @@
     "express": "~4.17.1",
     "formidable": "~1.2.2",
     "fs-extra": "~9.0.1",
+    "helmet": "^3.22.1",
     "html-minifier": "~4.0.0",
     "klaw": "~3.0.0",
     "klaw-sync": "~6.0.0",

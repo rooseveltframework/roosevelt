@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.18.2
+
+- Secured express app by setting helmet middleware
+- Replaced body-parser middleware with express integration
+
 ## 0.18.1
 
 - Changed `passphrase` option from `https.p12.passphrase` to `https.passphrase` so it can be used for certAndKey configurations as well.
