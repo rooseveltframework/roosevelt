@@ -102,7 +102,7 @@
     "coverage": "c8 --reporter=text --reporter=lcov mocha --timeout 60000 test/*.js",
     "lint": "standard && eslint test/*.js",
     "postinstall": "node ./lib/scripts/configAuditor.js && node ./lib/scripts/deprecationCheck.js",
-    "test": "mocha --timeout 60000 test/fileGeneration.js",
+    "test": "mocha --timeout 60000 test/*.js",
     "test-debug": "mocha --inspect-brk --timeout 60000 test/*.js"
   },
   "lint-staged": {
