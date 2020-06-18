@@ -2,7 +2,12 @@
 
 ## Next version
 
-- Put your changes here...
+- You can now [use PHP as your templating engine](https://github.com/rooseveltframework/express-php-view-engine) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
+- Breaking: blacklist/whitelist params throughout the API have been renamed to blocklist/allowlist.
+- README was copyedited to improve the clarity of the default behaviors of some of the API, remove outdated information, and other small improvements.
+- CI improvements.
+  - Breaking: Roosevelt is no longer tested on Node 10.x. We didn't do anything to explicitly break older Node versions, but use at your own risk.
+- Various dependencies bumped.
 
 ## 0.18.2
 

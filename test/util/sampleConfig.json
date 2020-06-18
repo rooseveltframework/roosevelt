@@ -85,7 +85,7 @@
       "enable": "value",
       "options": "value"
     },
-    "whitelist": "value",
+    "allowlist": "value",
     "output": "value",
     "versionFile": "value"
   },
@@ -112,8 +112,8 @@
   "cleanTimer": "value",
   "clientViews": {
     "exposeAll": "value",
-    "blacklist": "value",
-    "whitelist": "value",
+    "blocklist": "value",
+    "allowlist": "value",
     "defaultBundle": "value",
     "output": "value",
     "minify": "value",

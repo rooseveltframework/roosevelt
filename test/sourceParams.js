@@ -18,8 +18,8 @@ const config = {
 
 describe('sourceParams', () => {
   describe('config objects', () => {
-    // blacklist certain params from auto checking
-    const blacklist = [
+    // blocklist certain params from auto checking
+    const blocklist = [
       'appDir',
       'cssCompiler',
       'onClientViewsProcess',
@@ -78,7 +78,7 @@ describe('sourceParams', () => {
       for (const key in appConfig) {
         const param = appConfig[key]
 
-        if (!blacklist.includes(key)) {
+        if (!blocklist.includes(key)) {
           assert.deepStrictEqual(param, pkg.rooseveltConfig[key], `${key} was not correctly set`)
         }
       }
@@ -109,7 +109,7 @@ describe('sourceParams', () => {
       for (const key in appConfig) {
         const param = appConfig[key]
 
-        if (!blacklist.includes(key)) {
+        if (!blocklist.includes(key)) {
           assert.deepStrictEqual(param, config[key], `${key} was not correctly set`)
         }
       }
@@ -150,7 +150,7 @@ describe('sourceParams', () => {
       for (const key in appConfig) {
         const param = appConfig[key]
 
-        if (!blacklist.includes(key)) {
+        if (!blocklist.includes(key)) {
           assert.deepStrictEqual(param, configJson[key], `${key} was not correctly set`)
         }
       }
@@ -177,7 +177,7 @@ describe('sourceParams', () => {
         },
         css: {
           sourcePath: 'coolCss',
-          whitelist: [
+          allowlist: [
             '${css.sourcePath}/hello.js' // eslint-disable-line
           ]
         },
@@ -186,7 +186,7 @@ describe('sourceParams', () => {
           webpack: {
             bundles: [
               {
-                output: '${css.whitelist[0]}' // eslint-disable-line
+                output: '${css.allowlist[0]}' // eslint-disable-line
               }
             ]
           }
@@ -208,7 +208,7 @@ describe('sourceParams', () => {
 
       // check against various scenarios
       assert.deepStrictEqual(appConfig.https.port, 4001, 'number param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.css.whitelist[0], path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'partial param variable not parsed correctly')
+      assert.deepStrictEqual(appConfig.css.allowlist[0], path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'partial param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.symlinks[0].source, path.join(appConfig.staticsRoot, 'coolJavaScript'), 'param variable within array not parsed correctly')
       assert.deepStrictEqual(appConfig.symlinks[0].dest, path.join(appConfig.publicFolder, 'js'), 'param variable within array not parsed correctly')
       assert.deepStrictEqual(appConfig.js.webpack.bundles[0].output, path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'deeply nested param variable not parsed correctly')

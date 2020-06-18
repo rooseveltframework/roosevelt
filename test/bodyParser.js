@@ -51,7 +51,7 @@ describe('body-parser', () => {
     })
   })
 
-  it('server should respond with 413 error when too many urlencoded fields are sent', done => {
+  it('should respond with 413 error when too many urlencoded fields are sent', done => {
     // send a post with too many urlencoded fields
     request(context.app)
       .post('/paramLimit')
@@ -67,7 +67,7 @@ describe('body-parser', () => {
       })
   })
 
-  it('server should respond with 413 error when too many json fields are sent', done => {
+  it('should respond with 413 error when too many json fields are sent', done => {
     // send a post with too json fields
     request(context.app)
       .post('/paramLimit')

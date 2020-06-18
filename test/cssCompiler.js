@@ -95,12 +95,12 @@ describe('css preprocessors', () => {
       })
     })
 
-    it('should only compile static css files in the whitelist', done => {
+    it('should only compile static css files in the allowlist', done => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
         css: {
-          whitelist: [
+          allowlist: [
             'file1.less',
             'import/file3.less'
           ],
@@ -124,12 +124,12 @@ describe('css preprocessors', () => {
       })
     })
 
-    it('should compile css files in the whitelist with alt destinations set', done => {
+    it('should compile css files in the allowlist with alt destinations set', done => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
         css: {
-          whitelist: [
+          allowlist: [
             'file1.less:compile/main.css',
             'import/file3.less:styles.css'
           ],
