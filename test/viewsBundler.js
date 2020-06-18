@@ -22,7 +22,7 @@ describe('Views Bundler Tests', function () {
   const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
-    <!-- roosevelt-whitelist output.js -->
+    <!-- roosevelt-allowlist output.js -->
     <h1>Hello World</h1>
     <div>
         <p>lorem ipsum dolor set</p>
@@ -32,9 +32,9 @@ describe('Views Bundler Tests', function () {
     <div>This will be put in bundle.js</div>
   `
 
-  const blacklistedTemplate = `
-    <!-- roosevelt-blacklist -->
-    <p>This is in a blacklist</p>
+  const blocklistedTemplate = `
+    <!-- roosevelt-blocklist -->
+    <p>This is in a blocklist</p>
   `
 
   const pathOfTemplates = [
@@ -50,7 +50,7 @@ describe('Views Bundler Tests', function () {
   const staticTemplates = [
     template1,
     template2,
-    blacklistedTemplate
+    blocklistedTemplate
   ]
 
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
@@ -73,11 +73,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('properly expose template files in a whitelist', function (done) {
+  it('should properly expose template files in an allowlist', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         }
       },
@@ -99,11 +99,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('If a template doesn\'t have an extension, it will add .html to it', function (done) {
+  it('should add .html to a template that doesn\'t have an extension', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a']
         }
       },
@@ -124,7 +124,7 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there are no items in the whitelist', function (done) {
+  it('should not create a templates folder if there are no items in the allowlist', function (done) {
     generateTestApp({
       appDir,
       clientViews: {},
@@ -172,7 +172,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': []
         }
       },
@@ -198,7 +198,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': null
         }
       },
@@ -224,7 +224,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['fake.html']
         }
       },
@@ -246,11 +246,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should skip a file if it is in the whitelist but has a <!-- roosevelt-blacklist --> tag', function (done) {
+  it('should skip a file if it is in the allowlist but has a <!-- roosevelt-blocklist --> tag', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['bad.html']
         }
       },
@@ -280,7 +280,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         },
         output: 'js'
@@ -306,7 +306,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         }
       },
@@ -346,7 +346,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         },
         minify: false
@@ -387,7 +387,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         },
         minifyOptions
@@ -428,7 +428,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         },
         minifyOptions
@@ -466,12 +466,12 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to skip exposing files in the exposeAll step when already in whitelist', function (done) {
+  it('should be able to skip exposing files in the exposeAll step when already in allowlist', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
         exposeAll: true,
-        whitelist: {
+        allowlist: {
           'output.js': ['a.html']
         }
       },
@@ -497,12 +497,12 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save a file that has a whitelist defined both in roosevelt args and the template to the location defined in the template', function (done) {
+  it('should save a file that has an allowlist defined both in roosevelt args and the template to the location defined in the template', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
         exposeAll: true,
-        whitelist: {
+        allowlist: {
           'foobar.js': ['a.html']
         }
       },
@@ -532,14 +532,14 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to include a blacklist', function (done) {
-    const blacklist = ['bad.html']
+  it('should be able to include a blocklist', function (done) {
+    const blocklist = ['bad.html']
 
     generateTestApp({
       appDir,
       clientViews: {
         exposeAll: true,
-        blacklist
+        blocklist
       },
       generateFolderStructure: true
     }, options)
@@ -559,7 +559,7 @@ describe('Views Bundler Tests', function () {
           const templateJSON = require(file.path)()
           const templates = Object.keys(templateJSON)
 
-          blacklist.forEach(notExposedFile => {
+          blocklist.forEach(notExposedFile => {
             templates.forEach(template => {
               assert.strictEqual(template.includes(notExposedFile), false)
             })
@@ -575,8 +575,8 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to blacklist files with a <!-- roosevelt-blacklist --> tag at the top of the file', function (done) {
-    const blacklist = ['bad.html']
+  it('should be able to blocklist files with a <!-- roosevelt-blocklist --> tag at the top of the file', function (done) {
+    const blocklist = ['bad.html']
 
     generateTestApp({
       appDir,
@@ -601,7 +601,7 @@ describe('Views Bundler Tests', function () {
           const templateJSON = require(file.path)()
           const templates = Object.keys(templateJSON)
 
-          blacklist.forEach(notExposedFile => {
+          blocklist.forEach(notExposedFile => {
             templates.forEach(template => {
               assert.strictEqual(template.includes(notExposedFile), false)
             })
@@ -617,7 +617,7 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save whitelisted files with a <!-- roosevelt-whitelist --> tag to the proper location', function (done) {
+  it('should save allowlisted files with a <!-- roosevelt-allowlist --> tag to the proper location', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
@@ -653,7 +653,7 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save whitelisted files without a <!-- roosevelt-whitelist --> tag to the default location', function (done) {
+  it('should save allowlisted files without a <!-- roosevelt-allowlist --> tag to the default location', function (done) {
     generateTestApp({
       appDir,
       clientViews: {
