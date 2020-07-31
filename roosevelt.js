@@ -67,13 +67,6 @@ module.exports = params => {
 
   logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
-  // if running in prod, warn why public static assets don't load
-  if (appEnv === 'production') {
-    if (!params.alwaysHostPublic) {
-      logger.warn('📁', 'In production mode Roosevelt defaults to not exposing the public folder. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "alwaysHostPublic" to true or pass the "--host-public" command line flag.')
-    }
-  }
-
   const httpsParams = params.https
 
   // let's try setting up the servers with user-supplied params
@@ -398,7 +391,16 @@ module.exports = params => {
     const lock = {}
     function startupCallback (proto, port) {
       return async function () {
-        logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
+        function finalMessages () {
+          logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
+
+          // if running in prod, warn why public static assets don't load
+          if (appEnv === 'production') {
+            if (!params.alwaysHostPublic) {
+              logger.warn('IMPORTANT: Hosting of public folder is disabled by default in production mode. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "alwaysHostPublic" to true or pass the "--host-public" command line flag. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
+            }
+          }
+        }
 
         // spin up reload http(s) service if enabled in dev mode
         if (appEnv === 'development' && params.frontendReload.enable === true) {
@@ -418,9 +420,12 @@ module.exports = params => {
             // spin up the reload server
             await reloadServer.startWebSocketServer()
             logger.log('🎧', `Frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`.bold)
+            finalMessages()
           } catch (e) {
             logger.error(e)
           }
+        } else {
+          finalMessages()
         }
 
         if (!Object.isFrozen(lock)) {
