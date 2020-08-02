@@ -141,10 +141,11 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run dev`
     - `npm run d`
   - Script is short for: `nodemon app.js --development-mode`
-- `npm run proddev`: Runs the app in production mode, but with the public folder hosted by the Roosevelt app. This is useful for doing development in production mode without having to stage a complex simulation of your production environment, which would likely include hosting static files via another web server better-suited to serving statics like Apache or nginx.
+- `npm run production-proxy`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from localhost and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
   - Default shorthands:
-    - `npm run pd`
-  - Script is short for: `nodemon app.js --host-public`
+    - `npm run prodproxy`
+    - `npm run x`
+  - Script is short for: `nodemon app.js --production-proxy`
 - `npm run config-audit`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
   - Default shorthand:
     - `npm run a`
@@ -174,7 +175,7 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--raw`
     - `-r`
-- `node app.js --host-public`: Forces Roosevelt to always host the [public folder](https://github.com/rooseveltframework/roosevelt#public-folder-parameters) even when `alwaysHostPublic` is set to false. Useful for testing production mode.
+- `node app.js --host-public`: Forces Roosevelt to always host the [public folder](https://github.com/rooseveltframework/roosevelt#public-folder-parameters) even when `hostPublic` is set to false. Useful for testing `production-proxy` mode.
   - Default shorthands:
     - `--statics`
     - `-s`
@@ -805,7 +806,7 @@ Resolves to:
 
   ## Public folder parameters
 
-- `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `alwaysHostPublic` is enabled.
+- `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `hostPublic` is enabled.
 
   - Default: *[String]* `"public"`.
 
@@ -839,7 +840,7 @@ Resolves to:
 
   - Default: *[Boolean]* `false`.
 
-- `alwaysHostPublic`:  By default in production mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx. However, if you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set this setting to true.
+- `hostPublic`: Whether or not to allow Roosevelt to host the public folder. By default in `production-proxy` mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx.
 
   - Default: *[Boolean]* `false`.
 

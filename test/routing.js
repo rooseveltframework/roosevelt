@@ -70,7 +70,7 @@ describe('routing', () => {
     // spin up a roosevelt app
     roosevelt({
       ...appConfig,
-      alwaysHostPublic: true,
+      hostPublic: true,
       onServerStart: app => {
         // bind app to test context
         context.app = app
@@ -122,7 +122,7 @@ describe('routing', () => {
     // spin up a roosevelt app
     roosevelt({
       ...appConfig,
-      alwaysHostPublic: true,
+      hostPublic: true,
       routePrefix: 'foo',
       onServerStart: app => {
         // bind app to test context

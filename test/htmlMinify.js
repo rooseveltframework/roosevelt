@@ -23,6 +23,7 @@ describe('HTML Minification Tests', function () {
     },
     generateFolderStructure: true,
     viewEngine: 'html:teddy',
+    hostPublic: false, // this line gives us free coverage of an unrelated warning
     htmlMinifier: {
       enable: true,
       exceptionRoutes: false,

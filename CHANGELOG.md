@@ -4,6 +4,15 @@
 
 - Put your changes here...
 
+## 0.19.0
+
+- Breaking: Production mode behavior [changed significantly](https://github.com/rooseveltframework/roosevelt/issues/934):
+  - `localhostOnly` and `alwaysHostPublic` defaults were flipped to false and true respectively.
+  - `alwaysHostPublic` was renamed to `hostPublic`.
+  - The `--host-public` command line flag was removed, since it is no logner needed because `hostPublic` defaults to true now.
+  - New command line flag added called `production-proxy` to let you opt-in to `localhostOnly` and `alwaysHostPublic` being set to true and false respectively as before.
+- Various dependencies bumped.
+
 ## 0.18.3
 
 - You can now [use PHP as your templating engine](https://github.com/rooseveltframework/express-php-view-engine) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.

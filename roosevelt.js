@@ -372,14 +372,8 @@ module.exports = params => {
       }
     }
 
-    // shut down the process if both the htmlValidator and the app are trying to use the same port
-    if (params.port === params.htmlValidator.port) {
-      logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`)
-      process.exit(1)
-    }
-
     function serverPush (server, serverPort, serverFormat) {
-      servers.push(server.listen(serverPort, (params.localhostOnly && appEnv !== 'development' ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
+      servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
         if (err.message.includes('EADDRINUSE')) {
           logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`)
         }
@@ -393,12 +387,11 @@ module.exports = params => {
       return async function () {
         function finalMessages () {
           logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
-
-          // if running in prod, warn why public static assets don't load
-          if (appEnv === 'production') {
-            if (!params.alwaysHostPublic) {
-              logger.warn('IMPORTANT: Hosting of public folder is disabled by default in production mode. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "alwaysHostPublic" to true or pass the "--host-public" command line flag. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
-            }
+          if (params.localhostOnly) {
+            logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from localhost, then set "localhostOnly" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
+          }
+          if (!params.hostPublic) {
+            logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
           }
         }
 

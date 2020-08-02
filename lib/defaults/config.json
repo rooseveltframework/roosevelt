@@ -3,7 +3,7 @@
   "mode": "production",
   "enableCLIFlags": true,
   "generateFolderStructure": false,
-  "localhostOnly": true,
+  "localhostOnly": false,
   "logging": {
     "methods": {
       "http": true,
@@ -101,7 +101,7 @@
   "favicon": "none",
   "symlinks": [],
   "versionedPublic": false,
-  "alwaysHostPublic": false,
+  "hostPublic": true,
   "clientViews": {
     "allowlist": {},
     "blocklist": {},
