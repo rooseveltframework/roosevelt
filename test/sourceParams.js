@@ -230,6 +230,51 @@ describe('sourceParams', () => {
       process.argv = processArgv.slice()
     })
 
+    it('should set production proxy mode via --production-proxy-mode', () => {
+      // add the cli flag
+      process.argv.push('--production-proxy-mode')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.mode, 'production-proxy')
+    })
+
+    it('should set production proxy mode via --prodproxy', () => {
+      // add the cli flag
+      process.argv.push('--prodproxy')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.mode, 'production-proxy')
+    })
+
+    it('should set production proxy mode via -x', () => {
+      // add the cli flag
+      process.argv.push('-x')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.mode, 'production-proxy')
+    })
+
     it('should set production mode via --production-mode', () => {
       // add the cli flag
       process.argv.push('--production-mode')

@@ -607,7 +607,7 @@ describe('Roosevelt.js Tests', function () {
     const server = http.createServer(function (req, res) {
       res.statusCode = 200
       res.end()
-    }).listen(43711, 'localhost')
+    }).listen(43711)
 
     // generate the test app
     generateTestApp({

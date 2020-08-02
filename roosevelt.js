@@ -372,11 +372,6 @@ module.exports = params => {
       }
     }
 
-    // shut down the process if both the htmlValidator and the app are trying to use the same port
-    if (params.port === params.htmlValidator.port) {
-      logger.error(`${appName} and the HTML validator are both trying to use the same port. You'll need to change the port setting on one of them to proceed.`)
-      process.exit(1)
-    }
 
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
