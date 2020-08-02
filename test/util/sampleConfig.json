@@ -100,7 +100,7 @@
   "publicFolder": "value",
   "favicon": "value",
   "versionedPublic": "value",
-  "alwaysHostPublic": "value",
+  "hostPublic": "value",
   "checkDependencies": "value",
   "cores": "value",
   "frontendReload": {

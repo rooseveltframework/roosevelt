@@ -198,7 +198,7 @@ describe('sourceParams', () => {
           }
         ],
         versionedPublic: true,
-        alwaysHostPublic: '${enableCLIFlags}' // eslint-disable-line
+        hostPublic: '${enableCLIFlags}' // eslint-disable-line
       }
 
       // initialize roosevelt
@@ -213,7 +213,7 @@ describe('sourceParams', () => {
       assert.deepStrictEqual(appConfig.symlinks[0].dest, path.join(appConfig.publicFolder, 'js'), 'param variable within array not parsed correctly')
       assert.deepStrictEqual(appConfig.js.webpack.bundles[0].output, path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'deeply nested param variable not parsed correctly')
       assert.deepStrictEqual(appConfig.formidable.multiples, true, 'true param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.alwaysHostPublic, false, 'false param variable not parsed correctly')
+      assert.deepStrictEqual(appConfig.hostPublic, false, 'false param variable not parsed correctly')
     })
   })
 
@@ -318,54 +318,6 @@ describe('sourceParams', () => {
       const appConfig = app.expressApp.get('params')
 
       assert.deepStrictEqual(appConfig.mode, 'development')
-    })
-
-    it('should enable alwaysHostPublic via --host-public', () => {
-      // add the cli flag
-      process.argv.push('--host-public')
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'production',
-        alwaysHostPublic: false,
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.alwaysHostPublic, true)
-    })
-
-    it('should enable alwaysHostPublic via --statics', () => {
-      // add the cli flag
-      process.argv.push('--statics')
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'production',
-        alwaysHostPublic: false,
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.alwaysHostPublic, true)
-    })
-
-    it('should enable alwaysHostPublic via -s', () => {
-      // add the cli flag
-      process.argv.push('--statics')
-
-      // initialize roosevelt with inverse configs
-      const app = require('../roosevelt')({
-        mode: 'production',
-        alwaysHostPublic: false,
-        ...config
-      })
-
-      const appConfig = app.expressApp.get('params')
-
-      assert.deepStrictEqual(appConfig.alwaysHostPublic, true)
     })
 
     it('should enable html validator via --enable-validator', () => {
