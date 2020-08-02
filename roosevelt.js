@@ -372,7 +372,6 @@ module.exports = params => {
       }
     }
 
-
     function serverPush (server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
         if (err.message.includes('EADDRINUSE')) {
