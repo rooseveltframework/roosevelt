@@ -11,6 +11,7 @@
   - `alwaysHostPublic` was renamed to `hostPublic`.
   - The `--host-public` command line flag was removed, since it is no logner needed because `hostPublic` defaults to true now.
   - New command line flag added called `production-proxy` to let you opt-in to `localhostOnly` and `alwaysHostPublic` being set to true and false respectively as before.
+- Various dependencies bumped.
 
 ## 0.18.3
 
