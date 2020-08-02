@@ -32,7 +32,7 @@
     "express": "~4.17.1",
     "formidable": "~1.2.2",
     "fs-extra": "~9.0.1",
-    "helmet": "~3.23.3",
+    "helmet": "~4.0.0",
     "html-minifier": "~4.0.0",
     "klaw": "~3.0.0",
     "klaw-sync": "~6.0.0",
