@@ -29,6 +29,7 @@
     "maxLagPerRequest": 70,
     "lagCheckInterval": 500
   },
+  "helmet": {},
   "bodyParser": {
     "urlEncoded": {
       "extended": true
