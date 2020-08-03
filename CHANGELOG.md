@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.19.2
+
+- Fixed various bugs in `clientViews` feature.
+- Various dependencies bumped.
+
 ## 0.19.1
 
 - Added ability to configure helmet dependency.

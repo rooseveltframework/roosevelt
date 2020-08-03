@@ -104,8 +104,8 @@
   "versionedPublic": false,
   "hostPublic": true,
   "clientViews": {
-    "allowlist": {},
-    "blocklist": {},
+    "allowlist": [],
+    "blocklist": [],
     "output": "templates",
     "exposeAll": false,
     "defaultBundle": "bundle.js",
