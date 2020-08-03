@@ -46,7 +46,7 @@
     "webpack": "~4.44.0"
   },
   "devDependencies": {
-    "c8": "~7.2.1",
+    "c8": "~7.3.0",
     "codecov": "~3.7.1",
     "eslint": "~7.6.0",
     "eslint-plugin-mocha": "~7.0.1",
