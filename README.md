@@ -162,6 +162,10 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--dev`
     - `-d`
+- `node app.js --production-proxy-mode`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from localhost and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
+  - Default shorthands:
+    - `--prodproxy`
+    - `-x`
 - `node app.js --cores <m>`: Configures how many CPUs your app will run on.
   - `<m>` can be either a number representing the desired cores, or you can supply `max` to use all available CPUs.
     - Default is `1`.
@@ -175,10 +179,6 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--raw`
     - `-r`
-- `node app.js --host-public`: Forces Roosevelt to always host the [public folder](https://github.com/rooseveltframework/roosevelt#public-folder-parameters) even when `hostPublic` is set to false. Useful for testing `production-proxy` mode.
-  - Default shorthands:
-    - `--statics`
-    - `-s`
 
 ## Combining npm scripts and command line arguments
 
@@ -399,6 +399,8 @@ Resolves to:
     ```
 
   - To disable multipart forms entirely, set `formidable` to `false`.
+
+- `helmet`: Parameters to pass to the [helmet](https://github.com/helmetjs/helmet) module.
 
 - `toobusy`: Parameters to pass to the [node-toobusy](https://github.com/STRML/node-toobusy) module.
 
@@ -1049,6 +1051,7 @@ Note: When a custom preprocessor is defined in this way it will override the sel
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.18.x](https://github.com/rooseveltframework/roosevelt/blob/3bdd5146b468c4c6ccfa0b76b0f94f19f0b4fa19/README.md)*
 - *[0.17.x](https://github.com/rooseveltframework/roosevelt/blob/18eae61db07704e5cbf02cbb4e0a998f7e34fa2c/README.md)*
 - *[0.16.x](https://github.com/rooseveltframework/roosevelt/blob/b33046c0281084a2dc0cde26dc38c2a538484c57/README.md)*
 - *[0.15.x](https://github.com/rooseveltframework/roosevelt/blob/1b5680c67ed79a2285b536d735c526413613eb9b/README.md)*

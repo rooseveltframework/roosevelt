@@ -491,26 +491,6 @@ describe('sourceParams', () => {
     }
     let app
 
-    it('should disable validator if HTTP_PROXY is set and NO_PROXY does not contain localhost', function (done) {
-      process.env.HTTP_PROXY = true
-      process.env.NO_PROXY = 'hsdfhjsdf hdsfjhsdf dhf sdhjfhsd fhjsdf dshjfhs'
-      app = require('../roosevelt')(appConfig)
-      assert.strictEqual(app.expressApp.get('params').htmlValidator.enable, false)
-      delete process.env.HTTP_PROXY
-      delete process.env.NO_PROXY
-      done()
-    })
-
-    it('should disable validator if HTTPS_PROXY is set and NO_PROXY does not contain localhost', function (done) {
-      process.env.HTTPS_PROXY = true
-      process.env.NO_PROXY = 'blah'
-      app = require('../roosevelt')(appConfig)
-      assert.strictEqual(app.expressApp.get('params').htmlValidator.enable, false)
-      delete process.env.HTTPS_PROXY
-      delete process.env.NO_PROXY
-      done()
-    })
-
     it('should change the https.port param to 45678', function (done) {
       process.env.HTTPS_PORT = 45678
 

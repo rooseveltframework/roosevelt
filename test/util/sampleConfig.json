@@ -43,6 +43,7 @@
     "lagCheckInterval": "value"
   },
   "shutdownTimeout": "value",
+  "helmet": {},
   "bodyParser": {
     "urlEncoded": {
       "extended": "value"

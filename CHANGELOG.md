@@ -4,6 +4,15 @@
 
 - Put your changes here...
 
+## 0.19.1
+
+- Added ability to configure helmet dependency.
+- Fixed bug that caused frontend reload not to work.
+- Fixed a bug in the Express `env` variable that would cause it to be incorrectly set at times.
+- Updated some out of date into in the README.
+- Removed some unnecessary code.
+- Various dependencies bumped.
+
 ## 0.19.0
 
 - Breaking: Production mode behavior [changed significantly](https://github.com/rooseveltframework/roosevelt/issues/934):
