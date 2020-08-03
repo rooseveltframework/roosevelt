@@ -8,6 +8,7 @@
 
 - Added ability to configure helmet dependency.
 - Fixed bug that caused frontend reload not to work.
+- Fixed a bug in the Express `env` variable that would cause it to be incorrectly set at times.
 - Updated some out of date into in the README.
 - Removed some unnecessary code.
 - Various dependencies bumped.
