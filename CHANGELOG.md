@@ -6,7 +6,11 @@
 
 ## 0.19.2
 
-- Fixed various bugs in `clientViews` feature.
+- Breaking: `clientViews` no longer exports a function, instead exporting a JSON object.
+- Breaking: `clientViews` will no longer minify templates by default.
+- Fixed bug with `clientViews` `exposeAll` feature that would cause it to scoop up any system files that might be present in your views directories.
+- Fixed bug with `clientViews` blocklist mistakenly defaulting to an object instead of an array which could cause crashes in some configurations.
+- Fixed bug with CSS preprocessor that would cause it to scoop up any system files that might be present in your CSS directories.
 - Various dependencies bumped.
 
 ## 0.19.1
