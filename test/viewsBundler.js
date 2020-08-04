@@ -308,7 +308,8 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         allowlist: {
           'output.js': ['a.html']
-        }
+        },
+        minify: true
       },
       generateFolderStructure: true
     }, options)
@@ -325,7 +326,7 @@ describe('Views Bundler Tests', function () {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
-          const templateJSON = require(file.path)()
+          const templateJSON = require(file.path)
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
@@ -366,7 +367,7 @@ describe('Views Bundler Tests', function () {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
-          const templateJSON = require(file.path)()
+          const templateJSON = require(file.path)
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
@@ -390,6 +391,7 @@ describe('Views Bundler Tests', function () {
         allowlist: {
           'output.js': ['a.html']
         },
+        minify: true,
         minifyOptions
       },
       generateFolderStructure: true
@@ -407,7 +409,7 @@ describe('Views Bundler Tests', function () {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
-          const templateJSON = require(file.path)()
+          const templateJSON = require(file.path)
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
@@ -449,7 +451,7 @@ describe('Views Bundler Tests', function () {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
-          const templateJSON = require(file.path)()
+          const templateJSON = require(file.path)
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
@@ -556,7 +558,7 @@ describe('Views Bundler Tests', function () {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
-          const templateJSON = require(file.path)()
+          const templateJSON = require(file.path)
           const templates = Object.keys(templateJSON)
 
           blocklist.forEach(notExposedFile => {
@@ -598,7 +600,7 @@ describe('Views Bundler Tests', function () {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
-          const templateJSON = require(file.path)()
+          const templateJSON = require(file.path)
           const templates = Object.keys(templateJSON)
 
           blocklist.forEach(notExposedFile => {
@@ -639,7 +641,7 @@ describe('Views Bundler Tests', function () {
         if (fsr.fileExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
-        const templateJSON = require(outputBundle.path)()
+        const templateJSON = require(outputBundle.path)
         const templates = Object.keys(templateJSON)
 
         assert.strictEqual(templates.length, 1)
@@ -675,7 +677,7 @@ describe('Views Bundler Tests', function () {
         if (fsr.fileExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
-        const templateJSON = require(outputBundle.path)()
+        const templateJSON = require(outputBundle.path)
         const templates = Object.keys(templateJSON)
 
         assert.strictEqual(templates.length, 1)

@@ -104,12 +104,12 @@
   "versionedPublic": false,
   "hostPublic": true,
   "clientViews": {
-    "allowlist": [],
+    "allowlist": {},
     "blocklist": [],
     "output": "templates",
     "exposeAll": false,
     "defaultBundle": "bundle.js",
-    "minify": true,
+    "minify": false,
     "minifyOptions": {}
   }
 }
