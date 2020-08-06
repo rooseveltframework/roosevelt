@@ -221,7 +221,7 @@ module.exports = params => {
 
     preprocessCss()
 
-    require('./lib/tools/viewsBundler')(app)
+    require('./lib/viewsBundler')(app)
 
     function preprocessCss () {
       require('./lib/preprocessCss')(app, bundleJs)
