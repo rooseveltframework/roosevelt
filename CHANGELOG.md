@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.19.3
+
+- Fixed bug which could cause CSS preprocessor to fail if there are subdirectories in your CSS folder.
+- Various dependencies bumped.
+
 ## 0.19.2
 
 - Breaking: `clientViews` no longer exports a function, instead exporting a JSON object.
