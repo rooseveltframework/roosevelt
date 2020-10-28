@@ -59,7 +59,7 @@
     "sinon": "~9.2.0",
     "standard": "~14.3.4",
     "stylus": "~0.54.8",
-    "supertest": "~5.0.0",
+    "supertest": "~6.0.0",
     "teddy": "~0.5.6"
   },
   "optionalDependencies": {
