@@ -213,6 +213,8 @@ module.exports = params => {
     }
     initialized = true
 
+    require('./lib/generateSymlinks')(app)
+
     // Inject reload javascript HTML tag
     require('./lib/injectReload')(app)
 
