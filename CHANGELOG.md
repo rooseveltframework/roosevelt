@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Fix bug so that Roosevelt listens to NODE_ENV when command line arguments aren't specified
 
 ## 0.19.3
 
