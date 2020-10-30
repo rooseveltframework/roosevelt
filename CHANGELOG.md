@@ -2,6 +2,7 @@
 
 ## Next version
 
+- Fix bug so that Roosevelt listens to NODE_ENV when command line arguments aren't specified
 - Moved symlink creation to a separate step and made it the first thing that is done on app startup
 
 ## 0.19.3
