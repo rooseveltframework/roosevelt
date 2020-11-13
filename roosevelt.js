@@ -45,6 +45,7 @@ module.exports = params => {
   if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {
     // run the param audit
     require('./lib/scripts/configAuditor').audit(params.appDir)
+    require('./lib/scripts/deprecationCheck')(params.appDir)
   }
 
   const logger = app.get('logger')
