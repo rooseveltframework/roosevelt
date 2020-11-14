@@ -7,6 +7,7 @@
 ## 0.19.5
 
 - Fix for Node 15 / npm 7 regression. Config auditor and deprecation checker will no longer run as postinstall scripts to compensate for INIT_CWD being removed from npm. These checks will be run exclusively on application first run instead (or any time the public folder is removed). (Closes https://github.com/rooseveltframework/roosevelt/issues/975)
+- Dropped Node 12 support.
 - Various dependencies updated.
 
 ## 0.19.4

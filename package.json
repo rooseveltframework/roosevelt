@@ -19,17 +19,19 @@
   "main": "roosevelt.js",
   "readmeFilename": "README.md",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14.0.0"
   },
   "engineStrict": true,
   "dependencies": {
     "app-module-path": "~2.2.0",
+    "check-dependencies": "~1.1.0",
     "clean-css": "~4.2.3",
     "colors": "~1.4.0",
     "compression": "~1.7.4",
     "cookie-parser": "~1.4.5",
     "es6-template-strings": "~2.0.1",
     "express": "~4.17.1",
+    "express-html-validator": "~0.1.2",
     "formidable": "~1.2.2",
     "fs-extra": "~9.0.1",
     "helmet": "~4.2.0",
@@ -39,6 +41,7 @@
     "method-override": "~3.0.0",
     "morgan": "~1.10.0",
     "parent-require": "~1.0.0",
+    "reload": "~3.1.1",
     "roosevelt-logger": "~0.2.2",
     "serve-favicon": "~2.5.0",
     "source-configs": "~0.3.4",
@@ -61,11 +64,6 @@
     "stylus": "~0.54.8",
     "supertest": "~6.0.1",
     "teddy": "~0.5.6"
-  },
-  "optionalDependencies": {
-    "check-dependencies": "~1.1.0",
-    "express-html-validator": "~0.1.2",
-    "reload": "~3.1.1"
   },
   "repository": {
     "type": "git",
