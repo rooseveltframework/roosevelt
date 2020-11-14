@@ -70,7 +70,7 @@ module.exports = params => {
   const httpsParams = params.https
 
   // let's try setting up the servers with user-supplied params
-  if (!httpsParams.force) {
+  if (!httpsParams.force || !httpsParams.enable) {
     httpServer = http.Server(app)
     httpServer.on('connection', mapConnections)
   }
@@ -293,6 +293,11 @@ module.exports = params => {
     let keys
     shutdownType = close
 
+    // fire user-defined onAppExit event
+    if (params.onAppExit && typeof params.onAppExit === 'function') {
+      params.onAppExit(app)
+    }
+
     // force destroy connections if the server takes too long to shut down
     checkConnectionsTimeout = setTimeout(() => {
       logger.error(`${appName} could not close all connections in time; forcefully shutting down`)
@@ -449,7 +454,7 @@ module.exports = params => {
       process.on('SIGTERM', gracefulShutdown)
       process.on('SIGINT', gracefulShutdown)
     } else {
-      if (!params.https.force) {
+      if (!httpsParams.force || !httpsParams.enable) {
         serverPush(httpServer, params.port, 'HTTP')
       }
       if (httpsParams.enable) {

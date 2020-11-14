@@ -28,6 +28,7 @@ describe('sourceParams', () => {
       'onReqStart',
       'onServerInit',
       'onServerStart',
+      'onAppExit',
       'routePrefix',
       'unversionedPublic'
     ]

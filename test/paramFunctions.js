@@ -67,6 +67,36 @@ describe('Parameter Function Tests', function () {
     })
   })
 
+  it('should execute onAppExit', function (done) {
+    let serverExitBool
+    options.method = 'initServer'
+
+    // generate the app
+    generateTestApp({
+      appDir: appDir,
+      generateFolderStructure: true,
+      onAppExit: '(app) => {process.send("the big exit")}'
+    }, options)
+
+    // fork the app.js file and run it as a child process
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+
+    // when the server has finished initialization, try to access the server or see if the message is the word that is suppose to be given back
+    testApp.on('message', (message) => {
+      if (message === 'the big exit') {
+        serverExitBool = true
+      } else {
+        testApp.send('stop')
+      }
+    })
+
+    // when the child process exits, check assertions and finish the test
+    testApp.on('exit', () => {
+      assert.strictEqual(serverExitBool, true, 'onAppExit did not execute')
+      done()
+    })
+  })
+
   it('should execute what is in onReqStart', function (done) {
     // bool var to hold whether or not the app had used its body parser middleware yet
     let bodyParserNotUsedBool = false

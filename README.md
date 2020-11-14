@@ -862,6 +862,8 @@ require('roosevelt')({
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerStart(app)`: Fired when the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+- `onAppExit(app)`: Fired when the app recieves a kill signal.
+  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onReqStart(req, res, next)`: Fired at the beginning of each new request.
   - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
   - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
