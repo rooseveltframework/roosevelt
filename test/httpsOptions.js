@@ -72,6 +72,20 @@ describe('HTTPS Server Options Tests', function () {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
+  it('should create a http server when https.enable param is false and https.force param is true', function () {
+    // change config
+    config.https.force = true
+    config.https.enable = false
+
+    app({ appDir: appDir, ...config })
+
+    // test assertion
+    assert(stubHttpServer.called, 'http.Server was not called')
+    assert(stubHttpsServer.notCalled, 'https.Server was called')
+
+    config.https.enable = true
+  })
+
   it('should not create a http.Server when the https.force param is set to true', function () {
     // change config
     config.https.force = true
