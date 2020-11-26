@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/roosevelt/graphs/contributors"
     }
   ],
-  "version": "0.19.5",
+  "version": "0.19.6",
   "files": [
     "defaultErrorPages",
     "lib",
@@ -46,21 +46,21 @@
     "serve-favicon": "~2.5.0",
     "source-configs": "~0.3.4",
     "toobusy-js": "~0.5.1",
-    "webpack": "~5.4.0"
+    "webpack": "~5.7.0"
   },
   "devDependencies": {
     "c8": "~7.3.5",
     "codecov": "~3.8.1",
-    "eslint": "~7.13.0",
+    "eslint": "~7.14.0",
     "eslint-plugin-mocha": "~8.0.0",
     "husky": "~4.3.0",
     "less": "~3.12.2",
-    "lint-staged": "~10.5.1",
+    "lint-staged": "~10.5.2",
     "mocha": "~8.2.1",
     "node-sass": "~5.0.0",
     "proxyquire": "~2.1.3",
     "sinon": "~9.2.1",
-    "standard": "~16.0.2",
+    "standard": "~16.0.3",
     "stylus": "~0.54.8",
     "supertest": "~6.0.1",
     "teddy": "~0.5.6"

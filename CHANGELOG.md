@@ -2,8 +2,13 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.19.6
+
 - Added `onAppExit` event.
 - Fixed bug with https feature.
+- Various dependencies updated.
 
 ## 0.19.5
 
