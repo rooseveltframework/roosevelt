@@ -46,7 +46,7 @@
     "serve-favicon": "~2.5.0",
     "source-configs": "~0.3.4",
     "toobusy-js": "~0.5.1",
-    "webpack": "~5.7.0"
+    "webpack": "~5.11.0"
   },
   "devDependencies": {
     "c8": "~7.3.5",
