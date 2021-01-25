@@ -62,7 +62,7 @@
     "sinon": "~9.2.2",
     "standard": "~16.0.3",
     "stylus": "~0.54.8",
-    "supertest": "~6.0.1",
+    "supertest": "~6.1.0",
     "teddy": "~0.5.6"
   },
   "repository": {
