@@ -51,7 +51,7 @@
   "devDependencies": {
     "c8": "~7.4.0",
     "codecov": "~3.8.1",
-    "eslint": "~7.16.0",
+    "eslint": "~7.19.0",
     "eslint-plugin-mocha": "~8.0.0",
     "husky": "~4.3.6",
     "less": "~4.0.0",
