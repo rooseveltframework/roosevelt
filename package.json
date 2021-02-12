@@ -51,7 +51,7 @@
   "devDependencies": {
     "c8": "~7.5.0",
     "codecov": "~3.8.1",
-    "eslint": "~7.19.0",
+    "eslint": "~7.20.0",
     "eslint-plugin-mocha": "~8.0.0",
     "less": "~4.1.1",
     "lint-staged": "~10.5.4",
