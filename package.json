@@ -47,12 +47,12 @@
     "serve-favicon": "~2.5.0",
     "source-configs": "~0.3.4",
     "toobusy-js": "~0.5.1",
-    "webpack": "~5.23.0"
+    "webpack": "~5.24.2"
   },
   "devDependencies": {
     "c8": "~7.6.0",
     "codecov": "~3.8.1",
-    "eslint": "~7.20.0",
+    "eslint": "~7.21.0",
     "eslint-plugin-mocha": "~8.0.0",
     "less": "~4.1.1",
     "mocha": "~8.3.0",
