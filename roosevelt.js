@@ -9,7 +9,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 
-module.exports = params => {
+module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
 
   // appDir is either specified by the user or sourced from the parent require
@@ -39,7 +39,7 @@ module.exports = params => {
   app.set('router', router)
 
   // source user supplied params
-  params = require('./lib/sourceParams')(params, app)
+  params = require('./lib/sourceParams')(params, app, schema)
 
   // use existence of public folder to determine first run
   if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {

@@ -551,4 +551,94 @@ describe('sourceParams', () => {
       assert.deepStrictEqual(prefix, '')
     })
   })
+
+  describe('overriding command line args', () => {
+    let processArgv
+
+    const schema = {
+      rooseveltConfig: {
+        cores: {
+          commandLineArg: ['--num-cores']
+        }
+      }
+    }
+
+    before(() => {
+      // backup cli flags
+      processArgv = process.argv.slice()
+    })
+
+    afterEach(() => {
+      // restore cli flags
+      process.argv = processArgv.slice()
+    })
+
+    it('should not set params based on default flags', (done) => {
+      process.argv.push('--cores')
+      process.argv.push(2)
+
+      const app = require('../roosevelt')({
+        ...config
+      }, schema)
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.cores, 1)
+      done()
+    })
+
+    it('should set params based on specified flags', (done) => {
+      process.argv.push('--num-cores')
+      process.argv.push(2)
+
+      const app = require('../roosevelt')({
+        ...config
+      }, schema)
+
+      const appConfig = app.expressApp.get('params')
+      assert.deepStrictEqual(appConfig.cores, 2)
+      done()
+    })
+  })
+
+  describe('overriding environment variables', () => {
+    const appConfig = {
+      appDir: path.join(__dirname, '../app/envParams'),
+      enableCLIFlags: false,
+      logging: {
+        methods: {
+          http: false,
+          info: false,
+          warn: false
+        }
+      },
+      port: 12345
+    }
+
+    const schema = {
+      rooseveltConfig: {
+        port: {
+          envVar: ['HTTP_PORT_NEW']
+        }
+      }
+    }
+
+    it('should not set param value from default env var', function (done) {
+      process.env.HTTP_PORT = 45678
+
+      const app = require('../roosevelt')(appConfig, schema)
+      assert.strictEqual(app.expressApp.get('params').port, 12345)
+      delete process.env.HTTP_PORT
+      done()
+    })
+
+    it('should get param value from specified env var', function (done) {
+      process.env.HTTP_PORT_NEW = 45678
+
+      const app = require('../roosevelt')(appConfig, schema)
+      assert.strictEqual(app.expressApp.get('params').port, 45678)
+      delete process.env.HTTP_PORT_NEW
+      done()
+    })
+  })
 })
