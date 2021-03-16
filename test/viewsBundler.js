@@ -40,7 +40,10 @@ describe('Views Bundler Tests', function () {
   const pathOfTemplates = [
     path.join(appDir, 'mvc/views/a.html'),
     path.join(appDir, 'mvc/views/b.html'),
-    path.join(appDir, 'mvc/views/bad.html')
+    path.join(appDir, 'mvc/views/bad.html'),
+    path.join(appDir, 'mvc/views/nested/a.html'),
+    path.join(appDir, 'mvc/views/nested/b.html'),
+    path.join(appDir, 'mvc/views/nested/bad.html')
   ]
 
   const pathOfExposedTemplates = [
@@ -50,13 +53,16 @@ describe('Views Bundler Tests', function () {
   const staticTemplates = [
     template1,
     template2,
+    blocklistedTemplate,
+    template1,
+    template2,
     blocklistedTemplate
   ]
 
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function () {
-    fse.ensureDirSync(path.join(appDir, 'mvc/views'))
+    fse.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
 
     for (let i = 0; i < pathOfTemplates.length; i++) {
       fse.writeFileSync(pathOfTemplates[i], staticTemplates[i])
@@ -643,8 +649,7 @@ describe('Views Bundler Tests', function () {
         }
         const templateJSON = require(outputBundle.path)
         const templates = Object.keys(templateJSON)
-
-        assert.strictEqual(templates.length, 1)
+        assert.strictEqual(templates.length, 2)
 
         testApp.send('stop')
       }
@@ -673,6 +678,78 @@ describe('Views Bundler Tests', function () {
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
+
+        if (fsr.fileExists(outputBundle.path)) {
+          delete require.cache[require.resolve(outputBundle.path)]
+        }
+        const templateJSON = require(outputBundle.path)
+        const templates = Object.keys(templateJSON)
+
+        assert.strictEqual(templates.length, 2)
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should include nested files when using exposeAll', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        exposeAll: true
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+
+        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
+
+        if (fsr.fileExists(outputBundle.path)) {
+          delete require.cache[require.resolve(outputBundle.path)]
+        }
+        const templateJSON = require(outputBundle.path)
+        const templates = Object.keys(templateJSON)
+
+        assert.strictEqual(templates.length, 2)
+
+        testApp.send('stop')
+      }
+    })
+
+    testApp.on('exit', () => {
+      done()
+    })
+  })
+
+  it('should include all files within a directory in allowlist', function (done) {
+    generateTestApp({
+      appDir,
+      clientViews: {
+        allowlist: {
+          'output.js': ['nested']
+        }
+      },
+      generateFolderStructure: true
+    }, options)
+
+    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+    testApp.stdout.on('data', (result) => {
+      if (serverStarted(result)) {
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+
+        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+
+        const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
 
         if (fsr.fileExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
