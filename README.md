@@ -401,6 +401,8 @@ Resolves to:
   - To disable multipart forms entirely, set `formidable` to `false`.
 
 - `helmet`: Parameters to pass to the [helmet](https://github.com/helmetjs/helmet) module.
+  - Default: *[Object]*
+    The default options are specified in the [helmet docs](https://helmetjs.github.io/), with the exception of the upgrade-insecure-requests in the content security policy, which has been removed.
 
 - `toobusy`: Parameters to pass to the [node-toobusy](https://github.com/STRML/node-toobusy) module.
 
