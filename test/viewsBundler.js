@@ -757,7 +757,7 @@ describe('Views Bundler Tests', function () {
         const templateJSON = require(outputBundle.path)
         const templates = Object.keys(templateJSON)
 
-        assert.strictEqual(templates.length, 1)
+        assert.strictEqual(templates.length, 2)
 
         testApp.send('stop')
       }
