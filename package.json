@@ -50,7 +50,7 @@
     "webpack": "~5.25.1"
   },
   "devDependencies": {
-    "c8": "~7.6.0",
+    "c8": "~7.7.0",
     "codecov": "~3.8.1",
     "eslint": "~7.22.0",
     "eslint-plugin-mocha": "~8.1.0",
