@@ -202,6 +202,27 @@ Environment variable precedence:
 - Environment variables supersede your app's [parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters).
 - Environment variables can be overridden with [command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments).
 
+## Overriding recognized command line flags and environment variables
+
+You can override the default command line flags and environment variables by providing a schema from [source-configs](https://github.com/rooseveltframework/source-configs) with a 'rooseveltConfig' section. For instance, to set the number of cores from the command line with '--num-cores' or '-n' instead of '--cores' or '-c', you could write:
+```javascript
+const schema = {
+  rooseveltConfig: {
+    cores: {
+      commandLineArg: ['--num-cores', '-n'],
+      envVar: ['NUM_CORES']
+    }
+  }
+}
+require('roosevelt')({
+  'generateFolderStructure': true
+}, schema).startServer()
+```
+
+Note that this also adds an environment variable.
+
+This will override the default for any recognized Roosevelt parameter.
+
 # Default directory structure
 
 - `app.js`: Entry point to your application. Feel free to rename this, but make sure to update `package.json`'s reference to it.
