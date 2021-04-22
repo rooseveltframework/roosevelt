@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.19.7
+
+- `clientViews` `allowlist` now allows directories.
+- Default command line flags and environment variables recognized by Roosevelt can now be overridden via source-configs.
+- Various dependencies updated.
+
 ## 0.19.6
 
 - Added `onAppExit` event.
