@@ -8,7 +8,7 @@ const fsr = require('../lib/tools/fsr')()
 const less = require('less')
 const path = require('path')
 const roosevelt = require('../roosevelt')
-const sass = require('node-sass')
+const sass = require('sass')
 const stylus = require('stylus')
 
 describe('css preprocessors', () => {
@@ -529,7 +529,7 @@ describe('css preprocessors', () => {
         css: {
           compiler: {
             enable: true,
-            module: 'node-sass'
+            module: 'sass'
           },
           minifier: {
             enable: false
@@ -569,7 +569,7 @@ describe('css preprocessors', () => {
         css: {
           compiler: {
             enable: true,
-            module: 'node-sass'
+            module: 'sass'
           },
           minifier: {
             enable: false
@@ -595,7 +595,7 @@ describe('css preprocessors', () => {
         css: {
           compiler: {
             enable: true,
-            module: 'node-sass'
+            module: 'sass'
           },
           minifier: {
             enable: false
