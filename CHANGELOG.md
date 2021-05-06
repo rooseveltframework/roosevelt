@@ -2,9 +2,13 @@
 
 ## Next version
 
-- Updated for support for Node 16.x.
-- Migrated from node-sass to dart-sass.
 - Put your changes here...
+
+## 0.19.8
+
+- Updated for support for Node 16.x. This required a migraiton from node-sass to dart-sass.
+- Dropped official Node 15 support, though it will probably still work. Node 14 remains officially supported.
+- Various dependencies updated.
 
 ## 0.19.7
 
