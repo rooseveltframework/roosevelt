@@ -610,7 +610,7 @@ Resolves to:
 
     - `module`: *[String]* Node module name of the CSS preprocessor you wish to use.
 
-      - Note: Currently [less](http://lesscss.org/), [node-sass](https://sass-lang.com/), and [stylus](http://stylus-lang.com/) are supported.
+      - Note: Currently [less](http://lesscss.org/), [sass](https://sass-lang.com/), and [stylus](http://stylus-lang.com/) are supported.
 
       - Note: Your chosen CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
 

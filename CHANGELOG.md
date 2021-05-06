@@ -2,6 +2,8 @@
 
 ## Next version
 
+- Updated for support for Node 16.x.
+- Migrated from node-sass to dart-sass.
 - Put your changes here...
 
 ## 0.19.7
