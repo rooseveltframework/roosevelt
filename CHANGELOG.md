@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.19.9
+
+- Made Webpack errors less verbose.
+- Various dependencies updated.
+
 ## 0.19.8
 
 - Updated for support for Node 16.x. This required a migraiton from node-sass to dart-sass.
