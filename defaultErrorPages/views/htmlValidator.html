@@ -5,6 +5,77 @@
   <meta name='viewport' content='width=device-width,initial-scale=1'>
   <meta name='format-detection' content='telephone=no'>
   <title>${pageTitle}</title>
+  <style>
+    ${prismStyle}
+    h1 {
+      color: #000;
+    }
+
+    body {
+      margin-left: 15px;
+    }
+
+    h1 {
+      float: left;
+    }
+
+    button {
+      margin-top: 25px;
+      float: right;
+    }
+
+    button + p {
+      float: right;
+    }
+
+    h2 {
+      clear: both;
+    }
+
+    .validatorErrors {
+      color: #f00;
+      white-space: pre-wrap;
+    }
+
+    .validatorWarnings {
+      color: #ffa500;
+      white-space: pre-wrap;
+    }
+
+    .markup {
+      font-family: monospace;
+      background-color: #fff;
+      overflow: hidden;
+      padding: 0.5em;
+      border-radius: .25em;
+      box-shadow: .1em .1em .5em rgba(0,0,0,.45);
+      line-height: 0;
+      counter-reset: line;
+    }
+
+    .markup .line-numbers {
+      display: block;
+      line-height: 1.5rem;
+    }
+
+    .markup .line-numbers::before {
+      counter-increment: line;
+      content: counter(line);
+      display: inline-block;
+      border-right: 1px solid #ddd;
+      padding: 0 .5em;
+      margin-right: .5em;
+      width: ${preWidth}px;
+    }
+
+    .markup .error::before {
+      background-color: #ffb2b2;
+    }
+
+    input {
+      margin-top: 25px;
+    }
+  </style>
   <script defer>
     var rawMarkup = document.querySelectorAll('textarea')[0].value
     var displayAnywayButton = document.createElement('button')
@@ -57,77 +128,6 @@
 <body>
   <main>
     <article>
-      <style>
-        ${prismStyle}
-        h1 {
-          color: #000;
-        }
-
-        body {
-          margin-left: 15px;
-        }
-
-        h1 {
-          float: left;
-        }
-
-        button {
-          margin-top: 25px;
-          float: right;
-        }
-
-        button + p {
-          float: right;
-        }
-
-        h2 {
-          clear: both;
-        }
-
-        .validatorErrors {
-          color: #f00;
-          white-space: pre-wrap;
-        }
-
-        .validatorWarnings {
-          color: #ffa500;
-          white-space: pre-wrap;
-        }
-
-        .markup {
-          font-family: monospace;
-          background-color: #fff;
-          overflow: hidden;
-          padding: 0.5em;
-          border-radius: .25em;
-          box-shadow: .1em .1em .5em rgba(0,0,0,.45);
-          line-height: 0;
-          counter-reset: line;
-        }
-
-        .markup .line-numbers {
-          display: block;
-          line-height: 1.5rem;
-        }
-
-        .markup .line-numbers::before {
-          counter-increment: line;
-          content: counter(line);
-          display: inline-block;
-          border-right: 1px solid #ddd;
-          padding: 0 .5em;
-          margin-right: .5em;
-          width: ${preWidth}px;
-        }
-
-        .markup .error::before {
-          background-color: #ffb2b2;
-        }
-
-        input {
-          margin-top: 25px;
-        }
-      </style>
       <h1>${pageHeader}</h1>
       ${errors}
       ${warnings}
@@ -137,7 +137,6 @@
       </form>
     </article>
   </main>
-
   <textarea hidden>${rawMarkup}</textarea>
 </body>
 </html>
