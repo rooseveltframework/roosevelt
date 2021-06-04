@@ -76,53 +76,55 @@
       margin-top: 25px;
     }
   </style>
-  <script defer>
-    var rawMarkup = document.querySelectorAll('textarea')[0].value
-    var displayAnywayButton = document.createElement('button')
-    displayAnywayButton.innerHTML = 'Display anyway'
+  <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+      var rawMarkup = document.querySelectorAll('textarea')[0].value
+      var displayAnywayButton = document.createElement('button')
+      displayAnywayButton.innerHTML = 'Display anyway'
 
-    displayAnywayButton.addEventListener('click', function () {
-      var iframe = document.createElement('iframe')
-      document.body.appendChild(iframe)
-      var doc = iframe.contentWindow.document
-      doc.open()
-      doc.write(rawMarkup)
-      var html = doc.querySelectorAll('html')[0].innerHTML
-      doc.close()
-      document.querySelectorAll('html')[0].innerHTML = html
-      inertScriptReplace(document.getElementsByTagName('body')[0])
-    })
-    document.querySelectorAll('h1')[0].insertAdjacentElement('afterend', displayAnywayButton)
+      displayAnywayButton.addEventListener('click', function () {
+        var iframe = document.createElement('iframe')
+        document.body.appendChild(iframe)
+        var doc = iframe.contentWindow.document
+        doc.open()
+        doc.write(rawMarkup)
+        var html = doc.querySelectorAll('html')[0].innerHTML
+        doc.close()
+        document.querySelectorAll('html')[0].innerHTML = html
+        inertScriptReplace(document.getElementsByTagName('body')[0])
+      })
+      document.querySelectorAll('h1')[0].insertAdjacentElement('afterend', displayAnywayButton)
 
-    document.querySelectorAll('input')[0].addEventListener('click', function (e) {
-      if (confirm('Are you sure you want to disable the HTML validator until the server restarts?')) {
-        return true
-      } else {
-        e.preventDefault()
-      }
-    })
+      document.querySelectorAll('input')[0].addEventListener('click', function (e) {
+        if (confirm('Are you sure you want to disable the HTML validator until the server restarts?')) {
+          return true
+        } else {
+          e.preventDefault()
+        }
+      })
 
-    function inertScriptReplace (node) {
-      if (node.tagName === 'SCRIPT') {
-        node.parentNode.replaceChild(nodeScriptClone(node), node)
-      } else {
-        var i = 0
-        var children = node.childNodes
-        while (i < children.length) {
-          inertScriptReplace(children[i++])
+      function inertScriptReplace (node) {
+        if (node.tagName === 'SCRIPT') {
+          node.parentNode.replaceChild(nodeScriptClone(node), node)
+        } else {
+          var i = 0
+          var children = node.childNodes
+          while (i < children.length) {
+            inertScriptReplace(children[i++])
+          }
+        }
+        return node
+
+        function nodeScriptClone (node) {
+          var script  = document.createElement('script')
+          script.text = node.innerHTML
+          for (var i = node.attributes.length - 1; i >= 0; i--) {
+            script.setAttribute(node.attributes[i].name, node.attributes[i].value)
+          }
+          return script
         }
       }
-      return node
-
-      function nodeScriptClone (node) {
-        var script  = document.createElement('script')
-        script.text = node.innerHTML
-        for (var i = node.attributes.length - 1; i >= 0; i--) {
-          script.setAttribute(node.attributes[i].name, node.attributes[i].value)
-        }
-        return script
-      }
-    }
+    })
     </script>
 </head>
 <body>
