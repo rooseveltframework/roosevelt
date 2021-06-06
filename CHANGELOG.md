@@ -2,7 +2,9 @@
 
 ## Next version
 
-- Put your changes here...
+- Fixed confusing console warning.
+- HTML validator frontend scripts moved to `<head>`.
+- Various dependencies updated.
 
 ## 0.19.9
 
