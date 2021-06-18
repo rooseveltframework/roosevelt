@@ -2,6 +2,7 @@
 
 ## Next version
 
+- Added `roosevelt-router` feature to improve support for writing isomorphic code for SPAs.
 - Altered `clientViews` such that the template list will lack file extensions if the file extension of the template matches the default view engine's file extension.
 - Fixed confusing console warning.
 - HTML validator frontend scripts moved to `<head>`.
