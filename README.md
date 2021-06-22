@@ -15,6 +15,7 @@ Some notable features:
   - Need some extra speed in template parsing? Consider writing your templates in [PHP](https://php.net)! The Roosevelt team also built a view engine that lets you [use PHP as your templating engine](https://github.com/rooseveltframework/express-php-view-engine) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
 - [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external-facing CSS files via [clean-css](https://www.npmjs.com/package/clean-css). There's also built-in support for [Sass](https://sass-lang.com) and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
 - Built-in, easy to use interface for creating [Webpack](https://webpack.js.org/) bundles for module bundling and minifying your frontend JS.
+- Optional isomorphic (aka universal, [amphibious](https://twitter.com/kethinov/status/566896168324825088), etc) controller support based on [page-express-mapper](https://github.com/rooseveltframework/page-express-mapper) to map [page.js](http://visionmedia.github.io/page.js/) to the Express API so both your Express routes and template code can be shared on the client and the server without modification for building single page apps with maximal code reuse on both sides.
 - Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
 - Automatic HTML validation in development mode of your post-server rendered HTML powered by [express-html-validator](https://github.com/rooseveltframework/express-html-validator).
 
@@ -31,6 +32,7 @@ Some notable features:
   - [Available command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments)
   - [Combining npm scripts and command line arguments](https://github.com/rooseveltframework/roosevelt#combining-npm-scripts-and-command-line-arguments)
   - [Recognized environment variables](https://github.com/rooseveltframework/roosevelt#recognized-environment-variables)
+  - [Overriding recognized command line flags and environment variables](https://github.com/rooseveltframework/roosevelt#overriding-recognized-command-line-flags-and-environment-variables)
 - [Default directory structure](https://github.com/rooseveltframework/roosevelt#default-directory-structure)
   - [Default .gitignore](https://github.com/rooseveltframework/roosevelt#default-gitignore)
 - [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
@@ -42,12 +44,12 @@ Some notable features:
   - [Events](https://github.com/rooseveltframework/roosevelt#events)
   - [Event list](https://github.com/rooseveltframework/roosevelt#event-list)
 - [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
+  - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
+    - [roosevelt-router API](https://github.com/rooseveltframework/roosevelt#roosevelt-router-api)
 - [Making model files](https://github.com/rooseveltframework/roosevelt#making-model-files)
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
 - [Express middleware and other configurations automatically loaded by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-middleware-and-other-configurations-automatically-loaded-by-roosevelt)
-- [Deployment](https://github.com/rooseveltframework/roosevelt#deployment)
-  - [Removing dependencies unneeded in production](https://github.com/rooseveltframework/roosevelt#removing-dependencies-unneeded-in-production)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
 - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
 
@@ -253,7 +255,7 @@ Some notable things ignored by default and why:
 Roosevelt is designed to have a minimal amount of boilerplate so you can spend less time focused on configuration and more time writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
 
 ```js
-require('roosevelt')().startServer();
+require('roosevelt')().startServer()
 ```
 
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
@@ -640,13 +642,13 @@ Resolves to:
           "fileName": "_version.less",
           "varName": "appVersion"
         }
-        ```
+      ```
 
   - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
 
       ```less
         /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
-        ```
+      ```
 
   - Some things to note:
 
@@ -672,7 +674,7 @@ Resolves to:
         "output": "css",
         "versionFile": null
       }
-      ```
+    ```
 
 - `js`: *[Object]* How you want Roosevelt to handle module bundling and minifying your frontend JS:
 
@@ -829,7 +831,7 @@ Resolves to:
     }
     ```
 
-  ## Public folder parameters
+## Public folder parameters
 
 - `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `hostPublic` is enabled.
 
@@ -876,7 +878,7 @@ Roosevelt provides a series of events you can attach code to by passing a functi
 ```js
 require('roosevelt')({
   onServerStart: (app) => { /* do something */ }
-});
+})
 ```
 
 ## Event list
@@ -914,12 +916,12 @@ module.exports = (router, app) => { // router is an Express router and app is th
   router.route('/about').get((req, res) => {
 
     // load a data model
-    let model = require('models/dataModel');
+    let model = require('models/dataModel')
 
     // render a Teddy template and pass it the model
-    res.render('about', model);
-  });
-};
+    res.render('about', model)
+  })
+}
 ```
 
 Sometimes it is also useful to separate controller logic from your routing. This can be done by creating a reusable controller module.
@@ -929,9 +931,9 @@ An example would be creating a reusable controller for "404 Not Found" pages:
 ```js
 // reusable controller "notFound.js"
 module.exports = (app, req, res) => {
-  let model = { content: 'Cannot find this page' };
-  res.status(404);
-  res.render('404', model);
+  let model = { content: 'Cannot find this page' }
+  res.status(404)
+  res.render('404', model)
 }
 ```
 
@@ -941,7 +943,7 @@ This allows them to be called at will in any other controller's route when neede
 
 ```js
 // import the "notFound" controller logic previously defined
-const throw404 = require('controllers/notFound');
+const throw404 = require('controllers/notFound')
 
 module.exports = (router, app) => {
   router.route('/whatever').get((req, res) => {
@@ -952,18 +954,93 @@ module.exports = (router, app) => {
 
       // logic didn't fail
       // so render the page normally
-      let model = require('models/dataModel');
-      res.render('whatever', model);
+      let model = require('models/dataModel')
+      res.render('whatever', model)
     }
     else {
 
       // logic failed
       // so throw the 404 by executing your reusable controller
-      throw404(app, req, res);
+      throw404(app, req, res)
     }
-  });
-};
+  })
+}
 ```
+
+## Making isomorphic controller files
+
+You can also write isomorphic controller files that can be shared on both the client and the server:
+
+```js
+// isomorphic controller file about.js
+module.exports = (router, app) => { // router is an Express router and app is the Express app created by Roosevelt
+
+  // standard Express route
+  router.route('/about').get((req, res) => {
+
+    // get model data if we're on the server
+    // isoRequire fails silently if we're on the client
+    let model = router.isoRequire('models/dataModel') || window.model
+
+    // if it's an API request (as defined by a request with content-type: 'application/json'), then it will send JSON data
+    // if not, it will render HTML
+    router.apiRender(req, res, model) || res.render('about', model)
+
+    // run client-side exclusive code
+    if (router.client) {
+      // get the model via a fetch, or extract it from the DOM, or whatever you want to do
+      // or maybe model is already populated by window.model from a previous page you were on
+      // also define DOM events and do other frontendy things
+      console.log('hello frontend')
+    }
+  })
+}
+```
+
+When using controller files on the client, you will need to include and configure `roosevelt-router` in your main JS bundle before loading your controller files:
+
+ ```js
+ // main.js — frontend JS bundle entry point
+ window.model = {} // declare a blank model for now, to be filled in later by fetching data from the server
+ 
+ // require and configure roosevelt-router
+ const router = require('roosevelt/lib/roosevelt-router')({
+ 
+   // your templating system (required)
+   templatingSystem: require('teddy'),
+ 
+   // your templates (required)
+   // requires use of clientViews feature of roosevelt
+   templateBundle: require('views'),
+ 
+   // supply a function to be called immediately when roosevelt-renderer's constructor is invoked
+   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
+   // required if not using teddy, optional if using teddy
+   onLoad: null,
+ 
+   // define a res.render(template, model) function to render your templates
+   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
+   // required if not using teddy, optional if using teddy
+   renderMethod: null
+ })
+ 
+ require('about')(router) // load an isomorphic controller file
+ 
+ router.init() // activate router
+ 
+ ```
+
+### roosevelt-router API
+
+- `router.isoRequire`: *[Function]* Like `require` but designed to fail silently allowing `||` chaining.
+  - Example: `let model = router.isoRequire('models/dataModel') || window.model`.
+    - Thus, if `models/dataModel` does not exist, it will fall back to `window.model`.
+- `router.apiRender`: *[Function]* Send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
+  - Example: `router.apiRender(req, res, model) || res.render('about', model)`.
+- `router.backend`: *[Boolean]* True if the execution context is the Node.js server.
+- `router.server`: *[Boolean]* True if the execution context is the Node.js server.
+- `router.frontend`: *[Boolean]* True if the execution context is the browser.
+- `router.client`: *[Boolean]* True if the execution context is the browser.
 
 # Making model files
 
@@ -1035,14 +1112,6 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Includes the [helmet](https://github.com/helmetjs/helmet) middleware.
 - Logs HTTP requests to the console using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
-
-# Deployment
-
-## Removing dependencies unneeded in production
-
-In contexts where you only need to run Roosevelt in production mode, you can remove some dependencies that are only needed in development mode in order to shrink the footprint of production builds.
-
-These dependencies can be omitted from your build by running `npm i --no-optional`
 
 # Supplying your own CSS preprocessor
 
