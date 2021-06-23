@@ -45,7 +45,8 @@ Some notable features:
   - [Event list](https://github.com/rooseveltframework/roosevelt#event-list)
 - [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
   - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-    - [roosevelt-router API](https://github.com/rooseveltframework/roosevelt#roosevelt-router-api)
+    - [roosevelt-router](https://github.com/rooseveltframework/roosevelt#roosevelt-router)
+      - [API](https://github.com/rooseveltframework/roosevelt#api)
 - [Making model files](https://github.com/rooseveltframework/roosevelt#making-model-files)
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
@@ -910,7 +911,9 @@ Controller files are places to write [Express routes](http://expressjs.com/api.h
 To make a new controller, make a new file in the controllers directory. For example:
 
 ```js
-module.exports = (router, app) => { // router is an Express router and app is the Express app created by Roosevelt
+module.exports = (router, app) => {
+  // router is an Express router
+  // and app is the Express app created by Roosevelt
 
   // standard Express route
   router.route('/about').get((req, res) => {
@@ -973,7 +976,9 @@ You can also write isomorphic controller files that can be shared on both the cl
 
 ```js
 // isomorphic controller file about.js
-module.exports = (router, app) => { // router is an Express router and app is the Express app created by Roosevelt
+module.exports = (router, app) => {
+  // router is an Express router
+  // and app is the Express app created by Roosevelt
 
   // standard Express route
   router.route('/about').get((req, res) => {
@@ -982,7 +987,8 @@ module.exports = (router, app) => { // router is an Express router and app is th
     // isoRequire fails silently if we're on the client
     let model = router.isoRequire('models/dataModel') || window.model
 
-    // if it's an API request (as defined by a request with content-type: 'application/json'), then it will send JSON data
+    // if it's an API request (as defined by a request with content-type: 'application/json'),
+    // then it will send JSON data
     // if not, it will render HTML
     router.apiRender(req, res, model) || res.render('about', model)
 
@@ -996,6 +1002,8 @@ module.exports = (router, app) => { // router is an Express router and app is th
   })
 }
 ```
+
+### roosevelt-router
 
 When using controller files on the client, you will need to include and configure `roosevelt-router` in your main JS bundle before loading your controller files:
 
@@ -1013,15 +1021,15 @@ When using controller files on the client, you will need to include and configur
    // requires use of clientViews feature of roosevelt
    templateBundle: require('views'),
  
-   // supply a function to be called immediately when roosevelt-renderer's constructor is invoked
-   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
-   // required if not using teddy, optional if using teddy
-   onLoad: null,
+   // supply a function to be called immediately when roosevelt-router's constructor is invoked
+   // you can leave this undefined if you're using teddy and you don't want to customize
+   // the default SPA rendering behavior
+   onLoad: null, // required if not using teddy, optional if using teddy
  
    // define a res.render(template, model) function to render your templates
-   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
-   // required if not using teddy, optional if using teddy
-   renderMethod: null
+   // you can leave this undefined if you're using teddy and you don't want to customize
+   // the default SPA rendering behavior
+   renderMethod: null // required if not using teddy, optional if using teddy
  })
  
  require('about')(router) // load an isomorphic controller file
@@ -1030,7 +1038,22 @@ When using controller files on the client, you will need to include and configur
  
  ```
 
-### roosevelt-router API
+#### API
+
+**Constructor parameters:**
+
+When you call `roosevelt-router`'s constructor, e.g. `const router = require('roosevelt/lib/roosevelt-router')(params)`, the `params` object can accept the following methods:
+
+- `templatingSystem` (required): Which HTML templating system you would like to use. Supply the Node.js module. `teddy` is recommended, but not required.
+- `templateBundle` (required): A JavaScript object containing a bundle of HTML templates. It is recommended that you use the `clientViews` feature of Roosevelt to supply this, but not required.
+- `onLoad`: A function that will be called immediately after `roosevelt-router`'s constructor is invoked. You can leave this undefined if you're using Teddy and you don't want to customize the default SPA rendering behavior.
+  - Optional if using Teddy. Required if not using Teddy.
+- `renderMethod`: Define a `res.render(template, model)` function to render your templates. You can leave this undefined if you're using Teddy and you don't want to customize the default SPA rendering behavior.
+  - Optional if using Teddy. Required if not using Teddy. 
+
+**Instance members:**
+
+When you get a `router` object after instantiating `roosevelt-router` e.g. `const router = require('roosevelt/lib/roosevelt-router')(params)`, the following properties and methods are available to you:
 
 - `router.isoRequire`: *[Function]* Like `require` but designed to fail silently allowing `||` chaining.
   - Example: `let model = router.isoRequire('models/dataModel') || window.model`.
