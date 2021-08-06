@@ -49,7 +49,7 @@
     "serve-favicon": "~2.5.0",
     "source-configs": "~0.3.5",
     "toobusy-js": "~0.5.1",
-    "webpack": "~5.48.0"
+    "webpack": "~5.49.0"
   },
   "devDependencies": {
     "c8": "~7.8.0",
