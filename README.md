@@ -1061,7 +1061,7 @@ When you get a `router` object after instantiating `roosevelt-router` e.g. `cons
   - Example: `let model = router.isoRequire('models/dataModel') || window.model`.
     - Thus, if `models/dataModel` does not exist, it will fall back to `window.model`.
 
-- `router.apiRender`: *[Function]* server-side method to send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
+- `router.apiRender`: *[Function]* Server-side method to send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
 
   - Example: `router.apiRender(req, res, model) || res.render('about', model)`.
 
