@@ -977,27 +977,29 @@ You can also write isomorphic controller files that can be shared on both the cl
 ```js
 // isomorphic controller file about.js
 module.exports = (router, app) => {
-  // router is an Express router
-  // and app is the Express app created by Roosevelt
-
-  // standard Express route
   router.route('/about').get((req, res) => {
+    // define base model if we're on the server, or inherit the already populated model if we're on the client
+    //
+    // isoRequire allows you to require a file only on the server; it will always return false on the client
+    // this makes it possible to share this file with frontend module bundlers without server-exclusive files
+    // being included in your bundle
+    let model = router.server ? router.isoRequire('models/global')(req, res) : frontendModel
+    // the above assumes frontendModel is defined in the layout template before this JS loads on the client
 
-    // get model data if we're on the server
-    // isoRequire fails silently if we're on the client
-    let model = router.isoRequire('models/dataModel') || window.model
+    // populate the model with database queries and other transformations that are exclusive to the server
+    if (router.server) {
+      model = router.isoRequire('models/sampleData')(model)
+      model.frontendModel = JSON.stringify(model) // package up a version of the model for frontend consumption
+    }
 
-    // if it's an API request (as defined by a request with content-type: 'application/json'),
-    // then it will send JSON data
+    // if it's an API request (as defined by a request with content-type: 'application/json'), then it will send JSON data
     // if not, it will render HTML
     router.apiRender(req, res, model) || res.render('about', model)
 
     // run client-side exclusive code
     if (router.client) {
-      // get the model via a fetch, or extract it from the DOM, or whatever you want to do
-      // or maybe model is already populated by window.model from a previous page you were on
-      // also define DOM events and do other frontendy things
-      console.log('hello frontend')
+      // define DOM events and do other frontendy things
+      console.log('hello frontend about page')
     }
   })
 }
@@ -1009,7 +1011,6 @@ When using controller files on the client, you will need to include and configur
 
  ```js
  // main.js — frontend JS bundle entry point
- window.model = {} // declare a blank model for now, to be filled in later by fetching data from the server
  
  // require and configure roosevelt-router
  const router = require('roosevelt/lib/roosevelt-router')({
@@ -1021,21 +1022,22 @@ When using controller files on the client, you will need to include and configur
    // requires use of clientViews feature of roosevelt
    templateBundle: require('views'),
  
-   // supply a function to be called immediately when roosevelt-router's constructor is invoked
-   // you can leave this undefined if you're using teddy and you don't want to customize
-   // the default SPA rendering behavior
-   onLoad: null, // required if not using teddy, optional if using teddy
+   // supply a function to be called immediately when roosevelt-renderer's constructor is invoked
+   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
+   // required if not using teddy, optional if using teddy
+   onLoad: null,
  
    // define a res.render(template, model) function to render your templates
-   // you can leave this undefined if you're using teddy and you don't want to customize
-   // the default SPA rendering behavior
-   renderMethod: null // required if not using teddy, optional if using teddy
+   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
+   // required if not using teddy, optional if using teddy
+   renderMethod: null
  })
  
- require('about')(router) // load an isomorphic controller file
+ require('mvc/controllers/homepage')(router)
+ require('mvc/controllers/about')(router)
+ require('mvc/controllers/etc')(router)
  
  router.init() // activate router
- 
  ```
 
 #### API
@@ -1058,11 +1060,28 @@ When you get a `router` object after instantiating `roosevelt-router` e.g. `cons
 - `router.isoRequire`: *[Function]* Like `require` but designed to fail silently allowing `||` chaining.
   - Example: `let model = router.isoRequire('models/dataModel') || window.model`.
     - Thus, if `models/dataModel` does not exist, it will fall back to `window.model`.
-- `router.apiRender`: *[Function]* Send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
+
+- `router.apiRender`: *[Function]* server-side method to send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
+
   - Example: `router.apiRender(req, res, model) || res.render('about', model)`.
+
+- `router.onSubmit`: *[Function]* Client-side convenience method for handling form submits to the server in a SPA-friendly way. You can of course define your own DOM events however you like, but `router.onSubmit` gives you some stuff for free, such as preventing the page reload when the form is submitted, automatically sending a fetch to the server with the form data, automatically detecting if the response is JSON or text, and giving you an easy callback interface to handle the response with minimal boilerplate.
+
+  - Example: 
+
+    - ```javascript
+      router.onSubmit((e, data) => {
+        // e is the submit event object
+        // data is the response from the server
+      })
+      ```
+
 - `router.backend`: *[Boolean]* True if the execution context is the Node.js server.
+
 - `router.server`: *[Boolean]* True if the execution context is the Node.js server.
+
 - `router.frontend`: *[Boolean]* True if the execution context is the browser.
+
 - `router.client`: *[Boolean]* True if the execution context is the browser.
 
 # Making model files
