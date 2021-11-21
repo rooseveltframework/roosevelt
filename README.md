@@ -1022,7 +1022,7 @@ When using controller files on the client, you will need to include and configur
    // requires use of clientViews feature of roosevelt
    templateBundle: require('views'),
  
-   // supply a function to be called immediately when roosevelt-renderer's constructor is invoked
+   // supply a function to be called immediately when roosevelt-router's constructor is invoked
    // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
    // required if not using teddy, optional if using teddy
    onLoad: null,
