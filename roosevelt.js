@@ -224,6 +224,8 @@ module.exports = (params, schema) => {
 
     preprocessCss()
 
+    require('./lib/isomorphicControllersFinder')(app)
+
     require('./lib/viewsBundler')(app)
 
     function preprocessCss () {

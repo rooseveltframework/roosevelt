@@ -74,6 +74,7 @@ describe('sourceParams', () => {
       pkg.rooseveltConfig.css.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.css.output)
       pkg.rooseveltConfig.js.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.js.sourcePath)
       pkg.rooseveltConfig.clientViews.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.clientViews.output)
+      pkg.rooseveltConfig.isomorphicControllers.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.isomorphicControllers.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -105,6 +106,7 @@ describe('sourceParams', () => {
       config.css.output = path.join(config.publicFolder, config.css.output)
       config.js.sourcePath = path.join(config.staticsRoot, config.js.sourcePath)
       config.clientViews.output = path.join(config.staticsRoot, config.clientViews.output)
+      config.isomorphicControllers.output = path.join(config.staticsRoot, config.isomorphicControllers.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -146,6 +148,7 @@ describe('sourceParams', () => {
       configJson.css.output = path.join(configJson.publicFolder, configJson.css.output)
       configJson.js.sourcePath = path.join(configJson.staticsRoot, configJson.js.sourcePath)
       configJson.clientViews.output = path.join(configJson.staticsRoot, configJson.clientViews.output)
+      configJson.isomorphicControllers.output = path.join(configJson.staticsRoot, configJson.isomorphicControllers.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
