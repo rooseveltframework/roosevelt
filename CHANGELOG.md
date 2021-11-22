@@ -3,6 +3,7 @@
 ## Next version
 
 - Added `roosevelt-router` feature to improve support for writing isomorphic code for SPAs.
+- Added `isomorphicControllers` config option that will permit Roosevelt to make a list of all your controller files that can be used client-side as well so they can be auto-loaded client-side too.
 - Altered `clientViews` such that the template list will lack file extensions if the file extension of the template matches the default view engine's file extension.
 - Fixed confusing console warning.
 - HTML validator frontend scripts moved to `<head>`.

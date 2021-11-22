@@ -106,10 +106,14 @@
   "clientViews": {
     "allowlist": {},
     "blocklist": [],
-    "output": "templates",
+    "output": "js",
     "exposeAll": false,
-    "defaultBundle": "bundle.js",
+    "defaultBundle": "views.js",
     "minify": false,
     "minifyOptions": {}
+  },
+  "isomorphicControllers": {
+    "output": "js",
+    "file": null
   }
 }

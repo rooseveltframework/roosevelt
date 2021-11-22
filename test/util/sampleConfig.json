@@ -119,5 +119,9 @@
     "output": "value",
     "minify": "value",
     "minifyOptions": "value"
+  },
+  "isomorphicControllers": {
+    "output": "value",
+    "file": "value"
   }
 }
