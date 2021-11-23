@@ -996,28 +996,36 @@ You can also write isomorphic controller files that can be shared on both the cl
 // isomorphic controller file about.js
 module.exports = (router, app) => {
   router.route('/about').get((req, res) => {
-    // define base model if we're on the server, or inherit the already populated model if we're on the client
-    //
-    // isoRequire allows you to require a file only on the server; it will always return false on the client
-    // this makes it possible to share this file with frontend module bundlers without server-exclusive files
-    // being included in your bundle
-    let model = router.server ? router.isoRequire('models/global')(req, res) : frontendModel
-    // the above assumes frontendModel is defined in the layout template before this JS loads on the client
+    let model
 
-    // populate the model with database queries and other transformations that are exclusive to the server
+    // do any pre-render server-side stuff here
     if (router.server) {
-      model = router.isoRequire('models/sampleData')(model)
-      model.frontendModel = JSON.stringify(model) // package up a version of the model for frontend consumption
+      // populate the model with database queries and other transformations that are exclusive to the server
+      // isoRequire allows you to require a file only on the server; it will always return false on the client
+      // this makes it possible to share this file with frontend module bundlers without server-exclusive files
+      // being included in your bundle
+      model = router.isoRequire('models/global')(req, res) // get some data common to all pages
+
+      // do things you only need to do if it's a server-side render (when serving HTML from the server, not JSON)
+      if (router.serverSideRender(req)) {
+        // do SSR-exclusive things here
+      }
     }
+
+    // do any pre-render client-side stuff here
+    if (router.client) {
+      model = window.model // assuming this was fetched from somewhere at some point beforehand
+    }
+
+    // do any pre-render stuff common to both the backend and frontend here before calling the render method
+    model.content.pageTitle = 'About'
 
     // if it's an API request (as defined by a request with content-type: 'application/json'), then it will send JSON data
     // if not, it will render HTML
     router.apiRender(req, res, model) || res.render('about', model)
 
-    // run client-side exclusive code
     if (router.client) {
-      // define DOM events and do other frontendy things
-      console.log('hello frontend about page')
+      // do any post-render client-side stuff here (e.g. DOM manipulation)
     }
   })
 }
@@ -1075,15 +1083,23 @@ When you call `roosevelt-router`'s constructor, e.g. `const router = require('ro
 
 When you get a `router` object after instantiating `roosevelt-router` e.g. `const router = require('roosevelt/lib/roosevelt-router')(params)`, the following properties and methods are available to you:
 
-- `router.isoRequire`: *[Function]* Like `require` but designed to fail silently allowing `||` chaining.
+- `router.isoRequire(module)`: *[Function]* Like `require` but designed to fail silently allowing `||` chaining.
   - Example: `let model = router.isoRequire('models/dataModel') || window.model`.
     - Thus, if `models/dataModel` does not exist, it will fall back to `window.model`.
 
-- `router.apiRender`: *[Function]* Server-side method to send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
+- `router.apiRender(req, res, model)`: *[Function]* Server-side method to send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
+
+  - Arguments:
+    - `req`: Express request object for this request.
+    - `res`: Express response object for this request.
+    - `model`: Data model to send to the template.
 
   - Example: `router.apiRender(req, res, model) || res.render('about', model)`.
 
-- `router.onSubmit`: *[Function]* Client-side convenience method for handling form submits to the server in a SPA-friendly way. You can of course define your own DOM events however you like, but `router.onSubmit` gives you some stuff for free, such as preventing the page reload when the form is submitted, automatically sending a fetch to the server with the form data, automatically detecting if the response is JSON or text, and giving you an easy callback interface to handle the response with minimal boilerplate.
+- `router.onSubmit(callback)`: *[Function]* Client-side convenience method for handling form submits to the server in a SPA-friendly way. You can of course define your own DOM events however you like, but `router.onSubmit` gives you some stuff for free, such as preventing the page reload when the form is submitted, automatically sending a fetch to the server with the form data, automatically detecting if the response is JSON or text, and giving you an easy callback interface to handle the response with minimal boilerplate.
+
+  - Arguments:
+    - `callback`: Callback function to execute when the request is complete. The callback function will be provided with two arguments: a standard event object for the DOM event and the data that was sent back from the request.
 
   - Example:
 
@@ -1093,6 +1109,20 @@ When you get a `router` object after instantiating `roosevelt-router` e.g. `cons
         // data is the response from the server
       })
       ```
+
+- `router.updatePage(markup, targetContainer)`: *[Function]* Convenience method for replacing some or all of the page with new markup.
+
+  - Arguments:
+    - `markup`: String of markup to update the page with.
+    - `targetContainer`: What DOM element will be the container for your new markup. If none is specified, the entire `<body>` tag will be replaced and the `<title>` tag will be updated if the markup fragement containts a `<title>` tag.
+
+  - Example with a `targetContainer`: `router.updatePage(markupFragment, document.getElementById('some-container))`
+  - Example without a `targetContainer`: `router.updatePage(fullPageMarkup)`
+
+- `router.serverSideRender(req)` and `router.ssr(req)`: *[Function]* Server-side method to check to see if the request is full page load (a server-side render) or if it's an API request. Retruns true if it's a full page load or returns false if it is an API request.
+
+  - Arguments:
+    - `req`: Express request object for this request.
 
 - `router.backend`: *[Boolean]* True if the execution context is the Node.js server.
 
