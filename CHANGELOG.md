@@ -1,5 +1,9 @@
 # Roosevelt Changelog
 
+## Next version
+
+- Put your changes here...
+
 ## 0.19.10
 
 - Added `roosevelt-router` feature to improve support for writing isomorphic code for SPAs.
