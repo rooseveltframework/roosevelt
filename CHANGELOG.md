@@ -1,6 +1,6 @@
 # Roosevelt Changelog
 
-## Next version
+## 0.19.10
 
 - Added `roosevelt-router` feature to improve support for writing isomorphic code for SPAs.
 - Added `isomorphicControllers` config option that will permit Roosevelt to make a list of all your controller files that can be used client-side as well so they can be auto-loaded client-side too.
