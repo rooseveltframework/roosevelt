@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/roosevelt/graphs/contributors"
     }
   ],
-  "version": "0.19.10",
+  "version": "0.19.11",
   "files": [
     "defaultErrorPages",
     "lib",

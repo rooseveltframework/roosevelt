@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.19.11
+
+- Fixed bug that caused isoRequire to only work with absolute paths.
+- Various dependencies updated.
+
 ## 0.19.10
 
 - Added `roosevelt-router` feature to improve support for writing isomorphic code for SPAs.
