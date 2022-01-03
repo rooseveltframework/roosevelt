@@ -35,7 +35,7 @@
     "express-html-validator": "~0.1.2",
     "formidable": "~1.2.2",
     "fs-extra": "~10.0.0",
-    "helmet": "~4.6.0",
+    "helmet": "~5.0.0",
     "html-minifier": "~4.0.0",
     "klaw": "~4.0.1",
     "klaw-sync": "~6.0.0",
