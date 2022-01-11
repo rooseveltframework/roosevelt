@@ -26,7 +26,7 @@
     "app-module-path": "~2.2.0",
     "check-dependencies": "~1.1.0",
     "clean-css": "~5.2.2",
-    "colors": "~1.4.0",
+    "colors": "1.4.0",
     "compression": "~1.7.4",
     "cookie-parser": "~1.4.6",
     "es6-template-strings": "~2.0.1",
@@ -63,7 +63,7 @@
     "sinon": "~12.0.1",
     "standard": "~16.0.4",
     "stylus": "~0.56.0",
-    "supertest": "~6.1.6",
+    "supertest": "~6.2.0",
     "teddy": "~0.5.9"
   },
   "repository": {
