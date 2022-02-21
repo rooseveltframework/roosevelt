@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.19.12
+
+- Various dependencies updated.
+  - Migrated colors to @colors/colors.
+
 ## 0.19.11
 
 - Fixed bug that caused isoRequire to only work with absolute paths.
