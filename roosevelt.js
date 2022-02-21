@@ -1,4 +1,4 @@
-require('colors')
+require('@colors/colors')
 
 const http = require('http')
 const https = require('https')
