@@ -31,7 +31,7 @@
     "cookie-parser": "~1.4.6",
     "es6-template-strings": "~2.0.1",
     "execa": "~5.1.1",
-    "express": "~4.17.3",
+    "express": "~4.18.1",
     "express-html-validator": "~0.2.0",
     "formidable": "~1.2.6",
     "fs-extra": "~10.1.0",
@@ -49,22 +49,22 @@
     "serve-favicon": "~2.5.0",
     "source-configs": "~0.3.6",
     "toobusy-js": "~0.5.1",
-    "webpack": "~5.72.0"
+    "webpack": "~5.72.1"
   },
   "devDependencies": {
-    "c8": "~7.11.0",
+    "c8": "~7.11.2",
     "codecov": "~3.8.3",
-    "eslint": "~8.13.0",
-    "eslint-plugin-mocha": "~10.0.3",
+    "eslint": "~8.15.0",
+    "eslint-plugin-mocha": "~10.0.4",
     "less": "~4.1.2",
     "mocha": "~10.0.0",
     "proxyquire": "~2.1.3",
     "sass": "~1.39.2",
-    "sinon": "~13.0.1",
+    "sinon": "~14.0.0",
     "standard": "~17.0.0",
     "stylus": "~0.57.0",
-    "supertest": "~6.2.2",
-    "teddy": "~0.5.9"
+    "supertest": "~6.2.3",
+    "teddy": "~0.5.10"
   },
   "repository": {
     "type": "git",
