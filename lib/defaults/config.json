@@ -26,6 +26,7 @@
     "multiples": true
   },
   "toobusy": {
+    "enable": true,
     "maxLagPerRequest": 70,
     "lagCheckInterval": 500
   },
