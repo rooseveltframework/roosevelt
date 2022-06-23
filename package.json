@@ -99,7 +99,6 @@
   },
   "scripts": {
     "codecov": "codecov",
-    "certsGenerator": "node ./node_modules/roosevelt/lib/scripts/httpsSelfsigned.js",
     "coverage": "c8 --reporter=text --reporter=lcov mocha --timeout 60000 test/*.js",
     "lint": "standard && eslint test/*.js",
     "test": "mocha --timeout 60000 test/*.js",
