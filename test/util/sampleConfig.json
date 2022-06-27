@@ -39,6 +39,7 @@
     "multiples": "value"
   },
   "toobusy": {
+    "enable": false,
     "maxLagPerRequest": "value",
     "lagCheckInterval": "value"
   },
