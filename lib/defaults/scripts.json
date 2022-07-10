@@ -27,6 +27,10 @@
     "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
+  "certGen": {
+    "value": "node ./node_modules/roosevelt/lib/scripts/httpsSelfsigned.js",
+    "priority": "error"
+  },
   "config-audit": {
     "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "error",
