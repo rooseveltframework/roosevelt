@@ -24,7 +24,7 @@ describe('css preprocessors', () => {
     htmlValidator: {
       enable: false
     },
-    appDir: appDir,
+    appDir,
     generateFolderStructure: true
   }
   const file1 = `

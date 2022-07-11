@@ -34,7 +34,7 @@ describe('error pages', function () {
   it('should render the default 404 page if there is a request for an invalid route', function (done) {
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       viewEngine: [
         'html: teddy'
@@ -75,7 +75,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       errorPages: {
         notFound: '404test.js'
@@ -115,7 +115,7 @@ describe('error pages', function () {
   it('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', function (done) {
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       errorPages: {
         internalServerError: '500test.js'
@@ -155,7 +155,7 @@ describe('error pages', function () {
   it('should render the default 500 error page if an error has occured on the server', function (done) {
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -192,7 +192,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       toobusy: {
@@ -239,7 +239,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       errorPages: {
         serviceUnavailable: '503test.js'
@@ -291,7 +291,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -354,7 +354,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
@@ -414,7 +414,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       https: {
         enable: true,
@@ -478,7 +478,7 @@ describe('error pages', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)

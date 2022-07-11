@@ -9,7 +9,7 @@ const roosevelt = require('../roosevelt')
 describe('routing', () => {
   const appDir = path.join(__dirname, 'app/routesTest')
   const appConfig = {
-    appDir: appDir,
+    appDir,
     mode: 'production',
     generateFolderStructure: true,
     logging: {

@@ -34,7 +34,7 @@ describe('view engines', function () {
   it('should render the teddy test page', function (done) {
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       viewEngine: [
         'html: teddy'
@@ -76,7 +76,7 @@ describe('view engines', function () {
   it('should be able to handle multiple viewEngines', function (done) {
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       viewEngine: [
         'html: teddy',
@@ -103,7 +103,7 @@ describe('view engines', function () {
   it('should be able to use view engines that are functions and do not have an __express function', function (done) {
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       viewEngine: [
         'jcs: ../test/util/jcsTemplate'
@@ -143,7 +143,7 @@ describe('view engines', function () {
     // generate the test app
     generateTestApp({
       generateFolderStructure: true,
-      appDir: appDir,
+      appDir,
       viewEngine: [
         'html: teddy: blah'
       ],
@@ -178,7 +178,7 @@ describe('view engines', function () {
     // generate the test app
     generateTestApp({
       generateFolderStructure: true,
-      appDir: appDir,
+      appDir,
       viewEngine: [
         'html: teddyza'
       ],
@@ -211,7 +211,7 @@ describe('view engines', function () {
     // generate the test app
     generateTestApp({
       generateFolderStructure: true,
-      appDir: appDir,
+      appDir,
       viewEngine: 'html: teddy',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)

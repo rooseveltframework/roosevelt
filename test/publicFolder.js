@@ -42,7 +42,7 @@ describe('Public Folder Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/faviconTest.ico'
@@ -92,7 +92,7 @@ describe('Public Folder Tests', function () {
   it('should allow for no favicon with a null paramter', function (done) {
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: null
@@ -135,7 +135,7 @@ describe('Public Folder Tests', function () {
     let nonExistentWarningBool = false
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/nothingHere.ico'
@@ -187,7 +187,7 @@ describe('Public Folder Tests', function () {
 
     // generate the app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true

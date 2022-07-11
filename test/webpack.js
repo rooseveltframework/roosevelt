@@ -87,7 +87,7 @@ describe('webpack', () => {
         }
       },
       mode: 'production',
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       js: {
         sourceDir: 'js',
@@ -118,7 +118,7 @@ describe('webpack', () => {
       htmlValidator: {
         enable: false
       },
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       js: {
         sourceDir: 'js',
@@ -146,7 +146,7 @@ describe('webpack', () => {
         }
       },
       mode: 'production',
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       js: {
         sourceDir: 'js',
@@ -184,7 +184,7 @@ describe('webpack', () => {
         }
       },
       mode: 'development',
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       htmlValidator: {
         enable: false
@@ -225,7 +225,7 @@ describe('webpack', () => {
         }
       },
       mode: 'development',
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       htmlValidator: {
         enable: false

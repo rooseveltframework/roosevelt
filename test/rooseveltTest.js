@@ -68,7 +68,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       onServerInit: '(app) => {console.log("Server initialized")}'
@@ -107,7 +107,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
@@ -143,7 +143,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true
     }, sOptions)
 
@@ -183,7 +183,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true
     }, sOptions)
 
@@ -226,7 +226,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
@@ -260,7 +260,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
@@ -295,7 +295,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
@@ -333,7 +333,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {console.log("server started " + process.pid)}'
     }, sOptions)
@@ -373,7 +373,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -415,7 +415,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -456,7 +456,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate a app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -489,7 +489,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate a app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       localhostOnly: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
@@ -526,7 +526,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: 'something'
     }, sOptions)
@@ -559,7 +559,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate a app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       localhostOnly: true,
       https: {
@@ -611,7 +611,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the test app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -667,7 +667,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       mode: 'development',
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
@@ -723,7 +723,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       mode: 'development',
       onServerStart: '(app) => {process.send(app.get("params"))}',
@@ -763,7 +763,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -810,7 +810,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true
     }, sOptions)
 
@@ -844,7 +844,7 @@ describe('Roosevelt.js Tests', function () {
 
     // generate the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       https: {
         enable: true,

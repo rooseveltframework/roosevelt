@@ -6,7 +6,7 @@ const errorPage = fs.readFileSync(path.join(__dirname, '../views/5xx.html'))
 module.exports = function (app, err, req, res) {
   const status = err.status || 500
   const model = {
-    status: status,
+    status,
     url: req.url,
     mainDomain: req.headers['x-forwarded-host'] || req.headers.host,
     appVersion: app.get('appVersion')

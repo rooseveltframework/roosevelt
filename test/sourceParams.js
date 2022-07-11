@@ -62,7 +62,7 @@ describe('sourceParams', () => {
 
       // initialize roosevelt
       const app = require('../roosevelt')({
-        appDir: appDir
+        appDir
       })
 
       const appConfig = app.expressApp.get('params')
@@ -136,7 +136,7 @@ describe('sourceParams', () => {
 
       // initialize roosevelt
       const app = require('../roosevelt')({
-        appDir: appDir
+        appDir
       })
 
       const appConfig = app.expressApp.get('params')
