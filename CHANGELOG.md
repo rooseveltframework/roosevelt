@@ -4,6 +4,16 @@
 
 - Put your changes here...
 
+## 0.19.13
+
+- Added script to generate self-signed HTTPS certs:
+  - `npm run certs-generator`: Generates self-signed HTTPS certs for your app.
+    - Default shorthand:
+      - `npm run c`
+    - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certsGenerator.js`
+- Some refactoring.
+- Various dependencies updated.
+
 ## 0.19.12
 
 - Various dependencies updated.

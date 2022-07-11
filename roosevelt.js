@@ -517,11 +517,11 @@ module.exports = (params, schema) => {
   }
 
   return {
-    httpServer: httpServer,
-    httpsServer: httpsServer,
+    httpServer,
+    httpsServer,
     expressApp: app,
-    initServer: initServer,
-    startServer: startServer,
+    initServer,
+    startServer,
     stopServer: gracefulShutdown
   }
 }

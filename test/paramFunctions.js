@@ -41,7 +41,7 @@ describe('Parameter Function Tests', function () {
 
     // generate the app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerInit: '(app) => {process.send("something")}'
     }, options)
@@ -73,7 +73,7 @@ describe('Parameter Function Tests', function () {
 
     // generate the app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onAppExit: '(app) => {process.send("the big exit")}'
     }, options)
@@ -106,7 +106,7 @@ describe('Parameter Function Tests', function () {
 
     // generate the app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onReqStart: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
@@ -151,7 +151,7 @@ describe('Parameter Function Tests', function () {
 
     // generate the app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onReqBeforeRoute: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
@@ -196,7 +196,7 @@ describe('Parameter Function Tests', function () {
 
     // generate the app
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onReqAfterRoute: '(req, res) => {console.log("Testing after: " + res.Testing)}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
@@ -244,7 +244,7 @@ describe('Parameter Function Tests', function () {
 
     // create the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -280,7 +280,7 @@ describe('Parameter Function Tests', function () {
 
     // create the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       errorPages: {
@@ -325,7 +325,7 @@ describe('Parameter Function Tests', function () {
 
     // create the app.js file
     generateTestApp({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       onServerStart: '(app) => {process.send(app.get("routes"))}',
       checkDependencies: false

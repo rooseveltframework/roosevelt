@@ -20,7 +20,7 @@ describe('file creation', () => {
 
     // spin up an app configured to make lots of folders
     const app = require('../roosevelt')({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       logging: {
         methods: {
@@ -61,7 +61,7 @@ describe('file creation', () => {
 
     // spin up an app
     const app = require('../roosevelt')({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: false,
       logging: {
         methods: {
@@ -103,7 +103,7 @@ describe('file creation', () => {
 
     // spin up an app
     const app = require('../roosevelt')({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       versionedPublic: true,
       logging: {

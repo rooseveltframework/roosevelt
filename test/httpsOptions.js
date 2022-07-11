@@ -55,7 +55,7 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should create a https server when https.enable is set to true', function () {
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertion
     assert(stubHttpsServer.called, 'https.Server was not called')
@@ -65,7 +65,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.force = false
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertion
     assert(stubHttpServer.called, 'http.Server was not called')
@@ -77,7 +77,7 @@ describe('HTTPS Server Options Tests', function () {
     config.https.force = true
     config.https.enable = false
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertion
     assert(stubHttpServer.called, 'http.Server was not called')
@@ -90,7 +90,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.force = true
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertion
     assert(stubHttpServer.notCalled, 'http.Server called despite force flag')
@@ -99,7 +99,7 @@ describe('HTTPS Server Options Tests', function () {
   it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', function () {
     const p12text = fs.readFileSync(path.join(appDir, '../.././util/certs/test.p12'), 'utf8')
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
@@ -112,7 +112,7 @@ describe('HTTPS Server Options Tests', function () {
   it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', function () {
     const p12text = fs.readFileSync(path.join(appDir, '../.././util/certs/test.p12'), 'utf8')
     config.https.authInfoPath.p12.p12Path = p12text
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
@@ -129,7 +129,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config - unset p12Path
     config.https.authInfoPath.p12.p12Path = ''
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
@@ -145,7 +145,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config - change key to a string
     config.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.key'))
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
@@ -161,7 +161,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config - change cert to a  string
     config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.crt'))
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
@@ -173,7 +173,7 @@ describe('HTTPS Server Options Tests', function () {
   it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', function () {
     const catext = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'))
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertion
     assert(stubHttpsServer.args[0][0].ca.equals(catext), 'https.Server CA did not match supplied CA')
@@ -187,7 +187,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.caCert = ['test/util/certs/ca.crt', 'test/util/certs/ca-2.crt']
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
@@ -199,7 +199,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.caCert = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'), 'UTF8')
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertion
     assert.strictEqual(stubHttpsServer.args[0][0].ca, config.https.caCert, 'https.Server CA did not match supplied CA')
@@ -213,7 +213,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.caCert = [ca1, ca2]
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
@@ -228,7 +228,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.caCert = [ca1, path.join(appDir, '../.././util/certs/ca-2.crt')]
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
@@ -240,7 +240,7 @@ describe('HTTPS Server Options Tests', function () {
     // change config
     config.https.caCert = 42
 
-    app({ appDir: appDir, ...config })
+    app({ appDir, ...config })
 
     // test assertions
     assert(stubHttpsServer.called, 'https.Server was not called')

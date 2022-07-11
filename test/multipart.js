@@ -36,7 +36,7 @@ describe('multipart/formidable', () => {
 
     // spin up the roosevelt app
     roosevelt({
-      appDir: appDir,
+      appDir,
       generateFolderStructure: true,
       port: 40003,
       logging: {

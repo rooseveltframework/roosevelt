@@ -11,7 +11,7 @@ const roosevelt = require('../roosevelt')
 describe('HTML Minification Tests', function () {
   const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
-    appDir: appDir,
+    appDir,
     port: 41002,
     logging: {
       methods: {
@@ -63,7 +63,7 @@ describe('HTML Minification Tests', function () {
     // initialize test app
     app = roosevelt({
       ...appConfig,
-      onServerStart: onServerStart
+      onServerStart
     })
 
     app.startServer()
@@ -88,7 +88,7 @@ describe('HTML Minification Tests', function () {
     // initialize test app
     app = roosevelt({
       ...appConfig,
-      onServerStart: onServerStart
+      onServerStart
     })
 
     app.startServer()
@@ -117,7 +117,7 @@ describe('HTML Minification Tests', function () {
     // initialize test app
     app = roosevelt({
       ...config,
-      onServerStart: onServerStart
+      onServerStart
     })
 
     app.startServer()
@@ -146,7 +146,7 @@ describe('HTML Minification Tests', function () {
     // initialize test app
     app = roosevelt({
       ...config,
-      onServerStart: onServerStart
+      onServerStart
     })
 
     app.startServer()
@@ -175,7 +175,7 @@ describe('HTML Minification Tests', function () {
     // initialize test app
     app = roosevelt({
       ...config,
-      onServerStart: onServerStart
+      onServerStart
     })
 
     app.startServer()
@@ -220,7 +220,7 @@ describe('HTML Minification Tests', function () {
     // initialize test app
     app = roosevelt({
       ...config,
-      onServerStart: onServerStart
+      onServerStart
     })
 
     app.startServer()
