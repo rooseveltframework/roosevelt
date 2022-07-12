@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.19.14
+
+- Fixed bug that required admin permissions to start an app in Windows.
+
 ## 0.19.13
 
 - Added script to generate self-signed HTTPS certs:
