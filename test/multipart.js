@@ -65,10 +65,10 @@ describe('multipart/formidable', () => {
           // move files to 'complete' directory
           for (const key in files) {
             const file = files[key]
-            const filePath = file.path
+            const filePath = file.filepath
 
             if (typeof filePath === 'string') {
-              fs.copyFileSync(filePath, path.join(completeDir, file.name))
+              fs.copyFileSync(filePath, path.join(completeDir, file.originalFilename))
             }
           }
 
