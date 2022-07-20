@@ -496,7 +496,7 @@ describe('css preprocessors', () => {
         font-size: $fontSize1;
       }
       p1 {
-        width: calc((50px * 5px ) - 100px);
+        width: calc((50 * 5) - 100)px;
         font-size: $fontSize2;
       }
       p2 {
