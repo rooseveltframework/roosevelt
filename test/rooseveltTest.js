@@ -9,7 +9,6 @@ const http = require('http')
 const os = require('os')
 const path = require('path')
 const request = require('supertest')
-const { spawnSync } = require('child_process')
 
 describe('Roosevelt.js Tests', function () {
   // directory for the test app
@@ -635,119 +634,6 @@ describe('Roosevelt.js Tests', function () {
       assert.strictEqual(serverStartedBool, false, 'Roosevelt completely compiled the app and started it even thought we get EADDRINUSE error')
       assert.strictEqual(samePortWarningBool, true, 'Roosevelt did not report that it could not start because something is using the same port that the app wants to use')
       server.close()
-      done()
-    })
-  })
-
-  it('should report that the node_modules directory is missing some packages or that some are out of date', function (done) {
-    // bool var to hold that whether or not a specific warning was outputted
-    let missingOrOODPackageBool = false
-
-    // command for npm
-    let npmName
-    if (os.platform() === 'win32') {
-      npmName = 'npm.cmd'
-    } else {
-      npmName = 'npm'
-    }
-
-    // set up the node_modules and the package.json file
-    fs.mkdirSync(appDir)
-    let packageJSONSource = {
-      dependencies: {
-        colors: '~1.2.0',
-        express: '~4.16.2'
-      }
-    }
-
-    packageJSONSource = JSON.stringify(packageJSONSource)
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawnSync(npmName, ['install', 'express@3.0.0'], { cwd: appDir })
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      mode: 'development',
-      generateFolderStructure: true,
-      onServerStart: '(app) => {process.send(app.get("params"))}'
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on error logs, check if any display the missing or out of date warning log
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('Currently installed npm dependencies do not match')) {
-        missingOrOODPackageBool = true
-      }
-    })
-
-    // when the app finishes init, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when the app exit, check to see if the warning log was made
-    testApp.on('exit', () => {
-      assert.strictEqual(missingOrOODPackageBool, true, 'Roosevelt did not report that there are some missing or out of date packages in the app Directory')
-      done()
-    })
-  })
-
-  it('should not report that the node_modules directory is missing some packages or that some are out of date if checkDependencies is false', function (done) {
-    // bool var to hold that whether or not a specific warning was outputted
-    let missingOrOODPackageBool = false
-
-    // command for npm
-    let npmName
-    if (os.platform() === 'win32') {
-      npmName = 'npm.cmd'
-    } else {
-      npmName = 'npm'
-    }
-
-    // set up the node_modules and the package.json file
-    fs.mkdirSync(appDir)
-    let packageJSONSource = {
-      dependencies: {
-        colors: '~1.2.0',
-        teddy: '~0.4.0'
-      }
-    }
-
-    packageJSONSource = JSON.stringify(packageJSONSource)
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawnSync(npmName, ['install', 'teddy@3.0.0'], { cwd: appDir })
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      generateFolderStructure: true,
-      mode: 'development',
-      onServerStart: '(app) => {process.send(app.get("params"))}',
-      checkDependencies: false
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on error logs, check if any display the missing or out of date warning log
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('Currently installed npm dependencies do not match')) {
-        missingOrOODPackageBool = true
-      }
-    })
-
-    // when the app finishes init, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when the app exit, check to see if the warning log was made
-    testApp.on('exit', () => {
-      assert.strictEqual(missingOrOODPackageBool, false, 'Roosevelt did report that there are some missing or out of date packages in the app Directory even though checkDependencies is false')
       done()
     })
   })
