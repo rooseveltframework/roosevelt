@@ -447,10 +447,6 @@ Resolves to:
     }
     ```
 
-- `checkDependencies`: Whether or not to warn if dependencies are out of date.
-
-  - Default: *[Boolean]* `true`.
-
 - `cores`: By default, Roosevelt will run on 1 CPU, but you can change the number of cores that the app will run on with this parameter.
 
   - Default: *[Number]* `1`.
