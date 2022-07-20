@@ -43,7 +43,6 @@
     "httpsPort": 9857,
     "verbose": false
   },
-  "checkDependencies": true,
   "cores": 1,
   "shutdownTimeout": 30000,
   "https": {

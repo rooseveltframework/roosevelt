@@ -327,8 +327,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       generateFolderStructure: true,
-      onServerStart: '(app) => {process.send(app.get("routes"))}',
-      checkDependencies: false
+      onServerStart: '(app) => {process.send(app.get("routes"))}'
     }, options)
 
     // fork the app.js file and run it as a child process

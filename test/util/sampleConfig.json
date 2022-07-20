@@ -103,7 +103,6 @@
   "favicon": "value",
   "versionedPublic": "value",
   "hostPublic": "value",
-  "checkDependencies": "value",
   "cores": "value",
   "frontendReload": {
     "enable": false,

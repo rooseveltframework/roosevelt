@@ -695,63 +695,6 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should not report that the node_modules directory is missing some packages or that some are out of date if checkDependencies is false', function (done) {
-    // bool var to hold that whether or not a specific warning was outputted
-    let missingOrOODPackageBool = false
-
-    // command for npm
-    let npmName
-    if (os.platform() === 'win32') {
-      npmName = 'npm.cmd'
-    } else {
-      npmName = 'npm'
-    }
-
-    // set up the node_modules and the package.json file
-    fs.mkdirSync(appDir)
-    let packageJSONSource = {
-      dependencies: {
-        colors: '~1.2.0',
-        teddy: '~0.4.0'
-      }
-    }
-
-    packageJSONSource = JSON.stringify(packageJSONSource)
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-    spawnSync(npmName, ['install', 'teddy@3.0.0'], { cwd: appDir })
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageJSONSource)
-
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      generateFolderStructure: true,
-      mode: 'development',
-      onServerStart: '(app) => {process.send(app.get("params"))}',
-      checkDependencies: false
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on error logs, check if any display the missing or out of date warning log
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('Currently installed npm dependencies do not match')) {
-        missingOrOODPackageBool = true
-      }
-    })
-
-    // when the app finishes init, kill it
-    testApp.on('message', () => {
-      testApp.send('stop')
-    })
-
-    // when the app exit, check to see if the warning log was made
-    testApp.on('exit', () => {
-      assert.strictEqual(missingOrOODPackageBool, false, 'Roosevelt did report that there are some missing or out of date packages in the app Directory even though checkDependencies is false')
-      done()
-    })
-  })
-
   it('should be able to close an active connection when the app is closed', function (done) {
     // bool var to hold whether or not the request had finished
     let requestFinishedBool = false
