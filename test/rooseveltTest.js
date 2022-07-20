@@ -9,7 +9,6 @@ const http = require('http')
 const os = require('os')
 const path = require('path')
 const request = require('supertest')
-const { spawnSync } = require('child_process')
 
 describe('Roosevelt.js Tests', function () {
   // directory for the test app
