@@ -21,7 +21,7 @@ describe('file creation', () => {
     // spin up an app configured to make lots of folders
     const app = require('../roosevelt')({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       logging: {
         methods: {
           info: false,
@@ -56,13 +56,13 @@ describe('file creation', () => {
     })
   })
 
-  it('should not generate any files when generateFolderStructure is false', done => {
+  it('should not generate any files when makeBuildArtifacts is false', done => {
     fs.ensureDirSync(appDir)
 
     // spin up an app
     const app = require('../roosevelt')({
       appDir,
-      generateFolderStructure: false,
+      makeBuildArtifacts: false,
       logging: {
         methods: {
           info: false,
@@ -104,7 +104,7 @@ describe('file creation', () => {
     // spin up an app
     const app = require('../roosevelt')({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       versionedPublic: true,
       logging: {
         methods: {

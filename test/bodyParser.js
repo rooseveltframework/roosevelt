@@ -7,7 +7,7 @@ describe('body-parser', () => {
   before(done => {
     // spin up the roosevelt app
     roosevelt({
-      generateFolderStructure: false,
+      makeBuildArtifacts: false,
       port: 40000,
       logging: {
         methods: {

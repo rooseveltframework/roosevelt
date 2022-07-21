@@ -42,7 +42,7 @@ describe('Parameter Function Tests', function () {
     // generate the app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerInit: '(app) => {process.send("something")}'
     }, options)
 
@@ -74,7 +74,7 @@ describe('Parameter Function Tests', function () {
     // generate the app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onAppExit: '(app) => {process.send("the big exit")}'
     }, options)
 
@@ -107,7 +107,7 @@ describe('Parameter Function Tests', function () {
     // generate the app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onReqStart: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -152,7 +152,7 @@ describe('Parameter Function Tests', function () {
     // generate the app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onReqBeforeRoute: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -197,7 +197,7 @@ describe('Parameter Function Tests', function () {
     // generate the app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onReqAfterRoute: '(req, res) => {console.log("Testing after: " + res.Testing)}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -245,7 +245,7 @@ describe('Parameter Function Tests', function () {
     // create the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -281,7 +281,7 @@ describe('Parameter Function Tests', function () {
     // create the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       errorPages: {
         notFound: '404errController.js'
@@ -326,7 +326,7 @@ describe('Parameter Function Tests', function () {
     // create the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("routes"))}'
     }, options)
 

@@ -88,7 +88,7 @@ describe('webpack', () => {
       },
       mode: 'production',
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       js: {
         sourceDir: 'js',
         webpack: {
@@ -119,7 +119,7 @@ describe('webpack', () => {
         enable: false
       },
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       js: {
         sourceDir: 'js',
         webpack: {
@@ -147,7 +147,7 @@ describe('webpack', () => {
       },
       mode: 'production',
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       js: {
         sourceDir: 'js',
         webpack: {
@@ -185,7 +185,7 @@ describe('webpack', () => {
       },
       mode: 'development',
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       htmlValidator: {
         enable: false
       },
@@ -226,7 +226,7 @@ describe('webpack', () => {
       },
       mode: 'development',
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       htmlValidator: {
         enable: false
       },

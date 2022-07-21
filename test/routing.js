@@ -11,7 +11,7 @@ describe('routing', () => {
   const appConfig = {
     appDir,
     mode: 'production',
-    generateFolderStructure: true,
+    makeBuildArtifacts: true,
     logging: {
       methods: {
         http: false,

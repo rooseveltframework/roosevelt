@@ -35,7 +35,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       viewEngine: [
         'html: teddy'
       ],
@@ -76,7 +76,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       errorPages: {
         notFound: '404test.js'
       },
@@ -116,7 +116,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       errorPages: {
         internalServerError: '500test.js'
       },
@@ -156,7 +156,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -193,7 +193,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       toobusy: {
         maxLagPerRequest: 10,
@@ -240,7 +240,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       errorPages: {
         serviceUnavailable: '503test.js'
       },
@@ -292,7 +292,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -355,7 +355,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
     }, options)
@@ -415,7 +415,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       https: {
         enable: true,
         port: 43203
@@ -479,7 +479,7 @@ describe('error pages', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 

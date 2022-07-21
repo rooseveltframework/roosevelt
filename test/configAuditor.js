@@ -47,7 +47,7 @@ describe('config auditor', () => {
       method: 'initServer',
       config: {
         mode: 'development',
-        generateFolderStructure: false
+        makeBuildArtifacts: false
       }
     })
 

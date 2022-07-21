@@ -21,7 +21,7 @@ describe('HTML Minification Tests', function () {
         verbose: false
       }
     },
-    generateFolderStructure: true,
+    makeBuildArtifacts: true,
     viewEngine: 'html:teddy',
     hostPublic: false, // this line gives us free coverage of an unrelated warning
     htmlMinifier: {
