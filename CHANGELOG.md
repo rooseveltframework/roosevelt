@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.20.0
+
+- Renamed `generateFolderStructure` to `makeBuildArtifacts`.
+- Removed `checkDependencies`.
+
 ## 0.19.14
 
 - Fixed bug that required admin permissions to start an app in Windows.

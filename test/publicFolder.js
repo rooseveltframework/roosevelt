@@ -43,7 +43,7 @@ describe('Public Folder Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/faviconTest.ico'
     }, options)
@@ -93,7 +93,7 @@ describe('Public Folder Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: null
     }, options)
@@ -136,7 +136,7 @@ describe('Public Folder Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/nothingHere.ico'
     }, options)
@@ -188,7 +188,7 @@ describe('Public Folder Tests', function () {
     // generate the app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true
     }, options)

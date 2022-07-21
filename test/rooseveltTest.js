@@ -68,7 +68,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
@@ -107,7 +107,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
@@ -143,7 +143,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, sOptions)
 
     // bool var to see that a message was not send back by a call back and that folders exists
@@ -183,7 +183,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -226,7 +226,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -260,7 +260,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -295,7 +295,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -333,7 +333,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {console.log("server started " + process.pid)}'
     }, sOptions)
 
@@ -373,7 +373,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -415,7 +415,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -456,7 +456,7 @@ describe('Roosevelt.js Tests', function () {
     // generate a app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -489,7 +489,7 @@ describe('Roosevelt.js Tests', function () {
     // generate a app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       localhostOnly: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -526,7 +526,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: 'something'
     }, sOptions)
 
@@ -559,7 +559,7 @@ describe('Roosevelt.js Tests', function () {
     // generate a app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       localhostOnly: true,
       https: {
         enable: true,
@@ -611,7 +611,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -650,7 +650,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -697,7 +697,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -731,7 +731,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       https: {
         enable: true,
         port: 43203,

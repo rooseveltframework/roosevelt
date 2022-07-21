@@ -382,7 +382,7 @@ module.exports = (params, schema) => {
     function startupCallback (proto, port) {
       return async function () {
         function finalMessages () {
-          logger.info('🎧', `${appName} ${proto.trim()} server listening on port ${port} (${appEnv} mode)`.bold)
+          logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
           if (params.localhostOnly) {
             logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
           }
@@ -408,7 +408,7 @@ module.exports = (params, schema) => {
 
             // spin up the reload server
             await reloadServer.startWebSocketServer()
-            logger.log('🎧', `Frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`.bold)
+            logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
             finalMessages()
           } catch (e) {
             logger.error(e)

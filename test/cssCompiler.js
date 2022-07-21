@@ -25,7 +25,7 @@ describe('css preprocessors', () => {
       enable: false
     },
     appDir,
-    generateFolderStructure: true
+    makeBuildArtifacts: true
   }
   const file1 = `
     body {

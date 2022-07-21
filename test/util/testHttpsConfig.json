@@ -1,6 +1,6 @@
 {
   "port": 1234,
-  "generateFolderStructure": false,
+  "makeBuildArtifacts": false,
   "logging": {
     "methods": {
       "http": false,

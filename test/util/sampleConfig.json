@@ -1,7 +1,7 @@
 {
   "port": "value",
   "mode": "production",
-  "generateFolderStructure": false,
+  "makeBuildArtifacts": false,
   "localhostOnly": "value",
   "logging": {
     "methods": {

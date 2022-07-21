@@ -2,7 +2,7 @@
   "port": 43711,
   "mode": "production",
   "enableCLIFlags": true,
-  "generateFolderStructure": false,
+  "makeBuildArtifacts": false,
   "localhostOnly": false,
   "logging": {
     "methods": {

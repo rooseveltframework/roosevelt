@@ -35,7 +35,7 @@ describe('view engines', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       viewEngine: [
         'html: teddy'
       ],
@@ -77,7 +77,7 @@ describe('view engines', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       viewEngine: [
         'html: teddy',
         'jcs: ../test/util/jcsTemplate'
@@ -104,7 +104,7 @@ describe('view engines', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       viewEngine: [
         'jcs: ../test/util/jcsTemplate'
       ],
@@ -142,7 +142,7 @@ describe('view engines', function () {
 
     // generate the test app
     generateTestApp({
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       appDir,
       viewEngine: [
         'html: teddy: blah'
@@ -177,7 +177,7 @@ describe('view engines', function () {
 
     // generate the test app
     generateTestApp({
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       appDir,
       viewEngine: [
         'html: teddyza'
@@ -210,7 +210,7 @@ describe('view engines', function () {
   it('should be able to set the viewEngine if it was just a string', function (done) {
     // generate the test app
     generateTestApp({
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       appDir,
       viewEngine: 'html: teddy',
       onServerStart: '(app) => {process.send(app.get("params"))}'

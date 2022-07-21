@@ -87,7 +87,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['a.html']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -113,7 +113,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['a']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -134,7 +134,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {},
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -152,11 +152,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if generateFolderStructure is false', function (done) {
+  it('should not create a templates folder if makeBuildArtifacts is false', function (done) {
     generateTestApp({
       appDir,
       clientViews: {},
-      generateFolderStructure: false
+      makeBuildArtifacts: false
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -182,7 +182,7 @@ describe('Views Bundler Tests', function () {
           'output.js': []
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -208,7 +208,7 @@ describe('Views Bundler Tests', function () {
           'output.js': null
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -234,7 +234,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['fake.html']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -260,7 +260,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['bad.html']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -291,7 +291,7 @@ describe('Views Bundler Tests', function () {
         },
         output: 'js'
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -317,7 +317,7 @@ describe('Views Bundler Tests', function () {
         },
         minify: true
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -358,7 +358,7 @@ describe('Views Bundler Tests', function () {
         },
         minify: false
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -400,7 +400,7 @@ describe('Views Bundler Tests', function () {
         minify: true,
         minifyOptions
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -441,7 +441,7 @@ describe('Views Bundler Tests', function () {
         },
         minifyOptions
       },
-      generateFolderStructure: true,
+      makeBuildArtifacts: true,
       onClientViewsProcess: '(template) => { return template + "<div>Appended div!</div>" }'
     }, options)
 
@@ -483,7 +483,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['a.html']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -514,7 +514,7 @@ describe('Views Bundler Tests', function () {
           'foobar.js': ['a.html']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -549,7 +549,7 @@ describe('Views Bundler Tests', function () {
         exposeAll: true,
         blocklist
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -591,7 +591,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -631,7 +631,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -666,7 +666,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -702,7 +702,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -739,7 +739,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['nested']
         }
       },
-      generateFolderStructure: true
+      makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })

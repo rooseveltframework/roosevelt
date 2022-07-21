@@ -37,7 +37,7 @@ describe('validator usage', () => {
     // spin up the roosevelt app
     roosevelt({
       mode: 'development',
-      generateFolderStructure: false,
+      makeBuildArtifacts: false,
       port: 40001,
       logging: {
         methods: {

@@ -16,7 +16,7 @@ describe('frontend reload', () => {
       }
     },
     mode: 'development',
-    generateFolderStructure: false,
+    makeBuildArtifacts: false,
     htmlValidator: {
       enable: false
     },

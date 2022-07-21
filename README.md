@@ -123,11 +123,11 @@ To do that:
 
   ```javascript
   require('roosevelt')({
-    'generateFolderStructure': true
+    'makeBuildArtifacts': true
   }).startServer()
   ```
 
-- Then `node app.js`. If the `generateFolderStructure` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
+- Then `node app.js`. If the `makeBuildArtifacts` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
 
 ## Available npm scripts
 
@@ -222,7 +222,7 @@ const schema = {
   }
 }
 require('roosevelt')({
-  'generateFolderStructure': true
+  'makeBuildArtifacts': true
 }, schema).startServer()
 ```
 
@@ -325,7 +325,7 @@ Resolves to:
 
   - Default: *[Boolean]* `true`.
 
-- `generateFolderStructure`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
+- `makeBuildArtifacts`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
 
   - Default: *[Boolean]* `false`.
 
@@ -1235,6 +1235,7 @@ Note: When a custom preprocessor is defined in this way it will override the sel
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.19.x](https://github.com/rooseveltframework/roosevelt/blob/aa10ea86f986f624bef56aa2f02ade5b6c551e13/README.md)*
 - *[0.18.x](https://github.com/rooseveltframework/roosevelt/blob/3bdd5146b468c4c6ccfa0b76b0f94f19f0b4fa19/README.md)*
 - *[0.17.x](https://github.com/rooseveltframework/roosevelt/blob/18eae61db07704e5cbf02cbb4e0a998f7e34fa2c/README.md)*
 - *[0.16.x](https://github.com/rooseveltframework/roosevelt/blob/b33046c0281084a2dc0cde26dc38c2a538484c57/README.md)*
