@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Some error message copyediting.
 
 ## 0.20.0
 
