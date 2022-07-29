@@ -28,6 +28,7 @@ Some notable features:
 - [Create and run a Roosevelt app](https://github.com/rooseveltframework/roosevelt#create-and-run-a-roosevelt-app)
   - [Using the Roosevelt app generator](https://github.com/rooseveltframework/roosevelt#using-the-roosevelt-app-generator)
   - [Create a Roosevelt app manually](https://github.com/rooseveltframework/roosevelt#create-a-roosevelt-app-manually)
+    - [Use Roosevelt as a static site generator](https://github.com/rooseveltframework/roosevelt#use-roosevelt-as-a-static-site-generator)
   - [Available npm scripts](https://github.com/rooseveltframework/roosevelt#available-npm-scripts)
   - [Available command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments)
   - [Combining npm scripts and command line arguments](https://github.com/rooseveltframework/roosevelt#combining-npm-scripts-and-command-line-arguments)
@@ -128,6 +129,16 @@ To do that:
   ```
 
 - Then `node app.js`. If the `makeBuildArtifacts` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
+
+### Use Roosevelt as a static site generator
+
+Same steps as above, except set `makeBuildArtifacts` to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
+
+  ```javascript
+  require('roosevelt')({
+    'makeBuildArtifacts': 'staticsOnly'
+  }).init()
+  ```
 
 ## Available npm scripts
 
@@ -330,6 +341,8 @@ Resolves to:
   - Default: *[Boolean]* `false`.
 
     - Will be set to `true` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
+
+    - Can also accept a value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
 
   - This parameter is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). See [create a Roosevelt app manually](https://github.com/rooseveltframework/roosevelt#create-a-roosevelt-app-manually) for an example.
 
@@ -1190,6 +1203,7 @@ Additionally the Roosevelt constructor returns the following object:
 | `reloadHttpServer`       | *[Object]* The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `reloadHttpsServer`       | *[Object]* The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `initServer(callback)`   | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. Takes an optional callback. |
+| `init`                   | *[Method]* Shorthand for `initServer`. |
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 | `stopServer(close)`      | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
 
