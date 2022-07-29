@@ -4,6 +4,12 @@
 
 - Some error message copyediting.
 
+## 0.20.1
+
+- `makeBuildArtifacts` will now accept a new value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
+- `initServer` can now also be called as `init` instead.
+- Various dependencies updated.
+
 ## 0.20.0
 
 - Renamed `generateFolderStructure` to `makeBuildArtifacts`.

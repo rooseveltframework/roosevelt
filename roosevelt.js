@@ -507,6 +507,7 @@ module.exports = (params, schema) => {
     httpsServer,
     expressApp: app,
     initServer,
+    init: initServer,
     startServer,
     stopServer: gracefulShutdown
   }
