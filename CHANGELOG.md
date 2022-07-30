@@ -12,7 +12,9 @@
 
 ## 0.20.0
 
-- Renamed `generateFolderStructure` to `makeBuildArtifacts`.
+- Breaking: Renamed `generateFolderStructure` to `makeBuildArtifacts`.
+- Various dependencies updated.
+  - Breaking: Among them, `formidable` was updated which is a breaking change for any app that takes file uploads as [property names in req.files have been renamed](https://github.com/node-formidable/formidable/blob/master/CHANGELOG.md#200), most notably `file.path` is now `file.filepath` and `file.name` is now `file.originalname`.
 - Removed `checkDependencies`.
 
 ## 0.19.14
