@@ -71,10 +71,15 @@
     "serviceUnavailable": "value"
   },
   "staticsRoot": "value",
-  "htmlMinifier": {
-    "enable": "value",
-    "exceptionRoutes": "value",
-    "options": "value"
+  "html": {
+    "sourcePath": "pages",
+    "models": {},
+    "output": "",
+    "minifier": {
+      "enable": "value",
+      "exceptionRoutes": "value",
+      "options": "value"
+    }
   },
   "css": {
     "sourcePath": "value",

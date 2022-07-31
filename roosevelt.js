@@ -52,7 +52,11 @@ module.exports = (params, schema) => {
   const appName = app.get('appName')
   const appEnv = app.get('env')
 
-  logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
+  if (params.makeBuildArtifacts === 'staticsOnly') {
+    logger.info('💭', `Building ${appName} static site...`.bold)
+  } else {
+    logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
+  }
 
   const httpsParams = params.https
 
@@ -193,7 +197,6 @@ module.exports = (params, schema) => {
     })
   }
 
-  // Initialize Roosevelt app middleware and prepare static css,js
   function initServer (cb) {
     if (initialized) {
       return cb()
@@ -202,17 +205,15 @@ module.exports = (params, schema) => {
 
     require('./lib/generateSymlinks')(app)
 
-    // Inject reload javascript HTML tag
-    require('./lib/injectReload')(app)
+    require('./lib/injectReload')(app) // inject's reload's <script> tag
 
-    // Minify HTML
     require('./lib/htmlMinifier')(app)
 
-    preprocessCss()
+    preprocessStaticPages()
 
-    require('./lib/isomorphicControllersFinder')(app)
-
-    require('./lib/viewsBundler')(app)
+    function preprocessStaticPages () {
+      require('./lib/preprocessStaticPages')(app, preprocessCss)
+    }
 
     function preprocessCss () {
       require('./lib/preprocessCss')(app, bundleJs)
@@ -246,6 +247,10 @@ module.exports = (params, schema) => {
         cb()
       }
     }
+
+    require('./lib/isomorphicControllersFinder')(app)
+
+    require('./lib/viewsBundler')(app)
   }
 
   // Parse routes of app and router level routes

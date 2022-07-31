@@ -70,6 +70,8 @@ describe('sourceParams', () => {
       // do some param post-processing that matches what we expect from roosevelt
       pkg.rooseveltConfig.staticsRoot = path.join(appDir, pkg.rooseveltConfig.staticsRoot)
       pkg.rooseveltConfig.publicFolder = (path.join(appDir, pkg.rooseveltConfig.publicFolder))
+      pkg.rooseveltConfig.html.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.html.sourcePath)
+      pkg.rooseveltConfig.html.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.html.output)
       pkg.rooseveltConfig.css.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.css.sourcePath)
       pkg.rooseveltConfig.css.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.css.output)
       pkg.rooseveltConfig.js.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.js.sourcePath)
@@ -102,6 +104,8 @@ describe('sourceParams', () => {
       // do some param post-processing that matches what we expect from roosevelt
       config.staticsRoot = path.join(config.appDir, config.staticsRoot)
       config.publicFolder = (path.join(config.appDir, config.publicFolder))
+      config.html.sourcePath = path.join(config.staticsRoot, config.html.sourcePath)
+      config.html.output = path.join(config.publicFolder, config.html.output)
       config.css.sourcePath = path.join(config.staticsRoot, config.css.sourcePath)
       config.css.output = path.join(config.publicFolder, config.css.output)
       config.js.sourcePath = path.join(config.staticsRoot, config.js.sourcePath)
@@ -144,6 +148,8 @@ describe('sourceParams', () => {
       // do some param post-processing that matches what we expect from roosevelt
       configJson.staticsRoot = path.join(appDir, configJson.staticsRoot)
       configJson.publicFolder = (path.join(appDir, configJson.publicFolder))
+      configJson.html.sourcePath = path.join(configJson.staticsRoot, configJson.html.sourcePath)
+      configJson.html.output = path.join(configJson.publicFolder, configJson.html.output)
       configJson.css.sourcePath = path.join(configJson.staticsRoot, configJson.css.sourcePath)
       configJson.css.output = path.join(configJson.publicFolder, configJson.css.output)
       configJson.js.sourcePath = path.join(configJson.staticsRoot, configJson.js.sourcePath)

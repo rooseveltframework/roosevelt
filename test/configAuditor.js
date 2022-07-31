@@ -72,7 +72,6 @@ describe('config auditor', () => {
     pkgJson.rooseveltConfig.css.extraParam = true
     pkgJson.rooseveltConfig.errorPages.extraParam = true
     pkgJson.rooseveltConfig.frontendReload.extraParam = true
-    pkgJson.rooseveltConfig.htmlMinifier.extraParam = true
     pkgJson.rooseveltConfig.htmlValidator.extraParam = true
     pkgJson.rooseveltConfig.logging.extraParam = true
     pkgJson.rooseveltConfig.js.extraParam = true
@@ -93,7 +92,6 @@ describe('config auditor', () => {
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.css,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.errorPages,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.frontendReload,'))
-    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlMinifier,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.logging,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js,'))
@@ -139,7 +137,6 @@ describe('config auditor', () => {
     configFile.css.extraParam = true
     configFile.errorPages.extraParam = true
     configFile.frontendReload.extraParam = true
-    configFile.htmlMinifier.extraParam = true
     configFile.htmlValidator.extraParam = true
     configFile.logging.extraParam = true
     configFile.js.extraParam = true
@@ -160,7 +157,6 @@ describe('config auditor', () => {
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.css,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.errorPages,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.frontendReload,'))
-    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlMinifier,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.logging,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js,'))

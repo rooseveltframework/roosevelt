@@ -2,7 +2,16 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.21.0
+
+- Breaking: `htmlMinifier` param renamed and expanded to `html`. You will need to update your Roosevelt config.
+  - Added feature `html.sourcePath`, `html.models`, and `html.output` which lets you generate static HTML pages from the your statics directory by compiling them with a view engine and depositing the output to the public folder at start time.
+- Fixed issue with `symlinks` that would cause symlinking to a file rather than a directory to fail in Windows.
 - Some error message copyediting.
+- Some minor refactoring and documentation fixes.
+- Various dependencies updated.
 
 ## 0.20.1
 

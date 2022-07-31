@@ -24,15 +24,17 @@ describe('HTML Minification Tests', function () {
     makeBuildArtifacts: true,
     viewEngine: 'html:teddy',
     hostPublic: false, // this line gives us free coverage of an unrelated warning
-    htmlMinifier: {
-      enable: true,
-      exceptionRoutes: false,
-      options: {
-        removeComments: true,
-        collapseWhitespace: true,
-        collapseBooleanAttributes: true,
-        removeAttributeQuotes: true,
-        removeEmptyAttributes: true
+    html: {
+      minifier: {
+        enable: true,
+        exceptionRoutes: false,
+        options: {
+          removeComments: true,
+          collapseWhitespace: true,
+          collapseBooleanAttributes: true,
+          removeAttributeQuotes: true,
+          removeEmptyAttributes: true
+        }
       }
     }
   }
@@ -76,7 +78,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, appConfig.htmlMinifier.options)
+            const testMinify = minify(res.text, appConfig.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -101,7 +103,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, appConfig.htmlMinifier.options)
+            const testMinify = minify(res.text, appConfig.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -109,10 +111,10 @@ describe('HTML Minification Tests', function () {
     }
   })
 
-  it('should not minify HTML when "htmlMinifier.enable" param is set to false', function (done) {
+  it('should not minify HTML when "html.minifier.enable" param is set to false', function (done) {
     // copy root config and disable HTML minifier
     const config = JSON.parse(JSON.stringify(appConfig))
-    config.htmlMinifier.enable = false
+    config.html.minifier.enable = false
 
     // initialize test app
     app = roosevelt({
@@ -130,7 +132,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinifier.options)
+            const testMinify = minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
           }
           done()
@@ -159,7 +161,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinifier.options)
+            const testMinify = minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
           }
           done()
@@ -170,7 +172,7 @@ describe('HTML Minification Tests', function () {
   it('should not minify HTML when requesting exceptionRoutes (string format)', function (done) {
     // copy root config and set exceptionRoutes as string
     const config = JSON.parse(JSON.stringify(appConfig))
-    config.htmlMinifier.exceptionRoutes = '/minify'
+    config.html.minifier.exceptionRoutes = '/minify'
 
     // initialize test app
     app = roosevelt({
@@ -188,7 +190,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinifier.options)
+            const testMinify = minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionRoutes by testing another URL
@@ -204,7 +206,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinifier.options)
+            const testMinify = minify(res.text, config.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -215,7 +217,7 @@ describe('HTML Minification Tests', function () {
   it('should not minify HTML when requesting exceptionRoutes (array format)', function (done) {
     // copy root config and set exceptionRoutes as array
     const config = JSON.parse(JSON.stringify(appConfig))
-    config.htmlMinifier.exceptionRoutes = ['/minify']
+    config.html.minifier.exceptionRoutes = ['/minify']
 
     // initialize test app
     app = roosevelt({
@@ -233,7 +235,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinifier.options)
+            const testMinify = minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionRoutes by testing another URL
@@ -249,7 +251,7 @@ describe('HTML Minification Tests', function () {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.htmlMinifier.options)
+            const testMinify = minify(res.text, config.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
