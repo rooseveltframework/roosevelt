@@ -534,15 +534,15 @@ Resolves to:
 
 - `viewEngine`: What templating engine to use, formatted as *[String]* `"fileExtension: nodeModule"`.
 
-- Default: *[String]* `"none"`.
+  - Default: *[String]* `"none"`.
 
-- Will be set to `"html: teddy"` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
+  - Will be set to `"html: teddy"` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
 
-- Also by default when using the generator, the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
+  - Also by default when using the generator, the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
 
-- To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
+  - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
 
-- Example configuration using multiple templating systems: *[Object]*
+  - Example configuration using multiple templating systems: *[Object]*
 
       ```json
       {
@@ -588,30 +588,56 @@ Resolves to:
 
   - Default: *[String]* `"statics"`.
 
-- `htmlMinifier`: How you want Roosevelt to minify your HTML:
+- `html`: How you want Roosevelt to handle HTML:
 
-  - `enable`: *[Boolean]* Whether or not to minify HTML.
+  - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
 
-      - Note: Can also be disabled by the `minify` param.
+  - `models`: Data to pass to templates by file path / file name.
+    - Example:
+      ```json
+      {
+        "models": {
+          "index.html": {
+            "some": "data"
+          },
+          "subdirectory/otherFile.html": {
+            "someOther": "data"
+          }
+        }
+      }
+      ```
 
-  - Note: Minification is automatically disabled in development mode.
+  - `output`: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
 
-  - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
+  - `minifier`: How you want Roosevelt to minify your HTML:
 
-  - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
+    - `enable`: *[Boolean]* Whether or not to minify HTML.
+
+        - Note: Can also be disabled by the `minify` param.
+
+    - Note: Minification is automatically disabled in development mode.
+
+    - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
+
+    - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
 
   - Default: *[Object]*
 
       ```json
       {
-        "enable": true,
-        "exceptionRoutes": false,
-        "options": {
-          "removeComments": true,
-          "collapseWhitespace": true,
-          "collapseBooleanAttributes": true,
-          "removeAttributeQuotes": true,
-          "removeEmptyAttributes": true
+        "sourcePath": "pages",
+        "models": {}
+        "output": "",
+        "minifier": {
+          "enable": true,
+          "exceptionRoutes": false,
+          "options": {
+            "removeComments": true,
+            "collapseWhitespace": true,
+            "collapseBooleanAttributes": true,
+            "removeAttributeQuotes": true,
+            "removeEmptyAttributes": true
+          }
         }
       }
       ```
@@ -635,60 +661,60 @@ Resolves to:
   - `minifier`: *[Object]* Params pertaining to CSS minifcation.
 
     - `enable`: *[Boolean]* Whether or not to minify CSS.
-- Note: Can also be disabled by the `minify` param.
+  - Note: Can also be disabled by the `minify` param.
 
-- `options`: *[Object]* Parameters to pass to the CSS minifier [clean-css](https://www.npmjs.com/package/clean-css), a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
+  - `options`: *[Object]* Parameters to pass to the CSS minifier [clean-css](https://www.npmjs.com/package/clean-css), a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
 
-- `allowlist`: Array of CSS files to allowlist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
+  - `allowlist`: Array of CSS files to allowlist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
 
-  - Example array member: *[String]* `example.less:example.min.css` (compiles `example.less` into `example.min.css`).
+    - Example array member: *[String]* `example.less:example.min.css` (compiles `example.less` into `example.min.css`).
 
-- `output`: Subdirectory within `publicFolder` where compiled CSS files will be written to.
+  - `output`: Subdirectory within `publicFolder` where compiled CSS files will be written to.
 
-- `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`. Versioning your static files is useful for resetting your users' browser cache when you release a new version of your app.
+  - `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`. Versioning your static files is useful for resetting your users' browser cache when you release a new version of your app.
 
-  - Default: `null`.
+    - Default: `null`.
 
-  - Example usage (with LESS): *[Object]*
+    - Example usage (with LESS): *[Object]*
+
+        ```json
+          {
+            "fileName": "_version.less",
+            "varName": "appVersion"
+          }
+        ```
+
+    - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
+
+        ```less
+          /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
+        ```
+
+    - Some things to note:
+
+      - If there is already a file there with that name, this will overwrite it, so be careful!
+
+      - It's generally a good idea to add this file to `.gitignore`, since it is a build artifact.
+
+  - Default: *[Object]*
 
       ```json
         {
-          "fileName": "_version.less",
-          "varName": "appVersion"
+          "sourcePath": "css",
+          "compiler": {
+            "enable" : false,
+            "module": "less",
+            "options": {}
+          },
+          "minifier": {
+            "enable": true,
+            "options": {}
+          },
+          "allowlist": null,
+          "output": "css",
+          "versionFile": null
         }
       ```
-
-  - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
-
-      ```less
-        /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
-      ```
-
-  - Some things to note:
-
-    - If there is already a file there with that name, this will overwrite it, so be careful!
-
-    - It's generally a good idea to add this file to `.gitignore`, since it is a build artifact.
-
-- Default: *[Object]*
-
-    ```json
-      {
-        "sourcePath": "css",
-        "compiler": {
-          "enable" : false,
-          "module": "less",
-          "options": {}
-        },
-        "minifier": {
-          "enable": true,
-          "options": {}
-        },
-        "allowlist": null,
-        "output": "css",
-        "versionFile": null
-      }
-    ```
 
 - `js`: *[Object]* How you want Roosevelt to handle module bundling and minifying your frontend JS:
 
@@ -848,7 +874,7 @@ Resolves to:
 
   - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
 
-    - Uses the params you set in `htmlMinifier.options` if empty.
+    - Uses the params you set in `html.minifier.options` if empty.
 
   - Default: *[Object]*
 
@@ -1181,8 +1207,10 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
+| `htmlPath`                           | Full path on the file system to where your app's HTML static page source files are located. |
 | `cssPath`                            | Full path on the file system to where your app's CSS source files are located. |
 | `jsPath`                             | Full path on the file system to where your app's JS source files are located. |
+| `htmlRenderedOutput`                 | Full path on the file system to where your app's rendered and minified staic HTML files are located. |
 | `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
 | `clientViewsBundledOutput`           | Full path on the file system to where your app's client-exposed views folder is located. |
 | `env`                                | Either `development` or `production`.                        |

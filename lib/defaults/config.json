@@ -66,14 +66,19 @@
   },
   "routePrefix": null,
   "staticsRoot": "statics",
-  "htmlMinifier": {
-    "enable": true,
-    "exceptionRoutes": false,
-    "options": {
-      "collapseWhitespace": true,
-      "collapseBooleanAttributes": true,
-      "removeAttributeQuotes": true,
-      "removeEmptyAttributes": true
+  "html": {
+    "sourcePath": "pages",
+    "models": {},
+    "output": "",
+    "minifier": {
+      "enable": true,
+      "exceptionRoutes": false,
+      "options": {
+        "collapseWhitespace": true,
+        "collapseBooleanAttributes": true,
+        "removeAttributeQuotes": true,
+        "removeEmptyAttributes": true
+      }
     }
   },
   "css": {

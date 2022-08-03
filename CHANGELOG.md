@@ -2,7 +2,16 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.21.0
+
+- Breaking: `htmlMinifier` param renamed and expanded to `html`. You will need to update your Roosevelt config.
+  - Added feature `html.sourcePath`, `html.models`, and `html.output` which lets you generate static HTML pages from the your statics directory by compiling them with a view engine and depositing the output to the public folder at start time.
+- Fixed issue with `symlinks` that would cause symlinking to a file rather than a directory to fail in Windows.
 - Some error message copyediting.
+- Some minor refactoring and documentation fixes.
+- Various dependencies updated.
 
 ## 0.20.1
 
@@ -12,7 +21,9 @@
 
 ## 0.20.0
 
-- Renamed `generateFolderStructure` to `makeBuildArtifacts`.
+- Breaking: Renamed `generateFolderStructure` to `makeBuildArtifacts`.
+- Various dependencies updated.
+  - Breaking: Among them, `formidable` was updated which is a breaking change for any app that takes file uploads as [property names in req.files have been renamed](https://github.com/node-formidable/formidable/blob/master/CHANGELOG.md#200), most notably `file.path` is now `file.filepath` and `file.name` is now `file.originalname`.
 - Removed `checkDependencies`.
 
 ## 0.19.14
