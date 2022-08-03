@@ -135,9 +135,23 @@ To do that:
 Same steps as above, except set `makeBuildArtifacts` to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
 
   ```javascript
-  require('roosevelt')({
-    'makeBuildArtifacts': 'staticsOnly'
-  }).init()
+require('roosevelt')({
+  makeBuildArtifacts: 'staticsOnly'
+}).init()
+  ```
+
+You will also need to set view engine if you want to render HTML templates into static pages and supply data to the templates:
+
+  ```javascript
+require('roosevelt')({
+  makeBuildArtifacts: 'staticsOnly',
+  viewEngine: 'html: teddy',
+  onServerInit: (app) => {
+    app.get('htmlModels')['index.html'] = {
+      hello: 'world!'
+    }
+  }
+}).init()
   ```
 
 ## Available npm scripts
@@ -244,6 +258,7 @@ This will override the default for any recognized Roosevelt parameter.
 # Default directory structure
 
 - `app.js`: Entry point to your application. Feel free to rename this, but make sure to update `package.json`'s reference to it.
+- `lib`: Random includable JS files that don't belong in any of the other directories. It has been added to the `require` stack so you can simply `require('lib/someFile')`.
 - `mvc`: Folder for models, views, and controllers. All configurable via parameters (see below).
   - `controllers`: Folder for controller files.
   - `models`: Folder for model files.
@@ -252,6 +267,7 @@ This will override the default for any recognized Roosevelt parameter.
 - `package.json`: A file common to most Node.js apps for configuring your app.
 - `public`: All contents within this folder will be exposed as static files.
 - `statics`: Folder for source CSS, image, JS, and other static files. By default some of the contents of this folder are symlinked to from `public`, which you can configure (see below).
+  - `pages`: Folder for HTML templates that get rendered and minified into static pages.
   - `css`: Folder for source CSS files.
   - `images`: Folder for source image files.
   - `js`: Folder for source JS files.
@@ -488,39 +504,39 @@ Resolves to:
       - Default: *[Number]* `43733`.
 
     - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-- Default: `undefined`.
+  - Default: `undefined`.
 
-- Object members:
+  - Object members:
 
-  - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
-      - Object members:
+    - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
+        - Object members:
 
-        - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
-    - Default: `undefined`.
+          - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
+      - Default: `undefined`.
 
-  - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
-      - Object members:
+    - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
+        - Object members:
 
-        - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
-    - Default: `undefined`.
+          - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
+      - Default: `undefined`.
 
-    - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-        - Default: `undefined`.
+      - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+          - Default: `undefined`.
 
-    - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
-- Default: `undefined`.
+      - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
+  - Default: `undefined`.
 
-- `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
-    - Default: `undefined`.
+  - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
+      - Default: `undefined`.
 
-    - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
-- Default: `undefined`.
+      - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
+  - Default: `undefined`.
 
-- `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
+  - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
 
-  - Default:  `undefined`.
+    - Default:  `undefined`.
 
-- Default: *[Object]* `{}`.
+  - Default: *[Object]* `{}`.
 
 ## MVC parameters
 
@@ -1277,6 +1293,7 @@ Note: When a custom preprocessor is defined in this way it will override the sel
 
 # Documentation for previous versions of Roosevelt
 
+- *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*
 - *[0.19.x](https://github.com/rooseveltframework/roosevelt/blob/aa10ea86f986f624bef56aa2f02ade5b6c551e13/README.md)*
 - *[0.18.x](https://github.com/rooseveltframework/roosevelt/blob/3bdd5146b468c4c6ccfa0b76b0f94f19f0b4fa19/README.md)*
 - *[0.17.x](https://github.com/rooseveltframework/roosevelt/blob/18eae61db07704e5cbf02cbb4e0a998f7e34fa2c/README.md)*
