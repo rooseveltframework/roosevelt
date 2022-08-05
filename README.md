@@ -154,6 +154,8 @@ require('roosevelt')({
 }).init()
   ```
 
+Note: If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
+
 ## Available npm scripts
 
 Roosevelt apps created with the app generator come with the following notable [npm scripts](https://docs.npmjs.com/misc/scripts) prepopulated in [package.json](https://docs.npmjs.com/files/package.json):
@@ -622,6 +624,7 @@ Resolves to:
         }
       }
       ```
+    - Note: If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
 
   - `output`: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
 

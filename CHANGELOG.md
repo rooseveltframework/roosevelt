@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.21.1
+
+- Static site generator can now be supplied models by file instead of by configuration. If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead.
+- Static site generator will now run the HTML validator against rendered templates.
+- Bumped CI Node versions.
+
 ## 0.21.0
 
 - Breaking: `htmlMinifier` param renamed and expanded to `html`. You will need to update your Roosevelt config.
