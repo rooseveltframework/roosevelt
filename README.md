@@ -767,48 +767,48 @@ Resolves to:
           ]
           ```
 
-          - Webpack bundle example declaring one bundle only used in `dev` mode:
+        - Webpack bundle example declaring one bundle only used in `dev` mode:
 
-              ```json
-              [
-                {
-                  "env": "dev",
-                  "config": {
-                    "entry": "${js.sourcePath}/main.js",
-                    "output": {
-                      "path": "${publicFolder}/js",
-                      "filename": "bundle.js"
-                    }
+            ```json
+            [
+              {
+                "env": "dev",
+                "config": {
+                  "entry": "${js.sourcePath}/main.js",
+                  "output": {
+                    "path": "${publicFolder}/js",
+                    "filename": "bundle.js"
                   }
                 }
-              ]
-              ```
+              }
+            ]
+            ```
 
-          - Webpack bundle example declaring multiple bundles:
+        - Webpack bundle example declaring multiple bundles:
 
-              ```json
-              [
-                {
-                  "config": {
-                    "entry": "${js.sourcePath}/main.js",
-                    "output": {
-                      "path": "${publicFolder}/js",
-                      "filename": "bundle.js"
-                    }
+            ```json
+            [
+              {
+                "config": {
+                  "entry": "${js.sourcePath}/main.js",
+                  "output": {
+                    "path": "${publicFolder}/js",
+                    "filename": "bundle.js"
                   }
-                },
-                {
-                  "config": {
-                    "entry": "${js.sourcePath}/moreStuff.js",
-                    "output": {
-                      "path": "${publicFolder}/js",
-                      "filename": "bundle2.js"
-                    }
+                }
+              },
+              {
+                "config": {
+                  "entry": "${js.sourcePath}/moreStuff.js",
+                  "output": {
+                    "path": "${publicFolder}/js",
+                    "filename": "bundle2.js"
                   }
-                },
-                etc...
-              ]
-              ```
+                }
+              },
+              etc...
+            ]
+            ```
 
   - Default: *[Object]*
 
