@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.2
+
+- Fixed bug where the config auditor would complain about the `makeBuildArtifacts` param being set to string.
+- Various dependencies updated.
+
 ## 0.21.1
 
 - Static site generator can now be supplied models by file instead of by configuration. If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead.
