@@ -7,6 +7,7 @@
 ## 0.21.2
 
 - Fixed bug where the config auditor would complain about the `makeBuildArtifacts` param being set to string.
+- Static site generator will now run the HTML validator against rendered templates in dev mode only.
 - Various dependencies updated.
 
 ## 0.21.1
