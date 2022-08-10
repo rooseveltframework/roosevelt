@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.3
+
+- When `versionedPublic` is true, Roosevelt will no longer deposit static HTML pages into the versioned directory.
+- Various dependencies updated.
+
 ## 0.21.2
 
 - Fixed bug where the config auditor would complain about the `makeBuildArtifacts` param being set to string.
