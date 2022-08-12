@@ -73,6 +73,8 @@
   "staticsRoot": "value",
   "html": {
     "sourcePath": "pages",
+    "allowlist": null,
+    "blocklist": null,
     "models": {},
     "output": "",
     "minifier": {

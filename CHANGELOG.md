@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.21.4
+
+- Added `allowlist` and `blocklist` to the static site generator feature.
+- Fixed bug with the static site generator feature that required absolute paths for including child templates in a main template.
+- Various dependencies updated.
+
 ## 0.21.3
 
 - When `versionedPublic` is true, Roosevelt will no longer deposit static HTML pages into the versioned directory.
