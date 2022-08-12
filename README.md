@@ -610,6 +610,10 @@ Resolves to:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
 
+  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced.
+
+  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip.
+
   - `models`: Data to pass to templates by file path / file name.
     - Example:
       ```json
@@ -645,7 +649,9 @@ Resolves to:
       ```json
       {
         "sourcePath": "pages",
-        "models": {}
+        "allowlist": null,
+        "blocklist": null,
+        "models": {},
         "output": "",
         "minifier": {
           "enable": true,
