@@ -610,9 +610,9 @@ Resolves to:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
 
-  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced.
+  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
 
-  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip.
+  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
 
   - `models`: Data to pass to templates by file path / file name.
     - Example:

@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.5
+
+- `allowlist` and `blocklist` in static site generator feature now supports wildcard matching, e.g. `dir/*`.
+- Various dependencies updated.
+
 ## 0.21.4
 
 - Added `allowlist` and `blocklist` to the static site generator feature.
