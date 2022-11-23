@@ -2,7 +2,7 @@
 
 ## Manual testing
 
-- Create a Roosevelt sample app using generator-roosevelt or mkroosevelt.
+- Create a Roosevelt sample app using `generator-roosevelt` or `mkroosevelt`.
 - Link your sample app's dependency to your local clone of Roosevelt in your sample app's package.json dependency list.
 
 ## Before opening a pull request

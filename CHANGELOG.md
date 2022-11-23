@@ -2,6 +2,7 @@
 
 ## Next version
 
+- `allowlist` in CSS preprocessor now supports wildcard matching, e.g. `dir/*`.
 - Put your changes here...
 
 ## 0.21.5
