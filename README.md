@@ -176,11 +176,11 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run prodproxy`
     - `npm run x`
   - Script is short for: `nodemon app.js --production-proxy`
-- `npm run certs-generator`: Generates self-signed HTTPS certs for your app.
+- `npm run generate-certs`: Generates self-signed HTTPS certs for your app.
   - Default shorthand:
     - `npm run c`
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certsGenerator.js`
-- `npm run config-audit`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
+- `npm run audit-config`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
   - Default shorthand:
     - `npm run a`
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/configAuditor.js`
