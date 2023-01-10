@@ -27,7 +27,7 @@
     "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
-  "certs-generator": {
+  "generate-certs": {
     "value": "node ./node_modules/roosevelt/lib/scripts/certsGenerator.js",
     "priority": "error"
   },
@@ -35,7 +35,7 @@
     "value": "node ./node_modules/roosevelt/lib/scripts/certsGenerator.js",
     "priority": "error"
   },
-  "config-audit": {
+  "audit-config": {
     "value": "node ./node_modules/roosevelt/lib/scripts/configAuditor.js",
     "priority": "error",
     "inspect": true

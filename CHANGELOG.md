@@ -5,6 +5,12 @@
 - `allowlist` in CSS preprocessor now supports wildcard matching, e.g. `dir/*`.
 - Put your changes here...
 
+## 0.21.6
+
+- The `certs-generator` script's default name has been changed to `generate-certs`. The config auditor will now expect it to be named that.
+- The `config-audit` script's default name has been changed to `audit-config`. The config auditor will now expect it to be named that.
+- Various dependencies updated.
+
 ## 0.21.5
 
 - `allowlist` and `blocklist` in static site generator feature now supports wildcard matching, e.g. `dir/*`.

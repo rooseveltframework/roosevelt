@@ -101,7 +101,7 @@ describe('config auditor', () => {
 
   it('should detect and complain about a missing script', async () => {
     // delete a script
-    delete pkgJson.scripts['config-audit']
+    delete pkgJson.scripts['audit-config']
 
     // write package.json to app directory
     fs.ensureDirSync(path.join(appDir))
@@ -111,12 +111,12 @@ describe('config auditor', () => {
     const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found the problem
-    assert(stderr.includes('Missing script "config-audit"'))
+    assert(stderr.includes('Missing script "audit-config"'))
   })
 
   it('should detect and complain about an outdated script', async () => {
     // botch a script
-    pkgJson.scripts['config-audit'] = 'node /roosevelt/lol/wrong/place.js'
+    pkgJson.scripts['audit-config'] = 'node /roosevelt/lol/wrong/place.js'
 
     // write package.json to app directory
     fs.ensureDirSync(path.join(appDir))
@@ -126,7 +126,7 @@ describe('config auditor', () => {
     const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found the problem
-    assert(stderr.includes('Detected outdated script "config-audit"'))
+    assert(stderr.includes('Detected outdated script "audit-config"'))
   })
 
   it('should detect and complain about a wide variety of problems in rooseveltConfig.json', async () => {
