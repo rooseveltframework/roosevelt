@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.8
+
+- Added wildcard matching to views bundler feature.
+- Various dependencies updated.
+
 ## 0.21.7
 
 - Fixed CSS preprocessor breaking on Windows when using the default configuration in a newly generated app.
