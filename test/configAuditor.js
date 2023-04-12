@@ -3,7 +3,6 @@
 const appCleaner = require('./util/appCleaner')
 const appGenerator = require('./util/appGenerator')
 const assert = require('assert')
-const execa = require('execa')
 const fs = require('fs-extra')
 const path = require('path')
 
@@ -41,6 +40,8 @@ describe('config auditor', () => {
   })
 
   it('should start the config audit automatically on first app run', async () => {
+    const { execaNode } = await import('execa')
+
     // generate a sample Roosevelt app
     appGenerator({
       location: 'configAudit',
@@ -55,7 +56,7 @@ describe('config auditor', () => {
     fs.writeJSONSync(path.join(appDir, 'package.json'), pkgJson)
 
     // spin up the app
-    const { stdout } = await execa.node(path.join(appDir, 'app.js'))
+    const { stdout } = await execaNode(path.join(appDir, 'app.js'))
 
     // confirm via logging that the audit script started
     assert(stdout.includes('rooseveltConfig audit'), 'Config audit did not start')
@@ -65,6 +66,8 @@ describe('config auditor', () => {
   })
 
   it('should detect and complain about a wide variety of problems in package.json', async () => {
+    const { execaNode } = await import('execa')
+
     // add a whole lot of invalid stuff to a default config
     pkgJson.rooseveltConfig.port = []
     pkgJson.rooseveltConfig.extraParam = true
@@ -83,7 +86,7 @@ describe('config auditor', () => {
     fs.writeJSONSync(path.join(appDir, 'package.json'), pkgJson)
 
     // spin up the auditor script
-    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+    const { stderr } = await execaNode('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found all the problems
     assert(stderr.includes('The type of param "port" should be one of the supported types'))
@@ -100,6 +103,8 @@ describe('config auditor', () => {
   })
 
   it('should detect and complain about a missing script', async () => {
+    const { execaNode } = await import('execa')
+
     // delete a script
     delete pkgJson.scripts['audit-config']
 
@@ -108,13 +113,15 @@ describe('config auditor', () => {
     fs.writeJSONSync(path.join(appDir, 'package.json'), pkgJson)
 
     // spin up the auditor script
-    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+    const { stderr } = await execaNode('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found the problem
     assert(stderr.includes('Missing script "audit-config"'))
   })
 
   it('should detect and complain about an outdated script', async () => {
+    const { execaNode } = await import('execa')
+
     // botch a script
     pkgJson.scripts['audit-config'] = 'node /roosevelt/lol/wrong/place.js'
 
@@ -123,13 +130,15 @@ describe('config auditor', () => {
     fs.writeJSONSync(path.join(appDir, 'package.json'), pkgJson)
 
     // spin up the auditor script
-    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+    const { stderr } = await execaNode('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found the problem
     assert(stderr.includes('Detected outdated script "audit-config"'))
   })
 
   it('should detect and complain about a wide variety of problems in rooseveltConfig.json', async () => {
+    const { execaNode } = await import('execa')
+
     // add a whole lot of invalid stuff to a default config
     configFile.port = []
     configFile.extraParam = true
@@ -148,7 +157,7 @@ describe('config auditor', () => {
     fs.writeJSONSync(path.join(appDir, 'rooseveltConfig.json'), configFile)
 
     // spin up the auditor script
-    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+    const { stderr } = await execaNode('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found all the problems
     assert(stderr.includes('The type of param "port" should be one of the supported types'))
@@ -165,6 +174,8 @@ describe('config auditor', () => {
   })
 
   it('should scan and detect problems in both package.json and rooseveltConfig.json', async () => {
+    const { execaNode } = await import('execa')
+
     // add invalid entries to package and config file
     pkgJson.rooseveltConfig.extraParam = true
     configFile.extraParam = true
@@ -175,7 +186,7 @@ describe('config auditor', () => {
     fs.writeJSONSync(path.join(appDir, 'rooseveltConfig.json'), configFile)
 
     // spin up the auditor script
-    const { stderr } = await execa.node('../../../lib/scripts/configAuditor.js', { cwd: appDir })
+    const { stderr } = await execaNode('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found all the problems
     assert(stderr.includes('Issues have been detected in rooseveltConfig.json'))
