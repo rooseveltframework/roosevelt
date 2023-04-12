@@ -7,6 +7,7 @@
 ## 0.21.8
 
 - Added wildcard matching to views bundler feature.
+- Fixed bug that could cause build artifact generation to crash starting the app.
 - Various dependencies updated.
 
 ## 0.21.7
