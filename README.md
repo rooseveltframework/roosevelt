@@ -175,7 +175,7 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `npm run prodproxy`
     - `npm run x`
-  - Script is short for: `nodemon app.js --production-proxy`
+  - Script is short for: `nodemon app.js --production-proxy-mode`
 - `npm run generate-certs`: Generates self-signed HTTPS certs for your app.
   - Default shorthand:
     - `npm run c`
