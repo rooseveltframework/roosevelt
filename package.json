@@ -42,7 +42,6 @@
     "morgan": "1.10.0",
     "page": "1.11.6",
     "page-express-mapper": "2.0.2",
-    "parent-require": "1.0.0",
     "reload": "3.2.1",
     "roosevelt-logger": "0.2.3",
     "selfsigned": "2.1.1",
@@ -53,6 +52,7 @@
   },
   "devDependencies": {
     "c8": "7.13.0",
+    "chai": "1.x.x",
     "codecov": "3.8.3",
     "eslint": "8.38.0",
     "eslint-plugin-mocha": "10.1.0",
@@ -80,7 +80,10 @@
     "Express",
     "Express.js",
     "framework",
-    "web framework"
+    "web framework",
+    "require",
+    "module",
+    "modules"
   ],
   "preferGlobal": true,
   "_from": "roosevelt@*",
@@ -103,7 +106,7 @@
     "codecov": "codecov",
     "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
     "lint": "standard && eslint test/*.js",
-    "test": "mocha test/*.js",
+    "test": "mocha test/*.js && node_modules/.bin/mocha --reporter spec --require lib/test/bootstrap/node lib/test/*.test.js lib/test/**/*.test.js",
     "test-debug": "mocha --inspect-brk test/*.js"
   },
   "funding": {
