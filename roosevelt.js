@@ -15,9 +15,6 @@ module.exports = (params, schema) => {
   // appDir is either specified by the user or sourced from the parent require
   params.appDir = params.appDir || path.dirname(module.parent.filename)
 
-console.log("****** module.parent")
-console.log(module.parent)
-
   const reloadHttpsOptions = {}
   const servers = []
   const connections = {}
