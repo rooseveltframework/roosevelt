@@ -79,10 +79,7 @@
     "Express",
     "Express.js",
     "framework",
-    "web framework",
-    "require",
-    "module",
-    "modules"
+    "web framework"
   ],
   "preferGlobal": true,
   "_from": "roosevelt@*",
@@ -105,7 +102,7 @@
     "codecov": "codecov",
     "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
     "lint": "standard && eslint test/*.js",
-    "test": "mocha test/*.js && node_modules/.bin/mocha --reporter spec --require lib/test/bootstrap/node lib/test/*.test.js lib/test/**/*.test.js",
+    "test": "mocha test/*.js",
     "test-debug": "mocha --inspect-brk test/*.js"
   },
   "funding": {
