@@ -2,7 +2,8 @@
 
 ## Next version
 
-- Put your changes here...
+- Removed parent-require dependency.
+- Various dependencies updated.
 
 ## 0.21.8
 
