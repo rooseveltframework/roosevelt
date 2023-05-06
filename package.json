@@ -42,7 +42,6 @@
     "morgan": "1.10.0",
     "page": "1.11.6",
     "page-express-mapper": "2.0.2",
-    "parent-require": "1.0.0",
     "reload": "3.2.1",
     "roosevelt-logger": "0.2.3",
     "selfsigned": "2.1.1",
