@@ -23,7 +23,7 @@ Some notable features:
 
 *Note: this is documentation for the current version of Roosevelt. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
 
-# Table of contents
+## Table of contents
 
 - [Create and run a Roosevelt app](https://github.com/rooseveltframework/roosevelt#create-and-run-a-roosevelt-app)
   - [Using the Roosevelt app generator](https://github.com/rooseveltframework/roosevelt#using-the-roosevelt-app-generator)
@@ -54,8 +54,9 @@ Some notable features:
 - [Express middleware and other configurations automatically loaded by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-middleware-and-other-configurations-automatically-loaded-by-roosevelt)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
 - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
+- [Writing code for Roosevelt](https://github.com/rooseveltframework/roosevelt#writing-code-for-roosevelt)
 
-# Create and run a Roosevelt app
+## Create and run a Roosevelt app
 
 First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you install using a Node.js version manager like [nvm](https://github.com/creationix/nvm) rather than the official installer, as a version manager will allow you to switch between multiple versions of Node.js easily.
 
@@ -67,7 +68,7 @@ Some important caveats to note:
 
 Once you have a sane development environment, you can proceed with the standard install procedure below.
 
-## Using the Roosevelt app generator
+### Using the Roosevelt app generator
 
 The [Roosevelt app generator](https://github.com/rooseveltframework/generator-roosevelt) is a command line script based on [Yeoman](http://yeoman.io) that can create a sample Roosevelt app for you.
 
@@ -111,7 +112,7 @@ Or run in production mode:
 npm run p
 ```
 
-## Create a Roosevelt app manually
+### Create a Roosevelt app manually
 
 It is also possible to create a Roosevelt app without using the app generator. This will result in a more minimalist default configuration (e.g. no CSS or JS preprocessors enabled by default).
 
@@ -130,7 +131,7 @@ To do that:
 
 - Then `node app.js`. If the `makeBuildArtifacts` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
 
-### Use Roosevelt as a static site generator
+#### Use Roosevelt as a static site generator
 
 Same steps as above, except set `makeBuildArtifacts` to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
 
@@ -156,7 +157,7 @@ require('roosevelt')({
 
 Note: If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
 
-## Available npm scripts
+### Available npm scripts
 
 Roosevelt apps created with the app generator come with the following notable [npm scripts](https://docs.npmjs.com/misc/scripts) prepopulated in [package.json](https://docs.npmjs.com/files/package.json):
 
@@ -186,7 +187,7 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/configAuditor.js`
   - Note: this will run automatically whenever you run `npm i` as well.
 
-## Available command line arguments
+### Available command line arguments
 
 - `node app.js --production-mode`: Runs the app in production mode.
   - Default shorthands:
@@ -214,13 +215,13 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `--raw`
     - `-r`
 
-## Combining npm scripts and command line arguments
+### Combining npm scripts and command line arguments
 
 The npm scripts can be combined with the command line flags.
 
 For example, running `npm run d -- -r` will run your app in development mode and force the HTML validator to be disabled.
 
-## Recognized environment variables
+### Recognized environment variables
 
 The following is a list of [environment variables](https://en.wikipedia.org/wiki/Environment_variable) that Roosevelt listens for.
 
@@ -236,7 +237,7 @@ Environment variable precedence:
 - Environment variables supersede your app's [parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters).
 - Environment variables can be overridden with [command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments).
 
-## Overriding recognized command line flags and environment variables
+### Overriding recognized command line flags and environment variables
 
 You can override the default command line flags and environment variables by providing a schema from [source-configs](https://github.com/rooseveltframework/source-configs) with a 'rooseveltConfig' section. For instance, to set the number of cores from the command line with '--num-cores' or '-n' instead of '--cores' or '-c', you could write:
 ```javascript
@@ -257,7 +258,7 @@ Note that this also adds an environment variable.
 
 This will override the default for any recognized Roosevelt parameter.
 
-# Default directory structure
+## Default directory structure
 
 - `app.js`: Entry point to your application. Feel free to rename this, but make sure to update `package.json`'s reference to it.
 - `lib`: Random includable JS files that don't belong in any of the other directories. It has been added to the `require` stack so you can simply `require('lib/someFile')`.
@@ -275,7 +276,7 @@ This will override the default for any recognized Roosevelt parameter.
   - `js`: Folder for source JS files.
 - `.gitignore`: A standard file which contains a list of files and folders to ignore if your project is in a [git](https://git-scm.com/) repo. Delete it if you're not using git.
 
-## Default .gitignore
+### Default .gitignore
 
 The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to your liking before committing a fresh Roosevelt app to your git repo.
 
@@ -284,7 +285,7 @@ Some notable things ignored by default and why:
 - `public`: It's recommended that you don't create files in this folder manually, but instead use the `statics` parameter detailed below to expose folders in your `statics` directory to `public` via auto-generated symlinks.
 - `node_modules`: This folder is created when installing dependencies using the `npm i` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally not recommended to commit the `node_modules` folder to git.
 
-# Configure your app with parameters
+## Configure your app with parameters
 
 Roosevelt is designed to have a minimal amount of boilerplate so you can spend less time focused on configuration and more time writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
 
@@ -340,7 +341,7 @@ Resolves to:
 }
 ```
 
-## App behavior parameters
+### App behavior parameters
 
 - `port`: The HTTP port your app will run on.
 
@@ -488,7 +489,7 @@ Resolves to:
 
   - Default: *[Number]* `30000` (30 seconds).
 
-## HTTPS parameters
+### HTTPS parameters
 
 - `https`: *[Object]* Run a HTTPS server using Roosevelt.
   - Object members:
@@ -540,7 +541,7 @@ Resolves to:
 
   - Default: *[Object]* `{}`.
 
-## MVC parameters
+### MVC parameters
 
 - `modelsPath`: Relative path on filesystem to where your model files are located.
 
@@ -600,7 +601,7 @@ Resolves to:
 
   - Default: `null`.
 
-## Statics parameters
+### Statics parameters
 
 - `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
 
@@ -914,7 +915,7 @@ Resolves to:
       "minifyOptions": {}
     }
     ```
-## Public folder parameters
+### Public folder parameters
 
 - `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `hostPublic` is enabled.
 
@@ -954,7 +955,7 @@ Resolves to:
 
   - Default: *[Boolean]* `false`.
 
-## Events
+### Events
 
 Roosevelt provides a series of events you can attach code to by passing a function to the desired event as a parameter to Roosevelt's constructor like so:
 
@@ -964,7 +965,7 @@ require('roosevelt')({
 })
 ```
 
-## Event list
+### Event list
 
 - `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Note: some [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
@@ -986,7 +987,7 @@ require('roosevelt')({
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client.
   - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc)
 
-# Making controller files
+## Making controller files
 
 Controller files are places to write [Express routes](http://expressjs.com/api.html#app.VERB). A route is the term Express uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
 
@@ -1052,7 +1053,7 @@ module.exports = (router, app) => {
 }
 ```
 
-## Making isomorphic controller files
+### Making isomorphic controller files
 
 You can also write isomorphic controller files that can be shared on both the client and the server:
 
@@ -1095,7 +1096,7 @@ module.exports = (router, app) => {
 }
 ```
 
-### roosevelt-router
+#### roosevelt-router
 
 When using controller files on the client, you will need to include and configure `roosevelt-router` in your main JS bundle before loading your controller files:
 
@@ -1130,7 +1131,7 @@ require('controllers')(router)
 router.init() // activate router
  ```
 
-#### API
+##### API
 
 **Constructor parameters:**
 
@@ -1196,7 +1197,7 @@ When you get a `router` object after instantiating `roosevelt-router` e.g. `cons
 
 - `router.client`: *[Boolean]* True if the execution context is the browser.
 
-# Making model files
+## Making model files
 
 Since the above example requires a model file named `dataModel`, you will need to make that too. To do that, place a file named `dataModel.js` in `mvc/models`.
 
@@ -1206,13 +1207,13 @@ Here's a simple example `dataModel.js` data model:
 module.exports = {some: 'data'};
 ```
 
-# Making view files
+## Making view files
 
 Views by default are [Teddy](https://github.com/rooseveltframework/teddy) templates. See the Teddy documentation for information about how to write Teddy templates.
 
 You can also use different templating engines by tweaking Roosevelt's [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters).
 
-# Express variables exposed by Roosevelt
+## Express variables exposed by Roosevelt
 
 Roosevelt supplies several variables to Express that you may find handy. Access them using `app.get('variableName')`.
 
@@ -1260,7 +1261,7 @@ Additionally the Roosevelt constructor returns the following object:
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 | `stopServer(close)`      | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
 
-# Express middleware and other configurations automatically loaded by Roosevelt
+## Express middleware and other configurations automatically loaded by Roosevelt
 
 In addition to exposing a number of variables to Express and providing the MVC interface outlined above, Roosevelt also:
 
@@ -1270,7 +1271,7 @@ In addition to exposing a number of variables to Express and providing the MVC i
 - Logs HTTP requests to the console using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.
 
-# Supplying your own CSS preprocessor
+## Supplying your own CSS preprocessor
 
 In addition to Roosevelt's built-in support for the LESS, Sass, and Stylus preprocessors you can also define your own preprocessor on the fly at start time in Roosevelt's constructor like so:
 
@@ -1300,7 +1301,7 @@ API:
 
 Note: When a custom preprocessor is defined in this way it will override the selected preprocessor specified in `css.compiler.module`.
 
-# Documentation for previous versions of Roosevelt
+## Documentation for previous versions of Roosevelt
 
 - *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*
 - *[0.19.x](https://github.com/rooseveltframework/roosevelt/blob/aa10ea86f986f624bef56aa2f02ade5b6c551e13/README.md)*
@@ -1318,3 +1319,17 @@ Note: When a custom preprocessor is defined in this way it will override the sel
 - *[0.7.x](https://github.com/rooseveltframework/roosevelt/blob/b57533979d2962b524d217d125f3abafb7b5a94c/README.md)*
 - *[0.6.x](https://github.com/rooseveltframework/roosevelt/blob/44bd29c2739785c7a1a4396287d49e8d9733af2b/README.md)*
 - Older… [here be dragons](https://en.wikipedia.org/wiki/Here_be_dragons).
+
+## Writing code for Roosevelt
+
+Here's how to set up a dev env to hack on Roosevelt:
+
+- Fork/clone this repo.
+- Create or find a Roosevelt app you want to test against.
+  - To make a Roosevelt app, run `npx mkroosevelt`
+- Your changes to Roosevelt need to be copied to your app's `node_modules/roosevelt` directory.
+  - If you do not want to sync these directories automatically, then run the `dev_sync.sh` script. To do that:
+    - Install [fswatch](https://github.com/emcrisostomo/fswatch) and [rsync](https://en.wikipedia.org/wiki/Rsync) and ensure they are in your PATH.
+    - Set a `DEST_DIR` environment variable: `export DEST_DIR=/path/to/your/roosevelt/app`
+    - Run the script: `sh dev_sync.sh`
+    - Or in one command: `export DEST_DIR=/path/to/your/roosevelt/app && sh dev_sync.sh`
