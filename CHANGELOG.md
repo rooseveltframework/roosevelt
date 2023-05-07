@@ -3,6 +3,7 @@
 ## Next version
 
 - Removed parent-require dependency.
+- Added new `dev_sync.sh` to make writing code for Roosevelt easier. See instructions on how to use it in the README.
 - Various dependencies updated.
 
 ## 0.21.8
