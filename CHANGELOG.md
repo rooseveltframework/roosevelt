@@ -2,6 +2,11 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.21.9
+
+- Fixed frontend reload when https is enabled with self-signed certs.
 - Removed parent-require dependency.
 - Added new `dev_sync.sh` to make writing code for Roosevelt easier. See instructions on how to use it in the README.
 - Various dependencies updated.
