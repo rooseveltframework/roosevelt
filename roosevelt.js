@@ -477,7 +477,7 @@ module.exports = (params, schema) => {
     } else {
       config.route = '/reloadHttps'
       config.port = params.frontendReload.httpsPort
-      config.forceWss = true
+      config.forceWss = false // lets this work in self-signed cert situations
       config.https = reloadHttpsOptions
     }
 
