@@ -12,8 +12,6 @@ const fsr = require('./lib/tools/fsr')()
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
 
-// console.log("*** schema")  
-// console.log(schema)
   // appDir is either specified by the user or sourced from the parent require
   params.appDir = params.appDir || path.dirname(module.parent.filename)
 
@@ -42,8 +40,7 @@ module.exports = (params, schema) => {
 
   // source user supplied params
   params = require('./lib/sourceParams')(params, app, schema)
-  // console.log("*** params")
-  // console.log(params)
+
   // use existence of public folder to determine first run
   if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {
     // run the param audit
@@ -54,7 +51,7 @@ module.exports = (params, schema) => {
   const logger = app.get('logger')
   const appName = app.get('appName')
   const appEnv = app.get('env')
-// console.log(appEnv)
+
   if (params.makeBuildArtifacts === 'staticsOnly') {
     logger.info('💭', `Building ${appName} static site...`.bold)
   } else {
