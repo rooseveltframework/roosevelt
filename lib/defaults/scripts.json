@@ -27,22 +27,6 @@
     "value": "nodemon app.js --development-mode",
     "priority": "ignore"
   },
-  "verbose": {
-    "value": "node app.js --development-mode --webpack=verbose",
-    "priority": "error"
-  },
-  "--wp": {
-    "value": "npm run verbose",
-    "priority": "error"
-  },
-  "verboseFile": {
-    "value": "node app.js --development-mode --webpack=verbose-file",
-    "priority": "error"
-  },
-  "-w": {
-    "value": "npm run verboseFile",
-    "priority": "error"
-  },
   "generate-certs": {
     "value": "node ./node_modules/roosevelt/lib/scripts/certsGenerator.js",
     "priority": "error"
