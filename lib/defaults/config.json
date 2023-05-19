@@ -10,7 +10,7 @@
       "info": true,
       "warn": true,
       "error": true,
-      "verbose": false    
+      "verbose": false
     }
   },
   "minify": true,
@@ -103,7 +103,7 @@
     "webpack": {
       "enable": false,
       "bundles": [],
-      "verbose": ""
+      "verbose": false
     }
   },
   "publicFolder": "public",

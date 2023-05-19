@@ -385,7 +385,7 @@ Resolves to:
           "info": true,
           "warn": true,
           "error": true,
-          "verbose": false,
+          "verbose": false
         }
       }
       ```
