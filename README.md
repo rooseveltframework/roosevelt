@@ -386,7 +386,6 @@ Resolves to:
           "warn": true,
           "error": true,
           "verbose": false,
-          "verboseFile": false
         }
       }
       ```
