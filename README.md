@@ -197,14 +197,14 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--dev`
     - `-d`
-- `npm run development -- --webpack=verbose`: Runs the app in development mode and enables webpack error handler to print verbose error to console. 
+- `node app.js -- --webpack=verbose`: Runs the app in development mode and enables webpack error handler to print verbose error to console. 
   - Default shorthands:
-    - `npm run dev -- --wp=verbose`
-    - `npm run dev -- -w=verbose`
-- `npm run development -- --webpack=verbose-file`: Runs the app in development mode and enables webpack error handler to print verbose error to console as well as print a webpackError file to root containing the full error. 
+    - `node app.js -- --wp=verbose`
+    - `node app.js -- -w=verbose`
+- `node app.js -- --webpack=verbose-file`: Runs the app in development mode and enables webpack error handler to print verbose error to console as well as print a webpackError file to root containing the full error. 
   - Default shorthands:
-    - `npm run dev -- --wp=verbose-file`
-    - `npm run dev -- -w=verbose-file`
+    - `node app.js -- --wp=verbose-file`
+    - `node app.js -- -w=verbose-file`
 - `node app.js --production-proxy-mode`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from localhost and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
   - Default shorthands:
     - `--prodproxy`
