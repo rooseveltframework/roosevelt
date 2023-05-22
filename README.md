@@ -172,7 +172,15 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run dev`
     - `npm run d`
   - Script is short for: `nodemon app.js --development-mode`
-- `npm run production-proxy`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from localhost and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
+- `npm run development -- --webpack=verbose`: Runs the app in development mode and enables webpack error handler to print verbose error to console. 
+  - Default shorthands:
+    - `npm run dev -- --wp=verbose`
+    - `npm run dev -- -w=verbose`
+- `npm run development -- --webpack=verbose-file`: Runs the app in development mode and enables webpack error handler to print verbose error to console as well as print a webpackError file to root containing the full error. 
+  - Default shorthands:
+    - `npm run dev -- --wp=verbose-file`
+    - `npm run dev -- -w=verbose-file`
+- `npm run production-proxy`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from local host and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
   - Default shorthands:
     - `npm run prodproxy`
     - `npm run x`
@@ -816,6 +824,8 @@ Resolves to:
               etc...
             ]
             ```
+    
+     - `verbose`: *[string]* Enable Webpack verbose error handler.
 
   - Default: *[Object]*
 
@@ -824,7 +834,8 @@ Resolves to:
         "sourcePath": "js",
         "webpack": {
           "enable": false,
-          "bundles": []
+          "bundles": [],
+          "verbose": false
         }
       }
       ```

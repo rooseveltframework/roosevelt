@@ -482,6 +482,144 @@ describe('sourceParams', () => {
 
       assert.deepStrictEqual(appConfig.htmlValidator.enable, false)
     })
+
+    it('should set webpack verbose error handler to false when running in development mode withought webpack argument ', () => {
+      // add the cli flag
+      process.argv.push('--development')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'production',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, false)
+    })
+
+    it('should set webpack verbose error handler to false when running --dev mode withought webpack argument ', () => {
+      // add the cli flag
+      process.argv.push('--dev')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'production',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, false)
+    })
+
+    it('should set webpack verbose error handler to false when running -d mode withought webpack argument ', () => {
+      // add the cli flag
+      process.argv.push('-d')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'production',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, false)
+    })
+
+    it('should enable webpack verbose error handler via -- --webpack=verbose', () => {
+      // add the cli flag
+      process.argv.push('--webpack=verbose')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, true)
+    })
+
+    it('should enable webpack verbose error handler via -- --wp=verbose', () => {
+      // add the cli flag
+      process.argv.push('--wp=verbose')
+
+      console.log('*** process.argv')
+      console.log(process.argv)
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, true)
+    })
+
+    it('should enable webpack verbose error handler via -- -w=verbose', () => {
+      // add the cli flag
+      process.argv.push('-w=verbose')
+
+      console.log('*** process.argv')
+      console.log(process.argv)
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, true)
+    })
+
+    it('should enable webpack verbose error handler via -- --webpack=verbose-file', () => {
+      // add the cli flag
+      process.argv.push('--webpack=verbose-file')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, 'file')
+    })
+
+    it('should enable webpack verbose error handler via -- --wp=verbose-file', () => {
+      // add the cli flag
+      process.argv.push('--wp=verbose-file')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, 'file')
+    })
+
+    it('should enable webpack verbose error handler via -- -w=verbose-file', () => {
+      // add the cli flag
+      process.argv.push('-w=verbose-file')
+
+      // initialize roosevelt with inverse configs
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      const appConfig = app.expressApp.get('params')
+
+      assert.deepStrictEqual(appConfig.js.webpack.verbose, 'file')
+    })
   })
 
   describe('environment variables', () => {
