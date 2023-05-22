@@ -41,6 +41,13 @@ module.exports = (params, schema) => {
   // source user supplied params
   params = require('./lib/sourceParams')(params, app, schema)
 
+  // console.log("*** params")
+  // console.log(params)
+  // console.log("*** app")
+  // console.log(app)
+  // console.log("*** schema")
+  // console.log(schema)
+  
   // use existence of public folder to determine first run
   if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {
     // run the param audit
@@ -184,7 +191,7 @@ module.exports = (params, schema) => {
   }
 
   // assign individual keys to connections when opened so they can be destroyed gracefully
-  function mapConnections (conn) {
+  function mapConnections(conn) {
     const key = conn.remoteAddress + ':' + conn.remotePort
     connections[key] = conn
 
@@ -197,7 +204,7 @@ module.exports = (params, schema) => {
     })
   }
 
-  function initServer (cb) {
+  function initServer(cb) {
     if (initialized) {
       return cb()
     }
@@ -211,29 +218,29 @@ module.exports = (params, schema) => {
 
     preprocessStaticPages()
 
-    function preprocessStaticPages () {
+    function preprocessStaticPages() {
       require('./lib/preprocessStaticPages')(app, preprocessCss)
     }
 
-    function preprocessCss () {
+    function preprocessCss() {
       require('./lib/preprocessCss')(app, bundleJs)
     }
 
-    function bundleJs () {
+    function bundleJs() {
       require('./lib/jsBundler')(app, validateHTML)
     }
 
-    function validateHTML () {
+    function validateHTML() {
       if (app.get('env') === 'development' && params.htmlValidator.enable) {
         // instantiate the validator if it's installed
         try {
           require('express-html-validator')(app, params.htmlValidator)
-        } catch {}
+        } catch { }
       }
       mapRoutes()
     }
 
-    function mapRoutes () {
+    function mapRoutes() {
       // map routes
       app = require('./lib/mapRoutes')(app)
 
@@ -254,7 +261,7 @@ module.exports = (params, schema) => {
   }
 
   // Parse routes of app and router level routes
-  function parseRoutes (app, basePath, endpoints) {
+  function parseRoutes(app, basePath, endpoints) {
     const regexpExpressRegexp = /^\/\^\\\/(?:(:?[\w\\.-]*(?:\\\/:?[\w\\.-]*)*)|(\(\?:\(\[\^\\\/]\+\?\)\)))\\\/.*/
     const stack = app.stack || (app._router && app._router.stack)
 
@@ -282,7 +289,7 @@ module.exports = (params, schema) => {
   }
 
   // shut down all servers, connections and threads that the roosevelt app is using
-  function gracefulShutdown (close) {
+  function gracefulShutdown(close) {
     let key
     let keys
     shutdownType = close
@@ -335,7 +342,7 @@ module.exports = (params, schema) => {
     }
   }
 
-  function exitLog () {
+  function exitLog() {
     clearTimeout(checkConnectionsTimeout)
     logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
     if (shutdownType === 'close') {
@@ -350,7 +357,7 @@ module.exports = (params, schema) => {
     }
   }
 
-  function connectionCheck () {
+  function connectionCheck() {
     const connectionsAmount = Object.keys(connections)
     if (connectionsAmount.length === 0) {
       exitLog()
@@ -358,7 +365,7 @@ module.exports = (params, schema) => {
   }
 
   // start server
-  async function startHttpServer () {
+  async function startHttpServer() {
     // determine number of CPUs to use
     const max = os.cpus().length
     const cores = params.cores
@@ -373,7 +380,7 @@ module.exports = (params, schema) => {
       }
     }
 
-    function serverPush (server, serverPort, serverFormat) {
+    function serverPush(server, serverPort, serverFormat) {
       servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
         logger.error(err)
         if (err.message.includes('EADDRINUSE')) {
@@ -384,9 +391,9 @@ module.exports = (params, schema) => {
     }
 
     const lock = {}
-    function startupCallback (proto, port) {
+    function startupCallback(proto, port) {
       return async function () {
-        function finalMessages () {
+        function finalMessages() {
           logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
           if (params.localhostOnly) {
             logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
@@ -464,7 +471,7 @@ module.exports = (params, schema) => {
    * @param {String} proto - Which protocol to start
    * @returns {object} - Reload server instance
    */
-  function configReloadServer (proto) {
+  function configReloadServer(proto) {
     const reload = require('reload')
     const config = {
       verbose: !!params.logging.methods.verbose,
@@ -485,14 +492,14 @@ module.exports = (params, schema) => {
     return reloadInstance
   }
 
-  function startServer () {
+  function startServer() {
     if (!initialized) {
       return initServer(startHttpServer)
     }
     startHttpServer()
   }
 
-  function isCertString (stringToTest) {
+  function isCertString(stringToTest) {
     let testString = stringToTest
     if (typeof testString !== 'string') {
       testString = testString.toString()
