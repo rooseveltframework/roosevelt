@@ -41,13 +41,6 @@ module.exports = (params, schema) => {
   // source user supplied params
   params = require('./lib/sourceParams')(params, app, schema)
 
-  // console.log("*** params")
-  // console.log(params)
-  // console.log("*** app")
-  // console.log(app)
-  // console.log("*** schema")
-  // console.log(schema)
-  
   // use existence of public folder to determine first run
   if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {
     // run the param audit

@@ -546,9 +546,6 @@ describe('sourceParams', () => {
       // add the cli flag
       process.argv.push('--wp=verbose')
 
-      console.log('*** process.argv')
-      console.log(process.argv)
-
       // initialize roosevelt with inverse configs
       const app = require('../roosevelt')({
         mode: 'development',
@@ -562,9 +559,6 @@ describe('sourceParams', () => {
     it('should enable webpack verbose error handler via -- -w=verbose', () => {
       // add the cli flag
       process.argv.push('-w=verbose')
-
-      console.log('*** process.argv')
-      console.log(process.argv)
 
       // initialize roosevelt with inverse configs
       const app = require('../roosevelt')({
