@@ -203,7 +203,7 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `-w=verbose`
 - `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error. 
   - Default shorthands:
-    - `node app.js -- --wp=verbose-file`
+    - `--wp=verbose-file`
     - `node app.js -- -w=verbose-file`
 - `node app.js --production-proxy-mode`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from localhost and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
   - Default shorthands:
