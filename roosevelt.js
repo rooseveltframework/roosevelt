@@ -228,7 +228,7 @@ module.exports = (params, schema) => {
         // instantiate the validator if it's installed
         try {
           require('express-html-validator')(app, params.htmlValidator)
-        } catch {}
+        } catch { }
       }
       mapRoutes()
     }
