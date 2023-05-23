@@ -200,7 +200,7 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js -- --webpack=verbose`: Runs the app in development mode and enables webpack error handler to print verbose error to console. 
   - Default shorthands:
     - `--wp=verbose`
-    - `node app.js -- -w=verbose`
+    - `-w=verbose`
 - `node app.js -- --webpack=verbose-file`: Runs the app in development mode and enables webpack error handler to print verbose error to console as well as print a webpackError file to root containing the full error. 
   - Default shorthands:
     - `node app.js -- --wp=verbose-file`
