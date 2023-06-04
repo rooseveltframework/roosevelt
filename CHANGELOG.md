@@ -6,7 +6,7 @@
 
 ## 0.21.10
 
-- Added `--webpack=verbose` and `--wp=verbose-file` CLI flags to to make it easier to see verbose webpack errors. Available shorthands: `--wp` and `-w`.
+- Added `--webpack=verbose` and `--wp=verbose-file` CLI flags to make it easier to see verbose webpack errors. Available shorthands: `--wp` and `-w`.
 - Added detection of undefined template literal variables (e.g. via typo) in rooseveltConfig.
 - Added more helpful error if starting an app with broken symlinks.
 - Various dependencies updated.
