@@ -4,6 +4,13 @@
 
 - Put your changes here...
 
+## 0.21.10
+
+- Added `--webpack=verbose` and `--wp=verbose-file` CLI flags to to make it easier to see verbose webpack errors. Available shorthands: `--wp` and `-w`.
+- Added detection of undefined template literal variables (e.g. via typo) in rooseveltConfig.
+- Added more helpful error if starting an app with broken symlinks.
+- Various dependencies updated.
+
 ## 0.21.9
 
 - Fixed frontend reload when https is enabled with self-signed certs.
