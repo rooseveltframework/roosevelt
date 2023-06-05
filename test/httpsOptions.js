@@ -123,8 +123,8 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', function () {
-    const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.key'))
-    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.crt'))
+    const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
+    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
 
     // change config - unset p12Path
     config.https.authInfoPath.p12.p12Path = ''
@@ -139,11 +139,11 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', function () {
-    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.crt'))
-    const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.key'))
+    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
+    const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 
     // change config - change key to a string
-    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.key'))
+    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 
     app({ appDir, ...config })
 
@@ -155,11 +155,11 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', function () {
-    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.crt'))
-    const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.key'))
+    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
+    const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 
     // change config - change cert to a  string
-    config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(appDir, '../.././util/certs/test.req.crt'))
+    config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
 
     app({ appDir, ...config })
 
@@ -171,7 +171,7 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', function () {
-    const catext = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'))
+    const catext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
 
     app({ appDir, ...config })
 
@@ -181,11 +181,11 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', function () {
-    const ca1 = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'))
-    const ca2 = fs.readFileSync(path.join(appDir, '../.././util/certs/ca-2.crt'))
+    const ca1 = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
+    const ca2 = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 
     // change config
-    config.https.caCert = ['test/util/certs/ca.crt', 'test/util/certs/ca-2.crt']
+    config.https.caCert = ['test/util/certs/cert.pem', 'test/util/certs/key.pem']
 
     app({ appDir, ...config })
 
@@ -197,7 +197,7 @@ describe('HTTPS Server Options Tests', function () {
 
   it('should start a https server using the caCert param directly if it is set as a certificate string', function () {
     // change config
-    config.https.caCert = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'), 'UTF8')
+    config.https.caCert = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'), 'UTF8')
 
     app({ appDir, ...config })
 
@@ -207,8 +207,8 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', function () {
-    const ca1 = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'))
-    const ca2 = fs.readFileSync(path.join(appDir, '../.././util/certs/ca-2.crt'))
+    const ca1 = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
+    const ca2 = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 
     // change config
     config.https.caCert = [ca1, ca2]
@@ -222,11 +222,11 @@ describe('HTTPS Server Options Tests', function () {
   })
 
   it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', function () {
-    const ca1 = fs.readFileSync(path.join(appDir, '../.././util/certs/ca.crt'))
-    const ca2 = fs.readFileSync(path.join(appDir, '../.././util/certs/ca-2.crt'))
+    const ca1 = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
+    const ca2 = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 
     // change config
-    config.https.caCert = [ca1, path.join(appDir, '../.././util/certs/ca-2.crt')]
+    config.https.caCert = [ca1, path.join(appDir, '../.././util/certs/key.pem')]
 
     app({ appDir, ...config })
 

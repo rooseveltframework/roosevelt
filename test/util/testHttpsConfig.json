@@ -17,12 +17,12 @@
         "p12Path": "test/util/certs/test.p12"
       },
       "authCertAndKey": {
-        "cert": "test/util/certs/test.req.crt",
-        "key": "test/util/certs/test.req.key"
+        "cert": "test/util/certs/cert.pem",
+        "key": "test/util/certs/key.pem"
       }
     },
     "passphrase": "testpass",
-    "caCert": "test/util/certs/ca.crt",
+    "caCert": "test/util/certs/cert.pem",
     "requestCert": false,
     "rejectUnauthorized": false
   }
