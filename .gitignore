@@ -28,3 +28,6 @@ coverage
 
 ./test/util.certs/cert.pem
 ./test/util.certs/key.pem
+
+./lib/scripts/cert.pem
+./lib/scripts/key.pem
