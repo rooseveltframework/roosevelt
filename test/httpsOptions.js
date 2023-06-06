@@ -155,15 +155,14 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', async () => {
-    // const { execaNode } = await import('execa')
-    // await execaNode`certsGenerator.js`
-
-    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', async () => {
+    const { execaNode } = await import('execa')
+    await execaNode`certsGenerator.js`
     const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
+    const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
 
-    // change config - change key to a string
-    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
+    // change config - unset p12Path
+    config.https.authInfoPath.p12.p12Path = ''
 
     app({ appDir, ...config })
 
@@ -174,7 +173,10 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', async () => {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', async () => {
+    const { execaNode } = await import('execa')
+    await execaNode`certsGenerator.js`
+
     const certext = fs.readFileSync(path.join(appDir, '../.././util/certs/cert.pem'))
     const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
 

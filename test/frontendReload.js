@@ -71,6 +71,9 @@ describe('frontend reload', () => {
   })
 
   it.skip('should start reload https server in dev mode', async () => {
+    const { execaNode } = await import('execa')
+    await execaNode`certsGenerator.js`
+
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config,
@@ -83,8 +86,8 @@ describe('frontend reload', () => {
             p12Path: 'test/util/certs/test.p12'
           },
           authCertAndKey: {
-            cert: 'test/util/certs/test.req.crt',
-            key: 'test/util/certs/test.req.key'
+            cert: 'test/util/certs/cert.pem',
+            key: 'test/util/certs/key.pem'
           }
         },
         passphrase: 'testpass'
@@ -104,6 +107,9 @@ describe('frontend reload', () => {
   })
 
   it.skip('should start reload http and https servers in dev mode', async () => {
+    const { execaNode } = await import('execa')
+    await execaNode`certsGenerator.js`
+
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config,
@@ -116,8 +122,8 @@ describe('frontend reload', () => {
             p12Path: 'test/util/certs/test.p12'
           },
           authCertAndKey: {
-            cert: 'test/util/certs/test.req.crt',
-            key: 'test/util/certs/test.req.key'
+            cert: 'test/util/certs/cert.pem',
+            key: 'test/util/certs/key.pem'
           }
         },
         passphrase: 'testpass'
