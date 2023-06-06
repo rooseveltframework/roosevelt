@@ -54,7 +54,7 @@ describe('HTTPS Server Options Tests', async () => {
     })
   })
 
-  it.only('should create a https server when https.enable is set to true', async () => {
+  it('should create a https server when https.enable is set to true', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
     app({ appDir, ...config })
@@ -63,7 +63,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should create a http server and a https server when the https.force param is false', async () => {
+  it('should create a http server and a https server when the https.force param is false', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -77,7 +77,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should create a http server when https.enable param is false and https.force param is true', async () => {
+  it('should create a http server when https.enable param is false and https.force param is true', async () => {
     // change config
     config.https.force = true
     config.https.enable = false
@@ -91,7 +91,7 @@ describe('HTTPS Server Options Tests', async () => {
     config.https.enable = true
   })
 
-  it.only('should not create a http.Server when the https.force param is set to true', async () => {
+  it('should not create a http.Server when the https.force param is set to true', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -104,7 +104,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpServer.notCalled, 'http.Server called despite force flag')
   })
 
-  it.only('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', async () => {
+  it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -120,7 +120,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', async () => {
+  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -136,7 +136,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', async () => {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -155,7 +155,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', async () => {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
     const keytext = fs.readFileSync(path.join(appDir, '../.././util/certs/key.pem'))
@@ -173,7 +173,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', async () => {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -192,7 +192,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', async () => {
+  it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -205,7 +205,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', async () => {
+  it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -223,7 +223,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the caCert param directly if it is set as a certificate string', async () => {
+  it('should start a https server using the caCert param directly if it is set as a certificate string', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -237,7 +237,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', async () => {
+  it('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -255,7 +255,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', async () => {
+  it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', async () => {
     const { execaNode } = await import('execa')
     await execaNode`./lib/scripts/certsGenerator.js`
 
@@ -273,7 +273,7 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it.only('should start a https server if the caCert param is not a string or an array', async () => {
+  it('should start a https server if the caCert param is not a string or an array', async () => {
     // change config
     config.https.caCert = 42
 
