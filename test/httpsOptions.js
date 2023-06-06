@@ -38,7 +38,7 @@ describe('HTTPS Server Options Tests', async () => {
   })
 
   // reset stubs after each
-  afterEach(async () => {
+  afterEach(function () {
     stubHttpsListen.resetHistory()
     stubHttpsOn.resetHistory()
     stubHttpsServer.resetHistory()
