@@ -83,8 +83,8 @@ describe('frontend reload', () => {
             p12Path: 'test/util/certs/test.p12'
           },
           authCertAndKey: {
-            cert: 'test/util/certs/cert.pem',
-            key: 'test/util/certs/key.pem'
+            cert: 'certs/cert.pem',
+            key: 'certs/key.pem'
           }
         },
         passphrase: 'testpass'
@@ -116,8 +116,8 @@ describe('frontend reload', () => {
             p12Path: 'test/util/certs/test.p12'
           },
           authCertAndKey: {
-            cert: 'test/util/certs/cert.pem',
-            key: 'test/util/certs/key.pem'
+            cert: 'certs/cert.pem',
+            key: 'certs/key.pem'
           }
         },
         passphrase: 'testpass'

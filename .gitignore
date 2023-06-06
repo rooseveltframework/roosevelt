@@ -26,8 +26,5 @@ test/app
 coverage
 .nyc_output
 
-./test/util.certs/cert.pem
-./test/util.certs/key.pem
-
-./lib/scripts/cert.pem
-./lib/scripts/key.pem
+./lib/certs/cert.pem
+./lib/certs/key.pem
