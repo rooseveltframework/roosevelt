@@ -72,7 +72,7 @@ describe('frontend reload', () => {
 
   it.skip('should start reload https server in dev mode', async () => {
     const { execaNode } = await import('execa')
-    await execaNode`certsGenerator.js`
+    await execaNode`./lib/scripts/certsGenerator.js`
 
     // configure and start roosevelt
     const app = await startRoosevelt({
@@ -108,7 +108,7 @@ describe('frontend reload', () => {
 
   it.skip('should start reload http and https servers in dev mode', async () => {
     const { execaNode } = await import('execa')
-    await execaNode`certsGenerator.js`
+    await execaNode`./lib/scripts/certsGenerator.js`
 
     // configure and start roosevelt
     const app = await startRoosevelt({
