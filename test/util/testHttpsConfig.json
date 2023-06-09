@@ -14,7 +14,7 @@
     "port": 2468,
     "authInfoPath": {
       "p12": {
-        "p12Path": "test/util/certs/test.p12"
+        "p12Path": "certs/cert.p12"
       },
       "authCertAndKey": {
         "cert": "certs/cert.pem",

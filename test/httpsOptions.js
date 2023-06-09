@@ -99,7 +99,7 @@ describe('HTTPS Server Options Tests', async () => {
   })
 
   it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', function () {
-    const p12text = fs.readFileSync(path.join(appDir, '../.././util/certs/test.p12'), 'utf8')
+    const p12text = fs.readFileSync(path.join(appDir, './../../../certs/cert.p12'), 'utf8')
 
     app({ appDir, ...config })
 
@@ -112,7 +112,7 @@ describe('HTTPS Server Options Tests', async () => {
   })
 
   it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', function () {
-    const p12text = fs.readFileSync(path.join(appDir, '../.././util/certs/test.p12'), 'utf8')
+    const p12text = fs.readFileSync(path.join(appDir, './../../../certs/cert.p12'), 'utf8')
     config.https.authInfoPath.p12.p12Path = p12text
     app({ appDir, ...config })
 
