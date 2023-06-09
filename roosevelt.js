@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
+const getCerts = require('./lib/scripts/certsGenerator')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -76,6 +77,9 @@ module.exports = (params, schema) => {
 
     // options to configure to the https server
     httpsOptions = {}
+    if (!fsr.fileExists('./lib/scripts/certsGenerator')) {
+      getCerts.certsGenerator()
+    }
 
     if (authInfoPath) {
       if (authInfoPath.p12 && authInfoPath.p12.p12Path) {
