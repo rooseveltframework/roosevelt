@@ -80,7 +80,7 @@ describe('frontend reload', () => {
         force: true,
         authInfoPath: {
           p12: {
-            p12Path: '/certs/cert.p12'
+            p12Path: 'certs/cert.p12'
           },
           authCertAndKey: {
             cert: 'certs/cert.pem',
@@ -113,7 +113,7 @@ describe('frontend reload', () => {
         force: false,
         authInfoPath: {
           p12: {
-            p12Path: '/certs/cert.p12'
+            p12Path: 'certs/cert.p12'
           },
           authCertAndKey: {
             cert: 'certs/cert.pem',
