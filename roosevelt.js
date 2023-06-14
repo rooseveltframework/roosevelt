@@ -77,9 +77,6 @@ module.exports = (params, schema) => {
 
     // options to configure to the https server
     httpsOptions = {}
-    if (!fsr.fileExists('./lib/scripts/certsGenerator')) {
-      getCerts.certsGenerator()
-    }
 
     if (authInfoPath) {
       if (authInfoPath.p12 && authInfoPath.p12.p12Path) {

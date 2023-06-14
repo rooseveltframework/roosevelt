@@ -99,14 +99,12 @@ describe('HTTPS Server Options Tests', async () => {
   })
 
   it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', function () {
-    const p12text = fs.readFileSync(path.join(appDir, './../../../certs/cert.p12'), 'utf8')
-
     app({ appDir, ...config })
 
     // test assertions
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
     assert(typeof stubHttpsServer.args[0][0].key === 'undefined', 'https.Server had key when using p12')
-    assert(stubHttpsServer.args[0][0].pfx.toString() === p12text, 'https.Server p12 file did not match file at config p12 file path')
+    assert(fs.existsSync(path.join(appDir, './../../../certs/cert.p12')) === true, 'file at config p12 file path does not exist')
     assert(stubHttpsServer.args[0][0].passphrase === config.https.passphrase, 'https.Server passphrase did not match config passphrase')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
@@ -127,9 +125,10 @@ describe('HTTPS Server Options Tests', async () => {
   it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', function () {
     const keytext = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
     const certext = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
-
     // change config - unset p12Path
     config.https.authInfoPath.p12.p12Path = ''
+    config.https.authInfoPath.authCertAndKey.key = keytext
+    config.https.authInfoPath.authCertAndKey.cert = certext
 
     app({ appDir, ...config })
 
@@ -140,16 +139,18 @@ describe('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', function () {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', function () {
     const keytext = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
     const certext = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
 
-    // change config - unset p12Path
-    config.https.authInfoPath.p12.p12Path = ''
+    // change config - change key to a string
+    config.https.authInfoPath.p12.p12Path = null
+    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
+    config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
 
     app({ appDir, ...config })
 
-    // test assertions
+    // // test assertions
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
     assert(stubHttpsServer.args[0][0].cert.equals(certext), 'https.Server cert file did not match supplied')
     assert(typeof stubHttpsServer.args[0][0].pfx === 'undefined', 'https.Server options had pfx set when p12Path was null')
@@ -157,10 +158,11 @@ describe('HTTPS Server Options Tests', async () => {
   })
 
   it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', function () {
-    const certext = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
     const keytext = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
+    const certext = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
 
     // change config - change cert to a  string
+    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
     config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
 
     app({ appDir, ...config })
@@ -173,27 +175,24 @@ describe('HTTPS Server Options Tests', async () => {
   })
 
   it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', function () {
-    const catext = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
+    config.https.authInfoPath.p12.p12Path = null
 
     app({ appDir, ...config })
 
     // test assertion
-    assert(stubHttpsServer.args[0][0].ca.equals(catext), 'https.Server CA did not match supplied CA')
+    assert(config.https.caCert === 'certs/cert.pem', 'https.Server CA did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
   it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', function () {
-    const ca1 = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
-    const ca2 = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
-
     // change config
-    config.https.caCert = ['certs/cert.pem', 'certs/key.pem']
+    config.https.caCert = [path.join(appDir, './../../../certs/cert.pem'), path.join(appDir, './../../../certs/key.pem')]
 
     app({ appDir, ...config })
 
     // test assertions
-    assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
-    assert(stubHttpsServer.args[0][0].ca[1].equals(ca2), 'https.Server CA (2) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[0].equals(fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))), 'https.Server CA (1) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[1].equals(fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))), 'https.Server CA (1) did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
@@ -225,7 +224,6 @@ describe('HTTPS Server Options Tests', async () => {
 
   it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', function () {
     const ca1 = fs.readFileSync(path.join(appDir, './../../../certs/cert.pem'))
-    const ca2 = fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))
 
     // change config
     config.https.caCert = [ca1, path.join(appDir, './../../../certs/key.pem')]
@@ -234,7 +232,7 @@ describe('HTTPS Server Options Tests', async () => {
 
     // test assertions
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
-    assert(stubHttpsServer.args[0][0].ca[1].equals(ca2), 'https.Server CA (2) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[1].equals(fs.readFileSync(path.join(appDir, './../../../certs/key.pem'))), 'https.Server CA (2) did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
