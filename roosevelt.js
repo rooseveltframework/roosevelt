@@ -8,6 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
+const cg = require('./lib/scripts/certsGenerator.js')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -72,6 +73,8 @@ module.exports = (params, schema) => {
   }
 
   if (httpsParams.enable) {
+    //Runs the certGenerator if httpsParams.enable
+    cg.certsGenerator()
     authInfoPath = httpsParams.authInfoPath
 
     // options to configure to the https server
