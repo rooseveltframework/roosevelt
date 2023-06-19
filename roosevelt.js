@@ -76,6 +76,7 @@ module.exports = (params, schema) => {
 
     // options to configure to the https server
     httpsOptions = {}
+
     if (authInfoPath) {
       if (authInfoPath.p12 && authInfoPath.p12.p12Path) {
         // if the string ends with a dot and 3 alphanumeric characters (including _)
