@@ -27,6 +27,7 @@ describe('sourceParams', () => {
       'onReqBeforeRoute',
       'onReqStart',
       'onServerInit',
+      'onStaticAssetsGenerated',
       'onServerStart',
       'onAppExit',
       'routePrefix',

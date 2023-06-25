@@ -197,6 +197,9 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--dev`
     - `-d`
+- `node app.js --build`: Only runs the build scripts and doesn't start the app.
+  - Default shorthands:
+    - `-b`
 - `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console. 
   - Default shorthands:
     - `--wp=verbose`
@@ -979,6 +982,8 @@ require('roosevelt')({
 ### Event list
 
 - `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Note: some [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
+  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+- `onStaticAssetsGenerated(app)`: Fired when the server finishes init but before the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerStart(app)`: Fired when the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.

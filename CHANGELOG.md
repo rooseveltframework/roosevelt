@@ -4,6 +4,14 @@
 
 - Put your changes here...
 
+## 0.21.11
+
+- Added a new `--build` CLI flag that will instruct Roosevelt to just build the build artifacts but not start the server.
+- Added new `onStaticAssetsGenerated` event that is fired when the server finishes init but before the server starts.
+- Fixed an issue that would cause the server to start even when `makeBuildArtifacts` is set to `staticsOnly`. This has the side effect of causing `serverStart()` to revert to the behavior of `init()` if `makeBuildArtifacts` is set to `staticsOnly`.
+- Fixed a bug that would cause roosevelt-router to produce a false negative when detecting teddy.
+- Various dependencies updated.
+
 ## 0.21.10
 
 - Added `--webpack=verbose` and `--wp=verbose-file` CLI flags to make it easier to see verbose webpack errors. Available shorthands: `--wp` and `-w`.
