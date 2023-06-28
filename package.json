@@ -63,7 +63,7 @@
     "standard": "17.1.0",
     "stylus": "0.59.0",
     "supertest": "6.3.3",
-    "teddy": "0.6.2"
+    "teddy": "0.6.3"
   },
   "repository": {
     "type": "git",
