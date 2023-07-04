@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.12
+
+- Fixed isomorphic controllers bundler webpack bug in Windows.
+- Various dependencies updated.
+
 ## 0.21.11
 
 - Added a new `--build` CLI flag that will instruct Roosevelt to just build the build artifacts but not start the server.
