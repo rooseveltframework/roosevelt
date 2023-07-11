@@ -108,6 +108,8 @@ describe('HTTPS Server Options Tests', async () => {
 
   // after all tests clean up the test app directory
   after(function (done) {
+    fs.rmSync('./test/app/certs', { recursive: true, force: true });
+
     cleanupTestApp(appDir, (err) => {
       if (err) {
         throw err
