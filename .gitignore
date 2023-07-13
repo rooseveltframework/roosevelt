@@ -25,7 +25,3 @@ test/app
 
 coverage
 .nyc_output
-
-./lib/certs/cert.pem
-./lib/certs/key.pem
-./lib/certs/cert.p12
