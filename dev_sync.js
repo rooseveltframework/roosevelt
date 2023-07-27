@@ -13,7 +13,6 @@ this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
 this.logger.info('')
 this.logger.info('💭', 'Make sure the above directories are correct or this could delete unwanted files!')
 this.logger.info('')
-// Change directory path run git command
 
 execSync(`fswatch -0 ${SRC_DIR} | while read -d "" event
 do
