@@ -54,7 +54,7 @@ module.exports = (params, schema) => {
   const appEnv = app.get('env')
 
   if (params.makeBuildArtifacts === 'staticsOnly') {
-    logger.info('💭', `Building ${appName} static site...`.bold)
+    logger.info('💭', `Building ${appName} static site in ${appEnv} mode...`.bold)
   } else {
     logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
   }
@@ -246,6 +246,10 @@ module.exports = (params, schema) => {
       // custom error page
       app = require('./lib/500ErrorPage.js')(app)
 
+      if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
+        params.onStaticAssetsGenerated(app)
+      }
+
       if (cb && typeof cb === 'function') {
         cb()
       }
@@ -377,13 +381,15 @@ module.exports = (params, schema) => {
     }
 
     function serverPush (server, serverPort, serverFormat) {
-      servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
-        logger.error(err)
-        if (err.message.includes('EADDRINUSE')) {
-          logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.bold)
-        }
-        process.exit(1)
-      }))
+      if (params.makeBuildArtifacts !== 'staticsOnly') {
+        servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
+          logger.error(err)
+          if (err.message.includes('EADDRINUSE')) {
+            logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.bold)
+          }
+          process.exit(1)
+        }))
+      }
     }
 
     const lock = {}

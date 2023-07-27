@@ -14,15 +14,15 @@
     "port": 2468,
     "authInfoPath": {
       "p12": {
-        "p12Path": "test/util/certs/test.p12"
+        "p12Path": "test/app/certs/cert.p12"
       },
       "authCertAndKey": {
-        "cert": "test/util/certs/test.req.crt",
-        "key": "test/util/certs/test.req.key"
+        "cert": "test/app/certs/cert.pem",
+        "key": "test/app/certs/key.pem"
       }
     },
     "passphrase": "testpass",
-    "caCert": "test/util/certs/ca.crt",
+    "caCert": "test/app/certs/cert.pem",
     "requestCert": false,
     "rejectUnauthorized": false
   }
