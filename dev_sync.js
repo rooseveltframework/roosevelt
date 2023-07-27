@@ -17,6 +17,7 @@ try {
     } else {
       this.logger.info('')
       this.logger.warn('Make sure the above directories are correct or this could delete unwanted files!')
+      this.logger.info('💭', 'We are not in a Roosevelt app ...')
       this.logger.info('')
       fsWatch()
     }
