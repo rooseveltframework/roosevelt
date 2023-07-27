@@ -3,8 +3,8 @@ this.logger = new Logger()
 const fs = require('fs')
 const path = require('path')
 const SRC_DIR = __dirname
-// Change path in DEST_DIR to point to the sample apps  EX: path.join(__dirname, 'PATH GOES HERE')
-const DEST_DIR = path.join(__dirname, './../my-roosevelt-sample-app/')
+const DEST_DIR = process.env.DEST_DIR
+
 try {
   if (DEST_DIR === '') {
     this.logger.error('ERROR: DEST_DIR is an empty variable')
