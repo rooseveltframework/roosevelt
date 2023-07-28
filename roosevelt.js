@@ -74,7 +74,13 @@ module.exports = (params, schema) => {
 
   if (httpsParams.enable) {
     // Runs the certGenerator if httpsParams.enable
-    cg.certsGenerator()
+    console.log(httpsParams)
+    if (appEnv === 'development' && httpsParams.autoCert) {
+      if (!fs.existsSync('./certs')) {
+        cg.certsGenerator()
+      }
+    }
+
     authInfoPath = httpsParams.authInfoPath
 
     // options to configure to the https server
