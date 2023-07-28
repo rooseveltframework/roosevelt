@@ -48,7 +48,7 @@
   "https": {
     "enable": false,
     "force": false,
-    "autoCert": false,
+    "autoCert": true,
     "port": 43733,
     "authInfoPath": null,
     "passphrase": null,

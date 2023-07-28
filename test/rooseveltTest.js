@@ -736,7 +736,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203,
         force: true,
-        autoCert: false
+        autoCert: true
       }
     }, sOptions)
 
