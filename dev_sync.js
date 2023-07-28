@@ -1,7 +1,6 @@
 const Logger = require('roosevelt-logger')
 this.logger = new Logger()
 const fs = require('fs')
-const path = require('path')
 const SRC_DIR = __dirname
 const DEST_DIR = process.env.DEST_DIR
 
