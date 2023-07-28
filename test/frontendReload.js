@@ -78,6 +78,7 @@ describe('frontend reload', () => {
         enable: true,
         port: 43712,
         force: true,
+        autoCert: false,
         authInfoPath: {
           p12: {
             p12Path: 'certs/cert.p12'
@@ -111,6 +112,7 @@ describe('frontend reload', () => {
         enable: true,
         port: 43712,
         force: false,
+        autoCert: false,
         authInfoPath: {
           p12: {
             p12Path: 'certs/cert.p12'

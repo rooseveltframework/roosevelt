@@ -11,6 +11,7 @@
   "https": {
     "enable": true,
     "force": true,
+    "autoCert": false,
     "port": 2468,
     "authInfoPath": {
       "p12": {

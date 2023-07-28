@@ -54,7 +54,7 @@
   "https": {
     "enable" : false,
     "force": "value",
-    "autoCert": true,
+    "autoCert": false,
     "port": "value",
     "authInfoPath": "value",
     "passphrase": "value",
