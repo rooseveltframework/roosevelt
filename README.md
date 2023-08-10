@@ -513,6 +513,10 @@ Resolves to:
 
       - Default: *[Boolean]* `false`.
 
+    - `autoCert`: Will create https certificates in dev mode as long as they don't already exist
+
+      - Default: *[Boolean]* `true`.
+
     - `port`: The port your app will run a HTTPS server on.
 
       - Default: *[Number]* `43733`.
