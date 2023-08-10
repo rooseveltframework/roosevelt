@@ -77,6 +77,8 @@ module.exports = (params, schema) => {
     if (appEnv === 'development' && httpsParams.autoCert) {
       if (!fs.existsSync('./certs')) {
         cg.certsGenerator()
+      } else if (!fs.existsSync('./certs/key.pem') || (!fs.existsSync('./certs/cert.pem'))) {
+        cg.certsGenerator()
       }
     }
 
