@@ -1,12 +1,12 @@
 const Logger = require('roosevelt-logger')
 this.logger = new Logger()
-const Rsync = require('rsync')
+// const Rsync = require('rsync')
 const DEST_DIR = process.env.DEST_DIR
 const SRC_DIR = __dirname
 const fs = require('fs')
 
 try {
-  if (DEST_DIR === '') {
+  if (DEST_DIR === '' || DEST_DIR === undefined) {
     this.logger.error('ERROR: DEST_DIR is an empty variable')
   } else if (DEST_DIR === SRC_DIR) {
     this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
@@ -35,22 +35,32 @@ async function fsWatch () {
     this.logger.err(error)
   })
 
-  const rsync = new Rsync()
-    .flags('avz')
-    .delete()
-    .exclude('.DS_Store')
-    .source(`${DEST_DIR}/node_modules/roosevelt/`)
-    .destination(SRC_DIR)
-
-  rsync.execute(function (error, code, cmd) {
-    if (error) {
-      this.logger.err(error.message)
-    }
+  watcher.on('ready', () => {
+    this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
+    this.logger.info('')
+    this.logger.info('💭', `Now watching: ${SRC_DIR}`)
+    this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
+    this.logger.info('')
   })
 
-  this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
-  this.logger.info('')
-  this.logger.info('💭', `Now watching: ${SRC_DIR}`)
-  this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
-  this.logger.info('')
+  process.on('SIGINT', function () {
+    console.log('')
+    console.log('💭')
+    console.log('💭 Caught interrupt signal')
+    console.log('💭')
+    watcher.close()
+    process.exit()
+  })
 }
+
+// const rsync = new Rsync()
+//   .flags('avz')
+//   .delete()
+//   .exclude('.DS_Store')
+//   .source(`${DEST_DIR}/node_modules/roosevelt/`)
+//   .destination(SRC_DIR)
+// rsync.execute(function (error, code, cmd) {
+//   if (error) {
+//     this.logger.error(error.message)
+//   }
+// })
