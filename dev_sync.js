@@ -4,21 +4,7 @@ const Rsync = require('rsync')
 // const DEST_DIR = process.env.DEST_DIR
 const DEST_DIR = './../my-roosevelt-sample-app'
 const SRC_DIR = __dirname
-
 const fs = require('fs')
-// const watcher = require('watcher')
-
-// async function fsWatch () {
-//   const watch = await import('watcher')
-//   const Watcher = watch.default
-
-//   const watcher = new Watcher(DEST_DIR)
-
-//   console.log(watcher)
-// }
-
-// console.log(`*** DEST_DIR:  ${DEST_DIR}`)
-// console.log(fsWatch())
 
 try {
   if (DEST_DIR === '') {
@@ -39,10 +25,17 @@ try {
   }
 } catch (err) { console.log(err) }
 
-function fsWatch () {
+async function fsWatch () {
+  const watch = await import('watcher')
+  const Watcher = watch.default
+  const watcher = new Watcher(DEST_DIR)
+
+  watcher.on('error', error => {
+    console.log(error instanceof Error)
+  })
+
   const Logger = require('roosevelt-logger')
   this.logger = new Logger()
-  //   const { execSync } = require('child_process')
   const rsync = new Rsync()
   //   .shell('ssh')
     .flags('avz')
