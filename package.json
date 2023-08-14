@@ -45,10 +45,12 @@
     "page-express-mapper": "2.0.2",
     "reload": "3.2.1",
     "roosevelt-logger": "0.2.3",
+    "rsync": "^0.6.1",
     "selfsigned": "2.1.1",
     "serve-favicon": "2.5.0",
     "source-configs": "0.3.6",
     "toobusy-js": "0.5.1",
+    "watcher": "^2.3.0",
     "webpack": "5.88.2"
   },
   "devDependencies": {
