@@ -53,6 +53,6 @@ async function fsWatch () {
   this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
   this.logger.info('')
   this.logger.info('💭', `Now watching: ${SRC_DIR}`)
-  this.logger.info('💭', `Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
+  this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
   this.logger.info('')
 }
