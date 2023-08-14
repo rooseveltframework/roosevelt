@@ -26,16 +26,16 @@ try {
 } catch (err) { console.log(err) }
 
 async function fsWatch () {
+  const Logger = require('roosevelt-logger')
+  this.logger = new Logger()
   const watch = await import('watcher')
   const Watcher = watch.default
   const watcher = new Watcher(DEST_DIR)
 
   watcher.on('error', error => {
-    console.log(error instanceof Error)
+    this.logger.err(error)
   })
 
-  const Logger = require('roosevelt-logger')
-  this.logger = new Logger()
   const rsync = new Rsync()
   //   .shell('ssh')
     .flags('avz')
@@ -46,13 +46,13 @@ async function fsWatch () {
 
   rsync.execute(function (error, code, cmd) {
     if (error) {
-      console.error(`error: ${error.message}`)
+      this.logger.err(error.message)
     }
   })
 
   this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
   this.logger.info('')
   this.logger.info('💭', `Now watching: ${SRC_DIR}`)
-  this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
+  this.logger.info('💭', `Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
   this.logger.info('')
 }
