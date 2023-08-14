@@ -1344,8 +1344,8 @@ Here's how to set up a dev env to hack on Roosevelt:
 - Create or find a Roosevelt app you want to test against.
   - To make a Roosevelt app, run `npx mkroosevelt`
 - Your changes to Roosevelt need to be copied to your app's `node_modules/roosevelt` directory.
-  - If you do not want to sync these directories automatically, then run the `dev_sync.sh` script. To do that:
+  - If you do not want to sync these directories automatically, then run the `dev_sync.js` script. To do that:
     - Install [fswatch](https://github.com/emcrisostomo/fswatch) and [rsync](https://en.wikipedia.org/wiki/Rsync) and ensure they are in your PATH.
     - Set a `DEST_DIR` environment variable: `export DEST_DIR=/path/to/your/roosevelt/app`
-    - Run the script: `sh dev_sync.sh`
-    - Or in one command: `export DEST_DIR=/path/to/your/roosevelt/app && sh dev_sync.sh`
+    - Run the script: `node dev_sync.js`
+    - Or in one command: `export DEST_DIR=/path/to/your/roosevelt/app && node dev_sync.js`
