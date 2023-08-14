@@ -10,11 +10,13 @@ const rsync = new Rsync()
   .flags('avz')
   .delete()
   .exclude('.DS_Store')
-  .source(SRC_DIR)
-  .destination(`${DEST_DIR}/node_modules/roosevelt/`)
+  .source(`${DEST_DIR}/node_modules/roosevelt/`)
+  .destination(SRC_DIR)
 
-// console.log(rsync)
 rsync.execute(function (error, code, cmd) {
+  console.log(code)
+  console.log(cmd)
+
   if (error) {
     console.error(`error: ${error.message}`)
   }
