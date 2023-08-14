@@ -36,7 +36,6 @@ async function fsWatch () {
   })
 
   const rsync = new Rsync()
-  //   .shell('ssh')
     .flags('avz')
     .delete()
     .exclude('.DS_Store')
