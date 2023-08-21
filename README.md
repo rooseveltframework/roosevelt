@@ -1353,4 +1353,3 @@ Here's how to set up a dev env to hack on Roosevelt:
     - Set a `DEST_DIR` environment variable: `export DEST_DIR=/path/to/your/roosevelt/app`
     - Run the script: `node dev_sync.js`
     - Or in one command: `export DEST_DIR=/path/to/your/roosevelt/app && node dev_sync.js`
-    - To Exit Press: `control + C`
