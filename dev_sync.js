@@ -32,7 +32,6 @@ async function fsWatch () {
   const Watcher = watch.default
   const watcher = new Watcher(SRC_DIR)
 
-
   const rsync = new Rsync()
     .flags('avz')
     .delete()
@@ -63,7 +62,5 @@ async function fsWatch () {
     console.log('💭')
     watcher.close()
     process.exit()
-
   })
 }
-
