@@ -2,12 +2,10 @@ const Logger = require('roosevelt-logger')
 this.logger = new Logger()
 const Rsync = require('rsync')
 let DEST_DIR = process.env.DEST_DIR
-rsvtConfig = `${DEST_DIR}/rooseveltConfig.json`
+const rsvtConfig = `${DEST_DIR}/rooseveltConfig.json`
 DEST_DIR = `${DEST_DIR}/node_modules/`
-
 const SRC_DIR = __dirname
 const fs = require('fs')
-console.log(`SRC_DIR: ${SRC_DIR}`)
 
 try {
   if (DEST_DIR === '' || DEST_DIR === undefined) {
