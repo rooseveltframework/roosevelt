@@ -2,7 +2,6 @@ const Logger = require('roosevelt-logger')
 this.logger = new Logger()
 const Rsync = require('rsync')
 let DEST_DIR = process.env.DEST_DIR
-// let DEST_DIR = './../my-roosevelt-sample-app'
 rsvtConfig = `${DEST_DIR}/rooseveltConfig.json`
 DEST_DIR = `${DEST_DIR}/node_modules/`
 
