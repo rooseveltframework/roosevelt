@@ -14,6 +14,8 @@ try {
     this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
   } else {
     if (fs.existsSync(rsvtConfig) || fs.existsSync(`${DEST_DIR}/roosevelt/`)) {
+      this.logger.info('')
+      this.logger.info('💭')
       this.logger.info('💭', 'We are in a Roosevelt app ...')
       fsWatch()
     } else {
@@ -48,17 +50,21 @@ async function fsWatch () {
     this.logger.info('💭', `Now watching: ${SRC_DIR}`)
     this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
     this.logger.info('')
+  })
 
+  setInterval(function () {
     rsync.execute(function (error, code, cmd) {
       if (error) {
         this.logger.error(`ERROR: ${error.message}`)
       }
     })
+  }, 5000)
 
+  process.on('SIGINT', function () {
+    console.log('')
+    console.log('')
     console.log('💭')
-    console.log('💭 Closing rsync')
     console.log('💭 Closing fswatch')
-
     console.log('💭')
     watcher.close()
     process.exit()
