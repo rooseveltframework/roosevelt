@@ -1,11 +1,27 @@
 const Logger = require('roosevelt-logger')
 this.logger = new Logger()
 const Rsync = require('rsync')
-let DEST_DIR = process.env.DEST_DIR
+let DEST_DIR = './../my-roosevelt-sample-app'
+// let DEST_DIR = process.env.DEST_DIR
 const rsvtConfig = `${DEST_DIR}/rooseveltConfig.json`
 DEST_DIR = `${DEST_DIR}/node_modules/`
 const SRC_DIR = __dirname
 const fs = require('fs')
+const { Glob } = require('glob')
+
+const gitignoreScanner = require('./lib/tools/gitignoreScanner')
+const gitignoreFiles = gitignoreScanner('./gitignore')
+const g = new Glob('./../roosevelt/**/*.js', { ignore: 'node_modules/**' })
+const globalList = []
+
+for (const file of g) {
+  for (let i = 0; i < gitignoreFiles.length; i++) {
+    if (gitignoreFiles[i] !== file) {
+      globalList.push(file)
+      break
+    }
+  }
+}
 
 try {
   if (DEST_DIR === '' || DEST_DIR === undefined) {
@@ -32,7 +48,7 @@ async function fsWatch () {
   this.logger = new Logger()
   const watch = await import('watcher')
   const Watcher = watch.default
-  const watcher = new Watcher(SRC_DIR)
+  const watcher = new Watcher(globalList, { recursive: true })
 
   const rsync = new Rsync()
     .flags('avz')
@@ -44,6 +60,7 @@ async function fsWatch () {
   watcher.on('error', error => {
     this.logger.err(error)
   })
+
   watcher.on('ready', () => {
     this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
     this.logger.info('')
@@ -52,13 +69,13 @@ async function fsWatch () {
     this.logger.info('')
   })
 
-  setInterval(function () {
+  watcher.on('change', filePath => {
     rsync.execute(function (error, code, cmd) {
       if (error) {
         this.logger.error(`ERROR: ${error.message}`)
       }
     })
-  }, 5000)
+  })
 
   process.on('SIGINT', function () {
     console.log('')
