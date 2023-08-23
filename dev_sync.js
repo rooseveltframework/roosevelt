@@ -9,10 +9,10 @@ const { Glob } = require('glob')
 
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
 const gitignoreFiles = gitignoreScanner('./gitignore')
-const g = new Glob('./../roosevelt/**/*.js', { ignore: 'node_modules/**' })
+const glob = new Glob('./../roosevelt/**/*.js', { ignore: 'node_modules/**' })
 const globalList = []
 
-for (const file of g) {
+for (const file of glob) {
   if (!gitignoreFiles.includes(file)) {
     globalList.push(file)
   }
@@ -45,13 +45,6 @@ async function fsWatch () {
   const Watcher = watch.default
   const watcher = new Watcher(globalList, { recursive: true })
 
-  const rsync = new Rsync()
-    .flags('avz')
-    .delete()
-    .exclude('.DS_Store')
-    .source(SRC_DIR)
-    .destination(DEST_DIR)
-
   watcher.on('error', error => {
     this.logger.err(error)
   })
@@ -63,8 +56,18 @@ async function fsWatch () {
     this.logger.info('💭', `Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
     this.logger.info('')
   })
-
+  console.log(globalList)
   watcher.on('change', filePath => {
+    const rosvlt = filePath.split('roosevelt')[1]
+    console.log(`File :${rosvlt}`)
+
+    const rsync = new Rsync()
+      .flags('avz')
+      .delete()
+      .exclude('.DS_Store')
+      .source(filePath)
+      .destination(DEST_DIR + '/node_modules/roosevelt/' + rosvlt)
+
     rsync.execute(function (error, code, cmd) {
       if (error) {
         this.logger.error(`ERROR: ${error.message}`)
