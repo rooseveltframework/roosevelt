@@ -56,7 +56,7 @@ async function fsWatch () {
     this.logger.info('💭', `Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
     this.logger.info('')
   })
-  console.log(globalList)
+
   watcher.on('change', filePath => {
     const rosvlt = filePath.split('roosevelt')[1]
     console.log(`File :${rosvlt}`)
