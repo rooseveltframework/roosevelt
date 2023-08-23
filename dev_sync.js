@@ -1,10 +1,8 @@
 const Logger = require('roosevelt-logger')
 this.logger = new Logger()
 const Rsync = require('rsync')
-let DEST_DIR = './../my-roosevelt-sample-app'
+const DEST_DIR = './../my-roosevelt-sample-app'
 // let DEST_DIR = process.env.DEST_DIR
-const rsvtConfig = `${DEST_DIR}/rooseveltConfig.json`
-DEST_DIR = `${DEST_DIR}/node_modules/`
 const SRC_DIR = __dirname
 const fs = require('fs')
 const { Glob } = require('glob')
@@ -29,7 +27,7 @@ try {
   } else if (DEST_DIR === SRC_DIR) {
     this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
   } else {
-    if (fs.existsSync(rsvtConfig) || fs.existsSync(`${DEST_DIR}/roosevelt/`)) {
+    if (fs.existsSync(`${DEST_DIR}/rooseveltConfig.json`) || fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)) {
       this.logger.info('')
       this.logger.info('💭')
       this.logger.info('💭', 'We are in a Roosevelt app ...')
@@ -65,7 +63,7 @@ async function fsWatch () {
     this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
     this.logger.info('')
     this.logger.info('💭', `Now watching: ${SRC_DIR}`)
-    this.logger.info('💭', `Will copy to: ${DEST_DIR}`)
+    this.logger.info('💭', `Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
     this.logger.info('')
   })
 
