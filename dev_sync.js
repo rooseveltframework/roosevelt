@@ -13,11 +13,8 @@ const g = new Glob('./../roosevelt/**/*.js', { ignore: 'node_modules/**' })
 const globalList = []
 
 for (const file of g) {
-  for (let i = 0; i < gitignoreFiles.length; i++) {
-    if (gitignoreFiles[i] !== file) {
-      globalList.push(file)
-      break
-    }
+  if (!gitignoreFiles.includes(file)) {
+    globalList.push(file)
   }
 }
 
