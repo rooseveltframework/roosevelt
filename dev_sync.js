@@ -35,7 +35,7 @@ function promptSetup (DEST_DIR) {
       (async () => {
         const response = await prompts(questions)
         DEST_DIR = response.DEST_DIR
-        if (DEST_DIR === 'exit' || DEST_DIR === 'close') {
+        if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
           console.log('')
           console.log('💭')
           console.log('💭 Closing fswatch')
@@ -66,7 +66,7 @@ function promptSetup (DEST_DIR) {
         (async () => {
           const response = await prompts(questions)
           DEST_DIR = response.DEST_DIR
-          if (DEST_DIR === 'exit' || DEST_DIR === 'close') {
+          if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
             console.log('')
             console.log('💭')
             console.log('💭 Closing fswatch')
@@ -123,7 +123,7 @@ async function fsWatch (DEST_DIR) {
     {
       type: 'text',
       name: 'INPUT',
-      message: 'Type "Exit or Close" to end fsWatcher"'
+      message: 'Type "Exit" or "Close" to end fsWatcher"'
     }
   ];
   (async () => {
