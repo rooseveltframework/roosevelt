@@ -16,10 +16,11 @@ for (const file of glob) {
     globalList.push(file)
   }
 }
-
 function promptSetup (DEST_DIR) {
   const Logger = require('roosevelt-logger')
   this.logger = new Logger()
+  console.log(`process.env.DEST_DIR: ${process.env.DEST_DIR}`)
+  DEST_DIR = process.env.DEST_DIR
 
   try {
     if (DEST_DIR === '' || DEST_DIR === undefined) {
@@ -49,9 +50,6 @@ function promptSetup (DEST_DIR) {
       this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
     } else {
       if (fs.existsSync(`${DEST_DIR}/rooseveltConfig.json`) || fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)) {
-        this.logger.info('')
-        this.logger.info('💭')
-        this.logger.info('💭', 'We are in a Roosevelt app ...')
         fsWatch(DEST_DIR)
       } else {
         this.logger.info('')
@@ -96,6 +94,8 @@ async function fsWatch (DEST_DIR) {
   })
 
   watcher.on('ready', () => {
+    this.logger.info('')
+    this.logger.info('')
     this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
     this.logger.info('')
     this.logger.info('💭', `Now watching: ${SRC_DIR}`)
@@ -119,15 +119,26 @@ async function fsWatch (DEST_DIR) {
     })
   })
 
-  process.on('SIGINT', function () {
-    console.log('')
-    console.log('')
-    console.log('💭')
-    console.log('💭 Closing fswatch')
-    console.log('💭')
-    watcher.close()
-    process.exit()
-  })
+  const questions = [
+    {
+      type: 'text',
+      name: 'INPUT',
+      message: 'Type "Exit or Close" to end fsWatcher"'
+    }
+  ];
+  (async () => {
+    const response = await prompts(questions)
+    const input = response.INPUT
+    if (input.toLowerCase() === 'exit' || input.toLowerCase() === 'close') {
+      console.log('')
+      console.log('')
+      console.log('💭')
+      console.log('💭 Closing fswatch')
+      console.log('💭')
+      watcher.close()
+      process.exit()
+    }
+  })()
 }
 
 promptSetup()
