@@ -1,5 +1,3 @@
-const Logger = require('roosevelt-logger')
-this.logger = new Logger()
 const DEST_DIR = process.env.DEST_DIR
 const Rsync = require('rsync')
 const SRC_DIR = __dirname
