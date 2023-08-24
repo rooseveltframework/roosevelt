@@ -35,23 +35,7 @@ function promptSetup (DEST_DIR) {
       (async () => {
         const response = await prompts(questions)
         DEST_DIR = response.DEST_DIR
-        if (DEST_DIR === undefined) {
-          console.log('')
-          console.log('')
-          console.log('💭')
-          console.log('💭 Closing fswatch')
-          console.log('💭')
-          process.exit()
-        } else if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
-          console.log('')
-          console.log('💭')
-          console.log('💭 Closing fswatch')
-          console.log('💭')
-          console.log('')
-          process.exit()
-        } else {
-          promptSetup(DEST_DIR)
-        }
+        fsClose(DEST_DIR)
       })()
     } else if (DEST_DIR === SRC_DIR) {
       this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
@@ -73,23 +57,7 @@ function promptSetup (DEST_DIR) {
         (async () => {
           const response = await prompts(questions)
           DEST_DIR = response.DEST_DIR
-          if (DEST_DIR === undefined) {
-            console.log('')
-            console.log('')
-            console.log('💭')
-            console.log('💭 Closing fswatch')
-            console.log('💭')
-            process.exit()
-          } else if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
-            console.log('')
-            console.log('💭')
-            console.log('💭 Closing fswatch')
-            console.log('💭')
-            console.log('')
-            process.exit()
-          } else {
-            promptSetup(DEST_DIR)
-          }
+          fsClose(DEST_DIR)
         })()
       }
     }
@@ -161,6 +129,26 @@ async function fsWatch (DEST_DIR) {
       process.exit()
     }
   })()
+}
+
+async function fsClose (DEST_DIR) {
+  if (DEST_DIR === undefined) {
+    console.log('')
+    console.log('')
+    console.log('💭')
+    console.log('💭 Closing fswatch')
+    console.log('💭')
+    process.exit()
+  } else if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
+    console.log('')
+    console.log('💭')
+    console.log('💭 Closing fswatch')
+    console.log('💭')
+    console.log('')
+    process.exit()
+  } else {
+    promptSetup(DEST_DIR)
+  }
 }
 
 promptSetup(DEST_DIR)
