@@ -4,10 +4,10 @@ const SRC_DIR = __dirname
 const fs = require('fs')
 const { Glob } = require('glob')
 const prompts = require('prompts')
-
+const rosvltPath = `${SRC_DIR}/**/*.js`
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
 const gitignoreFiles = gitignoreScanner('./gitignore')
-const glob = new Glob('./../roosevelt/**/*.js', { ignore: 'node_modules/**' })
+const glob = new Glob(rosvltPath, { ignore: 'node_modules/**' })
 const globalList = []
 
 for (const file of glob) {
