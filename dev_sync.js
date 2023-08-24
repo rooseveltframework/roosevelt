@@ -1,5 +1,6 @@
 const Logger = require('roosevelt-logger')
 this.logger = new Logger()
+const DEST_DIR = process.env.DEST_DIR
 const Rsync = require('rsync')
 const SRC_DIR = __dirname
 const fs = require('fs')
@@ -19,7 +20,7 @@ for (const file of glob) {
 function promptSetup (DEST_DIR) {
   const Logger = require('roosevelt-logger')
   this.logger = new Logger()
-  DEST_DIR = process.env.DEST_DIR
+  // DEST_DIR = process.env.DEST_DIR
 
   try {
     if (DEST_DIR === '' || DEST_DIR === undefined) {
@@ -34,7 +35,14 @@ function promptSetup (DEST_DIR) {
       (async () => {
         const response = await prompts(questions)
         DEST_DIR = response.DEST_DIR
-        if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
+        if (DEST_DIR === undefined) {
+          console.log('')
+          console.log('')
+          console.log('💭')
+          console.log('💭 Closing fswatch')
+          console.log('💭')
+          process.exit()
+        } else if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
           console.log('')
           console.log('💭')
           console.log('💭 Closing fswatch')
@@ -65,7 +73,14 @@ function promptSetup (DEST_DIR) {
         (async () => {
           const response = await prompts(questions)
           DEST_DIR = response.DEST_DIR
-          if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
+          if (DEST_DIR === undefined) {
+            console.log('')
+            console.log('')
+            console.log('💭')
+            console.log('💭 Closing fswatch')
+            console.log('💭')
+            process.exit()
+          } else if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
             console.log('')
             console.log('💭')
             console.log('💭 Closing fswatch')
@@ -128,7 +143,15 @@ async function fsWatch (DEST_DIR) {
   (async () => {
     const response = await prompts(questions)
     const input = response.INPUT
-    if (input.toLowerCase() === 'exit' || input.toLowerCase() === 'close') {
+    if (input === undefined) {
+      console.log('')
+      console.log('')
+      console.log('💭')
+      console.log('💭 Closing fswatch')
+      console.log('💭')
+      watcher.close()
+      process.exit()
+    } else if (input.toLowerCase() === 'exit' || input.toLowerCase() === 'close') {
       console.log('')
       console.log('')
       console.log('💭')
@@ -140,4 +163,4 @@ async function fsWatch (DEST_DIR) {
   })()
 }
 
-promptSetup()
+promptSetup(DEST_DIR)
