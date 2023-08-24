@@ -1,11 +1,10 @@
 const Logger = require('roosevelt-logger')
 this.logger = new Logger()
 const Rsync = require('rsync')
-const DEST_DIR = './../my-roosevelt-sample-app'
-// let DEST_DIR = process.env.DEST_DIR
 const SRC_DIR = __dirname
 const fs = require('fs')
 const { Glob } = require('glob')
+const prompts = require('prompts')
 
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
 const gitignoreFiles = gitignoreScanner('./gitignore')
@@ -18,27 +17,74 @@ for (const file of glob) {
   }
 }
 
-try {
-  if (DEST_DIR === '' || DEST_DIR === undefined) {
-    this.logger.error('ERROR: DEST_DIR is an empty variable')
-  } else if (DEST_DIR === SRC_DIR) {
-    this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
-  } else {
-    if (fs.existsSync(`${DEST_DIR}/rooseveltConfig.json`) || fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)) {
-      this.logger.info('')
-      this.logger.info('💭')
-      this.logger.info('💭', 'We are in a Roosevelt app ...')
-      fsWatch()
-    } else {
-      this.logger.info('')
-      this.logger.warn('Make sure the above directories are correct or this could delete unwanted files!')
-      this.logger.info('💭', 'We are not in a Roosevelt app ...')
-      this.logger.info('')
-    }
-  }
-} catch (err) { console.log(err) }
+function promptSetup (DEST_DIR) {
+  const Logger = require('roosevelt-logger')
+  this.logger = new Logger()
 
-async function fsWatch () {
+  try {
+    if (DEST_DIR === '' || DEST_DIR === undefined) {
+      this.logger.error('ERROR: DEST_DIR is an empty variable')
+      const questions = [
+        {
+          type: 'text',
+          name: 'DEST_DIR',
+          message: 'Path to Roosevelt Sample App?'
+        }
+      ];
+      (async () => {
+        const response = await prompts(questions)
+        DEST_DIR = response.DEST_DIR
+        if (DEST_DIR === 'exit' || DEST_DIR === 'close') {
+          console.log('')
+          console.log('💭')
+          console.log('💭 Closing fswatch')
+          console.log('💭')
+          console.log('')
+          process.exit()
+        } else {
+          promptSetup(DEST_DIR)
+        }
+      })()
+    } else if (DEST_DIR === SRC_DIR) {
+      this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
+    } else {
+      if (fs.existsSync(`${DEST_DIR}/rooseveltConfig.json`) || fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)) {
+        this.logger.info('')
+        this.logger.info('💭')
+        this.logger.info('💭', 'We are in a Roosevelt app ...')
+        fsWatch(DEST_DIR)
+      } else {
+        this.logger.info('')
+        this.logger.warn('Make sure the above directories are correct or this could delete unwanted files!')
+        this.logger.info('💭', 'We are not in a Roosevelt app ...')
+        this.logger.info('')
+        const questions = [
+          {
+            type: 'text',
+            name: 'DEST_DIR',
+            message: 'Path to Roosevelt Sample App?'
+          }
+        ];
+        (async () => {
+          const response = await prompts(questions)
+          DEST_DIR = response.DEST_DIR
+          if (DEST_DIR === 'exit' || DEST_DIR === 'close') {
+            console.log('')
+            console.log('💭')
+            console.log('💭 Closing fswatch')
+            console.log('💭')
+            console.log('')
+            process.exit()
+          } else {
+            promptSetup(DEST_DIR)
+          }
+        })()
+      }
+    }
+  } catch (err) { console.log(err) }
+}
+
+async function fsWatch (DEST_DIR) {
   const Logger = require('roosevelt-logger')
   this.logger = new Logger()
   const watch = await import('watcher')
@@ -59,8 +105,6 @@ async function fsWatch () {
 
   watcher.on('change', filePath => {
     const rosvlt = filePath.split('roosevelt')[1]
-    console.log(`File :${rosvlt}`)
-
     const rsync = new Rsync()
       .flags('avz')
       .delete()
@@ -85,3 +129,5 @@ async function fsWatch () {
     process.exit()
   })
 }
+
+promptSetup()
