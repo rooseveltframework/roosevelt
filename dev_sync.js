@@ -19,7 +19,6 @@ for (const file of glob) {
 function promptSetup (DEST_DIR) {
   const Logger = require('roosevelt-logger')
   this.logger = new Logger()
-  console.log(`process.env.DEST_DIR: ${process.env.DEST_DIR}`)
   DEST_DIR = process.env.DEST_DIR
 
   try {
