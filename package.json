@@ -62,7 +62,7 @@
     "sass": "1.66.1",
     "sinon": "15.2.0",
     "standard": "17.1.0",
-    "stylus": "0.59.0",
+    "stylus": "0.60.0",
     "supertest": "6.3.3",
     "teddy": "0.6.4"
   },
