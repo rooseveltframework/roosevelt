@@ -55,7 +55,7 @@
     "c8": "8.0.1",
     "codecov": "3.8.3",
     "eslint": "8.50.0",
-    "eslint-plugin-mocha": "10.1.0",
+    "eslint-plugin-mocha": "10.2.0",
     "less": "4.2.0",
     "mocha": "10.2.0",
     "proxyquire": "2.1.3",
