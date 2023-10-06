@@ -18,8 +18,7 @@
     "enable": true,
     "exceptions": {
       "requestHeader": "Partial",
-      "modelValue": "_disableValidator",
-      "routePrefix": "routePrefix"
+      "modelValue": "_disableValidator"
     },
     "validatorConfig": {}
   },
