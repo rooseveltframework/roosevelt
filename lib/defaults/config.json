@@ -31,6 +31,7 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
+  "csrfProtection": true,
   "bodyParser": {
     "urlEncoded": {
       "extended": true
