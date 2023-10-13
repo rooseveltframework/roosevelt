@@ -1,0 +1,20 @@
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'>
+    <title>CSRF Test</title>
+  </head>
+
+  <body>
+    <h1>Login Form</h1>
+    <form action="https://localhost:43711/">
+      <input type="hidden" name="_csrf" value=`${csrfToken}`>
+        <label for="uname"><b>User Name:</b></label>
+        <input type="text" placeholder="Enter Username" name="uname" required><br>
+    
+        <label for="psw"><b>Password:</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" required><br>
+    
+        <button type="submit">Login</button>
+      </form>
+  </body>
+</html>
