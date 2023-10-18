@@ -19,17 +19,18 @@ describe('form pages', function () {
     done()
   })
 
-  // afterEach(done => {
-  //   (async () => {
-  //     // wipe out the test app directory
-  //     await appCleaner('sourceParams')
-
-  //     done()
-  //   })()
-  // })
+  afterEach(function (done) {
+    // clean up the test app directory after each test
+    appCleaner(appDir, (err) => {
+      if (err) {
+        throw err
+      } else {
+        done()
+      }
+    })
+  })
 
   it.only('should render the form test page', function (done) {
-    // this.timeout(90000)
     // generate the test app
     generateTestApp({
       appDir,
@@ -44,13 +45,14 @@ describe('form pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the test page
-    testApp.on('message', (params) => {
-      request(`http://localhost:${params.port}`)
+    testApp.on('message', () => {
+      request('http://localhost:43711')
         .get('/form')
         .expect(200, (err, res) => {
           if (err) {
             assert.fail(err)
             testApp.send('stop')
+            done()
           }
           // test that the values rendered on the page are correct
           const test1 = res.text.includes('CSRF Test')
