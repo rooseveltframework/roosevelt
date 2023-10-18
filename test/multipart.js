@@ -21,8 +21,12 @@ function isEmpty (dir) {
   }
 }
 
+const appDir = path.join(__dirname, 'app/multipartForms')
+
+// Ensure the default paths are relative to appDir
+const destDir = process.env.DEST_DIR || path.join(appDir, 'complete')
+
 describe('multipart/formidable', () => {
-  const appDir = path.join(__dirname, 'app/multipartForms')
   const context = {}
   const tmpDir = path.join(appDir, 'tmp')
   const completeDir = path.join(appDir, 'complete')
@@ -65,10 +69,16 @@ describe('multipart/formidable', () => {
           // move files to 'complete' directory
           for (const key in files) {
             const file = files[key]
-            const filePath = file.filepath
+            const filePath = file[0].filepath
+            const originalFilename = file[0].originalFilename
+            const destPath = path.join(destDir, originalFilename)
 
             if (typeof filePath === 'string') {
-              fs.copyFileSync(filePath, path.join(completeDir, file.originalFilename))
+              try {
+                fs.moveSync(filePath, destPath)
+              } catch (error) {
+                console.error(`Error moving file: ${error}`)
+              }
             }
           }
 
