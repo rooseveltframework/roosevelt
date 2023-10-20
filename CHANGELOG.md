@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.13
+
+- Certs will be auto-generated in dev mode now if they don't exist.
+- Various dependencies updated.
+
 ## 0.21.12
 
 - Fixed isomorphic controllers bundler webpack bug in Windows.
