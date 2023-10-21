@@ -23,4 +23,4 @@ If you are a maintainer of Roosevelt, please follow the following release proced
 - Open and merge a pull request with those changes.
 - Tag the merge commit as the a new release version number.
 - Publish commit to npm.
-- Publish new generator-roosevelt and mkroosevelt versions too if necessary.
+- Publish new generator-roosevelt and mkroosevelt versions as well.
