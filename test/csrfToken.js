@@ -7,6 +7,7 @@ const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
+const getcsrfAttack = require('./../test/util/csrfAttack')
 
 describe('form pages', function () {
   const appDir = path.join(__dirname, 'app/errorPages')
@@ -30,7 +31,7 @@ describe('form pages', function () {
     })
   })
 
-  it.only('should render the form test page', function (done) {
+  it('should render the form test page', function (done) {
     // generate the test app
     generateTestApp({
       appDir,
@@ -71,5 +72,37 @@ describe('form pages', function () {
         done()
       })
     })
+  })
+
+  it.only('should render', function (done) {
+    // generate the test app
+    // generateTestApp({
+    //   appDir,
+    //   makeBuildArtifacts: true,
+    //   viewEngine: [
+    //     'html: teddy'
+    //   ],
+    //   onServerStart: '(app) => {process.send(app.get("params"))}'
+    // }, options)
+
+    // fork and run app.js as a child process
+    getcsrfAttack.csrfAttack()
+    const attackApp = fork('./csrfAttack/csrfExpress.js', { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+    console.log(attackApp)
+    attackApp.on('message', () => {
+      request('http://localhost:3001')
+        .post('form')
+        .expect(200, (err, res) => {
+          if (err) {
+            assert.fail(err)
+            // attackApp.send('stop')
+            done()
+          }
+          const test1 = res.text.includes('Congratulations. You just won a bonus of 1 million dollars!!')
+          assert.strictEqual(test1, true)
+          // attackApp.send('stop')
+        })
+    })
+    done()
   })
 })
