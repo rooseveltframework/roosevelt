@@ -23,7 +23,6 @@ function isEmpty (dir) {
 
 describe('multipart/formidable', () => {
   const appDir = path.join(__dirname, 'app/multipartForms')
-  const destDir = process.env.DEST_DIR || path.join(appDir, 'complete')
   const context = {}
   const tmpDir = path.join(appDir, 'tmp')
   const completeDir = path.join(appDir, 'complete')
@@ -68,7 +67,7 @@ describe('multipart/formidable', () => {
             for (const file of fileArray) {
               const filePath = file.filepath
               const originalFilename = file.originalFilename
-              const destPath = path.join(destDir, originalFilename)
+              const destPath = path.join(completeDir, originalFilename)
 
               if (typeof filePath === 'string') {
                 try {
