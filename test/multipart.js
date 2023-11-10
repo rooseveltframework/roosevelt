@@ -63,12 +63,19 @@ describe('multipart/formidable', () => {
           const files = req.files
 
           // move files to 'complete' directory
-          for (const key in files) {
-            const file = files[key]
-            const filePath = file.filepath
+          for (const fileArray of Object.values(files)) {
+            for (const file of fileArray) {
+              const filePath = file.filepath
+              const originalFilename = file.originalFilename
+              const destPath = path.join(completeDir, originalFilename)
 
-            if (typeof filePath === 'string') {
-              fs.copyFileSync(filePath, path.join(completeDir, file.originalFilename))
+              if (typeof filePath === 'string') {
+                try {
+                  fs.moveSync(filePath, destPath)
+                } catch (error) {
+                  console.error(`Error moving file: ${error}`)
+                }
+              }
             }
           }
 
