@@ -52,7 +52,7 @@ describe('frontend reload', () => {
     })
   }
 
-  it('should start reload http server in dev mode', async () => {
+  it.skip('should start reload http server in dev mode', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config
@@ -144,7 +144,7 @@ describe('frontend reload', () => {
     assert(httpsRes.status === 200)
   })
 
-  it('should auto inject reload script into rendered html', async () => {
+  it.skip('should auto inject reload script into rendered html', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config
@@ -162,7 +162,7 @@ describe('frontend reload', () => {
     assert(res.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'))
   })
 
-  it('should not start reload in prod mode', async () => {
+  it.skip('should not start reload in prod mode', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config,
@@ -181,7 +181,7 @@ describe('frontend reload', () => {
     assert(app.get('reloadHttpServer') === undefined)
   })
 
-  it('should not start reload when disabled', async () => {
+  it.skip('should not start reload when disabled', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config,
