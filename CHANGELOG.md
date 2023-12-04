@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.21.14
+
+- Updated various dependencies.
+
 ## 0.21.13
 
 - Certs will be auto-generated in dev mode now if they don't exist.

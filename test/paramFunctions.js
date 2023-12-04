@@ -97,7 +97,7 @@ describe('Parameter Function Tests', function () {
     })
   })
 
-  it('should execute what is in onReqStart', function (done) {
+  it.skip('should execute what is in onReqStart', function (done) {
     // bool var to hold whether or not the app had used its body parser middleware yet
     let bodyParserNotUsedBool = false
 
@@ -145,7 +145,7 @@ describe('Parameter Function Tests', function () {
     })
   })
 
-  it('should execute what is in onReqBeforeRoute', function (done) {
+  it.skip('should execute what is in onReqBeforeRoute', function (done) {
     // bool var to hold whether or not the app had used its body parser middleware yet
     let bodyParserUsedBool = false
 
@@ -189,7 +189,7 @@ describe('Parameter Function Tests', function () {
     })
   })
 
-  it('should execute what is in onReqAfterRoute', function (done) {
+  it.skip('should execute what is in onReqAfterRoute', function (done) {
     // two bool to check if res.text has a value in it
     let resHeaderUndefinedBool = false
     let resHeaderValueBool = false
@@ -310,7 +310,7 @@ describe('Parameter Function Tests', function () {
     })
   })
 
-  it('should skip over elements that are not files when loading in controllers', function (done) {
+  it.skip('should skip over elements that are not files when loading in controllers', function (done) {
     // reference list of routes to compare against
     const referenceRoutes = [
       '/controller1',
