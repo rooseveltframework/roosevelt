@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.21.15
+
+- Updated various dependencies.
+
 ## 0.21.14
 
 - Updated various dependencies.
