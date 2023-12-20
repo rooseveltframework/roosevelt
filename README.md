@@ -200,11 +200,11 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --build`: Only runs the build scripts and doesn't start the app.
   - Default shorthands:
     - `-b`
-- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console. 
+- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console.
   - Default shorthands:
     - `--wp=verbose`
     - `-w=verbose`
-- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error. 
+- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error.
   - Default shorthands:
     - `--wp=verbose-file`
     - `-w=verbose-file`
@@ -831,7 +831,7 @@ Resolves to:
               etc...
             ]
             ```
-    
+
      - `verbose`: *[string]* Enable Webpack verbose error handler.
 
   - Default: *[Object]*
@@ -1287,6 +1287,7 @@ In addition to exposing a number of variables to Express and providing the MVC i
 
 - Includes the [compression](https://github.com/expressjs/compression) middleware.
 - Includes the [cookie-parser](https://github.com/expressjs/cookie-parser) middleware.
+- Includes the [express-session](https://github.com/expressjs/session) middleware.
 - Includes the [helmet](https://github.com/helmetjs/helmet) middleware.
 - Logs HTTP requests to the console using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
 - Includes the [method-override](https://github.com/expressjs/method-override) middleware.

@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Add `express-session` dependency.
 
 ## 0.21.15
 
