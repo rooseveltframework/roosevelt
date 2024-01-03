@@ -225,6 +225,7 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--raw`
     - `-r`
+-  `node app.js --print`: Prints app configuration in the console.
 
 ### Combining npm scripts and command line arguments
 

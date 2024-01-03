@@ -3,6 +3,7 @@
 ## Next version
 
 - Add `express-session` dependency.
+- Added a new `--print` CLI flag that will log the app configuration when initializing.
 
 ## 0.21.15
 
