@@ -45,6 +45,12 @@
   },
   "shutdownTimeout": "value",
   "helmet": {},
+  "expressSession": {
+    "enable": true,
+    "secret": "secret key",
+    "resave": "false",
+    "saveUninitialized": false
+  },
   "bodyParser": {
     "urlEncoded": {
       "extended": "value"
