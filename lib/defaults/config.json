@@ -32,7 +32,7 @@
   },
   "helmet": {},
   "expressSession": {
-    "enable": true,
+    "enable": false,
     "secret": "secret key",
     "resave": "false",
     "saveUninitialized": false
