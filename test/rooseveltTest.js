@@ -519,7 +519,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should not execute onServerStart if the value is not a function', function (done) {
+  it('should not execute onServerStart if the value is not a function', function (done) {
     // bool var that will hold whether or not a message is recieved based on if a function was passed to onServerStart
     let serverStartFunctionBool = false
 
@@ -597,7 +597,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
+  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
     // bool var to hold whether or not specific logs were made or if a specific action happened
     let samePortWarningBool = false
     let serverStartedBool = false
@@ -685,7 +685,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should be able to use server close instead of exiting process with an HTTP server', function (done) {
+  it('should be able to use server close instead of exiting process with an HTTP server', function (done) {
     // set test app features
     sOptions.exitProcess = true
     sOptions.close = true
@@ -720,7 +720,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should be able to use server close instead of exiting process with an HTTPS server', function (done) {
+  it('should be able to use server close instead of exiting process with an HTTPS server', function (done) {
     // set the server type
     sOptions.close = true
     sOptions.serverType = 'httpsServer'

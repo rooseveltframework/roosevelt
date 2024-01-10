@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.21.16
+
+- Fixed an issue that could cause the server to start before all the controller routes were loaded.
+- Updated various dependencies.
+
 ## 0.21.15
 
 - Updated various dependencies.

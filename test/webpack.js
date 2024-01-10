@@ -136,7 +136,7 @@ describe('webpack', () => {
     })
   })
 
-  it.skip('should bundle in prod mode when env is not set', done => {
+  it('should bundle in prod mode when env is not set', done => {
     const app = roosevelt({
       logging: {
         methods: {
@@ -215,7 +215,7 @@ describe('webpack', () => {
     })
   })
 
-  it.skip('should bundle from a mix of config objects and files', done => {
+  it('should bundle from a mix of config objects and files', done => {
     const app = roosevelt({
       logging: {
         methods: {
