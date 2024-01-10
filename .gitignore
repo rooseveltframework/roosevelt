@@ -25,3 +25,5 @@ test/app
 
 coverage
 .nyc_output
+
+certs

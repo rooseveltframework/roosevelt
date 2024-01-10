@@ -200,11 +200,11 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --build`: Only runs the build scripts and doesn't start the app.
   - Default shorthands:
     - `-b`
-- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console. 
+- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console.
   - Default shorthands:
     - `--wp=verbose`
     - `-w=verbose`
-- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error. 
+- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error.
   - Default shorthands:
     - `--wp=verbose-file`
     - `-w=verbose-file`
@@ -831,7 +831,7 @@ Resolves to:
               etc...
             ]
             ```
-    
+
      - `verbose`: *[string]* Enable Webpack verbose error handler.
 
   - Default: *[Object]*
@@ -1353,3 +1353,5 @@ Here's how to set up a dev env to hack on Roosevelt:
     - Set a `DEST_DIR` environment variable: `export DEST_DIR=/path/to/your/roosevelt/app`
     - Run the script: `sh dev_sync.sh`
     - Or in one command: `export DEST_DIR=/path/to/your/roosevelt/app && sh dev_sync.sh`
+
+If you run into issues with tests failing that should pass, try `killall node` and delete the `test/app` folder, then try running the tests again.

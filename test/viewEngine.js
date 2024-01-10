@@ -31,7 +31,7 @@ describe('view engines', function () {
     })
   })
 
-  it.skip('should render the teddy test page', function (done) {
+  it('should render the teddy test page', function (done) {
     // generate the test app
     generateTestApp({
       appDir,
@@ -136,7 +136,7 @@ describe('view engines', function () {
     })
   })
 
-  it.skip('should throw an Error if the ViewEngine parameter is formatted incorrectly', function (done) {
+  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', function (done) {
     // bool var to hold whether or not the error of the viewEngine param being formatted incorrectly was thrown
     let viewEngineFormattedIncorrectlyBool = false
 
@@ -172,7 +172,7 @@ describe('view engines', function () {
     })
   })
 
-  it.skip('should throw an Error if the module passed into viewEngine is nonExistent', function (done) {
+  it('should throw an Error if the module passed into viewEngine is nonExistent', function (done) {
     let viewEngineConfiguredIncorrectlyBool = false
 
     // generate the test app
@@ -207,7 +207,7 @@ describe('view engines', function () {
     })
   })
 
-  it.skip('should be able to set the viewEngine if it was just a string', function (done) {
+  it('should be able to set the viewEngine if it was just a string', function (done) {
     // generate the test app
     generateTestApp({
       makeBuildArtifacts: true,

@@ -41,7 +41,7 @@ describe('routing', () => {
     })
   })
 
-  it.skip('should respond to a route handled in a controller file', done => {
+  it('should respond to a route handled in a controller file', done => {
     // spin up a roosevelt app
     roosevelt({
       ...appConfig,
@@ -66,7 +66,7 @@ describe('routing', () => {
     }).startServer()
   })
 
-  it.skip('should resolve a request to a public file', done => {
+  it('should resolve a request to a public file', done => {
     // spin up a roosevelt app
     roosevelt({
       ...appConfig,
@@ -92,7 +92,7 @@ describe('routing', () => {
     }).startServer()
   })
 
-  it.skip('should respond to route hosted in a subdirectory via routePrefix', done => {
+  it('should respond to route hosted in a subdirectory via routePrefix', done => {
     // spin up a roosevelt app
     roosevelt({
       ...appConfig,
@@ -118,7 +118,7 @@ describe('routing', () => {
     }).startServer()
   })
 
-  it.skip('should resolve a request to a public file hosted in a subdirectory via routePrefix', done => {
+  it('should resolve a request to a public file hosted in a subdirectory via routePrefix', done => {
     // spin up a roosevelt app
     roosevelt({
       ...appConfig,

@@ -31,7 +31,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should render the default 404 page if there is a request for an invalid route', function (done) {
+  it('should render the default 404 page if there is a request for an invalid route', function (done) {
     // generate the test app
     generateTestApp({
       appDir,
@@ -69,7 +69,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', function (done) {
+  it('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', function (done) {
     // copy the custom 404 controller into to the mvc folder
     fs.copyFileSync(path.join(__dirname, './util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
 
@@ -112,7 +112,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', function (done) {
+  it('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', function (done) {
     // generate the test app
     generateTestApp({
       appDir,
@@ -152,7 +152,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should render the default 500 error page if an error has occured on the server', function (done) {
+  it('should render the default 500 error page if an error has occured on the server', function (done) {
     // generate the test app
     generateTestApp({
       appDir,
@@ -284,7 +284,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should complete the request even though the server was closed in the middle of it and respond 503 to any other request made afterwards', function (done) {
+  it('should complete the request even though the server was closed in the middle of it and respond 503 to any other request made afterwards', function (done) {
     let shuttingDownLogBool = false
     let successfulShutdownBool = false
     let port = 0
@@ -348,7 +348,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
     let forceCloseLogBool = false
     let shuttingDownLogBool = false
 
@@ -402,7 +402,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
     // add test app features to use server close and then exit process
     options.close = true
     options.exitProcess = true
@@ -469,7 +469,7 @@ describe('error pages', function () {
     })
   })
 
-  it.skip('should be able to start the app normally without any controller errors, even though there is a non-controller file in the controller folder', function (done) {
+  it('should be able to start the app normally without any controller errors, even though there is a non-controller file in the controller folder', function (done) {
     let appCompletedInitLogBool = false
     let controllerErrorLogBool = false
 

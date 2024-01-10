@@ -34,6 +34,7 @@ module.exports = (params, schema) => {
   let shutdownType
   let httpReloadPromise
   let httpsReloadPromise
+  let initDone = false
 
   // expose initial vars
   app.set('express', express)
@@ -257,6 +258,7 @@ module.exports = (params, schema) => {
         params.onStaticAssetsGenerated(app)
       }
 
+      initDone = true
       if (cb && typeof cb === 'function') {
         cb()
       }
@@ -373,107 +375,111 @@ module.exports = (params, schema) => {
 
   // start server
   async function startHttpServer () {
-    // determine number of CPUs to use
-    const max = os.cpus().length
-    const cores = params.cores
+    const interval = setInterval(() => {
+      if (!initDone) return
+      // determine number of CPUs to use
+      const max = os.cpus().length
+      const cores = params.cores
 
-    if (cores) {
-      if (cores === 'max') {
-        numCPUs = max
-      } else if (cores <= max && cores > 0) {
-        numCPUs = cores
-      } else {
-        logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`)
-      }
-    }
-
-    function serverPush (server, serverPort, serverFormat) {
-      if (params.makeBuildArtifacts !== 'staticsOnly') {
-        servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
-          logger.error(err)
-          if (err.message.includes('EADDRINUSE')) {
-            logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.bold)
-          }
-          process.exit(1)
-        }))
-      }
-    }
-
-    const lock = {}
-    function startupCallback (proto, port) {
-      return async function () {
-        function finalMessages () {
-          logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
-          if (params.localhostOnly) {
-            logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
-          }
-          if (!params.hostPublic) {
-            logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
-          }
-        }
-
-        // spin up reload http(s) service if enabled in dev mode
-        if (appEnv === 'development' && params.frontendReload.enable === true) {
-          try {
-            let reloadServer
-            const config = params.frontendReload
-
-            // get reload ready and bind instance to express variable
-            if (proto === 'HTTP') {
-              reloadServer = await httpReloadPromise
-              app.set('reloadHttpServer', reloadServer)
-            } else {
-              reloadServer = await httpsReloadPromise
-              app.set('reloadHttpsServer', reloadServer)
-            }
-
-            // spin up the reload server
-            await reloadServer.startWebSocketServer()
-            logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
-            finalMessages()
-          } catch (e) {
-            logger.error(e)
-          }
+      if (cores) {
+        if (cores === 'max') {
+          numCPUs = max
+        } else if (cores <= max && cores > 0) {
+          numCPUs = cores
         } else {
-          finalMessages()
+          logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`)
         }
+      }
 
-        if (!Object.isFrozen(lock)) {
-          Object.freeze(lock)
-          // fire user-defined onServerStart event
-          if (params.onServerStart && typeof params.onServerStart === 'function') {
-            params.onServerStart(app)
+      function serverPush (server, serverPort, serverFormat) {
+        if (params.makeBuildArtifacts !== 'staticsOnly') {
+          servers.push(server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
+            logger.error(err)
+            if (err.message.includes('EADDRINUSE')) {
+              logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.bold)
+            }
+            process.exit(1)
+          }))
+        }
+      }
+
+      const lock = {}
+      function startupCallback (proto, port) {
+        return async function () {
+          function finalMessages () {
+            logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
+            if (params.localhostOnly) {
+              logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
+            }
+            if (!params.hostPublic) {
+              logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
+            }
+          }
+
+          // spin up reload http(s) service if enabled in dev mode
+          if (appEnv === 'development' && params.frontendReload.enable === true) {
+            try {
+              let reloadServer
+              const config = params.frontendReload
+
+              // get reload ready and bind instance to express variable
+              if (proto === 'HTTP') {
+                reloadServer = await httpReloadPromise
+                app.set('reloadHttpServer', reloadServer)
+              } else {
+                reloadServer = await httpsReloadPromise
+                app.set('reloadHttpsServer', reloadServer)
+              }
+
+              // spin up the reload server
+              await reloadServer.startWebSocketServer()
+              logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
+              finalMessages()
+            } catch (e) {
+              logger.error(e)
+            }
+          } else {
+            finalMessages()
+          }
+
+          if (!Object.isFrozen(lock)) {
+            Object.freeze(lock)
+            // fire user-defined onServerStart event
+            if (params.onServerStart && typeof params.onServerStart === 'function') {
+              params.onServerStart(app)
+            }
           }
         }
       }
-    }
 
-    if (cluster.isMaster && numCPUs > 1) {
-      for (i = 0; i < numCPUs; i++) {
-        cluster.fork()
-      }
-      cluster.on('exit', function (worker, code, signal) {
-        logger.info('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
-        clusterKilled++
-        if (clusterKilled === parseInt(numCPUs)) {
-          exitLog()
+      if (cluster.isMaster && numCPUs > 1) {
+        for (i = 0; i < numCPUs; i++) {
+          cluster.fork()
         }
-      })
+        cluster.on('exit', function (worker, code, signal) {
+          logger.info('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
+          clusterKilled++
+          if (clusterKilled === parseInt(numCPUs)) {
+            exitLog()
+          }
+        })
 
-      // make it so that the master process will go to gracefulShutdown when it is killed
-      process.on('SIGTERM', gracefulShutdown)
-      process.on('SIGINT', gracefulShutdown)
-    } else {
-      if (!httpsParams.force || !httpsParams.enable) {
-        serverPush(httpServer, params.port, 'HTTP')
-      }
-      if (httpsParams.enable) {
-        serverPush(httpsServer, httpsParams.port, 'HTTPS')
-      }
+        // make it so that the master process will go to gracefulShutdown when it is killed
+        process.on('SIGTERM', gracefulShutdown)
+        process.on('SIGINT', gracefulShutdown)
+      } else {
+        if (!httpsParams.force || !httpsParams.enable) {
+          serverPush(httpServer, params.port, 'HTTP')
+        }
+        if (httpsParams.enable) {
+          serverPush(httpsServer, httpsParams.port, 'HTTPS')
+        }
 
-      process.on('SIGTERM', gracefulShutdown)
-      process.on('SIGINT', gracefulShutdown)
-    }
+        process.on('SIGTERM', gracefulShutdown)
+        process.on('SIGINT', gracefulShutdown)
+      }
+      clearInterval(interval)
+    }, 100)
   }
   /**
    * Start reload http(s) service
