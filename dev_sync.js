@@ -40,10 +40,8 @@ function promptSetup (DEST_DIR) {
       if (fs.existsSync(`${DEST_DIR}/rooseveltConfig.json`) || fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)) {
         fsWatch(DEST_DIR)
       } else {
-        this.logger.info('')
-        this.logger.warn('Make sure the above directories are correct or this could delete unwanted files!')
-        this.logger.info('💭', 'We are not in a Roosevelt app ...')
-        this.logger.info('')
+        this.logger.warn('\nMake sure the above directories are correct or this could delete unwanted files!')
+        this.logger.info('💭', 'We are not in a Roosevelt app ...\n')
         const questions = [
           {
             type: 'text',
@@ -73,13 +71,11 @@ async function fsWatch (DEST_DIR) {
   })
 
   watcher.on('ready', () => {
-    this.logger.info('')
-    this.logger.info('')
-    this.logger.info('💭', 'Roosevelt fswatch rsync tool running...')
-    this.logger.info('')
-    this.logger.info('💭', `Now watching: ${SRC_DIR}`)
-    this.logger.info('💭', `Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
-    this.logger.info('')
+    this.logger.info(`
+💭 Roosevelt fswatch rsync tool running...
+
+💭 Now watching: ${SRC_DIR}
+💭 Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
   })
 
   watcher.on('change', filePath => {
@@ -104,24 +100,15 @@ async function fsWatch (DEST_DIR) {
       name: 'INPUT',
       message: 'Type "Exit" or "Close" to end fsWatcher"'
     }
-  ];
-  (async () => {
+  ]
+
+  ;(async () => {
     const response = await prompts(questions)
-    const input = response.INPUT
-    if (input === undefined) {
-      console.log('')
-      console.log('')
-      console.log('💭')
-      console.log('💭 Closing fswatch')
-      console.log('💭')
-      watcher.close()
-      process.exit()
-    } else if (input.toLowerCase() === 'exit' || input.toLowerCase() === 'close') {
-      console.log('')
-      console.log('')
-      console.log('💭')
-      console.log('💭 Closing fswatch')
-      console.log('💭')
+    if (response.INPUT === undefined || response.INPUT.toLowerCase() === 'exit' || response.INPUT.toLowerCase() === 'close') {
+      this.logger.info(`
+💭
+💭 Closing fswatch
+💭`)
       watcher.close()
       process.exit()
     }
@@ -129,19 +116,11 @@ async function fsWatch (DEST_DIR) {
 }
 
 async function fsClose (DEST_DIR) {
-  if (DEST_DIR === undefined) {
-    console.log('')
-    console.log('')
-    console.log('💭')
-    console.log('💭 Closing fswatch')
-    console.log('💭')
-    process.exit()
-  } else if (DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
-    console.log('')
-    console.log('💭')
-    console.log('💭 Closing fswatch')
-    console.log('💭')
-    console.log('')
+  if (DEST_DIR === undefined || DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
+    this.logger.info(`
+💭
+💭 Closing fswatch
+💭`)
     process.exit()
   } else {
     promptSetup(DEST_DIR)
