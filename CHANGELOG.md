@@ -4,6 +4,19 @@
 
 - Put your changes here...
 
+## 0.21.16
+
+- Fixed an issue that could cause the server to start before all the controller routes were loaded.
+- Updated various dependencies.
+
+## 0.21.15
+
+- Updated various dependencies.
+
+## 0.21.14
+
+- Updated various dependencies.
+
 ## 0.21.13
 
 - Certs will be auto-generated in dev mode now if they don't exist.

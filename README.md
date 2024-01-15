@@ -200,11 +200,11 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --build`: Only runs the build scripts and doesn't start the app.
   - Default shorthands:
     - `-b`
-- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console. 
+- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console.
   - Default shorthands:
     - `--wp=verbose`
     - `-w=verbose`
-- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error. 
+- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error.
   - Default shorthands:
     - `--wp=verbose-file`
     - `-w=verbose-file`
@@ -831,7 +831,7 @@ Resolves to:
               etc...
             ]
             ```
-    
+
      - `verbose`: *[string]* Enable Webpack verbose error handler.
 
   - Default: *[Object]*
@@ -1353,9 +1353,9 @@ Here's how to set up a dev env to hack on Roosevelt:
     - Set a `DEST_DIR` environment variable: `export DEST_DIR=/path/to/your/roosevelt/app`
     - Run the script: `node dev_sync.js`
     - Or in one command: `export DEST_DIR=/path/to/your/roosevelt/app && node dev_sync.js`
- -For Windows 
+ -For Windows
     - Set a `DEST_DIR` environment variable: `$env:DEST_DIR="/path/to/your/roosevelt/app"`
     - Run the script: `node dev_sync.js`
- -To Exit the script 
-    - To end the script press: `control^ + C` 
+ -To Exit the script
+    - To end the script press: `control^ + C`
     - To end the script type: `Exit` or `Close`
