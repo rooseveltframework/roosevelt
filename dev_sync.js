@@ -1,5 +1,6 @@
 const DEST_DIR = process.env.DEST_DIR
 const Rsync = require('rsync')
+const Logger = require('roosevelt-logger')
 const SRC_DIR = __dirname
 const fs = require('fs')
 const { Glob } = require('glob')
@@ -15,42 +16,55 @@ for (const file of glob) {
     globalList.push(file)
   }
 }
+
+const pathQuestion = {
+  type: 'text',
+  name: 'DEST_DIR',
+  message: 'Enter the path to your roosevelt app:',
+  validate: value => fs.existsSync(value) ? true : 'value must be a valid path'
+}
+
+// begin script, ask for destination if non-existent
 function promptSetup (DEST_DIR) {
-  const Logger = require('roosevelt-logger')
   this.logger = new Logger()
 
   try {
     if (DEST_DIR === '' || DEST_DIR === undefined) {
-      this.logger.error('ERROR: DEST_DIR is an empty variable')
-      const questions = [
-        {
-          type: 'text',
-          name: 'DEST_DIR',
-          message: 'Path to Roosevelt Sample App?'
-        }
-      ];
-      (async () => {
-        const response = await prompts(questions)
+      // no destination is set
+      this.logger.warn('Destination directory has not been set.\n\n')
+      this.logger.info('ℹ️', 'You can set the destination directory path in an environment variable (DEST_DIR) to avoid this step.\n')
+
+      ;(async () => {
+        const response = await prompts(pathQuestion)
         DEST_DIR = response.DEST_DIR
         fsClose(DEST_DIR)
       })()
     } else if (DEST_DIR === SRC_DIR) {
+      // destination is the same as source, log error
       this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
     } else {
-      if (fs.existsSync(`${DEST_DIR}/rooseveltConfig.json`) || fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)) {
+      const destinationPackage = fs.existsSync(`${DEST_DIR}/package.json`)
+        ? JSON.parse(fs.readFileSync(`${DEST_DIR}/package.json`, 'utf-8'))
+        : false
+
+      // validate that destination is a roosevelt application
+      const checks = {
+        isNode: fs.existsSync(`${DEST_DIR}/package.json`),
+        hasRooseveltAsDep: (destinationPackage && Object.keys(destinationPackage.dependencies).includes('roosevelt')) || false,
+        hasNodeModuleFolder: fs.existsSync(`${DEST_DIR}/node_modules/roosevelt/`)
+      }
+
+      if (checks.isNode && checks.hasNodeModuleFolder && checks.hasRooseveltAsDep) {
+        // destination is a valid roosevelt app
+        this.logger.info('✅', 'Destination found and verified, creating symlink...')
         fsWatch(DEST_DIR)
       } else {
-        this.logger.warn('\nMake sure the above directories are correct or this could delete unwanted files!')
-        this.logger.info('💭', 'We are not in a Roosevelt app ...\n')
-        const questions = [
-          {
-            type: 'text',
-            name: 'DEST_DIR',
-            message: 'Path to Roosevelt Sample App?'
-          }
-        ];
-        (async () => {
-          const response = await prompts(questions)
+        // destination does not contain required roosevelt files
+        this.logger.info('\n')
+        this.logger.error('Destination is not a valid roosevelt application! Ensure the path leads to a valid roosevelt app.\n\nSee verification results for more info:\n', checks, '\n')
+
+        ;(async () => {
+          const response = await prompts(pathQuestion)
           DEST_DIR = response.DEST_DIR
           fsClose(DEST_DIR)
         })()
@@ -59,24 +73,20 @@ function promptSetup (DEST_DIR) {
   } catch (err) { console.log(err) }
 }
 
+// updates destination directory with updated files
 async function fsWatch (DEST_DIR) {
-  const Logger = require('roosevelt-logger')
   this.logger = new Logger()
   const watch = await import('watcher')
   const Watcher = watch.default
   const watcher = new Watcher(globalList, { recursive: true })
 
-  watcher.on('error', error => {
-    this.logger.err(error)
-  })
+  watcher.on('error', error => this.logger.err(error))
 
-  watcher.on('ready', () => {
-    this.logger.info(`
+  watcher.on('ready', () => this.logger.info(`
 💭 Roosevelt fswatch rsync tool running...
 
 💭 Now watching: ${SRC_DIR}
-💭 Will copy to: ${DEST_DIR}/node_modules/roosevelt/`)
-  })
+💭 Will copy to: ${DEST_DIR}/node_modules/roosevelt/`))
 
   watcher.on('change', filePath => {
     const rosvlt = filePath.split('roosevelt')[1]
@@ -87,10 +97,8 @@ async function fsWatch (DEST_DIR) {
       .source(filePath)
       .destination(DEST_DIR + '/node_modules/roosevelt/' + rosvlt)
 
-    rsync.execute(function (error, code, cmd) {
-      if (error) {
-        this.logger.error(`ERROR: ${error.message}`)
-      }
+    rsync.execute(function (error, _code, _cmd) {
+      if (error) this.logger.error(`ERROR: ${error.message}`)
     })
   })
 
@@ -105,22 +113,17 @@ async function fsWatch (DEST_DIR) {
   ;(async () => {
     const response = await prompts(questions)
     if (response.INPUT === undefined || response.INPUT.toLowerCase() === 'exit' || response.INPUT.toLowerCase() === 'close') {
-      this.logger.info(`
-💭
-💭 Closing fswatch
-💭`)
+      this.logger.info('💭', 'Closing fswatch')
       watcher.close()
       process.exit()
     }
   })()
 }
 
+// end script
 async function fsClose (DEST_DIR) {
   if (DEST_DIR === undefined || DEST_DIR.toLowerCase() === 'exit' || DEST_DIR.toLowerCase() === 'close') {
-    this.logger.info(`
-💭
-💭 Closing fswatch
-💭`)
+    this.logger.info('💭', 'Closing fswatch')
     process.exit()
   } else {
     promptSetup(DEST_DIR)
