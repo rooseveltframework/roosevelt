@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Added a new script `npm run dev-sync` that will automatically update a roosevelt apps `node_modules/roosevelt` folder.
 
 ## 0.21.16
 
