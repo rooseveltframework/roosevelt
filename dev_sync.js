@@ -1,4 +1,4 @@
-const DEST_DIR = process.env.DEST_DIR
+const DEST_DIR = process.env.DEST_DIR || process.argv[2]
 const Rsync = require('rsync')
 const Logger = require('roosevelt-logger')
 const SRC_DIR = __dirname
@@ -39,6 +39,14 @@ function promptSetup (DEST_DIR) {
         DEST_DIR = response.DEST_DIR
         fsClose(DEST_DIR)
       })()
+    } else if (!fs.existsSync(DEST_DIR)) {
+      this.logger.error(`Provided path (${DEST_DIR}) is not valid.\n\n`)
+
+      ;(async () => {
+        const response = await prompts(pathQuestion)
+        DEST_DIR = response.DEST_DIR
+        fsClose(DEST_DIR)
+      })()
     } else if (DEST_DIR === SRC_DIR) {
       // destination is the same as source, log error
       this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
@@ -60,7 +68,6 @@ function promptSetup (DEST_DIR) {
         fsWatch(DEST_DIR)
       } else {
         // destination does not contain required roosevelt files
-        this.logger.info('\n')
         this.logger.error('Destination is not a valid roosevelt application! Ensure the path leads to a valid roosevelt app.\n\nSee verification results for more info:\n', checks, '\n')
 
         ;(async () => {
@@ -83,6 +90,7 @@ async function fsWatch (DEST_DIR) {
   watcher.on('error', error => this.logger.err(error))
 
   watcher.on('ready', () => this.logger.info(`
+
 💭 Roosevelt fswatch rsync tool running...
 
 💭 Now watching: ${SRC_DIR}
@@ -102,17 +110,18 @@ async function fsWatch (DEST_DIR) {
     })
   })
 
-  const questions = [
-    {
+  ;(async () => {
+    const closeCommands = ['stop', 's']
+    const response = await prompts({
       type: 'text',
       name: 'INPUT',
-      message: 'Type "Exit" or "Close" to end fsWatcher"'
-    }
-  ]
+      message: 'Type "stop" or "s" to stop dev sync',
+      validate: value => closeCommands.includes(value.toLowerCase())
+        ? true
+        : 'Invalid command! Type "stop" or "s" to stop dev sync'
+    })
 
-  ;(async () => {
-    const response = await prompts(questions)
-    if (response.INPUT === undefined || response.INPUT.toLowerCase() === 'exit' || response.INPUT.toLowerCase() === 'close') {
+    if (response.INPUT === undefined || closeCommands.includes(response.INPUT.toLowerCase())) {
       this.logger.info('💭', 'Closing fswatch')
       watcher.close()
       process.exit()

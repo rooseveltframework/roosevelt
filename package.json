@@ -108,7 +108,8 @@
     "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
     "lint": "standard && eslint test/*.js",
     "test": "mocha test/*.js",
-    "test-debug": "mocha --inspect-brk test/*.js"
+    "test-debug": "mocha --inspect-brk test/*.js",
+    "dev-sync": "node dev_sync.js"
   },
   "funding": {
     "type": "individual",
