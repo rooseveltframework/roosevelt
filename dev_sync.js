@@ -1,15 +1,25 @@
 const DEST_DIR = process.env.DEST_DIR || process.argv[2]
+
+// todo: test Rsync in windows
+// todo: we should manually perform the Rsync
+// todo: will have to get the windows user to add rsync to their path
+// todo: document the windows users to do it (REMOVE RSYNC ENTIRELY)
+// call shell
 const Rsync = require('rsync')
 const Logger = require('roosevelt-logger')
 const SRC_DIR = __dirname
 const fs = require('fs')
 const { Glob } = require('glob')
 const prompts = require('prompts')
-const rosvltPath = `${SRC_DIR}/**/*.js`
+const rooseveltPath = `${SRC_DIR}/**/*.js`
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
 const gitignoreFiles = gitignoreScanner('./gitignore')
-const glob = new Glob(rosvltPath, { ignore: 'node_modules/**' })
+const glob = new Glob(rooseveltPath, { ignore: 'node_modules/**' })
 const globalList = []
+
+// todo: convert DEST_DIR and SRC_DIR to camelcase
+
+// todo: remove self-invoked async functions
 
 for (const file of glob) {
   if (!gitignoreFiles.includes(file)) {
@@ -20,7 +30,7 @@ for (const file of glob) {
 const pathQuestion = {
   type: 'text',
   name: 'DEST_DIR',
-  message: 'Enter the path to your roosevelt app:',
+  message: 'Enter the path to your Roosevelt app:',
   validate: value => fs.existsSync(value) ? true : 'value must be a valid path'
 }
 
@@ -31,16 +41,14 @@ function promptSetup (DEST_DIR) {
   try {
     if (DEST_DIR === '' || DEST_DIR === undefined) {
       // no destination is set
-      this.logger.warn('Destination directory has not been set.\n\n')
-      this.logger.info('ℹ️', 'You can set the destination directory path in an environment variable (DEST_DIR) to avoid this step.\n')
-
       ;(async () => {
         const response = await prompts(pathQuestion)
         DEST_DIR = response.DEST_DIR
         fsClose(DEST_DIR)
       })()
     } else if (!fs.existsSync(DEST_DIR)) {
-      this.logger.error(`Provided path (${DEST_DIR}) is not valid.\n\n`)
+      // todo
+      this.logger.error(`Provided path (${DEST_DIR}) doesn't exist.\n\n`)
 
       ;(async () => {
         const response = await prompts(pathQuestion)
@@ -49,6 +57,7 @@ function promptSetup (DEST_DIR) {
       })()
     } else if (DEST_DIR === SRC_DIR) {
       // destination is the same as source, log error
+      // todo: make this clearer - destination has to be a different directory than source, etc.
       this.logger.error('ERROR: DEST_DIR is pointing to the same path as SRC_DIR ')
     } else {
       const destinationPackage = fs.existsSync(`${DEST_DIR}/package.json`)
@@ -64,11 +73,12 @@ function promptSetup (DEST_DIR) {
 
       if (checks.isNode && checks.hasNodeModuleFolder && checks.hasRooseveltAsDep) {
         // destination is a valid roosevelt app
-        this.logger.info('✅', 'Destination found and verified, creating symlink...')
         fsWatch(DEST_DIR)
       } else {
         // destination does not contain required roosevelt files
-        this.logger.error('Destination is not a valid roosevelt application! Ensure the path leads to a valid roosevelt app.\n\nSee verification results for more info:\n', checks, '\n')
+        // todo: make this more human readable
+        // todo: i.e. - "destination does not appear to be a node project" etc.
+        this.logger.error('Destination is not a valid Roosevelt application. Ensure the path leads to a valid Roosevelt app.\n\nSee verification results for more info:\n', checks, '\n')
 
         ;(async () => {
           const response = await prompts(pathQuestion)
@@ -89,22 +99,21 @@ async function fsWatch (DEST_DIR) {
 
   watcher.on('error', error => this.logger.err(error))
 
+  // todo: better emojis
   watcher.on('ready', () => this.logger.info(`
-
-💭 Roosevelt fswatch rsync tool running...
-
 💭 Now watching: ${SRC_DIR}
-💭 Will copy to: ${DEST_DIR}/node_modules/roosevelt/`))
+💭 Will sync to: ${DEST_DIR}/node_modules/roosevelt/`))
 
   watcher.on('change', filePath => {
-    const rosvlt = filePath.split('roosevelt')[1]
+    const roosevelt = filePath.split('roosevelt')[1]
+
+    // todo: see todo's at top
     const rsync = new Rsync()
       .flags('avz')
       .delete()
       .exclude('.DS_Store')
       .source(filePath)
-      .destination(DEST_DIR + '/node_modules/roosevelt/' + rosvlt)
-
+      .destination(DEST_DIR + '/node_modules/roosevelt/' + roosevelt)
     rsync.execute(function (error, _code, _cmd) {
       if (error) this.logger.error(`ERROR: ${error.message}`)
     })
