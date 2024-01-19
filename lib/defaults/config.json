@@ -31,12 +31,7 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
-  "expressSession": {
-    "enable": false,
-    "secret": "secret key",
-    "resave": "false",
-    "saveUninitialized": false
-  },
+  "expressSession": false,
   "bodyParser": {
     "urlEncoded": {
       "extended": true
