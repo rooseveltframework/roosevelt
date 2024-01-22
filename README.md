@@ -1075,7 +1075,7 @@ module.exports = (router, app) => {
 
 ### CSRF protection
 
-CSRF protection is enabled by default in Roosevelt, and should be included on routes that lead to `POST` requests. See more on [CSRF attacks here](https://owasp.org/www-community/attacks/csrf).
+CSRF protection is enabled by default in Roosevelt, and should be included on routes that lead to `POST` requests. See more on [CSRF attacks here](https://owasp.org/www-community/attacks/csrf). There is more valuable information found in this [CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) that provides best practices for avoiding CSRF attacks.
 
 This requires minimal setup, and follows an easy-to-use pattern. Begin by attaching a CSRF token to your model:
 
@@ -1108,7 +1108,9 @@ In your template, include the token as a hidden input with the name `_csrf` on a
 </include>
 ```
 
-This is all the setup needed to ensure your routes are protected from CSRF attacks.
+This is one scenario of protecting a `POST` request. If you aren't dealing with a form like in the above example, you will have to include the CSRF token in a `_csrf` value in your request.
+
+#### Other POSTs
 
 ### Manually setting CSRF protected routes
 
