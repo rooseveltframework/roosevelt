@@ -1,10 +1,9 @@
-// todo: we should manually perform the Rsync
 // todo: will have to get the windows user to add rsync to their path
 // todo: document the windows users to do it (REMOVE RSYNC ENTIRELY)
 // call shell
-const Rsync = require('rsync')
 const Logger = require('roosevelt-logger')
 const { Glob } = require('glob')
+const { exec } = require('child_process')
 const fs = require('fs')
 const prompts = require('prompts')
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
@@ -62,40 +61,49 @@ class DevSync {
 
         this.destDir = response.path
         this.close(this.destDir)
-      } else if (!fs.existsSync(this.destDir)) {
-        throw new Error(`Provided path (${this.destDir}) doesn't exist.\n\n`)
-      } else if (this.destDir === this.srcDir) {
-        // destination is the same as source, log error
-        throw new Error(`Destination path (${this.destDir}) is the same path as source path (${this.srcDir}). The destination must be a different directory than the source.`)
-      } else {
+      } else if (!fs.existsSync(this.destDir)) { // destination doesn't exist
+        this.error(`Provided path (${this.destDir}) doesn't exist.\n\n`)
+      } else if (this.destDir === this.srcDir) { // destination is the same as source, log error
+        this.error(`Destination path (${this.destDir}) is the same path as source path (${this.srcDir}). The destination must be a different directory than the source.`)
+      } else { // destination found
         const destinationPackage = fs.existsSync(`${this.destDir}/package.json`) && JSON.parse(fs.readFileSync(`${this.destDir}/package.json`, 'utf-8'))
 
         // validate that destination is a roosevelt application
-        const checks = {
-          isNode: {
-            result: fs.existsSync(`${this.destDir}/package.json`)
+        const checks = [
+          // is a node project
+          {
+            result: fs.existsSync(`${this.destDir}/package.json`),
+            errorMsg: 'The destination does not appear to be a NodeJS project.'
           },
-          hasRooseveltAsDep: {
-            result: (destinationPackage && Object.keys(destinationPackage.dependencies).includes('roosevelt')) || false
+          // has roosevelt as a dependency
+          {
+            result: (destinationPackage && Object.keys(destinationPackage.dependencies).includes('roosevelt')) || false,
+            errorMsg: 'The destination does not appear to have Roosevelt included as a dependency.'
           },
-          hasNodeModuleFolder: {
-            result: fs.existsSync(`${this.destDir}/node_modules/roosevelt/`)
+          // has node_modules/roosevelt/
+          {
+            result: fs.existsSync(`${this.destDir}/node_modules/roosevelt/`),
+            errorMsg: 'The destination does not appear to have a Roosevelt folder in the node_modules folder.'
           }
-        }
+        ]
 
         if (Object.values(checks).every(check => check.result)) {
           // destination is a valid roosevelt app
           this.watch()
         } else {
           // destination does not contain required roosevelt files
-          throw new Error(`Destination is not a valid Roosevelt application. Ensure the path leads to a valid Roosevelt app.\n\nSee verification results for more info:\n ${JSON.stringify(checks, 0, 2)}\n`)
+          this.error(`Destination is not a valid Roosevelt application. Ensure the path leads to a valid Roosevelt app.\n\nSee verification results for more info:\n > ${checks.filter(check => !check.result).map(check => check.errorMsg).join('\n > ')}\n`)
         }
       }
     } catch (err) {
-      this.logger.error(err)
-      this.destDir = ''
-      this.prompt()
+      this.error(err)
     }
+  }
+
+  error (err) {
+    this.logger.error(err)
+    this.destDir = ''
+    this.prompt()
   }
 
   async watch () {
@@ -122,19 +130,17 @@ class DevSync {
       }
     })
 
-    watcher.on('change', filePath => {
-      const roosevelt = filePath.split('roosevelt')[1]
+    watcher.on('change', () => {
+      const cmd = `rsync -avz --delete --exclude=.DS_Store ${this.srcDir}/ ${this.destDir}/node_modules/roosevelt/`
 
-      // todo: see todo's at top
-      const rsync = new Rsync()
-        .flags('avz')
-        .delete()
-        .exclude('.DS_Store')
-        .source(filePath)
-        .destination(this.destDir + '/node_modules/roosevelt/' + roosevelt)
+      exec(cmd, (err, stdio, sterr) => {
+        err && this.logger.error(err)
+        sterr && this.logger.error(sterr)
 
-      rsync.execute(function (error, _code, _cmd) {
-        if (error) this.logger.error(`ERROR: ${error.message}`)
+        if (stdio) {
+          this.logger.info(`\n📝 Updating > ${this.destDir}/node_modules/roosevelt\n`)
+          this.logger.info(stdio)
+        }
       })
     })
   }
