@@ -1073,6 +1073,83 @@ module.exports = (router, app) => {
 }
 ```
 
+### CSRF protection
+
+CSRF protection is enabled by default in Roosevelt, and should be included on routes that lead to `POST` requests. See more on [CSRF attacks here](https://owasp.org/www-community/attacks/csrf).
+
+This requires minimal setup, and follows an easy-to-use pattern. Begin by attaching a CSRF token to your model:
+
+```js
+router.route('/some-route').get((req, res) => {
+  const model = { page: 'some title' }
+
+  // get the csrf token using the csrfToken() method on the request object
+  // it's best practice to preface the variable name with an underscore to indicate this variable is not meant to be seen
+  model._csrf = req.csrfToken()
+
+  res.render('some-template', model)
+})
+```
+
+In your template, include the token as a hidden input with the name `_csrf` on any form that makes a `POST` request:
+
+```html
+<include src="layouts/main">
+  <arg pageContent>
+    <form method="post" action="/post-route">
+      <!-- the naming of this hidden input must be "_csrf" -->
+      <input type="hidden" name="_csrf" value="{_csrf}">
+
+      <!-- some more inputs... -->
+
+      <button type="submit">Submit</button>
+    </form>
+  </arg>
+</include>
+```
+
+This is all the setup needed to ensure your routes are protected from CSRF attacks.
+
+### Manually setting CSRF protected routes
+
+If you do not want all routes protected from CSRF attacks, you are able to manually protect them by including middleware in your routes. *(Note: It is recommended that you protect all routes that could be susceptible to CSRF attacks)*
+
+To disable full protection, set `csrf` to `"manual"` wherever you defined your Roosevelt configuration:
+
+```js
+{
+  csrf: 'manual'
+}
+```
+
+The process is the same as above, with a few extra steps.
+
+Bring the `csrfProtection` method into your controller:
+
+```js
+module.exports = (router, app) => {
+  const csrfProtection = app.get('csrfProtection')
+
+  router.route(() => { ... })
+}
+```
+
+Include this method in any route (`GET` and `POST`) that needs to be protected:
+
+```js
+router.route('/form').get(csrfProtection, (req, res) => {
+  const model = {
+    _csrf: req.csrfToken()
+  }
+
+  res.render('form', model)
+})
+
+router.route('/form').post(csrfProtection, (req, res) => {
+  res.send('success')
+})
+```
+
 ### Making isomorphic controller files
 
 You can also write isomorphic controller files that can be shared on both the client and the server:
