@@ -1,6 +1,6 @@
 const Logger = require('roosevelt-logger')
 const { Glob } = require('glob')
-const { exec } = require('child_process')
+const { execSync } = require('child_process')
 const fs = require('fs')
 const prompts = require('prompts')
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
@@ -120,16 +120,10 @@ async function fsWatch (destDir) {
 
     const cmd = `rsync -avz --delete --exclude={${ignoredFiles.map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
 
-    // todo: use execSync
-    exec(cmd, (err, stdio, sterr) => {
-      err && logger.error(err)
-      sterr && logger.error(sterr)
+    const stdout = execSync(cmd)
 
-      if (stdio) {
-        logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
-        logger.info(stdio)
-      }
-    })
+    logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
+    logger.info(stdout.toString())
   })
 }
 
