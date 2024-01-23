@@ -9,6 +9,7 @@ const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 const cg = require('./lib/scripts/certsGenerator.js')
+const ssg = require('./lib/scripts/sessionSecretGenerator.js')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -72,17 +73,14 @@ module.exports = (params, schema) => {
     httpReloadPromise = configReloadServer('HTTP')
   }
 
-  // todo: separate session.json token into separate file ('sessonSecretGenerator.js')
-  // turn file into sessionSecret.json
-  // change default /certs/ to /secrets/ (ensure it is configurable)
-
   // todo: modify generator-roosevelt to express session default changes (npm scripts)
 
-  if (!fs.existsSync('./certs/session.json')) {
-    // todo: move secret gen here
-
-    // todo: check for express session turned on, folder, file
-    // todo: we want a param (autoSessionSecret or something)
+  if (params.expressSession) {
+    if (!fs.existsSync('./certs')) {
+      ssg.sessionSecretGenerator()
+    } else if (!fs.existsSync('./certs/sessionSecret.json')) {
+      ssg.sessionSecretGenerator()
+    }
   }
 
   if (httpsParams.enable) {
