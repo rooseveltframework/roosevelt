@@ -1348,13 +1348,14 @@ Here's how to set up a dev env to hack on Roosevelt:
 - Create or find a Roosevelt app you want to test against.
   - To make a Roosevelt app, run `npx mkroosevelt`
 - Your changes to Roosevelt need to be copied to your app's `node_modules/roosevelt` directory.
-  - If you want to sync these directories automatically, run the `dev_sync.js` script. To do that:
-    - Install [fswatch](https://github.com/emcrisostomo/fswatch) and [rsync](https://en.wikipedia.org/wiki/Rsync) and ensure they are in your PATH (run `echo $PATH` in your command line tool).
-    - Run the following command: `npm run dev-sync /path/to/roosevelt/app`
-    - You can also set the path in a `DEST_DIR` environment variable. When set, you only need to run `npm run dev-sync`.
+  - If you want to sync these directories automatically, run the `devSync.js` script. To do that:
+    - Install [fswatch](https://github.com/emcrisostomo/fswatch) and ensure it is in your PATH (run `echo $PATH` in your command line tool).
+      - *Note: Windows users will need to add a method of accessing rsync and including it in their path. Options include installing [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) or using the free version of [cwRsync](https://www.itefix.net/cwrsync)*
+    - Run the following command: `node devSync.js /path/to/roosevelt/app`
+    - You can also set the path in a `DEST_DIR` environment variable. When set, you only need to run `node devSync.js`.
       - Linux/Mac: `export DEST_DIR=/path/to/roosevelt/app`
       - Windows: `$env:DEST_DIR="/path/to/roosevelt/app"`
-      - Or in one command (Linux/Mac): `export DEST_DIR=/path/to/your/roosevelt/app && npm run dev-sync`
+      - Or in one command (Linux/Mac): `export DEST_DIR=/path/to/your/roosevelt/app && node devSync.js`
  - To Exit the script
     - To end the script press: `control^ + C`
     - To end the script type: `Exit` or `Close`
