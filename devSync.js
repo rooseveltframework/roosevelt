@@ -116,12 +116,16 @@ async function fsWatch (destDir) {
   })
 
   watcher.on('change', () => {
+    // files we don't want to include in sync
     const ignoredFiles = ['lib-cov', 'node_modules', 'pids', 'logs', 'results', 'Thumbs.db', 'npm-debug.log', '.build', 'public', '.DS_Store', 'devSync.js']
 
-    const cmd = `rsync -avz --delete --exclude={${ignoredFiles.map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+    // rsync command
+    const command = `rsync -avz --delete --exclude={${ignoredFiles.map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
 
-    const stdout = execSync(cmd)
+    // execute command
+    const stdout = execSync(command)
 
+    // log changes to user (list of files changed)
     logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
     logger.info(stdout.toString())
   })
