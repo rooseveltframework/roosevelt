@@ -82,15 +82,18 @@ module.exports = (params, schema) => {
 
     // setup express-session
     if (params.expressSession) {
-      if (!fs.existsSync(params.secretsFolder + '/sessionSecret.json')) {
+      if (!fs.existsSync(params.secretsFolder)) {
+        ssg.sessionSecretGenerator(null, params.secretsFolder)
+      } else if (!fs.existsSync(params.secretsFolder + '/sessionSecret.json')) {
         ssg.sessionSecretGenerator(null, params.secretsFolder)
       }
     }
 
     // setup https
     if (httpsParams.enable) {
-      // Runs the certGenerator if httpsParams.enable
-      if (appEnv === 'development' && httpsParams.autoCert) {
+      if (!fs.existsSync(params.secretsFolder)) {
+        cg.certsGenerator(null, params.secretsFolder)
+      } else if (appEnv === 'development' && httpsParams.autoCert) {
         if (!fs.existsSync(params.secretsFolder + '/key.pem') || (!fs.existsSync(params.secretsFolder + '/cert.pem'))) {
           cg.certsGenerator(null, params.secretsFolder)
         }

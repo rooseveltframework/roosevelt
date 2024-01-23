@@ -8,6 +8,7 @@
       "warn": false
     }
   },
+  "secretsFolder": "./test/app/certs",
   "https": {
     "enable": true,
     "force": true,
