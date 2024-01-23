@@ -72,12 +72,25 @@ module.exports = (params, schema) => {
     httpReloadPromise = configReloadServer('HTTP')
   }
 
+  // todo: separate session.json token into separate file ('sessonSecretGenerator.js')
+  // turn file into sessionSecret.json
+  // change default /certs/ to /secrets/ (ensure it is configurable)
+
+  // todo: modify generator-roosevelt to express session default changes (npm scripts)
+
+  if (!fs.existsSync('./certs/session.json')) {
+    // todo: move secret gen here
+
+    // todo: check for express session turned on, folder, file
+    // todo: we want a param (autoSessionSecret or something)
+  }
+
   if (httpsParams.enable) {
     // Runs the certGenerator if httpsParams.enable
     if (appEnv === 'development' && httpsParams.autoCert) {
       if (!fs.existsSync('./certs')) {
         cg.certsGenerator()
-      } else if (!fs.existsSync('./certs/key.pem') || (!fs.existsSync('./certs/cert.pem')) || (!fs.existsSync('./certs/session.json'))) {
+      } else if (!fs.existsSync('./certs/key.pem') || (!fs.existsSync('./certs/cert.pem'))) {
         cg.certsGenerator()
       }
     }

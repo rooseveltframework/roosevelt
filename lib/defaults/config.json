@@ -31,7 +31,7 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
-  "expressSession": false,
+  "expressSession": true,
   "bodyParser": {
     "urlEncoded": {
       "extended": true
