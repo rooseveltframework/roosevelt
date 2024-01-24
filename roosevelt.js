@@ -8,8 +8,7 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
-const cg = require('./lib/scripts/certsGenerator.js')
-const ssg = require('./lib/scripts/sessionSecretGenerator.js')
+const { generateSecrets } = require('./lib/scripts/generateSecrets.js')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -74,31 +73,13 @@ module.exports = (params, schema) => {
   }
 
   if (params.expressSession || httpsParams.enable) {
-    // console.log(params)
-    // // make secrets folder if non-existent
-    // if (!fs.existsSync(params.secretsFolder)) {
-    //   fs.mkdirSync(params.secretsFolder)
-    // }
-
-    // setup express-session
-    if (params.expressSession) {
-      if (!fs.existsSync(params.secretsFolder)) {
-        ssg.sessionSecretGenerator(null, params.secretsFolder)
-      } else if (!fs.existsSync(params.secretsFolder + '/sessionSecret.json')) {
-        ssg.sessionSecretGenerator(null, params.secretsFolder)
-      }
+    // make secrets folder if non-existent
+    if (!fs.existsSync(params.secretsFolder)) {
+      generateSecrets(params, appEnv)
     }
 
     // setup https
     if (httpsParams.enable) {
-      if (!fs.existsSync(params.secretsFolder)) {
-        cg.certsGenerator(null, params.secretsFolder)
-      } else if (appEnv === 'development' && httpsParams.autoCert) {
-        if (!fs.existsSync(params.secretsFolder + '/key.pem') || (!fs.existsSync(params.secretsFolder + '/cert.pem'))) {
-          cg.certsGenerator(null, params.secretsFolder)
-        }
-      }
-
       authInfoPath = httpsParams.authInfoPath
 
       // options to configure to the https server

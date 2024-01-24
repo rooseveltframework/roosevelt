@@ -8,6 +8,7 @@
       "warn": false
     }
   },
+  "expressSession": false,
   "secretsFolder": "./test/app/secrets",
   "https": {
     "enable": true,
