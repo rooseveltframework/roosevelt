@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Added a new script `npm run dev-sync` that will automatically update a roosevelt apps `node_modules/roosevelt` folder.
+- Converted dev_sync tool into a node file with increased protection against accidental destructive folder/file changes. 
 
 ## 0.21.16
 
