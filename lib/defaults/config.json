@@ -57,7 +57,7 @@
     "requestCert": null,
     "rejectUnauthorized": null
   },
-  "secretsFolder": "./secrets",
+  "secretsFolder": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
   "viewEngine": "none",

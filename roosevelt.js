@@ -74,10 +74,11 @@ module.exports = (params, schema) => {
   }
 
   if (params.expressSession || httpsParams.enable) {
-    // make secrets folder if non-existent
-    if (!fs.existsSync(params.secretsFolder)) {
-      fs.mkdirSync(params.secretsFolder)
-    }
+    // console.log(params)
+    // // make secrets folder if non-existent
+    // if (!fs.existsSync(params.secretsFolder)) {
+    //   fs.mkdirSync(params.secretsFolder)
+    // }
 
     // setup express-session
     if (params.expressSession) {

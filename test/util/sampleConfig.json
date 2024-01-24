@@ -63,7 +63,7 @@
     "requestCert": "value",
     "rejectUnauthorized": "value"
   },
-  "secretsFolder": "./test/app/certs",
+  "secretsFolder": "./test/app/secrets",
   "modelsPath": "value",
   "viewsPath": "value",
   "controllersPath": "value",
