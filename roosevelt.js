@@ -73,7 +73,6 @@ module.exports = (params, schema) => {
     httpReloadPromise = configReloadServer('HTTP')
   }
 
-  // todo: modify generator-roosevelt to express session default changes (npm scripts)
   if (params.expressSession || httpsParams.enable) {
     // make secrets folder if non-existent
     if (!fs.existsSync(params.secretsFolder)) {
