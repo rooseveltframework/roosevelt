@@ -2,6 +2,7 @@ const Logger = require('roosevelt-logger')
 const { Glob } = require('glob')
 const { execSync } = require('child_process')
 const fs = require('fs')
+const path = require('path')
 const prompts = require('prompts')
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
 const gitignoreFiles = gitignoreScanner('./gitignore')
@@ -99,7 +100,7 @@ async function fsWatch (destDir) {
 
   watcher.on('ready', async () => {
     logger.info('📁', `Now watching: ${srcDir}`)
-    logger.info('🔗', `Will sync to: ${destDir}/node_modules/roosevelt/`)
+    logger.info('🔗', `Will sync to: ${path.normalize(destDir + '/node_modules/roosevelt/')}`)
 
     const response = await prompts({
       type: 'text',
@@ -116,18 +117,47 @@ async function fsWatch (destDir) {
   })
 
   watcher.on('change', () => {
-    // files we don't want to include in sync
-    const ignoredFiles = ['lib-cov', 'node_modules', 'pids', 'logs', 'results', 'Thumbs.db', 'npm-debug.log', '.build', 'public', '.DS_Store', 'devSync.js']
+    // files/directories we don't want to include in sync
+    const ignoredDirectories = ['lib-cov', 'node_modules', 'pids', 'logs', 'results', '.build', 'public', '.DS_Store']
+    const ignoredFiles = ['Thumbs.db', 'npm-debug.log', 'devSync.js']
 
-    // rsync command
-    const command = `rsync -avz --delete --exclude={${ignoredFiles.map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+    const isWindows = process.platform === 'win32'
+
+    let command
+
+    // rsync/robocopy command
+    if (isWindows) {
+      /*
+        robocopy <source> <destination> <file(s)> <options>
+
+        <files> is left empty, and defaults to *.*
+
+        /mt: multi-threaded, defaults to 8
+        /e: copy subdirs, including empty dirs
+        /xd: exclude dirs
+        /xf: exclude files
+      */
+      command = `robocopy ${srcDir} ${path.normalize(destDir + '/node_modules/roosevelt/')} /mt /e /xd ${ignoredDirectories.join(' ')} /xf ${ignoredFiles.join(' ')}`
+    } else {
+      command = `rsync -avz --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+    }
+
 
     // execute command
-    const stdout = execSync(command)
-
-    // log changes to user (list of files changed)
-    logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
-    logger.info(stdout.toString())
+    try {
+      execSync(command)
+    } catch (stdout) {
+      // node thinks that any status other than 0 is an error - robocopy returns a 0 if no files changes and 1 if files were changed and copied
+      // any value greater than/equal to 8 indicates at least one failure during the copy operation
+      // see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
+      if (stdout.status >= 8) {
+        logger.error(stdout.output.toString())
+      } else {
+        // log changes to user (list of files changed)
+        logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
+        logger.info(stdout.output.toString())
+      }
+    }
   })
 }
 
