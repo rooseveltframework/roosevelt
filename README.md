@@ -1350,12 +1350,14 @@ Here's how to set up a dev env to hack on Roosevelt:
 - Your changes to Roosevelt need to be copied to your app's `node_modules/roosevelt` directory.
   - If you want to sync these directories automatically, run the `devSync.js` script. To do that:
     - Install [fswatch](https://github.com/emcrisostomo/fswatch) and ensure it is in your PATH (run `echo $PATH` in your command line tool).
-      - *Note: Windows users will need to add a method of accessing rsync and including it in their path. Options include installing [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) or using the free version of [cwRsync](https://www.itefix.net/cwrsync)*
-    - Run the following command: `node devSync.js /path/to/roosevelt/app`
+    - Run the following command: 
+      - Linux/Mac: `node devSync.js /path/to/roosevelt/app`
+      - Windows: `node devSync.js path:\\to\\roosevelt\\app`
     - You can also set the path in a `DEST_DIR` environment variable. When set, you only need to run `node devSync.js`.
       - Linux/Mac: `export DEST_DIR=/path/to/roosevelt/app`
-      - Windows: `$env:DEST_DIR="/path/to/roosevelt/app"`
+      - Windows: `$env:DEST_DIR="path:\\to\\roosevelt\\app"`
       - Or in one command (Linux/Mac): `export DEST_DIR=/path/to/your/roosevelt/app && node devSync.js`
- - To Exit the script
-    - To end the script press: `control^ + C`
-    - To end the script type: `Exit` or `Close`
+    - Not providing a path (just running `node devSync.js`) will allow you to define the destination path in your command line tool.
+ - To stop the script
+    - Press: `control^ + C`
+    - Type: `stop` or `s`

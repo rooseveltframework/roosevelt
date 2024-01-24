@@ -142,7 +142,6 @@ async function fsWatch (destDir) {
       command = `rsync -avz --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
     }
 
-
     // execute command
     try {
       execSync(command)
