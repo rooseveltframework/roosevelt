@@ -177,10 +177,10 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run prodproxy`
     - `npm run x`
   - Script is short for: `nodemon app.js --production-proxy-mode`
-- `npm run generate-certs`: Generates self-signed HTTPS certs for your app.
+- `npm run generate-secrets`: Generates self-signed HTTPS certs and secrets for your app.
   - Default shorthand:
     - `npm run c`
-  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certsGenerator.js`
+  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/generateSecrets.js`
 - `npm run audit-config`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
   - Default shorthand:
     - `npm run a`
@@ -379,6 +379,10 @@ Resolves to:
 - `appDir`: Root directory of your application.
 
   - Default: *[String]* The directory where your app's `package.json` is located.
+
+- `secretsFolder`: Folder that certs, keys, and secrets will be stored.
+
+  - Default: *[String]* `./secrets`
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx.
 

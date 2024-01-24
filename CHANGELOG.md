@@ -3,6 +3,7 @@
 ## Next version
 
 - Add `express-session` dependency.
+- The folder containing secrets and keys is now configurable through a configuration object.
 
 ## 0.21.15
 
