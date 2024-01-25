@@ -13,7 +13,8 @@ const config = {
       warn: false,
       verbose: false
     }
-  }
+  },
+  expressSession: false
 }
 
 describe('sourceParams', () => {
@@ -178,6 +179,7 @@ describe('sourceParams', () => {
             error: false
           }
         },
+        expressSession: false,
         enableCLIFlags: false,
         port: 4000,
         https: {
@@ -621,6 +623,7 @@ describe('sourceParams', () => {
     const appConfig = {
       appDir: path.join(__dirname, '../app/envParams'),
       enableCLIFlags: false,
+      expressSession: false,
       logging: {
         methods: {
           http: false,
@@ -747,6 +750,7 @@ describe('sourceParams', () => {
     const appConfig = {
       appDir: path.join(__dirname, '../app/envParams'),
       enableCLIFlags: false,
+      expressSession: false,
       logging: {
         methods: {
           http: false,
@@ -759,6 +763,7 @@ describe('sourceParams', () => {
 
     const schema = {
       rooseveltConfig: {
+        expressSession: false,
         port: {
           envVar: ['HTTP_PORT_NEW']
         }

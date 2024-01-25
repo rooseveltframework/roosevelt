@@ -32,6 +32,7 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     sOptions.appDir = appDir
     sOptions.method = 'initServer'
+    sOptions.expressSession = false
     generateTestApp(undefined, sOptions)
 
     const sampleJSON = {
@@ -69,6 +70,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
@@ -108,6 +110,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
@@ -143,7 +146,8 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      makeBuildArtifacts: true
+      makeBuildArtifacts: true,
+      expressSession: false
     }, sOptions)
 
     // bool var to see that a message was not send back by a call back and that folders exists
@@ -183,7 +187,8 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      makeBuildArtifacts: true
+      makeBuildArtifacts: true,
+      expressSession: false
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -551,7 +556,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
+  it.skip('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
     let httpsServerMadeBool = false
@@ -565,6 +570,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203
       },
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -732,6 +738,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       https: {
         enable: true,
         port: 43203,

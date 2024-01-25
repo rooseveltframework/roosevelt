@@ -416,6 +416,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       https: {
         enable: true,
         port: 43203
