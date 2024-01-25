@@ -80,94 +80,95 @@ module.exports = (params, schema) => {
     if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/sessionSecret.json')) {
       sessionSecretGenerator()
     }
+  }
 
-    // generate https certs
-    if (httpsParams.enable) {
+  // generate https certs
+  if (httpsParams.enable) {
     // Runs the certGenerator if httpsParams.enable
-      if (appEnv === 'development' && httpsParams.autoCert) {
-        if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(params.secretsDir + '/key.pem') || (!fs.existsSync(params.secretsDir + '/cert.pem'))))) {
-          certsGenerator()
-        }
+    if (appEnv === 'development' && httpsParams.autoCert) {
+      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(params.secretsDir + '/key.pem') || (!fs.existsSync(params.secretsDir + '/cert.pem'))))) {
+        certsGenerator()
       }
+    }
 
-      authInfoPath = httpsParams.authInfoPath
+    authInfoPath = httpsParams.authInfoPath
 
-      // options to configure to the https server
-      httpsOptions = {}
+    // options to configure to the https server
+    httpsOptions = {}
 
-      if (authInfoPath) {
-        if (authInfoPath.p12 && authInfoPath.p12.p12Path) {
+    if (authInfoPath) {
+      if (authInfoPath.p12 && authInfoPath.p12.p12Path) {
         // if the string ends with a dot and 3 alphanumeric characters (including _)
         // then we assume it's a filepath.
-          if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-            httpsOptions.pfx = fs.readFileSync(authInfoPath.p12.p12Path)
-          } else { // if the string doesn't end that way, we assume it's an encrypted string
-            httpsOptions.pfx = authInfoPath.p12.p12Path
-          }
-
-          reloadHttpsOptions.p12 = {}
-          reloadHttpsOptions.p12.p12Path = httpsOptions.pfx
-        } else if (authInfoPath.authCertAndKey) {
-          reloadHttpsOptions.certAndKey = {}
-
-          if (authInfoPath.authCertAndKey.cert) {
-            if (isCertString(authInfoPath.authCertAndKey.cert)) {
-              httpsOptions.cert = authInfoPath.authCertAndKey.cert
-            } else {
-              httpsOptions.cert = fs.readFileSync(authInfoPath.authCertAndKey.cert)
-            }
-
-            reloadHttpsOptions.certAndKey.cert = httpsOptions.cert
-          }
-          if (authInfoPath.authCertAndKey.key) {
-          // key strings are formatted the same way as cert strings
-            if (isCertString(authInfoPath.authCertAndKey.key)) {
-              httpsOptions.key = authInfoPath.authCertAndKey.key
-            } else {
-              httpsOptions.key = fs.readFileSync(authInfoPath.authCertAndKey.key)
-            }
-
-            reloadHttpsOptions.certAndKey.key = httpsOptions.key
-          }
+        if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
+          httpsOptions.pfx = fs.readFileSync(authInfoPath.p12.p12Path)
+        } else { // if the string doesn't end that way, we assume it's an encrypted string
+          httpsOptions.pfx = authInfoPath.p12.p12Path
         }
 
-        // set passphrase if in use
-        if (httpsParams.passphrase) {
-          httpsOptions.passphrase = httpsParams.passphrase
-          reloadHttpsOptions.passphrase = httpsParams.passphrase
-        }
-      }
-      if (httpsParams.caCert) {
-        if (typeof httpsParams.caCert === 'string') {
-          if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
-            httpsOptions.ca = httpsParams.caCert
-          } else { // it's a file path to the file, so read file
-            httpsOptions.ca = fs.readFileSync(httpsParams.caCert)
-          }
-        } else if (httpsParams.caCert instanceof Array) {
-          httpsOptions.ca = []
+        reloadHttpsOptions.p12 = {}
+        reloadHttpsOptions.p12.p12Path = httpsOptions.pfx
+      } else if (authInfoPath.authCertAndKey) {
+        reloadHttpsOptions.certAndKey = {}
 
-          httpsParams.caCert.forEach(function (certOrPath) {
-            let certStr = certOrPath
-            if (!isCertString(certOrPath)) {
-              certStr = fs.readFileSync(certOrPath)
-            }
-            httpsOptions.ca.push(certStr)
-          })
+        function assignCertStringByKey (key) {
+          const { authCertAndKey } = authInfoPath
+          const certString = authCertAndKey[key]
+
+          if (isCertString(certString)) {
+            httpsOptions[key] = certString
+          } else {
+            httpsOptions[key] = fs.readFileSync(params.secretsDir + '/' + certString)
+          }
+
+          reloadHttpsOptions.certAndKey[key] = httpsOptions[key]
+        }
+
+        if (authInfoPath.authCertAndKey.cert) {
+          assignCertStringByKey('cert')
+        }
+
+        if (authInfoPath.authCertAndKey.key) {
+          assignCertStringByKey('key')
         }
       }
 
-      // configure reload HTTPS server
-      if (appEnv === 'development' && params.frontendReload.enable) {
-        httpsReloadPromise = configReloadServer('HTTPS')
+      // set passphrase if in use
+      if (httpsParams.passphrase) {
+        httpsOptions.passphrase = httpsParams.passphrase
+        reloadHttpsOptions.passphrase = httpsParams.passphrase
       }
-
-      httpsOptions.requestCert = httpsParams.requestCert
-      httpsOptions.rejectUnauthorized = httpsParams.rejectUnauthorized
-
-      httpsServer = https.Server(httpsOptions, app)
-      httpsServer.on('connection', mapConnections)
     }
+    if (httpsParams.caCert) {
+      if (typeof httpsParams.caCert === 'string') {
+        if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
+          httpsOptions.ca = httpsParams.caCert
+        } else { // it's a file path to the file, so read file
+          httpsOptions.ca = fs.readFileSync(httpsParams.caCert)
+        }
+      } else if (httpsParams.caCert instanceof Array) {
+        httpsOptions.ca = []
+
+        httpsParams.caCert.forEach(function (certOrPath) {
+          let certStr = certOrPath
+          if (!isCertString(certOrPath)) {
+            certStr = fs.readFileSync(certOrPath)
+          }
+          httpsOptions.ca.push(certStr)
+        })
+      }
+    }
+
+    // configure reload HTTPS server
+    if (appEnv === 'development' && params.frontendReload.enable) {
+      httpsReloadPromise = configReloadServer('HTTPS')
+    }
+
+    httpsOptions.requestCert = httpsParams.requestCert
+    httpsOptions.rejectUnauthorized = httpsParams.rejectUnauthorized
+
+    httpsServer = https.Server(httpsOptions, app)
+    httpsServer.on('connection', mapConnections)
   }
 
   app.httpServer = httpServer
