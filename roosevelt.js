@@ -101,7 +101,7 @@ module.exports = (params, schema) => {
         // if the string ends with a dot and 3 alphanumeric characters (including _)
         // then we assume it's a filepath.
         if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-          httpsOptions.pfx = fs.readFileSync(authInfoPath.p12.p12Path)
+          httpsOptions.pfx = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + authInfoPath.p12.p12Path)
         } else { // if the string doesn't end that way, we assume it's an encrypted string
           httpsOptions.pfx = authInfoPath.p12.p12Path
         }
@@ -118,7 +118,7 @@ module.exports = (params, schema) => {
           if (isCertString(certString)) {
             httpsOptions[key] = certString
           } else {
-            httpsOptions[key] = fs.readFileSync(params.secretsDir + '/' + certString)
+            httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
           }
 
           reloadHttpsOptions.certAndKey[key] = httpsOptions[key]
@@ -144,7 +144,7 @@ module.exports = (params, schema) => {
         if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
           httpsOptions.ca = httpsParams.caCert
         } else { // it's a file path to the file, so read file
-          httpsOptions.ca = fs.readFileSync(httpsParams.caCert)
+          httpsOptions.ca = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + httpsParams.caCert)
         }
       } else if (httpsParams.caCert instanceof Array) {
         httpsOptions.ca = []

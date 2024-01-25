@@ -557,7 +557,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
+  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
     let httpsServerMadeBool = false
@@ -571,6 +571,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203
       },
+      secretsDir: 'secrets',
       expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)

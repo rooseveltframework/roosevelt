@@ -9,7 +9,7 @@
     }
   },
   "expressSession": false,
-  "secretsDir": "./test/app/secrets",
+  "secretsDir": "secrets",
   "https": {
     "enable": true,
     "force": true,
@@ -17,15 +17,15 @@
     "port": 2468,
     "authInfoPath": {
       "p12": {
-        "p12Path": "test/app/secrets/cert.p12"
+        "p12Path": "cert.p12"
       },
       "authCertAndKey": {
-        "cert": "test/app/secrets/cert.pem",
-        "key": "test/app/secrets/key.pem"
+        "cert": "cert.pem",
+        "key": "key.pem"
       }
     },
     "passphrase": "testpass",
-    "caCert": "test/app/secrets/cert.pem",
+    "caCert": "cert.pem",
     "requestCert": false,
     "rejectUnauthorized": false
   }
