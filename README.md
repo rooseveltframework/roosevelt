@@ -177,10 +177,13 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run prodproxy`
     - `npm run x`
   - Script is short for: `nodemon app.js --production-proxy-mode`
-- `npm run generate-secrets`: Generates self-signed HTTPS certs and secrets for your app.
+- `npm run generate-certs`: Generates self-signed HTTPS certs for your app.
   - Default shorthand:
     - `npm run c`
-  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/generateSecrets.js`
+  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certGenerator.js`
+- `npm run generate-secrets`: Generates a secret key for the `express-session` module.
+  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/sessionSecretGenerator.js`
+- `npm run generate-certs-secrets`: Generates self-signed HTTPS certs and a `express-session` secret.
 - `npm run audit-config`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
   - Default shorthand:
     - `npm run a`
