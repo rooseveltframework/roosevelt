@@ -78,6 +78,7 @@ describe('view engines', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       viewEngine: [
         'html: teddy',
         'jcs: ../test/util/jcsTemplate'
@@ -105,6 +106,7 @@ describe('view engines', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       viewEngine: [
         'jcs: ../test/util/jcsTemplate'
       ],

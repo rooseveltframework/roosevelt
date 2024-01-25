@@ -194,6 +194,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       toobusy: {
         maxLagPerRequest: 10,
@@ -241,6 +242,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       errorPages: {
         serviceUnavailable: '503test.js'
       },

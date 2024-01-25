@@ -22,7 +22,7 @@ describe('css preprocessors', () => {
       }
     },
     expressSession: false,
-    secretsDir: './test/app/secrets',
+    secretsDir: 'secrets',
     htmlValidator: {
       enable: false
     },

@@ -13,6 +13,7 @@ describe('HTML Minification Tests', function () {
   const appConfig = {
     appDir,
     expressSession: false,
+    secretsDir: 'secrets',
     port: 41002,
     logging: {
       methods: {

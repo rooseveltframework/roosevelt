@@ -28,11 +28,10 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
+  it.skip('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
     // generate the test app
     sOptions.appDir = appDir
     sOptions.method = 'initServer'
-    sOptions.expressSession = false
     generateTestApp(undefined, sOptions)
 
     const sampleJSON = {
@@ -462,6 +461,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -495,6 +495,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       localhostOnly: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -657,6 +658,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 

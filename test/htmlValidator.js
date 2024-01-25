@@ -38,6 +38,7 @@ describe('validator usage', () => {
     roosevelt({
       mode: 'development',
       expressSession: false,
+      secretsDir: 'secrets',
       makeBuildArtifacts: false,
       port: 40001,
       logging: {

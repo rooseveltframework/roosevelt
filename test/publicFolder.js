@@ -44,6 +44,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/faviconTest.ico'
     }, options)
@@ -94,6 +95,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: null
     }, options)
@@ -137,6 +139,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/nothingHere.ico'
     }, options)
@@ -189,6 +192,7 @@ describe('Public Folder Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       versionedPublic: true
     }, options)

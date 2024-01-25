@@ -12,6 +12,7 @@ describe('routing', () => {
     appDir,
     mode: 'production',
     makeBuildArtifacts: true,
+    expressSession: false,
     logging: {
       methods: {
         http: false,

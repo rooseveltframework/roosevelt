@@ -49,7 +49,7 @@ describe('config auditor', () => {
       config: {
         mode: 'development',
         expressSession: false,
-        secretsDir: './test/app/secrets',
+        secretsDir: 'secrets',
         makeBuildArtifacts: false
       }
     })

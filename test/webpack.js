@@ -87,7 +87,7 @@ describe('webpack', () => {
         }
       },
       expressSession: false,
-      secretDir: 'secrets',
+      secretsDir: 'secrets',
       mode: 'production',
       appDir,
       makeBuildArtifacts: true,
@@ -118,6 +118,7 @@ describe('webpack', () => {
         }
       },
       expressSession: false,
+      secretsDir: 'secrets',
       htmlValidator: {
         enable: false
       },
@@ -149,6 +150,7 @@ describe('webpack', () => {
         }
       },
       expressSession: false,
+      secretsDir: 'secrets',
       mode: 'production',
       appDir,
       makeBuildArtifacts: true,
@@ -188,6 +190,7 @@ describe('webpack', () => {
         }
       },
       expressSession: false,
+      secretsDir: 'secrets',
       mode: 'development',
       appDir,
       makeBuildArtifacts: true,
@@ -230,6 +233,7 @@ describe('webpack', () => {
         }
       },
       expressSession: false,
+      secretsDir: 'secrets',
       mode: 'development',
       appDir,
       makeBuildArtifacts: true,
