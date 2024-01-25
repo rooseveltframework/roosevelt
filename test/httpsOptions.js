@@ -46,7 +46,7 @@ describe('HTTPS Server Options Tests', async () => {
     const fs = require('fs')
     const key = pem.private
     const cert = pem.cert
-    const keyFolder = config.secretsFolder
+    const keyFolder = config.secretsDir
     const path = require('path')
 
     if (!appDir) {

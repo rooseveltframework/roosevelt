@@ -9,7 +9,7 @@
     }
   },
   "expressSession": false,
-  "secretsFolder": "./test/app/secrets",
+  "secretsDir": "./test/app/secrets",
   "https": {
     "enable": true,
     "force": true,
