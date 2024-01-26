@@ -28,9 +28,9 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
+  it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
     // generate the test app
-    sOptions.appDir = appDir
+    sOptions.appDir = './test/app'
     sOptions.method = 'initServer'
     generateTestApp(undefined, sOptions)
 
