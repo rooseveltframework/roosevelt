@@ -118,8 +118,8 @@ async function fsWatch (destDir) {
 
   watcher.on('change', () => {
     // files/directories we don't want to include in sync
-    const ignoredDirectories = ['lib-cov', 'node_modules', 'pids', 'logs', 'results', '.build', 'public', '.DS_Store']
-    const ignoredFiles = ['Thumbs.db', 'npm-debug.log', 'devSync.js']
+    const ignoredDirectories = gitignoreScanner('./gitignore', 'dir')
+    const ignoredFiles = gitignoreScanner('./gitignore', 'file')
 
     const isWindows = process.platform === 'win32'
 
