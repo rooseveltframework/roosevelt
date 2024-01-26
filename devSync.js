@@ -157,7 +157,6 @@ async function fsWatch (destDir) {
       const stdout = execSync(command)
       logger.info('\n' + stdout.toString())
     } catch (stdout) {
-      console.log(stdout)
       // node thinks that any status other than 0 is an error - robocopy returns a 0 if no files changes and 1 if files were changed and copied
       // any value greater than/equal to 8 indicates at least one failure during the copy operation
       // see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
