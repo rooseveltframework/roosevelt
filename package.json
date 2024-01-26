@@ -57,7 +57,7 @@
     "codecov": "3.8.3",
     "eslint": "8.56.0",
     "eslint-plugin-mocha": "10.2.0",
-    "glob": "10.3.3",
+    "glob": "10.3.10",
     "less": "4.2.0",
     "mocha": "10.2.0",
     "prompts": "2.4.2",
