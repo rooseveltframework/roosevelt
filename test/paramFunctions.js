@@ -43,6 +43,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerInit: '(app) => {process.send("something")}'
     }, options)
 
@@ -75,6 +76,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onAppExit: '(app) => {process.send("the big exit")}'
     }, options)
 
@@ -246,6 +248,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -282,6 +285,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       errorPages: {
         notFound: '404errController.js'

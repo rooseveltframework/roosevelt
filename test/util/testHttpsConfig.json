@@ -8,6 +8,8 @@
       "warn": false
     }
   },
+  "expressSession": false,
+  "secretsDir": "secrets",
   "https": {
     "enable": true,
     "force": true,
@@ -15,15 +17,15 @@
     "port": 2468,
     "authInfoPath": {
       "p12": {
-        "p12Path": "test/app/certs/cert.p12"
+        "p12Path": "cert.p12"
       },
       "authCertAndKey": {
-        "cert": "test/app/certs/cert.pem",
-        "key": "test/app/certs/key.pem"
+        "cert": "cert.pem",
+        "key": "key.pem"
       }
     },
     "passphrase": "testpass",
-    "caCert": "test/app/certs/cert.pem",
+    "caCert": "cert.pem",
     "requestCert": false,
     "rejectUnauthorized": false
   }

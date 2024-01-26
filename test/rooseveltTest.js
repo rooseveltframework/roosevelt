@@ -30,7 +30,7 @@ describe('Roosevelt.js Tests', function () {
 
   it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
     // generate the test app
-    sOptions.appDir = appDir
+    sOptions.appDir = './test/app'
     sOptions.method = 'initServer'
     generateTestApp(undefined, sOptions)
 
@@ -69,6 +69,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
@@ -108,6 +109,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
@@ -143,7 +145,8 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      makeBuildArtifacts: true
+      makeBuildArtifacts: true,
+      expressSession: false
     }, sOptions)
 
     // bool var to see that a message was not send back by a call back and that folders exists
@@ -183,7 +186,8 @@ describe('Roosevelt.js Tests', function () {
     // generate the test app
     generateTestApp({
       appDir,
-      makeBuildArtifacts: true
+      makeBuildArtifacts: true,
+      expressSession: false
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -457,6 +461,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -490,6 +495,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       localhostOnly: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -565,6 +571,8 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203
       },
+      secretsDir: 'secrets',
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -651,6 +659,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -697,7 +706,8 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      makeBuildArtifacts: true
+      makeBuildArtifacts: true,
+      expressSession: false
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -732,6 +742,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       https: {
         enable: true,
         port: 43203,

@@ -45,6 +45,7 @@
   },
   "shutdownTimeout": "value",
   "helmet": {},
+  "expressSession": false,
   "bodyParser": {
     "urlEncoded": {
       "extended": "value"
@@ -62,6 +63,7 @@
     "requestCert": "value",
     "rejectUnauthorized": "value"
   },
+  "secretsDir": "secrets",
   "modelsPath": "value",
   "viewsPath": "value",
   "controllersPath": "value",

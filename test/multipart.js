@@ -38,6 +38,7 @@ describe('multipart/formidable', () => {
     roosevelt({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       port: 40003,
       logging: {
         methods: {

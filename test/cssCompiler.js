@@ -21,6 +21,8 @@ describe('css preprocessors', () => {
         error: false
       }
     },
+    expressSession: false,
+    secretsDir: 'secrets',
     htmlValidator: {
       enable: false
     },
