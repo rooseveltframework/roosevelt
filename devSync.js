@@ -8,7 +8,7 @@ const gitignoreScanner = require('./lib/tools/gitignoreScanner')
 const gitignoreFiles = gitignoreScanner('./gitignore')
 
 // paths
-let destDir = process.env.DEST_DIR || process.argv[2]
+let destDir = process.env.ROOSEVELT_DEST_DIR || process.argv[2]
 const srcDir = __dirname
 const rooseveltPath = `${srcDir}/**/*.js`
 
@@ -139,6 +139,16 @@ async function fsWatch (destDir) {
       */
       command = `robocopy ${srcDir} ${path.normalize(destDir + '/node_modules/roosevelt/')} /mt /e /xd ${ignoredDirectories.join(' ')} /xf ${ignoredFiles.join(' ')}`
     } else {
+      /*
+        rsync <flags> <source> <destination>
+
+        -avz:
+          -a archive: recursion + preserve everything
+          -v verbose: verbose log during transfer
+          -z compress: compresses file data as it is sent to the destination
+        --delete: delete extraneous files from destination (only for dirs that are being synchronized)
+        --exclude: exclude files/dirs
+      */
       command = `rsync -avz --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
     }
 
