@@ -8,7 +8,8 @@ const path = require('path')
 const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
-const cg = require('./lib/scripts/certsGenerator.js')
+const { certsGenerator } = require('./lib/scripts/certsGenerator.js')
+const { sessionSecretGenerator } = require('./lib/scripts/sessionSecretGenerator.js')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -73,13 +74,21 @@ module.exports = (params, schema) => {
     httpReloadPromise = configReloadServer('HTTP')
   }
 
+  // #region certs
+
+  // generate express session secret
+  if (params.expressSession) {
+    if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/sessionSecret.json')) {
+      sessionSecretGenerator()
+    }
+  }
+
+  // generate https certs
   if (httpsParams.enable) {
     // Runs the certGenerator if httpsParams.enable
     if (appEnv === 'development' && httpsParams.autoCert) {
-      if (!fs.existsSync('./certs')) {
-        cg.certsGenerator()
-      } else if (!fs.existsSync('./certs/key.pem') || (!fs.existsSync('./certs/cert.pem'))) {
-        cg.certsGenerator()
+      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(params.secretsDir + '/key.pem') || (!fs.existsSync(params.secretsDir + '/cert.pem'))))) {
+        certsGenerator()
       }
     }
 
@@ -93,7 +102,7 @@ module.exports = (params, schema) => {
         // if the string ends with a dot and 3 alphanumeric characters (including _)
         // then we assume it's a filepath.
         if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-          httpsOptions.pfx = fs.readFileSync(authInfoPath.p12.p12Path)
+          httpsOptions.pfx = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + authInfoPath.p12.p12Path)
         } else { // if the string doesn't end that way, we assume it's an encrypted string
           httpsOptions.pfx = authInfoPath.p12.p12Path
         }
@@ -103,24 +112,25 @@ module.exports = (params, schema) => {
       } else if (authInfoPath.authCertAndKey) {
         reloadHttpsOptions.certAndKey = {}
 
-        if (authInfoPath.authCertAndKey.cert) {
-          if (isCertString(authInfoPath.authCertAndKey.cert)) {
-            httpsOptions.cert = authInfoPath.authCertAndKey.cert
+        function assignCertStringByKey (key) {
+          const { authCertAndKey } = authInfoPath
+          const certString = authCertAndKey[key]
+
+          if (isCertString(certString)) {
+            httpsOptions[key] = certString
           } else {
-            httpsOptions.cert = fs.readFileSync(authInfoPath.authCertAndKey.cert)
+            httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
           }
 
-          reloadHttpsOptions.certAndKey.cert = httpsOptions.cert
+          reloadHttpsOptions.certAndKey[key] = httpsOptions[key]
         }
-        if (authInfoPath.authCertAndKey.key) {
-          // key strings are formatted the same way as cert strings
-          if (isCertString(authInfoPath.authCertAndKey.key)) {
-            httpsOptions.key = authInfoPath.authCertAndKey.key
-          } else {
-            httpsOptions.key = fs.readFileSync(authInfoPath.authCertAndKey.key)
-          }
 
-          reloadHttpsOptions.certAndKey.key = httpsOptions.key
+        if (authInfoPath.authCertAndKey.cert) {
+          assignCertStringByKey('cert')
+        }
+
+        if (authInfoPath.authCertAndKey.key) {
+          assignCertStringByKey('key')
         }
       }
 
@@ -135,7 +145,7 @@ module.exports = (params, schema) => {
         if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
           httpsOptions.ca = httpsParams.caCert
         } else { // it's a file path to the file, so read file
-          httpsOptions.ca = fs.readFileSync(httpsParams.caCert)
+          httpsOptions.ca = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + httpsParams.caCert)
         }
       } else if (httpsParams.caCert instanceof Array) {
         httpsOptions.ca = []
@@ -165,6 +175,10 @@ module.exports = (params, schema) => {
   app.httpServer = httpServer
   app.httpsServer = httpsServer
 
+  // #endregion
+
+  // #region various express middleware
+
   // enable gzip compression
   app.use(require('compression')())
 
@@ -185,6 +199,7 @@ module.exports = (params, schema) => {
   if (params.onReqStart && typeof params.onReqStart === 'function') {
     app.use(params.onReqStart)
   }
+  // #endregion
 
   // configure express
   app = require('./lib/setExpressConfigs')(app)
@@ -193,6 +208,8 @@ module.exports = (params, schema) => {
   if (params.onServerInit && typeof params.onServerInit === 'function') {
     params.onServerInit(app)
   }
+
+  // #region helper functions
 
   // assign individual keys to connections when opened so they can be destroyed gracefully
   function mapConnections (conn) {
@@ -481,6 +498,7 @@ module.exports = (params, schema) => {
       clearInterval(interval)
     }, 100)
   }
+
   /**
    * Start reload http(s) service
    * @param {String} proto - Which protocol to start
@@ -528,6 +546,7 @@ module.exports = (params, schema) => {
     }
     return false
   }
+  // #endregion
 
   return {
     httpServer,

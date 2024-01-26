@@ -2,7 +2,8 @@
 
 ## Next version
 
-- Put your changes here...
+- Add `express-session` dependency.
+- The name of the directory containing secrets and HTTPS keys is now configurable using the `secretsDir` parameter (default value is `secrets`).
 
 ## 0.21.16
 

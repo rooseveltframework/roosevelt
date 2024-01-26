@@ -15,6 +15,7 @@ describe('frontend reload', () => {
         error: false
       }
     },
+    expressSession: false,
     mode: 'development',
     makeBuildArtifacts: false,
     htmlValidator: {
@@ -81,11 +82,11 @@ describe('frontend reload', () => {
         autoCert: true,
         authInfoPath: {
           p12: {
-            p12Path: 'certs/cert.p12'
+            p12Path: 'secrets/cert.p12'
           },
           authCertAndKey: {
-            cert: 'certs/cert.pem',
-            key: 'certs/key.pem'
+            cert: 'secrets/cert.pem',
+            key: 'secrets/key.pem'
           }
         },
         passphrase: 'testpass'
