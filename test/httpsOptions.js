@@ -71,12 +71,6 @@ describe('HTTPS Server Options Tests', async () => {
         fs.mkdirSync(secretDir)
       }
 
-      fs.writeFileSync(secretDir + '/sessionSecret.json', JSON.stringify({ secret: 'sample secret' }), err => {
-        if (err) {
-          console.error(err)
-        }
-      })
-
       fs.writeFileSync(secretDir + '/key.pem', key, err => {
         if (err) {
           console.error(err)
@@ -257,7 +251,7 @@ describe('HTTPS Server Options Tests', async () => {
 
   it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', function () {
     // change config
-    config.https.caCert = [path.join(appDir, './../../../test/app/secrets/cert.pem'), path.join(appDir, './../../../test/app/secrets/key.pem'), path.join(appDir, './../../../test/app/secrets/sessionSecret.json')]
+    config.https.caCert = [path.join(appDir, './../../../test/app/secrets/cert.pem'), path.join(appDir, './../../../test/app/secrets/key.pem')]
 
     app({ appDir, ...config })
 

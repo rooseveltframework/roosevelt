@@ -694,7 +694,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it.skip('should be able to use server close instead of exiting process with an HTTP server', function (done) {
+  it('should be able to use server close instead of exiting process with an HTTP server', function (done) {
     // set test app features
     sOptions.exitProcess = true
     sOptions.close = true
@@ -706,7 +706,8 @@ describe('Roosevelt.js Tests', function () {
     // generate the app.js file
     generateTestApp({
       appDir,
-      makeBuildArtifacts: true
+      makeBuildArtifacts: true,
+      expressSession: false
     }, sOptions)
 
     // fork the app and run it as a child process
