@@ -58,6 +58,8 @@
     "requestCert": null,
     "rejectUnauthorized": null
   },
+  "expressSession": true,
+  "secretsDir": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
   "viewEngine": "none",
