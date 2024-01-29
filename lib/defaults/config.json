@@ -31,7 +31,6 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
-  "expressSession": true,
   "csrf": "full",
   "bodyParser": {
     "urlEncoded": {
