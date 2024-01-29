@@ -10,7 +10,7 @@ const gitignoreFiles = gitignoreScanner('./gitignore')
 // paths
 let destDir = process.env.ROOSEVELT_DEST_DIR || process.argv[2]
 const srcDir = __dirname
-const rooseveltPath = `${srcDir}/**/*.js`
+const rooseveltPath = `${srcDir}/**/*.*`
 
 // files to be synced
 const glob = new Glob(rooseveltPath, { ignore: 'node_modules/**' })
