@@ -123,6 +123,10 @@ async function fsWatch (destDir) {
 function sync (destDir) {
   // files/directories we don't want to include in sync
   const ignoredDirectories = gitignoreScanner('./gitignore', 'dir')
+
+  // remove node_modules from the ignored list, as we want the dependencies to remain
+  ignoredDirectories.splice(ignoredDirectories.indexOf('node_modules'), 1)
+
   const ignoredFiles = gitignoreScanner('./gitignore', 'file')
 
   const isWindows = process.platform === 'win32'
