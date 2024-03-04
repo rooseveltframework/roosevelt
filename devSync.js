@@ -101,6 +101,7 @@ async function fsWatch (destDir) {
   watcher.on('ready', async () => {
     logger.info('📁', `Now watching: ${srcDir}`)
     logger.info('🔗', `Will sync to: ${path.normalize(destDir + '/node_modules/roosevelt/')}`)
+    sync(destDir)
 
     const response = await prompts({
       type: 'text',
@@ -116,59 +117,61 @@ async function fsWatch (destDir) {
     }
   })
 
-  watcher.on('change', () => {
-    // files/directories we don't want to include in sync
-    const ignoredDirectories = gitignoreScanner('./gitignore', 'dir')
-    const ignoredFiles = gitignoreScanner('./gitignore', 'file')
+  watcher.on('change', () => sync(destDir))
+}
 
-    const isWindows = process.platform === 'win32'
+function sync (destDir) {
+  // files/directories we don't want to include in sync
+  const ignoredDirectories = gitignoreScanner('./gitignore', 'dir')
+  const ignoredFiles = gitignoreScanner('./gitignore', 'file')
 
-    let command
+  const isWindows = process.platform === 'win32'
 
-    // rsync/robocopy command
-    if (isWindows) {
-      /*
-        robocopy <source> <destination> <file(s)> <options>
+  let command
 
-        <files> is left empty, and defaults to *.*
+  // rsync/robocopy command
+  if (isWindows) {
+    /*
+      robocopy <source> <destination> <file(s)> <options>
 
-        /mt: multi-threaded, defaults to 8
-        /e: copy subdirs, including empty dirs
-        /xd: exclude dirs
-        /xf: exclude files
-      */
-      command = `robocopy ${srcDir} ${path.normalize(destDir + '/node_modules/roosevelt/')} /mt /e /xd ${ignoredDirectories.join(' ')} /xf ${ignoredFiles.join(' ')}`
+      <files> is left empty, and defaults to *.*
+
+      /mt: multi-threaded, defaults to 8
+      /e: copy subdirs, including empty dirs
+      /xd: exclude dirs
+      /xf: exclude files
+    */
+    command = `robocopy ${srcDir} ${path.normalize(destDir + '/node_modules/roosevelt/')} /mt /e /xd ${ignoredDirectories.join(' ')} /xf ${ignoredFiles.join(' ')}`
+  } else {
+    /*
+    rsync <flags> <source> <destination>
+
+    -avz:
+    -a archive: recursion + preserve everything
+    -v verbose: verbose log during transfer
+    -z compress: compresses file data as it is sent to the destination
+    --delete: delete extraneous files from destination (only for dirs that are being synchronized)
+    --exclude: exclude files/dirs
+    */
+    command = `rsync -avz --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+  }
+
+  // execute command
+  try {
+    const stdout = execSync(command)
+    logger.info('\n' + stdout.toString())
+  } catch (stdout) {
+    // node thinks that any status other than 0 is an error - robocopy returns a 0 if no files changes and 1 if files were changed and copied
+    // any value greater than/equal to 8 indicates at least one failure during the copy operation
+    // see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
+    if (stdout.status >= 8) {
+      logger.error(stdout.output.toString())
     } else {
-      /*
-        rsync <flags> <source> <destination>
-
-        -avz:
-          -a archive: recursion + preserve everything
-          -v verbose: verbose log during transfer
-          -z compress: compresses file data as it is sent to the destination
-        --delete: delete extraneous files from destination (only for dirs that are being synchronized)
-        --exclude: exclude files/dirs
-      */
-      command = `rsync -avz --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+      // log changes to user (list of files changed)
+      logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
+      logger.info(stdout.output.toString())
     }
-
-    // execute command
-    try {
-      const stdout = execSync(command)
-      logger.info('\n' + stdout.toString())
-    } catch (stdout) {
-      // node thinks that any status other than 0 is an error - robocopy returns a 0 if no files changes and 1 if files were changed and copied
-      // any value greater than/equal to 8 indicates at least one failure during the copy operation
-      // see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
-      if (stdout.status >= 8) {
-        logger.error(stdout.output.toString())
-      } else {
-        // log changes to user (list of files changed)
-        logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
-        logger.info(stdout.output.toString())
-      }
-    }
-  })
+  }
 }
 
 // stop the program
