@@ -85,14 +85,16 @@ module.exports = (params, schema) => {
 
   // generate https certs
   if (httpsParams.enable) {
+    authInfoPath = httpsParams.authInfoPath
+
     // Runs the certGenerator if httpsParams.enable
     if (appEnv === 'development' && httpsParams.autoCert) {
-      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(params.secretsDir + '/key.pem') || (!fs.existsSync(params.secretsDir + '/cert.pem'))))) {
+      const { authCertAndKey } = authInfoPath
+
+      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(authCertAndKey.key) || (!fs.existsSync(authCertAndKey.cert))))) {
         certsGenerator()
       }
     }
-
-    authInfoPath = httpsParams.authInfoPath
 
     // options to configure to the https server
     httpsOptions = {}
@@ -119,7 +121,8 @@ module.exports = (params, schema) => {
           if (isCertString(certString)) {
             httpsOptions[key] = certString
           } else {
-            httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
+            // httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
+            httpsOptions[key] = fs.readFileSync(certString)
           }
 
           reloadHttpsOptions.certAndKey[key] = httpsOptions[key]

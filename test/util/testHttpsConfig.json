@@ -17,11 +17,11 @@
     "port": 2468,
     "authInfoPath": {
       "p12": {
-        "p12Path": "cert.p12"
+        "p12Path": "./secrets/cert.p12"
       },
       "authCertAndKey": {
-        "cert": "cert.pem",
-        "key": "key.pem"
+        "cert": "./secrets/cert.pem",
+        "key": "./secrets/key.pem"
       }
     },
     "passphrase": "testpass",
