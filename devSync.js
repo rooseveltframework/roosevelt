@@ -10,7 +10,7 @@ const gitignoreFiles = gitignoreScanner('./gitignore')
 // paths
 let destDir = process.env.ROOSEVELT_DEST_DIR || process.argv[2]
 const srcDir = __dirname
-const rooseveltPath = `${srcDir}/**/*.*`
+const rooseveltPath = `${srcDir}/**/*.js`
 
 // files to be synced
 const glob = new Glob(rooseveltPath, { ignore: 'node_modules/**' })
@@ -152,18 +152,18 @@ function sync (destDir) {
 
     -avz:
     -a archive: recursion + preserve everything
-    -v verbose: verbose log during transfer
     -z compress: compresses file data as it is sent to the destination
     --delete: delete extraneous files from destination (only for dirs that are being synchronized)
     --exclude: exclude files/dirs
+    --info=progress2 --info=name0: outputs statistics based on the whole transfer, rather than individual files.
     */
-    command = `rsync -avz --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+    command = `rsync -az -r --info=progress2 --info=name0 --delete --exclude={${[...ignoredDirectories, ...ignoredFiles, '.git', '.gitignore', '.github', '.vscode'].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
   }
 
   // execute command
   try {
-    const stdout = execSync(command)
-    logger.info('\n' + stdout.toString())
+    execSync(command, { stdio: 'inherit' })
+    logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
   } catch (stdout) {
     // node thinks that any status other than 0 is an error - robocopy returns a 0 if no files changes and 1 if files were changed and copied
     // any value greater than/equal to 8 indicates at least one failure during the copy operation
@@ -171,9 +171,7 @@ function sync (destDir) {
     if (stdout.status >= 8) {
       logger.error(stdout.output.toString())
     } else {
-      // log changes to user (list of files changed)
       logger.info(`\n📝 Updating > ${destDir}/node_modules/roosevelt\n`)
-      logger.info(stdout.output.toString())
     }
   }
 }
