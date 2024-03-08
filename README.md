@@ -1,4 +1,3 @@
-
 # Roosevelt MVC web framework
 
 [![Build Status](https://github.com/rooseveltframework/roosevelt/workflows/CI/badge.svg
