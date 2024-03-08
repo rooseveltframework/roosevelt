@@ -152,12 +152,13 @@ function sync (destDir) {
 
     -avz:
     -a archive: recursion + preserve everything
+    -h human readable:
     -z compress: compresses file data as it is sent to the destination
+    --progress: show file progress during transfer
     --delete: delete extraneous files from destination (only for dirs that are being synchronized)
     --exclude: exclude files/dirs
-    --info=progress2 --info=name0: outputs statistics based on the whole transfer, rather than individual files.
     */
-    command = `rsync -az -r --info=progress2 --info=name0 --delete --exclude={${[...ignoredDirectories, ...ignoredFiles, '.git', '.gitignore', '.github', '.vscode'].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
+    command = `rsync -ahz --progress --delete --exclude={${[...ignoredDirectories, ...ignoredFiles].map(file => `'${file}'`).join(',')}} ${srcDir}/ ${destDir}/node_modules/roosevelt/`
   }
 
   // execute command
