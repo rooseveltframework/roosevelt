@@ -2,8 +2,8 @@
 
 ## Next version
 
-- Converted dev_sync tool into a node file with increased protection against accidental destructive folder/file changes. 
-- Add `express-session` dependency.
+- Converted dev_sync tool into a node file with increased protection against accidental destructive folder/file changes.
+- Add `express-session` and `memorystore` dependency.
 - The name of the directory containing secrets and HTTPS keys is now configurable using the `secretsDir` parameter (default value is `secrets`).
 
 ## 0.21.16
