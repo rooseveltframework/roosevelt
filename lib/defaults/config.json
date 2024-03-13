@@ -58,7 +58,15 @@
     "rejectUnauthorized": null
   },
   "expressSession": true,
-  "store": "default",
+  "store": {
+    "instance": null,
+    "preset": "default",
+    "presetOptions": {
+      "checkPeriod": 86400000,
+      "ttl": null,
+      "max": null
+    }
+  },
   "secretsDir": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",

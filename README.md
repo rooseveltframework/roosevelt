@@ -497,7 +497,6 @@ Resolves to:
 
   ```json
   {
-    "store": "default",
     "resave": false,
     "saveUninitialized": false,
   }
@@ -516,6 +515,28 @@ Resolves to:
     ...other express-session parameters
   }
   ```
+
+- `store`: Parameters to be passed to `express-session`. Must pass in either an `instance` or a `preset`.
+
+  - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
+
+  - `preset`: *[String]* Available presets provided by Roosevelts. Can be `default` or `express-session-default`
+
+    - Roosevelt uses [memorystore](https://www.npmjs.com/package/memorystore) as its default session storage.
+
+  - `presetOptions`: *[Object]* Options to pass to the preset store. (Note: These only apply when `preset` is set to `"default"`)
+
+    - `checkPeriod`: *[Number]* How long, in milliseconds, the MemoryStore will check for expired items.
+
+      - Default is `86400000`, or 1 day.
+
+    - `ttl`: *[Number]* How long, in milliseconds, before a session is expired.
+
+      - Defaults to value of `checkPeriod`.
+
+    - `max`: *[Number]* The maximum size of the cache, checked by applying the length function to all values in the cache.
+
+      - Default is `Infinity`.
 
 - `toobusy`: Parameters to pass to the [node-toobusy](https://github.com/STRML/node-toobusy) module.
 
