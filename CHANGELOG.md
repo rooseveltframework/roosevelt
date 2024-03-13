@@ -2,9 +2,14 @@
 
 ## Next version
 
-- Converted dev_sync tool into a node file with increased protection against accidental destructive folder/file changes.
-- Add `express-session` and `memorystore` dependency.
-- The name of the directory containing secrets and HTTPS keys is now configurable using the `secretsDir` parameter (default value is `secrets`).
+- Put your changes here.
+
+## 0.22.0
+
+- Breaking: Integrated `malibu` into Roosevelt for CSRF protection, which is now on by default. This will require you to add CSRF tokens to all your POST routes, or disable this feature in your Roosevelt config.
+- Integrated `express-session` into Roosevelt for session support.
+- Added `secretsDir` param for a directory containing secrets, HTTPS keys, etc. This replaces the previous `certs` directory, but is backwards-compatible.
+- Improved dev_sync script for developing Roosevelt significantly.
 
 ## 0.21.16
 
