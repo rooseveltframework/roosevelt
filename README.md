@@ -491,7 +491,7 @@ Resolves to:
 
     - Roosevelt uses [memorystore](https://github.com/roccomuso/memorystore) as the default `express-session` store.
 
-    - To use the default store provided by `express-session`, use `"store": "memorystore"`
+    - To use the default store provided by `express-session`, use `"store": "express-session-default"`
 
     - To create a custom store for `express-session` (recommended for larger applications), see [this guide](<LINK TO GUIDE HERE>)
 
