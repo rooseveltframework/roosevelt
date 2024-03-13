@@ -58,6 +58,7 @@
     "rejectUnauthorized": null
   },
   "expressSession": true,
+  "store": "default",
   "secretsDir": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",

@@ -489,8 +489,15 @@ Resolves to:
 
   - If `expressSession` is set to `true`, it will use the configuration below:
 
+    - Roosevelt uses [memorystore](https://github.com/roccomuso/memorystore) as the default `express-session` store.
+
+    - To use the default store provided by `express-session`, use `"store": "memorystore"`
+
+    - To create a custom store for `express-session` (recommended for larger applications), see [this guide](<LINK TO GUIDE HERE>)
+
   ```json
   {
+    "store": "default",
     "resave": false,
     "saveUninitialized": false,
   }
