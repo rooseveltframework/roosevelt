@@ -30,7 +30,7 @@
     "cookie-parser": "1.4.6",
     "es6-template-strings": "2.0.1",
     "execa": "8.0.1",
-    "express": "4.19.1",
+    "express": "4.19.2",
     "express-html-validator": "0.2.4",
     "express-session": "1.18.0",
     "formidable": "3.5.1",
