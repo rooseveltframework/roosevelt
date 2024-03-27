@@ -1445,8 +1445,6 @@ Yes, it's kind of annoying to add it to every route and every HTML form, but the
 
 Roosevelt's default session store for `express-session` works great if your app only needs a single process, but if you're spreading your app across multiple processes or servers, you will need to reconfigure `express-session` to use a caching service that supports replication like [redis](https://en.wikipedia.org/wiki/Redis) or a database that supports replication like [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL) in order to scale your app.
 
-`node app.js `.
-
 #### Run the app behind a reverse proxy and use all the CPU cores
 
 To do this, use the `production-proxy-mode` command line flag and the `cores` command line flag, e.g. `node app.js --production-proxy-mode --cores max`.
