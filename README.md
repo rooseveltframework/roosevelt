@@ -7,67 +7,62 @@ Roosevelt is a web application development framework based on [Express](http://e
 
 Some notable features:
 
-- Minimal boilerplate to get started. Teddy Roosevelt—referred to by Cracked magazine as the "[the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time_p5.html)"—curtailed the abuse of monopolists, so there's no way he would ever put up with all the indecipherable boilerplate common to other web frameworks.
-- Default directory structure is simple, but easily configured.
-- Concise default [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) architecture.
-- Uses [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than popular alternatives. Can be configured to use any templating system that supports Express.
+- Boilerplate minimized. Teddy Roosevelt — referred to by Cracked magazine as the "[the most badass President of all-time](http://www.cracked.com/article_15895_the-5-most-badass-presidents-all-time_p5.html)" — curtailed the abuse of monopolists, so there's no way he would ever put up with all the indecipherable boilerplate common to other web frameworks.
+  - By contrast, the Express framework itself adopts a very minimalist philosophy. If you build a vanilla Express app yourself, you will need to manually include and configure a lot of additional modules to handle very basic things such as handling POST requests, file uploads, logging, security hardening, template parsing, CSS/JS preprocessing and bundling, etc. Roosevelt includes these and configures them properly for you.
+
+- [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)-based default directory structure.
+- [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than common alternatives. Can be configured to use any templating system that supports Express.
   - Need some extra speed in template parsing? Consider writing your templates in [PHP](https://php.net)! The Roosevelt team also built a view engine that lets you [use PHP as your templating engine](https://github.com/rooseveltframework/express-php-view-engine) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
 - [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external-facing CSS files via [clean-css](https://www.npmjs.com/package/clean-css). There's also built-in support for [Sass](https://sass-lang.com) and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
-- Built-in, easy to use interface for creating [Webpack](https://webpack.js.org/) bundles for module bundling and minifying your frontend JS.
-- Optional isomorphic (aka universal, [amphibious](https://twitter.com/kethinov/status/566896168324825088), etc) controller support based on [page-express-mapper](https://github.com/rooseveltframework/page-express-mapper) to map [page.js](http://visionmedia.github.io/page.js/) to the Express API so both your Express routes and template code can be shared on the client and the server without modification for building single page apps with maximal code reuse on both sides.
-- Automatic server reloading when your backend code changes (via [nodemon](https://nodemon.io)) and automatic browser reloading when your frontend code changes (via [reload](https://github.com/alallier/reload)).
-- Automatic HTML validation in development mode of your post-server rendered HTML powered by [express-html-validator](https://github.com/rooseveltframework/express-html-validator).
+- [Webpack](https://webpack.js.org/) fully integrated providing an easy to use interface for bundling and minifying your frontend JS.
+- Code-reloading in development mode via [nodemon](https://nodemon.io) for server-side changes and [reload](https://github.com/alallier/reload) for frontend changes.
+- HTML validation done automatically in development mode for your post-server rendered HTML powered by [express-html-validator](https://github.com/rooseveltframework/express-html-validator).
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/main/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
-*Note: this is documentation for the current version of Roosevelt. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
+*This is documentation for the current version of Roosevelt. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
 
 ## Table of contents
 
 - [Create and run a Roosevelt app](https://github.com/rooseveltframework/roosevelt#create-and-run-a-roosevelt-app)
-  - [Using the Roosevelt app generator](https://github.com/rooseveltframework/roosevelt#using-the-roosevelt-app-generator)
+  - [Prerequisites](https://github.com/rooseveltframework/roosevelt#prerequisites)
+  - [Roosevelt app generator](https://github.com/rooseveltframework/roosevelt#roosevelt-app-generator)
   - [Create a Roosevelt app manually](https://github.com/rooseveltframework/roosevelt#create-a-roosevelt-app-manually)
-    - [Use Roosevelt as a static site generator](https://github.com/rooseveltframework/roosevelt#use-roosevelt-as-a-static-site-generator)
+  - [Use Roosevelt as a static site generator](https://github.com/rooseveltframework/roosevelt#use-roosevelt-as-a-static-site-generator)
   - [Available npm scripts](https://github.com/rooseveltframework/roosevelt#available-npm-scripts)
   - [Available command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments)
   - [Combining npm scripts and command line arguments](https://github.com/rooseveltframework/roosevelt#combining-npm-scripts-and-command-line-arguments)
   - [Recognized environment variables](https://github.com/rooseveltframework/roosevelt#recognized-environment-variables)
   - [Overriding recognized command line flags and environment variables](https://github.com/rooseveltframework/roosevelt#overriding-recognized-command-line-flags-and-environment-variables)
 - [Default directory structure](https://github.com/rooseveltframework/roosevelt#default-directory-structure)
-  - [Default .gitignore](https://github.com/rooseveltframework/roosevelt#default-gitignore)
 - [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
-  - [App behavior parameters](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters)
-  - [HTTPS parameters](https://github.com/rooseveltframework/roosevelt#https-parameters)
   - [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters)
+  - [Development mode parameters](https://github.com/rooseveltframework/roosevelt#development-mode-parameters)
+  - [Deployment parameters](https://github.com/rooseveltframework/roosevelt#deployment-parameters)
+  - [App behavior parameters](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters)
+  - [Isomorphic parameters](https://github.com/rooseveltframework/roosevelt#isomorphic-parameters)
   - [Statics parameters](https://github.com/rooseveltframework/roosevelt#statics-parameters)
-  - [Public folder parameters](https://github.com/rooseveltframework/roosevelt#public-folder-parameters)
   - [Events](https://github.com/rooseveltframework/roosevelt#events)
   - [Event list](https://github.com/rooseveltframework/roosevelt#event-list)
-- [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
-  - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-    - [roosevelt-router](https://github.com/rooseveltframework/roosevelt#roosevelt-router)
-      - [API](https://github.com/rooseveltframework/roosevelt#api)
 - [Making model files](https://github.com/rooseveltframework/roosevelt#making-model-files)
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
+- [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
+  - [CSRF protection](https://github.com/rooseveltframework/roosevelt#csrf-protection)
+  - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
+  
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
-- [Express middleware and other configurations automatically loaded by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-middleware-and-other-configurations-automatically-loaded-by-roosevelt)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
+- [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
 - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
 - [Writing code for Roosevelt](https://github.com/rooseveltframework/roosevelt#writing-code-for-roosevelt)
 
 ## Create and run a Roosevelt app
 
-First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you install using a Node.js version manager like [nvm](https://github.com/creationix/nvm) rather than the official installer, as a version manager will allow you to switch between multiple versions of Node.js easily.
+### Prerequisites
 
-Some important caveats to note:
+First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you have both the current and LTS versions of Node.js installed on your system. To do that, it is recommended that you install Node.js using a Node.js version manager like [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) rather than the official installer, as a version manager will allow you to switch between multiple versions of Node.js easily.
 
-- nvm is not available on Windows. Windows users should try out [recommended alternatives](https://github.com/nvm-sh/nvm#important-notes).
-- It is also recommended that Windows users use a terminal that supports emojis, such as [Microsoft's new terminal](https://github.com/Microsoft/Terminal).
-- Linux/macOS users who install Node.js without a version manager like nvm may need to resolve some commonly encountered [permissions headaches associated with npm](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally). As such, use of nvm is strongly recommended.
-
-Once you have a sane development environment, you can proceed with the standard install procedure below.
-
-### Using the Roosevelt app generator
+### Roosevelt app generator
 
 The [Roosevelt app generator](https://github.com/rooseveltframework/generator-roosevelt) is a command line script based on [Yeoman](http://yeoman.io) that can create a sample Roosevelt app for you.
 
@@ -93,23 +88,15 @@ yo roosevelt
 
 Then follow the prompts.
 
-After creating your app, `cd` to your app's directory and install dependencies:
+After creating your app, `cd` to your app's directory and:
 
-```bash
-npm i
-```
+- Install dependencies: `npm i`
+- Run the app in development mode: `npm run development`
+  - Default shorthands:
+    - `npm run dev`
+    - `npm run d`
 
-Run in development mode:
-
-```bash
-npm run d
-```
-
-Or run in production mode:
-
-```bash
-npm run p
-```
+See [available npm scripts](https://github.com/rooseveltframework/roosevelt#available-npm-scripts) for more ways to run the app.
 
 ### Create a Roosevelt app manually
 
@@ -118,8 +105,11 @@ It is also possible to create a Roosevelt app without using the app generator. T
 To do that:
 
 - First create a new folder and `cd` into it.
+
 - Then `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
+
 - Create a file named `app.js`.
+
 - Put this code in `app.js`:
 
   ```javascript
@@ -128,11 +118,11 @@ To do that:
   }).startServer()
   ```
 
-- Then `node app.js`. If the `makeBuildArtifacts` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See below for more information about parameter configuration.
+- Then `node app.js`. If the `makeBuildArtifacts` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See [configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters) for more information about parameter configuration.
 
-#### Use Roosevelt as a static site generator
+### Use Roosevelt as a static site generator
 
-Same steps as above, except set `makeBuildArtifacts` to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
+Create a Roosevelt app using one of the methods above, then set the `makeBuildArtifacts` param to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
 
   ```javascript
 require('roosevelt')({
@@ -140,7 +130,7 @@ require('roosevelt')({
 }).init()
   ```
 
-You will also need to set view engine if you want to render HTML templates into static pages and supply data to the templates:
+You will also need to set `viewEngine` if you want to render HTML templates into static pages and supply data to the templates:
 
   ```javascript
 require('roosevelt')({
@@ -154,7 +144,7 @@ require('roosevelt')({
 }).init()
   ```
 
-Note: If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
+If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
 
 ### Available npm scripts
 
@@ -177,17 +167,13 @@ Roosevelt apps created with the app generator come with the following notable [n
     - `npm run x`
   - Script is short for: `nodemon app.js --production-proxy-mode`
 - `npm run generate-certs`: Generates self-signed HTTPS certs for your app.
-  - Default shorthand:
-    - `npm run c`
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certsGenerator.js`
 - `npm run generate-session-secret`: Generates a secret key for the `express-session` module.
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/sessionSecretGenerator.js`
 - `npm run generate-secrets`: Generates self-signed HTTPS certs and a `express-session` secret.
 - `npm run audit-config`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
-  - Default shorthand:
-    - `npm run a`
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/configAuditor.js`
-  - Note: this will run automatically whenever you run `npm i` as well.
+  - This will run automatically whenever you run `npm i` or `npm ci` as well.
 
 ### Available command line arguments
 
@@ -214,8 +200,8 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--prodproxy`
     - `-x`
-- `node app.js --cores <m>`: Configures how many CPUs your app will run on.
-  - `<m>` can be either a number representing the desired cores, or you can supply `max` to use all available CPUs.
+- `node app.js --cores n`: Configures how many CPUs your app will run on.
+  - `n` can be either a number representing the desired cores, or you can supply `max` to use all available CPUs.
     - Default is `1`.
   - Default shorthand:
     - `-c`
@@ -252,51 +238,58 @@ Environment variable precedence:
 
 ### Overriding recognized command line flags and environment variables
 
-You can override the default command line flags and environment variables by providing a schema from [source-configs](https://github.com/rooseveltframework/source-configs) with a 'rooseveltConfig' section. For instance, to set the number of cores from the command line with '--num-cores' or '-n' instead of '--cores' or '-c', you could write:
+You can override the default command line flags and environment variables by providing a schema from [source-configs](https://github.com/rooseveltframework/source-configs) with a `"rooseveltConfig"` section. For instance, to set the number of cores from the command line with `"--num-cores"` or `"-n"` instead of the default `"--cores"` or `"-c"`, you could write:
 ```javascript
-const schema = {
-  rooseveltConfig: {
-    cores: {
-      commandLineArg: ['--num-cores', '-n'],
-      envVar: ['NUM_CORES']
+const schemaOverride = {
+  rooseveltConfig: { // we are overriding the Roosevelt config
+    cores: { // we are overriding the cores param in the Roosevelt config
+      commandLineArg: ['--num-cores', '-n'], // the new command line arg
+      envVar: ['NUM_CORES'] // a new environment variable to listen for
     }
   }
 }
-require('roosevelt')({
-  'makeBuildArtifacts': true
-}, schema).startServer()
+const params = {} // set any Roosevelt parameters here
+require('roosevelt')(params, schemaOverride).startServer()
 ```
-
-Note that this also adds an environment variable.
-
-This will override the default for any recognized Roosevelt parameter.
 
 ## Default directory structure
 
-- `app.js`: Entry point to your application. Feel free to rename this, but make sure to update `package.json`'s reference to it.
-- `lib`: Random includable JS files that don't belong in any of the other directories. It has been added to the `require` stack so you can simply `require('lib/someFile')`.
-- `mvc`: Folder for models, views, and controllers. All configurable via parameters (see below).
-  - `controllers`: Folder for controller files.
-  - `models`: Folder for model files.
-  - `views`: Folder for view files.
-- `node_modules`: A standard folder created by Node.js where all modules your app depends on (such as Roosevelt) are installed to. This folder is created when installing dependencies using the `npm i` command.
-- `package.json`: A file common to most Node.js apps for configuring your app.
-- `public`: All contents within this folder will be exposed as static files.
-- `statics`: Folder for source CSS, image, JS, and other static files. By default some of the contents of this folder are symlinked to from `public`, which you can configure (see below).
-  - `pages`: Folder for HTML templates that get rendered and minified into static pages.
-  - `css`: Folder for source CSS files.
-  - `images`: Folder for source image files.
-  - `js`: Folder for source JS files.
-- `.gitignore`: A standard file which contains a list of files and folders to ignore if your project is in a [git](https://git-scm.com/) repo. Delete it if you're not using git.
+Below is the default directory structure for an app created using the Roosevelt app generator:
 
-### Default .gitignore
+- Application logic:
 
-The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to your liking before committing a fresh Roosevelt app to your git repo.
+  - `app.js`: Entry point to your application. Feel free to rename this, but make sure to update `package.json`'s references to it.
 
-Some notable things ignored by default and why:
+  - `lib`: Random includable JS files that don't belong in any of the other directories. It has been added to the `require` stack so you can simply `require('lib/someFile')`.
 
-- `public`: It's recommended that you don't create files in this folder manually, but instead use the `statics` parameter detailed below to expose folders in your `statics` directory to `public` via auto-generated symlinks.
-- `node_modules`: This folder is created when installing dependencies using the `npm i` step to set up your app. Since some modules you might include later in your app can be platform-specific and are compiled for your OS during the install step, it's generally not recommended to commit the `node_modules` folder to git.
+  - `mvc`: Folder for models, views, and controllers. All configurable via parameters (see below).
+    - `controllers`: Folder for controller files; the "C" in MVC. This is where your HTTP routes will go.
+    - `models`: Folder for model files; the "M" in MVC. This is where you will get data to display in your views e.g. by querying a database or do other business logic.
+    - `views`: Folder for view files; the "V" in MVC. This is where your HTML templates will go.
+
+- Static files:
+
+  - `public`: All contents within this folder will be exposed as static files.
+
+  - `statics`: Folder for source CSS, image, JS, and other static files. By default some of the contents of this folder are symlinked to from `public`, which you can configure via params. See [configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters) for more information about parameter configuration.
+    - `css`: Folder for source CSS files.
+    - `images`: Folder for source image files.
+    - `js`: Folder for source JS files.
+    - `pages`: Folder for HTML templates that get rendered and minified into static pages.
+
+- Application infrastructure:
+
+  - `.gitignore`: A standard file which contains a list of files and folders to ignore if your project is in a [git](https://git-scm.com/) repo. Delete it if you're not using git. The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to your liking before committing a fresh Roosevelt app to your git repo.
+    - Some notable things ignored by default and why:
+      - `node_modules`: This folder is created when installing dependencies using the `npm i` step to set up your app. It's generally not recommended to commit the `node_modules` folder or any other build artifacts to git.
+      - `public`: It's recommended that you don't create files in this folder manually, but instead use the `statics` parameter detailed below to expose folders in your `statics` directory to `public` via auto-generated symlinks.
+      - `secrets`: A folder for "secret" files, e.g. session keys, HTTPS certs, passwords, etc. Since this folder contains sensitive information, it should not be committed to git.
+  - `node_modules`: A standard folder created by Node.js where all modules your app depends on (such as Roosevelt) are installed to. This folder is created when installing dependencies using the `npm i` command.
+
+  - `package.json`: A file common to most Node.js apps for configuring your app.
+  - `package-lock.json`: An auto-generated file common to most Node.js apps containing a map of your dependency tree. This is created after you run `npm i` for the first time.
+  - `rooseveltConfig.json`: Where your Roosevelt config is stored and what your params are set to. See [configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters) for more information about parameter configuration.
+  - `secrets`: A folder for "secret" files, e.g. session keys, HTTPS certs, passwords, etc. It is added to  `.gitignore`.
 
 ## Configure your app with parameters
 
@@ -354,33 +347,14 @@ Resolves to:
 }
 ```
 
-### App behavior parameters
+### MVC parameters
 
-- `port`: The HTTP port your app will run on.
-
-  - Default: *[Number]* `43711`.
-
-- `mode`: Decides whether your app starts in production mode or development mode by default.
-
-  - Default: *[String]* `production`.
-
-- `enableCLIFlags`: Enables parsing of command line flags. Disable this if you want to handle `argv` yourself or if you don't want Roosevelt to listen to the command line flags it listens for by default.
-
-  - Default: *[Boolean]* `true`.
-
-- `makeBuildArtifacts`: When enabled Roosevelt will generate user specified directories (e.g. MVC parameters and statics parameters).
-
-  - Default: *[Boolean]* `false`.
-
-    - Will be set to `true` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
-
-    - Can also accept a value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
-
-  - This parameter is useful in scenarios when you want to create a Roosevelt app entirely from nothing (without using [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt)). See [create a Roosevelt app manually](https://github.com/rooseveltframework/roosevelt#create-a-roosevelt-app-manually) for an example.
-
-- `appDir`: Root directory of your application.
-
-  - Default: *[String]* The directory where your app's `package.json` is located.
+- `controllersPath`: Relative path on filesystem to where your controller files are located.
+  - Default: *[String]* `"mvc/controllers"`.
+- `modelsPath`: Relative path on filesystem to where your model files are located.
+  - Default: *[String]* `"mvc/models"`.
+- `viewsPath`: Relative path on filesystem to where your view files are located.
+  - Default: *[String]* `"mvc/views"`.
 
 - `secretsDir`: Directory that stores certs, keys, and secrets.
 
@@ -388,40 +362,25 @@ Resolves to:
 
   - Important: Changing this value will require updating `.gitignore`.
 
-- `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx.
+### Development mode parameters
 
-  - Default: *[Boolean]* `true`.
-  - Note: This setting is ignored in development mode.
-
-- `logging`: Parameters to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger parameters documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
+- `frontendReload`: Settings to use for the [reload](https://github.com/alallier/reload) module which automatically reloads your browser when your frontend code changes. This feature is only available in development mode.
 
   - Default: *[Object]*
 
-      ```json
-      {
-        "methods": {
-          "http": true,
-          "info": true,
-          "warn": true,
-          "error": true,
-          "verbose": false
-        }
-      }
-      ```
+    ```json
+    {
+      "enable": true,
+      "port": 9856,
+      "httpsPort": 9857
+    }
+    ```
 
-- `minify`: Enables HTML and CSS minification.
-
-  - Default: *[Boolean]* `true`.
-
-  - Note: Automatically disabled during development mode.
-
-- `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/rooseveltframework/express-html-validator#configuration):
+- `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/rooseveltframework/express-html-validator#configuration). This feature is only available in development mode.
 
   - `enable`: *[Boolean]* Enables or disables the built-in HTML validator.
 
-    - Note: The validator is only available in development mode.
-
-  - `exceptions`: A set of params that can be used to prevent validation in certain scenarios:
+  - `exceptions`: A set of params that can be used to prevent validation in certain scenarios.
 
     - `header` *[String]*: A custom header that when set will disable the validator on a per request basis.
 
@@ -433,9 +392,9 @@ Resolves to:
 
   - `validatorConfig` *[Object]*: [html-validate configuration](https://html-validate.org/usage/#configuration) that determines what errors the validator looks for.
 
-    - Note: The full list of available validator rules can be found [here](https://html-validate.org/rules/).
+    - The full list of available validator rules can be found [here](https://html-validate.org/rules/).
 
-    - Note: This configuration can also be set by a `.htmlValidate.json` file placed in your app root directory.
+    - This configuration can also be set by a `.htmlValidate.json` file placed in your app root directory.
 
   - Default: *[Object]*
 
@@ -450,93 +409,70 @@ Resolves to:
     }
     ```
 
-- `bodyParser`: Parameters to supply to the [body-parser](https://github.com/expressjs/body-parser) module.
+### Deployment parameters
 
-  - `urlEncoded`: *[Object]* Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
+- `cores`: By default, Roosevelt will run on 1 CPU, but you can change the number of cores that the app will run on with this parameter.
 
-  - `json`: *[Object]* Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
+  - Default: *[Number]* `1`.
 
-  - Default: *[Object]*
+  - To use all available cores, set this value to `max`.
 
-      ```json
-      {
-        "urlEncoded": {
-          "extended": true
-        },
-        "json": {}
-      }
-      ```
+- `hostPublic`: Whether or not to allow Roosevelt to host the public folder. By default in `production-proxy` mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder through another web server, such as Apache or nginx that is better optimized for hosting static files.
 
-- `formidable`: Parameters to pass to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing. Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the upload directory when the request ends automatically. To keep any, be sure to move them before the request ends.
+  - Default: *[Boolean]* `false`.
 
-  - Default: *[Object]*
+- `https`: *[Object]* params for configuring the HTTPS server. HTTPS is disabled by default in apps created manually and enabled by default in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
 
-    ```json
-    {
-      "multiples": true
-    }
-    ```
+  - Default: *[Object]* `{}`.
+  - Object members:
 
-  - To disable multipart forms entirely, set `formidable` to `false`.
+    - `enable`: Enable HTTPS server.
+    - Default: *[Boolean]* `false`.
+    - `port`: The port your app will run the HTTPS server on.
+      - Default: *[Number]* `43733`.
+  - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
+      - Default: *[Boolean]* `false`.
+    - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
+    - Default: *[Boolean]* `true`.
+    - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
+      - Default: *[Object]* `undefined`.
+    - Object members:
+        - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
+          - Default: *[Object]* `undefined`.
+          - Object members:
+            - `p12Path`: *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
+              - Default: `undefined`.
+        - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
+          - Object members:
+            - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
+              - Default: `undefined`.
+    
+            - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+              - Default: `undefined`.
+    - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
+    - Default: `undefined`.
+    - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
+      - Default: `undefined`.
+    - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
+      - Default:  `undefined`.
+    - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
+      - Default: `undefined`.
 
-- `helmet`: Parameters to pass to the [helmet](https://github.com/helmetjs/helmet) module.
-  - Default: *[Object]*
-    The default options are specified in the [helmet docs](https://helmetjs.github.io/), with the exception of the upgrade-insecure-requests in the content security policy, which has been removed.
+- `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
 
-- `expressSession`: Parameter(s) to pass to the [express-session](https://github.com/expressjs/session) module. Can pass in a boolean (`true`/`false`), or supplying an object that allows further configuration using express-session parameters.
+  - Default: *[Boolean]* `true`. 
+  
+- `mode`: Decides whether your app starts in production mode or development mode by default.
 
-  - Default: *[Boolean]* `true`
+  - Default: *[String]* `production`.
 
-  - If `expressSession` is set to `true`, it will use the configuration below:
+- `port`: The HTTP port your app will run on. This setting is ignored if the app is set to force HTTPS-only mode.
 
-    - Roosevelt uses [memorystore](https://github.com/roccomuso/memorystore) as the default `express-session` store.
+  - Default: *[Number]* `43711`.
 
-    - To use the default store provided by `express-session`, use `"store": "express-session-default"`
+- `shutdownTimeout`: Maximum amount of time in milliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
 
-    - To create a custom store for `express-session` (recommended for larger applications), see [this guide](<LINK TO GUIDE HERE>)
-
-  ```json
-  {
-    "resave": false,
-    "saveUninitialized": false,
-  }
-  ```
-
-  - Optional: An object containing parameters that are specified in the [express-session docs](https://github.com/expressjs/session?tab=readme-ov-file#api) (Note: `secret` is generated by Roosevelt).
-
-  ```json
-  // using true/false
-  "expressSession": true
-
-  // using express-session parameters
-  "expressSession:" {
-    "resave": false,
-    "saveUninitialized": false,
-    ...other express-session parameters
-  }
-  ```
-
-- `store`: Parameters to be passed to `express-session`. Must pass in either an `instance` or a `preset`.
-
-  - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
-
-  - `preset`: *[String]* Available presets provided by Roosevelts. Can be `default` or `express-session-default`
-
-    - Roosevelt uses [memorystore](https://www.npmjs.com/package/memorystore) as its default session storage.
-
-  - `presetOptions`: *[Object]* Options to pass to the preset store. (Note: These only apply when `preset` is set to `"default"`)
-
-    - `checkPeriod`: *[Number]* How long, in milliseconds, the MemoryStore will check for expired items.
-
-      - Default is `86400000`, or 1 day.
-
-    - `ttl`: *[Number]* How long, in milliseconds, before a session is expired.
-
-      - Defaults to value of `checkPeriod`.
-
-    - `max`: *[Number]* The maximum size of the cache, checked by applying the length function to all values in the cache.
-
-      - Default is `Infinity`.
+  - Default: *[Number]* `30000` (30 seconds).
 
 - `toobusy`: Parameters to pass to the [node-toobusy](https://github.com/STRML/node-toobusy) module.
 
@@ -553,112 +489,37 @@ Resolves to:
     }
     ```
 
-- `cores`: By default, Roosevelt will run on 1 CPU, but you can change the number of cores that the app will run on with this parameter.
+### App behavior parameters
 
-  - Default: *[Number]* `1`.
+- `appDir`: Root directory of your application.
 
-  - To use all available cores, set this value to `max`.
+  - Default: *[String]* The directory where your app's `package.json` is located.
 
-- `shutdownTimeout`: Maximum amount of time in milliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
+- `bodyParser`: Parameters to supply to the [body-parser](https://github.com/expressjs/body-parser) module which handles POST requests.
 
-  - Default: *[Number]* `30000` (30 seconds).
+  - `urlEncoded`: *[Object]* Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
 
-- `csrf`: By default, CSRF protection is enabled and is applied to all routes (keyword `full`). CSRF protection can be limited to defined protected routes using the `manual` keyword (see [CSRF Protection](#csrf-protection) for further instructions).
+  - `json`: *[Object]* Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
 
-  - `csrf` is only disabled when `expressSession` is set to `false`.
+  - Default: *[Object]*
+
+    ```json
+    {
+      "urlEncoded": {
+        "extended": true
+      },
+      "json": {}
+    }
+    ```
+
+- `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by default or in an opt-in fashion. This feature is disabled when `expressSession` is set to `false`.
 
   - Default: *[String]* `full`.
-### HTTPS parameters
+  - Set it to `manual` to disable CSRF protection except on routes where you opt-in to it. See [CSRF Protection](https://github.com/rooseveltframework/roosevelt#csrf-protection) for further instructions.
 
-- `https`: *[Object]* Run a HTTPS server using Roosevelt.
-  - Object members:
+- `enableCLIFlags`: Enables parsing of command line flags. Disable this if you want to handle them yourself or if you don't want Roosevelt to listen to the command line flags it listens for by default.
 
-    - `enable`: Enable a HTTPS server.
-
-      - Default: *[Boolean]* `false`.
-
-    - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
-
-      - Default: *[Boolean]* `false`.
-
-    - `autoCert`: Will create https certificates in dev mode as long as they don't already exist
-
-      - Default: *[Boolean]* `true`.
-
-    - `port`: The port your app will run a HTTPS server on.
-
-      - Default: *[Number]* `43733`.
-
-    - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-  - Default: `undefined`.
-
-  - Object members:
-
-    - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
-        - Object members:
-
-          - `p12Path`:  *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
-      - Default: `undefined`.
-
-    - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
-        - Object members:
-
-          - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
-      - Default: `undefined`.
-
-      - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-          - Default: `undefined`.
-
-      - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
-  - Default: `undefined`.
-
-  - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
-      - Default: `undefined`.
-
-      - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
-  - Default: `undefined`.
-
-  - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
-
-    - Default:  `undefined`.
-
-  - Default: *[Object]* `{}`.
-
-### MVC parameters
-
-- `modelsPath`: Relative path on filesystem to where your model files are located.
-
-  - Default: *[String]* `"mvc/models"`.
-
-- `viewsPath`: Relative path on filesystem to where your view files are located.
-
-  - Default: *[String]* `"mvc/views"`.
-
-- `viewEngine`: What templating engine to use, formatted as *[String]* `"fileExtension: nodeModule"`.
-
-  - Default: *[String]* `"none"`.
-
-  - Will be set to `"html: teddy"` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
-
-  - Also by default when using the generator, the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
-
-  - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
-
-  - Example configuration using multiple templating systems: *[Object]*
-
-      ```json
-      {
-        "viewEngine": [
-          "html: teddy",
-          "php: php",
-          "ejs: ejs"
-        ]
-      }
-      ```
-
-- `controllersPath`: Relative path on filesystem to where your controller files are located.
-
-  - Default: *[String]* `"mvc/controllers"`.
+  - Default: *[Boolean]* `true`.
 
 - `errorPages`: Relative path on filesystem to where your various error page controller files are located. If you do not supply them, Roosevelt will use its default ones instead:
 
@@ -674,279 +535,117 @@ Resolves to:
 
     - Default: *[String]* `"503.js"`.
 
+- `expressSession`: Parameter(s) to pass to the [express-session](https://github.com/expressjs/session) module.
+
+  - Default: *[Boolean]* `true`.
+
+    - If `expressSession` is set to `true`, it will supply to following configuration to `express-session`:
+
+      ```json
+      {
+        "secret": [an auto-generated secret],
+        "resave": false, // usually a bad idea to set to true
+        "saveUninitialized": false, // usually a bad idea to set to true
+        "store": [the expressSessionStore.instance Roosevelt param]
+      }
+      ```
+
+      - Roosevelt sets `express-session` to use [memorystore](https://github.com/roccomuso/memorystore) as the default session store.
+
+  - If you supply your own parameters to `express-session`, it is recommended you take the above default configuration and modify it.
+
+- `expressSessionStore`: Define a custom session store to use with `express-session` instead of the default one provided by Roosevelt. This is recommended if you plan to shard your app across multiple separate processes or scale it to multiple servers.
+
+  - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
+  - `preset`: *[String]* Available presets provided by Roosevelt. Only used if `instance` is not provided.
+    - Available options:
+      - `default`: Use Roosevelt's default session store, which is [memorystore](https://www.npmjs.com/package/memorystore).
+      - `express-session-default`: Use `express-session`'s default session store (not recommended).
+  - `presetOptions`: Options to pass to the preset session store if one is selected. Only used if `instance` is not provided.
+    - Default: *[Object]*
+      - `checkPeriod`: How long, in milliseconds, the memory store will check for expired items.
+        - Default: *[Number]* `86400000` (1 day).
+      - `ttl`: How long, in milliseconds, before a session is expired.
+        - Default: *[Number]* the value of `checkPeriod`.
+      - `max`: The maximum size of the cache, checked by applying the length function to all values in the cache.
+        - Default: *[Number]* `Infinity`.
+
+  - Either `instance` or `preset` must be set for this param to work properly.
+
+- `formidable`: Parameters to pass to [formidable](https://github.com/felixge/node-formidable) using [formidable's API](https://github.com/felixge/node-formidable#api) for multipart form processing (file uploads). Access files uploaded in your controllers by examining the `req.files` object. Roosevelt will remove any files uploaded to the upload directory when the request ends automatically. To keep any, be sure to move them before the request ends.
+
+  - Default: *[Object]*
+
+    ```json
+    {
+      "multiples": true // enables multiple files to be uploaded simultaneously
+    }
+    ```
+
+  - To disable multipart forms entirely, set `formidable` to `false`.
+
+- `helmet`: Parameters to pass to the [helmet](https://github.com/helmetjs/helmet) module. This module helps secure Express apps by setting HTTP response headers.
+
+  - Default: *[Object]* The default options are specified in the [helmet docs](https://helmetjs.github.io/), with the exception of the `upgrade-insecure-requests` option that helmet sets in the `Content-Security-Policy`, which has been removed by default in Roosevelt.
+
+- `logging`: Parameters to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger parameters documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
+
+  - Default: *[Object]*
+
+    ```json
+    {
+      "methods": {
+        "http": true,
+        "info": true,
+        "warn": true,
+        "error": true,
+        "verbose": false
+      }
+    }
+    ```
+
+- `makeBuildArtifacts`: When enabled Roosevelt will generate user-specified directories, CSS/JS bundles, etc.
+
+  - Default: *[Boolean]* `false` for apps created manually.
+
+  - Will be set to `true` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
+  - Can also accept a value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
+
 - `routePrefix`: *[String]* A prefix prepended to your application's routes. Applies to all routes and static files.
 
   - Example: When set to `"foo"` a route bound to `/` will be instead be bound to `/foo/`.
 
-  - Note: This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
+  - This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
 
     - Example: An image located at `/images/teddy.jpg` can be resolved in a prefix-agnostic way via `` `${app.get('routePrefix')/images/teddy.jpg}` ``.
 
   - Default: `null`.
 
-### Statics parameters
+- `viewEngine`: What templating engine to use, formatted as *[String]* `"fileExtension: nodeModule"`.
 
-- `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
+  - Default: *[String]* `"none"` for apps created manually.
 
-  - Default: *[String]* `"statics"`.
+  - Will be set to `"html: teddy"` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
 
-- `html`: How you want Roosevelt to handle HTML:
+  - Also by default when using the generator, the module [teddy](https://github.com/rooseveltframework/teddy) is marked as a dependency in `package.json`.
 
-  - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
+  - To use multiple templating systems, supply an array of engines to use in the same string format. Each engine you use must also be marked as a dependency in your app's `package.json`. Whichever engine you supply first with this parameter will be considered the default.
 
-  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
-
-  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
-
-  - `models`: Data to pass to templates by file path / file name.
-    - Example:
-      ```json
-      {
-        "models": {
-          "index.html": {
-            "some": "data"
-          },
-          "subdirectory/otherFile.html": {
-            "someOther": "data"
-          }
-        }
-      }
-      ```
-    - Note: If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
-
-  - `output`: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
-
-  - `minifier`: How you want Roosevelt to minify your HTML:
-
-    - `enable`: *[Boolean]* Whether or not to minify HTML.
-
-        - Note: Can also be disabled by the `minify` param.
-
-    - Note: Minification is automatically disabled in development mode.
-
-    - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
-
-    - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
-
-  - Default: *[Object]*
-
-      ```json
-      {
-        "sourcePath": "pages",
-        "allowlist": null,
-        "blocklist": null,
-        "models": {},
-        "output": "",
-        "minifier": {
-          "enable": true,
-          "exceptionRoutes": false,
-          "options": {
-            "removeComments": true,
-            "collapseWhitespace": true,
-            "collapseBooleanAttributes": true,
-            "removeAttributeQuotes": true,
-            "removeEmptyAttributes": true
-          }
-        }
-      }
-      ```
-
-- `css`: *[Object]* How you want Roosevelt to configure your CSS preprocessor:
-
-  - `sourcePath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and written to the `public` folder when the app is started.
-
-  - `compiler`: *[Object]* Which CSS preprocessor (if any) to use.
-
-    - `enable`: *[Boolean]* Whether or not to use a preprocessor.
-
-    - `module`: *[String]* Node module name of the CSS preprocessor you wish to use.
-
-      - Note: Currently [less](http://lesscss.org/), [sass](https://sass-lang.com/), and [stylus](http://stylus-lang.com/) are supported.
-
-      - Note: Your chosen CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
-
-    - `options`: *[Object]* Parameters to send to the CSS preprocessor if it accepts any.
-
-  - `minifier`: *[Object]* Params pertaining to CSS minifcation.
-
-    - `enable`: *[Boolean]* Whether or not to minify CSS.
-  - Note: Can also be disabled by the `minify` param.
-
-  - `options`: *[Object]* Parameters to pass to the CSS minifier [clean-css](https://www.npmjs.com/package/clean-css), a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
-
-  - `allowlist`: Array of CSS files to allowlist for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
-
-    - Example array member: *[String]* `example.less:example.min.css` (compiles `example.less` into `example.min.css`).
-
-  - `output`: Subdirectory within `publicFolder` where compiled CSS files will be written to.
-
-  - `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`. Versioning your static files is useful for resetting your users' browser cache when you release a new version of your app.
-
-    - Default: `null`.
-
-    - Example usage (with LESS): *[Object]*
-
-        ```json
-          {
-            "fileName": "_version.less",
-            "varName": "appVersion"
-          }
-        ```
-
-    - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
-
-        ```less
-          /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
-        ```
-
-    - Some things to note:
-
-      - If there is already a file there with that name, this will overwrite it, so be careful!
-
-      - It's generally a good idea to add this file to `.gitignore`, since it is a build artifact.
-
-  - Default: *[Object]*
-
-      ```json
-        {
-          "sourcePath": "css",
-          "compiler": {
-            "enable" : false,
-            "module": "less",
-            "options": {}
-          },
-          "minifier": {
-            "enable": true,
-            "options": {}
-          },
-          "allowlist": null,
-          "output": "css",
-          "versionFile": null
-        }
-      ```
-
-- `js`: *[Object]* How you want Roosevelt to handle module bundling and minifying your frontend JS:
-
-  - `sourcePath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to the `public` folder when the app is started.
-
-  - `webpack`: Parameters related to bundling JS with [Webpack](https://webpack.js.org/):
-
-    - `enable`: Enable Webpack bundling.
-
-    - `bundles`: *[Array]* Declare one or more Webpack configurations to bundle JS with.
-
-      - `env`: *[String]* Bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
-
-      - `config`: *[Object]* or *[String]* The [Webpack configuration](https://webpack.js.org/configuration/) to send to Webpack. Can also be a path to a [Webpack config file](https://webpack.js.org/configuration/#use-different-config-file) relative to the app directory.
-
-      - Examples: *[Array]* of *[Objects]*
-
-        - Webpack bundle example declaring one bundle:
-
-          ```json
-          [
-            {
-              "config": {
-                "entry": "${js.sourcePath}/main.js",
-                "output": {
-                  "path": "${publicFolder}/js",
-                  "filename": "bundle.js"
-                }
-              }
-            }
-          ]
-          ```
-
-        - Webpack bundle example declaring one bundle only used in `dev` mode:
-
-            ```json
-            [
-              {
-                "env": "dev",
-                "config": {
-                  "entry": "${js.sourcePath}/main.js",
-                  "output": {
-                    "path": "${publicFolder}/js",
-                    "filename": "bundle.js"
-                  }
-                }
-              }
-            ]
-            ```
-
-        - Webpack bundle example declaring multiple bundles:
-
-            ```json
-            [
-              {
-                "config": {
-                  "entry": "${js.sourcePath}/main.js",
-                  "output": {
-                    "path": "${publicFolder}/js",
-                    "filename": "bundle.js"
-                  }
-                }
-              },
-              {
-                "config": {
-                  "entry": "${js.sourcePath}/moreStuff.js",
-                  "output": {
-                    "path": "${publicFolder}/js",
-                    "filename": "bundle2.js"
-                  }
-                }
-              },
-              etc...
-            ]
-            ```
-
-     - `verbose`: *[string]* Enable Webpack verbose error handler.
-
-  - Default: *[Object]*
-
-      ```json
-      {
-        "sourcePath": "js",
-        "webpack": {
-          "enable": false,
-          "bundles": [],
-          "verbose": false
-        }
-      }
-      ```
-
-- `frontendReload`: Settings to use for the [reload](https://github.com/alallier/reload) module which automatically reloads your browser when your frontend code changes.
-
-  - Default: *[Object]*
-
-      ```json
-      {
-        "enable": true,
-        "port": 9856,
-        "httpsPort": 9857
-      }
-      ```
-
-- `isomorphicControllers`: *[Object]* Permits Roosevelt to make a list of all your controller files that can be used client-side as well so they can be auto-loaded client-side too.
-
-  - `file`: *[String]* File name for the default JS controller auto-loader file. Set to `null` to disable this feature.
-
-    - Default: `null`.
-
-  - `output`: *[String]* Subdirectory within `publicFolder` to write JS controller auto-loader file to.
-
-    - Default: *[String]* `"js"`.
-
-  - Default: *[Object]*
+  - Example configuration using multiple templating systems: *[Object]*
 
     ```json
-    "isomorphicControllers": {
-      "file": null
-      "output": "js"
+    {
+      "viewEngine": [
+        "html: teddy",
+        "php: php",
+        "ejs: ejs"
+      ]
     }
     ```
 
-- `clientViews`: *[Object]* Allows you to expose view code to frontend JS for client-side templating.
+### Isomorphic parameters
+
+- `clientViews`: *[Object]* Allows you to expose view (template) file code to frontend JS for client-side templating.
 
   - `exposeAll`: *[Boolean]* Option to expose all templates.
 
@@ -955,6 +654,7 @@ Resolves to:
   - `blocklist`: *[Array]* of *[Strings]* List of files or folders to exclude when `exposeAll` is enabled.
 
     - Default: *[Array]* `[]`.
+
   - Can also be set declaratively by putting a `<!-- roosevelt-blocklist -->` tag at the top of any template.
 
   - `allowlist`: *[Object]* of *[Arrays]* List of JS files to create mapped to which view files to expose.
@@ -1001,29 +701,307 @@ Resolves to:
       "minifyOptions": {}
     }
     ```
-### Public folder parameters
 
-- `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `hostPublic` is enabled.
+- `isomorphicControllers`: *[Object]* Allows you to expose controller (route) file code to frontend JS for client-side routing.
 
-  - Default: *[String]* `"public"`.
+  - `file`: *[String]* File name for the default JS controller auto-loader file. Set to `null` to disable this feature.
+
+    - Default: `null`.
+
+  - `output`: *[String]* Subdirectory within `publicFolder` to write JS controller auto-loader file to.
+
+    - Default: *[String]* `"js"`.
+
+  - Default: *[Object]*
+
+    ```json
+    "isomorphicControllers": {
+      "file": null
+      "output": "js"
+    }
+    ```
+
+### Statics parameters
+
+- `css`: *[Object]* How you want Roosevelt to configure your CSS preprocessor:
+
+  - `sourcePath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and written to the `public` folder when the app is started.
+
+  - `compiler`: *[Object]* Which CSS preprocessor (if any) to use.
+
+    - `enable`: *[Boolean]* Whether or not to use a preprocessor.
+
+    - `module`: *[String]* Node module name of the CSS preprocessor you wish to use.
+
+      - Currently [less](http://lesscss.org/), [sass](https://sass-lang.com/), and [stylus](http://stylus-lang.com/) are supported.
+
+      - Your chosen CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
+
+    - `options`: *[Object]* Parameters to send to the CSS preprocessor if it accepts any.
+
+  - `minifier`: *[Object]* Params pertaining to CSS minifcation.
+
+    - `enable`: *[Boolean]* Whether or not to minify CSS.
+      - Can also be disabled by the `minify` param.
+
+  - `options`: *[Object]* Parameters to pass to the CSS minifier [clean-css](https://www.npmjs.com/package/clean-css), a list of which can be found in the [clean-css docs](https://github.com/jakubpawlowicz/clean-css#constructor-options).
+
+  - `allowlist`: Array of CSS files to allow for compiling. Leave undefined to compile all files. Supply a `:` character after each file name to delimit an alternate file path and/or file name for the minified file.
+
+    - Example array member: *[String]* `example.less:example.min.css` compiles `example.less` into `example.min.css`.
+
+  - `output`: Subdirectory within `publicFolder` where compiled CSS files will be written to.
+
+  - `versionFile`: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`. Versioning your static files is useful for resetting your users' browser cache when you release a new version of your app.
+
+    - Example usage (with LESS): *[Object]*
+
+      ```json
+      {
+        "fileName": "_version.less",
+        "varName": "appVersion"
+      }
+      ```
+
+    - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.less` with the following content:
+
+      ```less
+      /* do not edit; generated automatically by Roosevelt */ @appVersion: '0.1.0';
+      ```
+
+    - Some things to note:
+
+      - If there is already a file there with that name, this will overwrite it, so be careful!
+
+      - It's generally a good idea to add this file to `.gitignore`, since it is a build artifact.
+
+  - Default: *[Object]*
+
+    ```json
+    {
+      "sourcePath": "css",
+      "compiler": {
+        "enable" : false,
+        "module": "less",
+        "options": {}
+      },
+      "minifier": {
+        "enable": true,
+        "options": {}
+      },
+      "allowlist": null,
+      "output": "css",
+      "versionFile": null
+    }
+    ```
 
 - `favicon`: *[String]* Location of your [favicon](https://en.wikipedia.org/wiki/Favicon) file.
 
   - Default: *[String]* `"none"`.
     - Will be set to `"images/favicon.ico"` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
 
+- `html`: Generate static HTML pages:
+
+  - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
+
+  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
+
+  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
+
+  - `models`: Data to pass to templates by file path / file name.
+
+    - Example:
+
+      ```json
+      {
+        "models": {
+          "index.html": {
+            "some": "data"
+          },
+          "subdirectory/otherFile.html": {
+            "someOther": "data"
+          }
+        }
+      }
+      ```
+
+    - If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
+
+  - `output`: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
+
+  - `minifier`: How you want Roosevelt to minify your HTML:
+
+    - `enable`: *[Boolean]* Whether or not to minify HTML.
+
+      - Can also be disabled by the `minify` param.
+      - Minification is automatically disabled in development mode.
+    
+    - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
+    
+    - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
+    
+  - Default: *[Object]*
+
+    ```json
+    {
+      "sourcePath": "pages",
+      "allowlist": null,
+      "blocklist": null,
+      "models": {},
+      "output": "",
+      "minifier": {
+        "enable": true,
+        "exceptionRoutes": false,
+        "options": {
+          "removeComments": true,
+          "collapseWhitespace": true,
+          "collapseBooleanAttributes": true,
+          "removeAttributeQuotes": true,
+          "removeEmptyAttributes": true
+        }
+      }
+    }
+    ```
+
+- `js`: *[Object]* How you want Roosevelt to handle module bundling and minifying your frontend JS:
+
+  - `sourcePath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to the `public` folder when the app is started.
+
+  - `webpack`: Parameters related to bundling JS with [Webpack](https://webpack.js.org/):
+
+    - `enable`: Enable Webpack bundling.
+
+    - `bundles`: *[Array]* Declare one or more Webpack configurations to bundle JS with.
+
+      - `env`: *[String]* Bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
+
+      - `config`: *[Object]* or *[String]* The [Webpack configuration](https://webpack.js.org/configuration/) to send to Webpack. Can also be a path to a [Webpack config file](https://webpack.js.org/configuration/#use-different-config-file) relative to the app directory.
+
+      - Examples: *[Array]* of *[Objects]*
+
+        - Webpack bundle example declaring one bundle:
+
+          ```json
+          [
+            {
+              "config": {
+                "entry": "${js.sourcePath}/main.js",
+                "output": {
+                  "path": "${publicFolder}/js",
+                  "filename": "bundle.js"
+                }
+              }
+            }
+          ]
+          ```
+
+        - Webpack bundle example declaring one bundle only used in `dev` mode:
+
+          ```json
+          [
+            {
+              "env": "dev",
+              "config": {
+                "entry": "${js.sourcePath}/main.js",
+                "output": {
+                  "path": "${publicFolder}/js",
+                  "filename": "bundle.js"
+                }
+              }
+            }
+          ]
+          ```
+
+        - Webpack bundle example declaring multiple bundles:
+
+          ```json
+          [
+            {
+              "config": {
+                "entry": "${js.sourcePath}/main.js",
+                "output": {
+                  "path": "${publicFolder}/js",
+                  "filename": "bundle.js"
+                }
+              }
+            },
+            {
+              "config": {
+                "entry": "${js.sourcePath}/moreStuff.js",
+                "output": {
+                  "path": "${publicFolder}/js",
+                  "filename": "bundle2.js"
+                }
+              }
+            },
+            etc...
+          ]
+          ```
+
+    - `verbose`: *[string]* Enable Webpack verbose error handler.
+
+  - Default: *[Object]* for manually created apps.
+
+    ```json
+    {
+      "sourcePath": "js",
+      "webpack": {
+        "enable": false,
+        "bundles": [],
+        "verbose": false
+      }
+    }
+    ```
+    
+    Default: [Object] for apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt):
+    
+    ```json
+    {
+      "sourcePath": "js",
+      "webpack": {
+        "enable": true,
+        "bundles": [{
+          "config": {
+            "entry": "${js.sourcePath}/main.js",
+            "devtool": "source-map",
+            "output": {
+              "path": "${publicFolder}/js"
+            },
+            "resolve": {
+              "alias": {
+                "fs": false,
+                "path": false
+              },
+              "modules": ["${js.sourcePath}", "${publicFolder}/js", "${appDir}", "node_modules"]
+            }
+          }
+        }]
+      }
+    }
+    ```
+
+- `publicFolder`: All files and folders in this directory will be exposed as static files in development mode or when `hostPublic` is enabled.
+
+  - Default: *[String]* `"public"`.
+
+- `staticsRoot`: Relative path on filesystem to where your source static assets are located. By default this folder will not be made public, but is instead meant to store unprocessed or uncompressed source assets that will later be preprocessed and exposed in `public`.
+
+  - Default: *[String]* `"statics"`.
+
 - `symlinks`: *[Array]* Declare one or more symlinks to be generated at runtime.
 
   - `source`: *[String]* Path to be linked to.
 
-    - Note: Will not attempt to generate a symlink to a source path that does not exist.
+    - Roosevelt will not attempt to generate a symlink to a source path that does not exist.
 
   - `dest`: *[String]* Path to place symlink.
 
-    - Note: If this destination path already exists it will not be overwritten.
+    - If this destination path already exists it will not be overwritten.
 
   - Default: *[Array]* of *[Objects]* `[]`.
+
     - Will be set to the following in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt):
+
       ```json
       [
         {
@@ -1033,11 +1011,11 @@ Resolves to:
       ]
       ```
 
+- `minify`: Enables HTML and CSS minification. This feature is automatically disabled during development mode.
+
+  - Default: *[Boolean]* `true`.
+
 - `versionedPublic`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version.
-
-  - Default: *[Boolean]* `false`.
-
-- `hostPublic`: Whether or not to allow Roosevelt to host the public folder. By default in `production-proxy` mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder yourself directly through another web server, such as Apache or nginx.
 
   - Default: *[Boolean]* `false`.
 
@@ -1053,7 +1031,7 @@ require('roosevelt')({
 
 ### Event list
 
-- `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Note: some [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
+- `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Some [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onStaticAssetsGenerated(app)`: Fired when the server finishes init but before the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
@@ -1075,9 +1053,31 @@ require('roosevelt')({
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client.
   - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc)
 
+## Making model files
+
+Place a file named `dataModel.js` in `mvc/models`.
+
+Here's a simple example `dataModel.js` data model:
+
+```js
+module.exports = () => {
+  return {some: 'data'}
+}
+```
+
+In more complex apps, you might query a database to get your data instead.
+
+## Making view files
+
+Views by default are [Teddy](https://github.com/rooseveltframework/teddy) templates. See the Teddy documentation for information about how to write Teddy templates.
+
+You can also use different templating engines by tweaking Roosevelt's [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters).
+
 ## Making controller files
 
 Controller files are places to write [Express routes](http://expressjs.com/api.html#app.VERB). A route is the term Express uses for URL endpoints, such as `http://yoursite/blog` or `http://yoursite/about`.
+
+Controllers bind models and views together.
 
 To make a new controller, make a new file in the controllers directory. For example:
 
@@ -1090,9 +1090,9 @@ module.exports = (router, app) => {
   router.route('/about').get((req, res) => {
 
     // load a data model
-    let model = require('models/dataModel')
+    let model = require('models/dataModel')()
 
-    // render a Teddy template and pass it the model
+    // render a template and pass it the model
     res.render('about', model)
   })
 }
@@ -1143,94 +1143,69 @@ module.exports = (router, app) => {
 
 ### CSRF protection
 
-CSRF protection is enabled by default in Roosevelt, and should be included on all routes that lead to `POST` requests (including `GET`s). See more on [CSRF attacks here](https://owasp.org/www-community/attacks/csrf). There is more valuable information found in this [CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) that provides best practices for avoiding CSRF attacks.
+[Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default in Roosevelt and will be triggered on all routes that handle POST requests. The CSRF protection works by defining a trusted token when a page with a form is loaded and then verifying that that token is the same one that was given when the form is submitted.
 
-This requires minimal setup, and follows an easy-to-use pattern. Begin by attaching a CSRF token to your model:
+**This means you must define the CSRF token on all pages that submit forms, or you will see 403 Forbidden errors when you try to submit the form.**
+
+Here's an example of defining a CSRF token on a page that serves up a form:
 
 ```js
-router.route('/some-route').get((req, res) => {
-  const model = { page: 'some title' }
-
-  // get the csrf token using the csrfToken() method on the request object
-  // it's best practice to preface the variable name with an underscore to indicate this variable is not meant to be seen
+router.route('/page-with-a-form').get((req, res) => {
+  const model = { }
   model._csrf = req.csrfToken()
-
-  res.render('some-template', model)
+  res.render('page-with-a-form', model)
 })
 ```
 
-If you are using an HTML form, you would include the token as a hidden input with the name `_csrf` on any form that makes a `POST` request:
+Then you need to embed the CSRF token in your HTML template's form:
 
 ```html
-<include src="layouts/main">
-  <arg pageContent>
-    <form method="post" action="/post-route">
-      <!-- the naming of this hidden input must be "_csrf" -->
-      <input type="hidden" name="_csrf" value="{_csrf}">
-
-      <!-- some more inputs... -->
-
-      <button type="submit">Submit</button>
-    </form>
-  </arg>
-</include>
+{! this example is in the teddy template language !}
+<form method="post" action="/post-route">
+  <input type="hidden" name="_csrf" value="{_csrf}">
+  <!-- some more inputs... -->
+  <button type="submit">Submit</button>
+</form>
 ```
 
-This is one scenario of protecting a `POST` request. If you aren't dealing with a form like in the above example, you will have to include the CSRF token in a `_csrf` value in your request:
+That's it. When you submit the form, if the CSRF token matches, then you won't see a 403 Forbidden error.
+
+#### How to handle "manual" CSRF protection
+
+When the `csrfProtection` param is set to `manual`, you will need to protect your routes manually by opting-in to CSRF protection on those routes. Setting `csrfProtection` to `manual` is not recommended. Only do this if you know what you're doing.
+
+Here's an example of defining a CSRF token on a page that serves up a form:
 
 ```js
-const data = {
-  some: 'data',
-  someMore: 'data',
-  _csrf: tokenValue // you will have to retrieve the token from the template
-}
-
-const response = await fetch('https://somewebsite.com', {
-  method: "POST",
-  body: JSON.stringify(data),
-  // other settings...
-})
+router.route('/page-with-a-form').get(app.get('csrfProtection'), (req, res) => {
+  const model = { }
+  model._csrf = req.csrfToken()
+  res.render('page-with-a-form', model)
+}) 
 ```
 
-### Manually setting CSRF protected routes
+Then you need to embed the CSRF token in your HTML template's form:
 
-If you do not want all routes protected from CSRF attacks, you are able to manually protect them by including middleware in your routes. *(Note: It is recommended that you protect all routes that could be susceptible to CSRF attacks)*
-
-To disable full protection, set `csrf` to `"manual"` wherever you defined your Roosevelt configuration:
-
-```js
-{
-  csrf: 'manual'
-}
+```html
+{! this example is in the teddy template language !}
+<form method="post" action="/post-route">
+  <input type="hidden" name="_csrf" value="{_csrf}">
+  <!-- some more inputs... -->
+  <button type="submit">Submit</button>
+</form>
 ```
 
-The process is the same as above, with a few extra steps.
-
-Bring the `csrfProtection` method into your controller:
+Then you will need to include the `csrfProtection` middleware in your POST as well:
 
 ```js
-module.exports = (router, app) => {
-  const csrfProtection = app.get('csrfProtection')
-
-  router.route(() => { ... })
-}
-```
-
-Include this method in any route (`GET` and `POST`) that needs to be protected:
-
-```js
-router.route('/form').get(csrfProtection, (req, res) => {
-  const model = {
-    _csrf: req.csrfToken()
-  }
-
-  res.render('form', model)
-})
-
-router.route('/form').post(csrfProtection, (req, res) => {
+router.route('/post-route').post(app.get('csrfProtection'), (req, res) => {
   res.send('success')
 })
 ```
+
+That's it. When you submit the form, if the CSRF token matches, then you won't see a 403 Forbidden error.
+
+Learn more about what CSRF attacks are [here](https://owasp.org/www-community/attacks/csrf) or see the [CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) that describes best practices for avoiding CSRF attacks.
 
 ### Making isomorphic controller files
 
@@ -1376,22 +1351,6 @@ When you get a `router` object after instantiating `roosevelt-router` e.g. `cons
 
 - `router.client`: *[Boolean]* True if the execution context is the browser.
 
-## Making model files
-
-Since the above example requires a model file named `dataModel`, you will need to make that too. To do that, place a file named `dataModel.js` in `mvc/models`.
-
-Here's a simple example `dataModel.js` data model:
-
-```js
-module.exports = {some: 'data'};
-```
-
-## Making view files
-
-Views by default are [Teddy](https://github.com/rooseveltframework/teddy) templates. See the Teddy documentation for information about how to write Teddy templates.
-
-You can also use different templating engines by tweaking Roosevelt's [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters).
-
 ## Express variables exposed by Roosevelt
 
 Roosevelt supplies several variables to Express that you may find handy. Access them using `app.get('variableName')`.
@@ -1440,17 +1399,6 @@ Additionally the Roosevelt constructor returns the following object:
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
 | `stopServer(close)`      | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
 
-## Express middleware and other configurations automatically loaded by Roosevelt
-
-In addition to exposing a number of variables to Express and providing the MVC interface outlined above, Roosevelt also:
-
-- Includes the [compression](https://github.com/expressjs/compression) middleware.
-- Includes the [cookie-parser](https://github.com/expressjs/cookie-parser) middleware.
-- Includes the [express-session](https://github.com/expressjs/session) middleware.
-- Includes the [helmet](https://github.com/helmetjs/helmet) middleware.
-- Logs HTTP requests to the console using [morgan](https://github.com/expressjs/morgan), specifically `morgan('combined')`.
-- Includes the [method-override](https://github.com/expressjs/method-override) middleware.
-
 ## Supplying your own CSS preprocessor
 
 In addition to Roosevelt's built-in support for the LESS, Sass, and Stylus preprocessors you can also define your own preprocessor on the fly at start time in Roosevelt's constructor like so:
@@ -1470,7 +1418,7 @@ let app = require('roosevelt')({
 })
 ```
 
-API:
+### API
 
 - `cssCompiler(app)`: Custom CSS preprocessor.
   - `versionCode(app)`: Function to return the version of your app. This is needed to support the `versionFile` feature of Roosevelt's CSS preprocessor API.
@@ -1479,10 +1427,39 @@ API:
     - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
     - `filePath`: The path to the file being preprocessed.
 
-Note: When a custom preprocessor is defined in this way it will override the selected preprocessor specified in `css.compiler.module`.
+When a custom preprocessor is defined in this way it will override the selected preprocessor specified in `css.compiler.module`.
+
+## Deploying Roosevelt apps
+
+If you want to deploy a Roosevelt live to the internet, there are some things you should do to harden it appropriately if you expect to take significant traffic.
+
+#### Use HTTPS
+
+Setting up HTTPS can be tricky to configure properly especially for novices, so it can be tempting not do it to simplify deployment, but your website won't be seen as professional if it isn't served up via HTTPS. It's worth the effort to set it up.
+
+#### Don't disable CSRF protection
+
+Yes, it's kind of annoying to add it to every route and every HTML form, but the security benefits are worth it.
+
+#### Use a caching service or a database to store sessions
+
+Roosevelt's default session store for `express-session` works great if your app only needs a single process, but if you're spreading your app across multiple processes or servers, you will need to reconfigure `express-session` to use a caching service that supports replication like [redis](https://en.wikipedia.org/wiki/Redis) or a database that supports replication like [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL) in order to scale your app.
+
+`node app.js `.
+
+#### Run the app behind a reverse proxy and use all the CPU cores
+
+To do this, use the `production-proxy-mode` command line flag and the `cores` command line flag, e.g. `node app.js --production-proxy-mode --cores max`.
+
+Then host your app behind a reverse proxy from a web server like Apache or nginx, which [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
+
+Running the app in production-proxy mode runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from the proxy server and does not serve anything in the public folder.
+
+You will then need to serve the contents of the public folder directly via Apache or nginx.
 
 ## Documentation for previous versions of Roosevelt
 
+- *[0.21.x](https://github.com/rooseveltframework/roosevelt/blob/539e11dc9ce5f4d6340762dedb1a11134fe51b04/README.md)*
 - *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*
 - *[0.19.x](https://github.com/rooseveltframework/roosevelt/blob/aa10ea86f986f624bef56aa2f02ade5b6c551e13/README.md)*
 - *[0.18.x](https://github.com/rooseveltframework/roosevelt/blob/3bdd5146b468c4c6ccfa0b76b0f94f19f0b4fa19/README.md)*

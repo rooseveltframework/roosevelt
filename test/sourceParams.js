@@ -52,7 +52,7 @@ describe('sourceParams', () => {
       const pkg = {
         rooseveltConfig: {
           ...sampleConfig,
-          store: 'express-session-default',
+          expressSessionStore: 'express-session-default',
           enableCLIFlags: false
         }
       }
@@ -95,7 +95,7 @@ describe('sourceParams', () => {
       // build roosevelt config from sample
       const config = {
         ...sampleConfig,
-        store: 'express-session-default',
+        expressSessionStore: 'express-session-default',
         appDir: 'value',
         enableCLIFlags: false
       }
@@ -133,7 +133,7 @@ describe('sourceParams', () => {
       // build roosevelt config from sample
       const configJson = {
         ...sampleConfig,
-        store: 'express-session-default',
+        expressSessionStore: 'express-session-default',
         enableCLIFlags: false
       }
 

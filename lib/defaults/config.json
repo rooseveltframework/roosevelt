@@ -31,7 +31,7 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
-  "csrf": "full",
+  "csrfProtection": "full",
   "bodyParser": {
     "urlEncoded": {
       "extended": true
@@ -58,7 +58,7 @@
     "rejectUnauthorized": null
   },
   "expressSession": true,
-  "store": {
+  "expressSessionStore": {
     "instance": null,
     "preset": "default",
     "presetOptions": {
