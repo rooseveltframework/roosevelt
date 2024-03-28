@@ -46,6 +46,7 @@
   "shutdownTimeout": "value",
   "helmet": {},
   "expressSession": false,
+  "csrfProtection": "full",
   "bodyParser": {
     "urlEncoded": {
       "extended": "value"

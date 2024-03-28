@@ -231,6 +231,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -265,6 +266,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -300,6 +302,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -338,6 +341,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {console.log("server started " + process.pid)}'
     }, sOptions)
 
@@ -378,6 +382,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -420,6 +425,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -533,6 +539,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: 'something'
     }, sOptions)
 
@@ -620,6 +627,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 

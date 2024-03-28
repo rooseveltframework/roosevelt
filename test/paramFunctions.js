@@ -110,6 +110,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onReqStart: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -155,6 +156,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onReqBeforeRoute: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -200,6 +202,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onReqAfterRoute: '(req, res) => {console.log("Testing after: " + res.Testing)}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -331,6 +334,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("routes"))}'
     }, options)
 

@@ -31,6 +31,7 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
+  "csrfProtection": "full",
   "bodyParser": {
     "urlEncoded": {
       "extended": true
@@ -57,6 +58,15 @@
     "rejectUnauthorized": null
   },
   "expressSession": true,
+  "expressSessionStore": {
+    "instance": null,
+    "preset": "default",
+    "presetOptions": {
+      "checkPeriod": 86400000,
+      "ttl": null,
+      "max": null
+    }
+  },
   "secretsDir": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",

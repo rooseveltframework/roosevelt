@@ -39,6 +39,7 @@ describe('error pages', function () {
       viewEngine: [
         'html: teddy'
       ],
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -80,6 +81,7 @@ describe('error pages', function () {
       errorPages: {
         notFound: '404test.js'
       },
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -120,6 +122,7 @@ describe('error pages', function () {
       errorPages: {
         internalServerError: '500test.js'
       },
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -157,6 +160,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -295,6 +299,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -358,6 +363,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
     }, options)
@@ -483,6 +489,7 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
