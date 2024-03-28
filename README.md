@@ -1477,21 +1477,32 @@ You will then need to serve the contents of the public folder directly via Apach
 
 ## Writing code for Roosevelt
 
-Here's how to set up a dev env to hack on Roosevelt:
+Here's how to set up a development environment to hack on Roosevelt's code:
 
 - Fork/clone this repo.
+
 - Create or find a Roosevelt app you want to test against.
-  - To make a Roosevelt app, run `npx mkroosevelt`
-- Your changes to Roosevelt need to be copied to your app's `node_modules/roosevelt` directory.
-  - If you want to sync these directories automatically, run the `devSync.js` script. To do that:
+  - To make a Roosevelt app, run `npx mkroosevelt`.
+
+- Use the `devSync.js` tool to test your fork/clone of Roosevelt against your test app.
+
+  - To do that:
+
     - Run the following command:
-      - Linux/Mac: `node devSync.js /path/to/roosevelt/app`
-      - Windows: `node devSync.js path:\\to\\roosevelt\\app`
-    - You can also set the path in a `ROOSEVELT_DEST_DIR` environment variable. When set, you only need to run `node devSync.js`.
-      - Linux/Mac: `export ROOSEVELT_DEST_DIR=/path/to/roosevelt/app`
-      - Windows: `$env:ROOSEVELT_DEST_DIR="path:\\to\\roosevelt\\app"`
-      - Or in one command (Linux/Mac): `export ROOSEVELT_DEST_DIR=/path/to/your/roosevelt/app && node devSync.js`
-    - Not providing a path (just running `node devSync.js`) will allow you to define the destination path in your command line tool.
- - To stop the script
-    - Press: `control^ + C`
-    - Type: `stop` or `s`
+      - Linux/Mac: `node devSync.js /path/to/roosevelt/app`.
+      - Windows: `node devSync.js path:\\to\\roosevelt\\app`.
+      
+      - You can also set the path in a `ROOSEVELT_DEST_DIR` environment variable. When set, you only need to run `node devSync.js`.
+        - Linux/Mac: `export ROOSEVELT_DEST_DIR=/path/to/roosevelt/app`.
+        - Windows: `$env:ROOSEVELT_DEST_DIR="path:\\to\\roosevelt\\app"`.
+        - Or in one command (Linux/Mac): `export ROOSEVELT_DEST_DIR=/path/to/your/roosevelt/app && node devSync.js`.
+
+    - If you do not provide a path, running the `devSync.js` script will prompt you for one.
+  - To stop the script:
+
+      - Press: `control^ + C`.
+      - Type: `stop` or `s`.
+
+#### Troubleshooting the automated tests
+
+If some of the automated tests fail for you when they shouldn't be, make sure you remove the `test/app` folder and kill any Node.js processes (e.g. `killall node`) before running the test suite again.
