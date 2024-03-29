@@ -46,6 +46,11 @@
   "shutdownTimeout": "value",
   "helmet": {},
   "expressSession": false,
+  "expressSessionStore": {
+    "instance": null,
+    "preset": "default",
+    "presetOptions": { "checkPeriod": 86400000, "ttl": null, "max": null }
+  },
   "csrfProtection": "full",
   "bodyParser": {
     "urlEncoded": {
