@@ -185,9 +185,6 @@ module.exports = (params, schema) => {
   // enable gzip compression
   app.use(require('compression')())
 
-  // enable cookie parsing
-  app.use(require('cookie-parser')())
-
   // enable favicon support
   if (params.favicon !== 'none' && params.favicon !== null) {
     faviconPath = path.join(params.staticsRoot, params.favicon)
