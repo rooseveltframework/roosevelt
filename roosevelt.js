@@ -201,7 +201,7 @@ module.exports = (params, schema) => {
   }
   // #endregion
 
-  // configure express
+  // configure express, express-session, and csrf
   app = require('./lib/setExpressConfigs')(app)
 
   // fire user-defined onServerInit event

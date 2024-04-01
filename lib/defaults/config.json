@@ -74,6 +74,7 @@
   "controllersPath": "mvc/controllers",
   "errorPages": {
     "notFound": "404.js",
+    "unauthorized": "403.js",
     "internalServerError": "5xx.js",
     "serviceUnavailable": "503.js"
   },
