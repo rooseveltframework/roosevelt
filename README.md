@@ -1172,7 +1172,7 @@ router.route('/post-route').post(app.get('csrfProtection'), app.get('csrfErrorHa
 })
 ```
 
-That's it. When you submit the form, Roosevelt checks the CSRF token and confirms a match, then you won't see a 403 Forbidden error.
+That's it. When you submit the form, Roosevelt checks the CSRF token and confirms a match. If it doesn't match, a 403 Forbidden error will be displayed.
 
 Learn more about what CSRF attacks are [here](https://owasp.org/www-community/attacks/csrf) or see the [CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) that describes best practices for avoiding CSRF attacks.
 
