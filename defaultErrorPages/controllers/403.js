@@ -4,7 +4,6 @@ const template = require('es6-template-strings')
 const errorPage = fs.readFileSync(path.join(__dirname, '../views/403.html'))
 
 module.exports = function (app, req, res) {
-  // app.route('/403').all(function (req, res) {
   const model = {
     url: req.url,
     mainDomain: req.headers['x-forwarded-host'] || req.headers.host,
@@ -15,5 +14,4 @@ module.exports = function (app, req, res) {
   res.setHeader('Connection', 'close')
   res.status(403)
   res.send(errorTemplate)
-  // })
 }
