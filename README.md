@@ -1158,7 +1158,7 @@ When the `csrfProtection` param is set to `manual`, you will need to protect you
 Here's an example of defining a CSRF token on a page that serves up a form:
 
 ```js
-router.route('/page-with-a-form').get(app.get('csrfProtection'), app.get('csrfErrorHandling'), (req, res) => {
+router.route('/page-with-a-form').get((req, res) => {
   const model = { }
   res.render('page-with-a-form', model)
 })
@@ -1167,7 +1167,7 @@ router.route('/page-with-a-form').get(app.get('csrfProtection'), app.get('csrfEr
 Then you will need to include the `csrfProtection` middleware in your POST as well:
 
 ```js
-router.route('/post-route').post(app.get('csrfProtection'), app.get('csrfErrorHandling'), (req, res) => {
+router.route('/post-route').post(app.get('csrfProtection'), (req, res) => {
   res.send('success')
 })
 ```
