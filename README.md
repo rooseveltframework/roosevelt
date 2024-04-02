@@ -1149,7 +1149,7 @@ module.exports = (router, app) => {
 
 [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default in Roosevelt and will be triggered on all routes that handle POST requests. The CSRF protection works by defining a trusted token when a page with a form is loaded and then verifying that that token is the same one that was given when the form is submitted.
 
-**Roosevelt automatically protects any request other than GET, HEAD, or OPTION.**
+Roosevelt automatically protects any request other than GET, HEAD, or OPTION.
 
 #### How to handle "manual" CSRF protection
 
