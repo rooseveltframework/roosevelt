@@ -51,7 +51,7 @@
     "preset": "default",
     "presetOptions": { "checkPeriod": 86400000, "ttl": null, "max": null }
   },
-  "csrfProtection": "full",
+  "csrfProtection": true,
   "bodyParser": {
     "urlEncoded": {
       "extended": "value"

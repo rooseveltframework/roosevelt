@@ -31,7 +31,7 @@
     "lagCheckInterval": 500
   },
   "helmet": {},
-  "csrfProtection": "full",
+  "csrfProtection": true,
   "bodyParser": {
     "urlEncoded": {
       "extended": true
@@ -57,7 +57,7 @@
     "requestCert": null,
     "rejectUnauthorized": null
   },
-  "expressSession": true,
+  "expressSession": false,
   "expressSessionStore": {
     "instance": null,
     "preset": "default",
@@ -74,6 +74,7 @@
   "controllersPath": "mvc/controllers",
   "errorPages": {
     "notFound": "404.js",
+    "forbidden": "403.js",
     "internalServerError": "5xx.js",
     "serviceUnavailable": "503.js"
   },
