@@ -10,6 +10,7 @@ const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 const { certsGenerator } = require('./lib/scripts/certsGenerator.js')
 const { sessionSecretGenerator } = require('./lib/scripts/sessionSecretGenerator.js')
+const { csrfSecretGenerator } = require('./lib/scripts/csrfSecretGenerator.js')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -81,6 +82,11 @@ module.exports = (params, schema) => {
     if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/sessionSecret.json')) {
       sessionSecretGenerator()
     }
+  }
+
+  // generate csrf secret
+  if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/csrfSecret.json')) {
+    csrfSecretGenerator()
   }
 
   // generate https certs
