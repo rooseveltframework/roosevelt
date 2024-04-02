@@ -49,7 +49,7 @@ Some notable features:
 - [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
   - [CSRF protection](https://github.com/rooseveltframework/roosevelt#csrf-protection)
   - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-  
+
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
 - [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
@@ -446,7 +446,7 @@ Resolves to:
           - Object members:
             - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
               - Default: `undefined`.
-    
+
             - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
               - Default: `undefined`.
     - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
@@ -460,8 +460,8 @@ Resolves to:
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
 
-  - Default: *[Boolean]* `true`. 
-  
+  - Default: *[Boolean]* `true`.
+
 - `mode`: Decides whether your app starts in production mode or development mode by default.
 
   - Default: *[String]* `production`.
@@ -512,7 +512,7 @@ Resolves to:
     }
     ```
 
-- `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by default or in an opt-in fashion. This feature is disabled when `expressSession` is set to `false`.
+- `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by default or in an opt-in fashion.
 
   - Default: *[String]* `full`.
   - Set it to `manual` to disable CSRF protection except on routes where you opt-in to it. See [CSRF Protection](https://github.com/rooseveltframework/roosevelt#csrf-protection) for further instructions.
@@ -526,6 +526,10 @@ Resolves to:
   - `notFound`: Your [404 Not Found](https://en.wikipedia.org/wiki/HTTP_404) error page.
 
     - Default: *[String]* `"404.js"`.
+
+  - `forbidden`: Your [403 Forbidden](https://en.wikipedia.org/wiki/HTTP_403) error page.
+
+    - Default: *[String]* `"403.js"`.
 
   - `internalServerError`: Your [Internal Server Error](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page.
 
@@ -835,11 +839,11 @@ Resolves to:
 
       - Can also be disabled by the `minify` param.
       - Minification is automatically disabled in development mode.
-    
+
     - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
-    
+
     - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
-    
+
   - Default: *[Object]*
 
     ```json
@@ -952,9 +956,9 @@ Resolves to:
       }
     }
     ```
-    
+
     Default: [Object] for apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt):
-    
+
     ```json
     {
       "sourcePath": "js",
@@ -1145,30 +1149,7 @@ module.exports = (router, app) => {
 
 [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default in Roosevelt and will be triggered on all routes that handle POST requests. The CSRF protection works by defining a trusted token when a page with a form is loaded and then verifying that that token is the same one that was given when the form is submitted.
 
-**This means you must define the CSRF token on all pages that submit forms, or you will see 403 Forbidden errors when you try to submit the form.**
-
-Here's an example of defining a CSRF token on a page that serves up a form:
-
-```js
-router.route('/page-with-a-form').get((req, res) => {
-  const model = { }
-  model._csrf = req.csrfToken()
-  res.render('page-with-a-form', model)
-})
-```
-
-Then you need to embed the CSRF token in your HTML template's form:
-
-```html
-{! this example is in the teddy template language !}
-<form method="post" action="/post-route">
-  <input type="hidden" name="_csrf" value="{_csrf}">
-  <!-- some more inputs... -->
-  <button type="submit">Submit</button>
-</form>
-```
-
-That's it. When you submit the form, if the CSRF token matches, then you won't see a 403 Forbidden error.
+**Roosevelt automatically protects any request other than GET, HEAD, or OPTION.**
 
 #### How to handle "manual" CSRF protection
 
@@ -1177,33 +1158,21 @@ When the `csrfProtection` param is set to `manual`, you will need to protect you
 Here's an example of defining a CSRF token on a page that serves up a form:
 
 ```js
-router.route('/page-with-a-form').get(app.get('csrfProtection'), (req, res) => {
+router.route('/page-with-a-form').get(app.get('csrfProtection'), app.get('csrfErrorHandling'), (req, res) => {
   const model = { }
-  model._csrf = req.csrfToken()
   res.render('page-with-a-form', model)
-}) 
-```
-
-Then you need to embed the CSRF token in your HTML template's form:
-
-```html
-{! this example is in the teddy template language !}
-<form method="post" action="/post-route">
-  <input type="hidden" name="_csrf" value="{_csrf}">
-  <!-- some more inputs... -->
-  <button type="submit">Submit</button>
-</form>
+})
 ```
 
 Then you will need to include the `csrfProtection` middleware in your POST as well:
 
 ```js
-router.route('/post-route').post(app.get('csrfProtection'), (req, res) => {
+router.route('/post-route').post(app.get('csrfProtection'), app.get('csrfErrorHandling'), (req, res) => {
   res.send('success')
 })
 ```
 
-That's it. When you submit the form, if the CSRF token matches, then you won't see a 403 Forbidden error.
+That's it. When you submit the form, Roosevelt checks the CSRF token and confirms a match, then you won't see a 403 Forbidden error.
 
 Learn more about what CSRF attacks are [here](https://owasp.org/www-community/attacks/csrf) or see the [CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) that describes best practices for avoiding CSRF attacks.
 
@@ -1491,7 +1460,7 @@ Here's how to set up a development environment to hack on Roosevelt's code:
     - Run the following command:
       - Linux/Mac: `node devSync.js /path/to/roosevelt/app`.
       - Windows: `node devSync.js path:\\to\\roosevelt\\app`.
-      
+
       - You can also set the path in a `ROOSEVELT_DEST_DIR` environment variable. When set, you only need to run `node devSync.js`.
         - Linux/Mac: `export ROOSEVELT_DEST_DIR=/path/to/roosevelt/app`.
         - Windows: `$env:ROOSEVELT_DEST_DIR="path:\\to\\roosevelt\\app"`.
