@@ -512,10 +512,9 @@ Resolves to:
     }
     ```
 
-- `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection by default or in an opt-in fashion.
+- `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection.
 
-  - Default: *[String]* `full`.
-  - Set it to `manual` to disable CSRF protection except on routes where you opt-in to it. See [CSRF Protection](https://github.com/rooseveltframework/roosevelt#csrf-protection) for further instructions.
+  - Default: *[Boolean]* `true`.
 
 - `enableCLIFlags`: Enables parsing of command line flags. Disable this if you want to handle them yourself or if you don't want Roosevelt to listen to the command line flags it listens for by default.
 
@@ -1150,31 +1149,6 @@ module.exports = (router, app) => {
 [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default in Roosevelt and will be triggered on all routes that handle POST requests. The CSRF protection works by defining a trusted token when a page with a form is loaded and then verifying that that token is the same one that was given when the form is submitted.
 
 Roosevelt automatically protects any request other than GET, HEAD, or OPTION.
-
-#### How to handle "manual" CSRF protection
-
-When the `csrfProtection` param is set to `manual`, you will need to protect your routes manually by opting-in to CSRF protection on those routes. Setting `csrfProtection` to `manual` is not recommended. Only do this if you know what you're doing.
-
-Here's an example of defining a CSRF token on a page that serves up a form:
-
-```js
-router.route('/page-with-a-form').get((req, res) => {
-  const model = { }
-  res.render('page-with-a-form', model)
-})
-```
-
-Then you will need to include the `csrfProtection` middleware in your POST as well:
-
-```js
-router.route('/post-route').post(app.get('csrfProtection'), (req, res) => {
-  res.send('success')
-})
-```
-
-That's it. When you submit the form, Roosevelt checks the CSRF token and confirms a match. If it doesn't match, a 403 Forbidden error will be displayed.
-
-Learn more about what CSRF attacks are [here](https://owasp.org/www-community/attacks/csrf) or see the [CSRF cheat sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html) that describes best practices for avoiding CSRF attacks.
 
 ### Making isomorphic controller files
 
