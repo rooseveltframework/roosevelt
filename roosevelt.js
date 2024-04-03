@@ -129,8 +129,7 @@ module.exports = (params, schema) => {
           if (isCertString(certString)) {
             httpsOptions[key] = certString
           } else {
-            // httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
-            httpsOptions[key] = fs.readFileSync(certString)
+            httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
           }
 
           reloadHttpsOptions.certAndKey[key] = httpsOptions[key]
