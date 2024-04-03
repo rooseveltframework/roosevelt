@@ -4,12 +4,12 @@
 
 - Put your changes here.
 
-## 0.22.0
+## 0.21.17
 
-- Breaking: Integrated `malibu` into Roosevelt for CSRF protection, which is now on by default. This will require you to add CSRF tokens to all your POSTs, or disable this feature in your Roosevelt config. See the CSRF section of the README for more information.
+- Added CSRF protection.
 - Integrated `express-session` into Roosevelt for session support.
 - Added `secretsDir` param for a directory containing secrets, HTTPS certs, etc. This replaces the previous `certs` directory, but is backwards-compatible.
-- Improved dev_sync script for developing Roosevelt significantly.
+- Improved dev sync script for developing Roosevelt significantly.
 - Updated various dependencies.
 
 ## 0.21.16

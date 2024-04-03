@@ -47,9 +47,8 @@ Some notable features:
 - [Making model files](https://github.com/rooseveltframework/roosevelt#making-model-files)
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
 - [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
-  - [CSRF protection](https://github.com/rooseveltframework/roosevelt#csrf-protection)
   - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-
+  
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
 - [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
@@ -1144,12 +1143,6 @@ module.exports = (router, app) => {
 }
 ```
 
-### CSRF protection
-
-[Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default in Roosevelt and will be triggered on all routes that handle POST requests. The CSRF protection works by defining a trusted token when a page with a form is loaded and then verifying that that token is the same one that was given when the form is submitted.
-
-Roosevelt automatically protects any request other than GET, HEAD, or OPTION.
-
 ### Making isomorphic controller files
 
 You can also write isomorphic controller files that can be shared on both the client and the server:
@@ -1379,10 +1372,6 @@ If you want to deploy a Roosevelt live to the internet, there are some things yo
 #### Use HTTPS
 
 Setting up HTTPS can be tricky to configure properly especially for novices, so it can be tempting not do it to simplify deployment, but your website won't be seen as professional if it isn't served up via HTTPS. It's worth the effort to set it up.
-
-#### Don't disable CSRF protection
-
-Yes, it's kind of annoying to add it to every route and every HTML form, but the security benefits are worth it.
 
 #### Use a caching service or a database to store sessions
 
