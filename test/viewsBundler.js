@@ -18,7 +18,7 @@ const minifyOptions = {
   removeEmptyAttributes: true
 }
 
-describe.only('Views Bundler Tests', function () {
+describe('Views Bundler Tests', function () {
   const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
