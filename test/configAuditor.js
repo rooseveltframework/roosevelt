@@ -48,8 +48,7 @@ describe('config auditor', () => {
       method: 'initServer',
       config: {
         mode: 'development',
-        expressSession: false,
-        secretsDir: 'secrets',
+        csrfProtection: false,
         makeBuildArtifacts: false
       }
     })

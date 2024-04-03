@@ -39,6 +39,7 @@ describe('error pages', function () {
       viewEngine: [
         'html: teddy'
       ],
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -80,6 +81,8 @@ describe('error pages', function () {
       errorPages: {
         notFound: '404test.js'
       },
+      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -120,6 +123,8 @@ describe('error pages', function () {
       errorPages: {
         internalServerError: '500test.js'
       },
+      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -157,6 +162,8 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -195,6 +202,7 @@ describe('error pages', function () {
       appDir,
       makeBuildArtifacts: true,
       expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       toobusy: {
         maxLagPerRequest: 10,
@@ -243,6 +251,7 @@ describe('error pages', function () {
       appDir,
       makeBuildArtifacts: true,
       expressSession: false,
+      csrfProtection: false,
       errorPages: {
         serviceUnavailable: '503test.js'
       },
@@ -295,6 +304,8 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -358,6 +369,8 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
     }, options)
@@ -419,6 +432,7 @@ describe('error pages', function () {
       appDir,
       makeBuildArtifacts: true,
       expressSession: false,
+      csrfProtection: false,
       https: {
         enable: true,
         port: 43203
@@ -483,6 +497,8 @@ describe('error pages', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 

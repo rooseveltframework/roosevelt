@@ -9,8 +9,7 @@ describe('body-parser', () => {
     roosevelt({
       makeBuildArtifacts: false,
       port: 40000,
-      expressSession: false,
-      secretsDir: 'secrets',
+      csrfProtection: false,
       logging: {
         methods: {
           http: false,

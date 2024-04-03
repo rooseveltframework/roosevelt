@@ -43,7 +43,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerInit: '(app) => {process.send("something")}'
     }, options)
 
@@ -76,7 +76,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onAppExit: '(app) => {process.send("the big exit")}'
     }, options)
 
@@ -110,6 +110,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      csrfProtection: false,
       onReqStart: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -155,6 +156,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      csrfProtection: false,
       onReqBeforeRoute: '(req, res, next) => {console.log("body: " + JSON.stringify(req.body)); next()}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -200,6 +202,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      csrfProtection: false,
       onReqAfterRoute: '(req, res) => {console.log("Testing after: " + res.Testing)}',
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
@@ -248,7 +251,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -285,7 +288,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       errorPages: {
         notFound: '404errController.js'
@@ -331,6 +334,7 @@ describe('Parameter Function Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("routes"))}'
     }, options)
 

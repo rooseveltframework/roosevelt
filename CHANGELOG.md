@@ -2,9 +2,15 @@
 
 ## Next version
 
-- Converted dev_sync tool into a node file with increased protection against accidental destructive folder/file changes. 
-- Add `express-session` dependency.
-- The name of the directory containing secrets and HTTPS keys is now configurable using the `secretsDir` parameter (default value is `secrets`).
+- Put your changes here.
+
+## 0.22.00
+
+- Breaking: Added a unified `secrets` directory for various app secrets such as HTTPS certs, session secret, CSRF secret, etc. The name of the directory is configurable, but when upgrading an app from the previous version, you may need to alter your rooseveltConfig to remove directories from your `cert` or `key` paths. You must now specify only a file name in those params.
+- Added support for `express-session` for session support.
+- Added CSRF protection.
+- Improved dev sync script for developing Roosevelt significantly.
+- Updated various dependencies.
 
 ## 0.21.16
 

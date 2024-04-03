@@ -87,6 +87,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['a.html']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -113,6 +114,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['a']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -134,6 +136,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {},
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -156,6 +159,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {},
+      csrfProtection: false,
       makeBuildArtifacts: false
     }, options)
 
@@ -182,6 +186,7 @@ describe('Views Bundler Tests', function () {
           'output.js': []
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -208,6 +213,7 @@ describe('Views Bundler Tests', function () {
           'output.js': null
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -234,6 +240,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['fake.html']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -260,6 +267,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['bad.html']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -291,6 +299,7 @@ describe('Views Bundler Tests', function () {
         },
         output: 'js'
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -317,6 +326,7 @@ describe('Views Bundler Tests', function () {
         },
         minify: true
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -358,6 +368,7 @@ describe('Views Bundler Tests', function () {
         },
         minify: false
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -400,6 +411,7 @@ describe('Views Bundler Tests', function () {
         minify: true,
         minifyOptions
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -441,6 +453,7 @@ describe('Views Bundler Tests', function () {
         },
         minifyOptions
       },
+      csrfProtection: false,
       makeBuildArtifacts: true,
       onClientViewsProcess: '(template) => { return template + "<div>Appended div!</div>" }'
     }, options)
@@ -483,6 +496,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['a.html']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -514,6 +528,7 @@ describe('Views Bundler Tests', function () {
           'foobar.js': ['a.html']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -549,6 +564,7 @@ describe('Views Bundler Tests', function () {
         exposeAll: true,
         blocklist
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -591,6 +607,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -631,6 +648,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -666,6 +684,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -702,6 +721,7 @@ describe('Views Bundler Tests', function () {
       clientViews: {
         exposeAll: true
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
@@ -739,6 +759,7 @@ describe('Views Bundler Tests', function () {
           'output.js': ['nested']
         }
       },
+      csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 

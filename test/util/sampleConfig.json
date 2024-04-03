@@ -46,6 +46,12 @@
   "shutdownTimeout": "value",
   "helmet": {},
   "expressSession": false,
+  "expressSessionStore": {
+    "instance": null,
+    "preset": "default",
+    "presetOptions": { "checkPeriod": 86400000, "ttl": null, "max": null }
+  },
+  "csrfProtection": false,
   "bodyParser": {
     "urlEncoded": {
       "extended": "value"
@@ -70,6 +76,7 @@
   "viewEngine": "none",
   "errorPages": {
     "notFound": "value",
+    "forbidden": "value",
     "internalServerError": "value",
     "serviceUnavailable": "value"
   },

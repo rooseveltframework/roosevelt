@@ -37,8 +37,7 @@ describe('validator usage', () => {
     // spin up the roosevelt app
     roosevelt({
       mode: 'development',
-      expressSession: false,
-      secretsDir: 'secrets',
+      csrfProtection: false,
       makeBuildArtifacts: false,
       port: 40001,
       logging: {

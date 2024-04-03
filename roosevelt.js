@@ -10,6 +10,7 @@ const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 const { certsGenerator } = require('./lib/scripts/certsGenerator.js')
 const { sessionSecretGenerator } = require('./lib/scripts/sessionSecretGenerator.js')
+const { csrfSecretGenerator } = require('./lib/scripts/csrfSecretGenerator.js')
 
 module.exports = (params, schema) => {
   params = params || {} // ensure params are an object
@@ -83,16 +84,25 @@ module.exports = (params, schema) => {
     }
   }
 
+  // generate csrf secret
+  if (params.csrfProtection) {
+    if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/csrfSecret.json')) {
+      csrfSecretGenerator()
+    }
+  }
+
   // generate https certs
   if (httpsParams.enable) {
+    authInfoPath = httpsParams.authInfoPath
+
     // Runs the certGenerator if httpsParams.enable
     if (appEnv === 'development' && httpsParams.autoCert) {
-      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(params.secretsDir + '/key.pem') || (!fs.existsSync(params.secretsDir + '/cert.pem'))))) {
+      const { authCertAndKey } = authInfoPath
+
+      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(authCertAndKey.key) || (!fs.existsSync(authCertAndKey.cert))))) {
         certsGenerator()
       }
     }
-
-    authInfoPath = httpsParams.authInfoPath
 
     // options to configure to the https server
     httpsOptions = {}
@@ -182,9 +192,6 @@ module.exports = (params, schema) => {
   // enable gzip compression
   app.use(require('compression')())
 
-  // enable cookie parsing
-  app.use(require('cookie-parser')())
-
   // enable favicon support
   if (params.favicon !== 'none' && params.favicon !== null) {
     faviconPath = path.join(params.staticsRoot, params.favicon)
@@ -201,7 +208,7 @@ module.exports = (params, schema) => {
   }
   // #endregion
 
-  // configure express
+  // configure express, express-session, and csrf
   app = require('./lib/setExpressConfigs')(app)
 
   // fire user-defined onServerInit event
