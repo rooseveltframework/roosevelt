@@ -30,8 +30,7 @@ describe('file creation', () => {
           verbose: false
         }
       },
-      expressSession: false,
-      secretsDir: './test/app/secrets',
+      csrfProtection: false,
       viewsPath: 'mvc/views',
       modelsPath: 'mvc/models',
       controllersPath: 'mvc/controllers',
@@ -74,6 +73,7 @@ describe('file creation', () => {
         }
       },
       expressSession: false,
+      csrfProtection: false,
       secretsDir: './test/app/secrets',
       css: {
         sourcePath: 'css',
@@ -119,6 +119,7 @@ describe('file creation', () => {
         }
       },
       expressSession: false,
+      csrfProtection: false,
       secretsDir: './test/app/secrets',
       symlinks: [
         {

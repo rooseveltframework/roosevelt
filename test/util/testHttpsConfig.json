@@ -10,6 +10,7 @@
   },
   "expressSession": false,
   "secretsDir": "secrets",
+  "csrfProtection": false,
   "https": {
     "enable": true,
     "force": true,

@@ -36,7 +36,7 @@ describe('view engines', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       viewEngine: [
         'html: teddy'
       ],
@@ -79,7 +79,7 @@ describe('view engines', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       viewEngine: [
         'html: teddy',
         'jcs: ../test/util/jcsTemplate'
@@ -107,7 +107,7 @@ describe('view engines', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       viewEngine: [
         'jcs: ../test/util/jcsTemplate'
       ],
@@ -150,7 +150,7 @@ describe('view engines', function () {
       viewEngine: [
         'html: teddy: blah'
       ],
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -186,7 +186,7 @@ describe('view engines', function () {
       viewEngine: [
         'html: teddyza'
       ],
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -218,7 +218,7 @@ describe('view engines', function () {
       makeBuildArtifacts: true,
       appDir,
       viewEngine: 'html: teddy',
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 

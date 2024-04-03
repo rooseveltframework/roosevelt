@@ -69,7 +69,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}',
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
@@ -109,7 +109,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerInit: '(app) => {console.log("Server initialized")}'
     }, sOptions)
 
@@ -146,7 +146,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false
+      csrfProtection: false
     }, sOptions)
 
     // bool var to see that a message was not send back by a call back and that folders exists
@@ -187,7 +187,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false
+      csrfProtection: false
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -231,7 +231,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -266,7 +266,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -302,7 +302,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {console.log("server started")}'
     }, sOptions)
 
@@ -341,7 +341,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {console.log("server started " + process.pid)}'
     }, sOptions)
 
@@ -382,7 +382,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -425,7 +425,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -467,7 +467,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -501,7 +501,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       localhostOnly: true,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
@@ -539,7 +539,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: 'something'
     }, sOptions)
 
@@ -578,8 +578,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203
       },
-      secretsDir: 'secrets',
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -627,7 +626,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -667,7 +666,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, sOptions)
 
@@ -715,7 +714,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false
+      csrfProtection: false
     }, sOptions)
 
     // fork the app and run it as a child process
@@ -750,7 +749,7 @@ describe('Roosevelt.js Tests', function () {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      expressSession: false,
+      csrfProtection: false,
       https: {
         enable: true,
         port: 43203,

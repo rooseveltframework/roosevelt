@@ -15,7 +15,7 @@ describe('frontend reload', () => {
         error: false
       }
     },
-    expressSession: false,
+    csrfProtection: false,
     mode: 'development',
     makeBuildArtifacts: false,
     htmlValidator: {
@@ -39,7 +39,7 @@ describe('frontend reload', () => {
   }
 
   // stop roosevelt server
-  async function killRoosvelt (app, proto) {
+  async function killRoosevelt (app, proto) {
     return new Promise(resolve => {
       if (proto === 'HTTP') {
         app.httpServer.close(() => {
@@ -64,7 +64,7 @@ describe('frontend reload', () => {
       .get('/reloadHttp/reload.js')
 
     // shut down the roosevelt server
-    await killRoosvelt(app, 'HTTP')
+    await killRoosevelt(app, 'HTTP')
     await app.get('reloadHttpServer').closeServer()
 
     // assertion last because mocha
@@ -98,7 +98,7 @@ describe('frontend reload', () => {
       .get('/reloadHttps/reload.js')
 
     // shut down the roosevelt server
-    await killRoosvelt(app, 'HTTPS')
+    await killRoosevelt(app, 'HTTPS')
     await app.get('reloadHttpsServer').closeServer()
 
     // assertion last because mocha
@@ -135,8 +135,8 @@ describe('frontend reload', () => {
       .get('/reloadHttps/reload.js')
 
     // shut down the roosevelt server
-    await killRoosvelt(app, 'HTTP')
-    await killRoosvelt(app, 'HTTPS')
+    await killRoosevelt(app, 'HTTP')
+    await killRoosevelt(app, 'HTTPS')
     await app.get('reloadHttpServer').closeServer()
     await app.get('reloadHttpsServer').closeServer()
 
@@ -156,7 +156,7 @@ describe('frontend reload', () => {
       .get('/script')
 
     // shut down the roosevelt server
-    await killRoosvelt(app, 'HTTP')
+    await killRoosevelt(app, 'HTTP')
     await app.get('reloadHttpServer').closeServer()
 
     // assertion last because mocha
@@ -175,7 +175,7 @@ describe('frontend reload', () => {
       .get('/reloadHttp/reload.js')
 
     // shut down the roosevelt server
-    await killRoosvelt(app, 'HTTP')
+    await killRoosevelt(app, 'HTTP')
 
     // assertion last because mocha
     assert(res.status === 404)
@@ -196,7 +196,7 @@ describe('frontend reload', () => {
       .get('/reloadHttp/reload.js')
 
     // shut down the roosevelt server
-    await killRoosvelt(app, 'HTTP')
+    await killRoosevelt(app, 'HTTP')
 
     // assertion last because mocha
     assert(res.status === 404)

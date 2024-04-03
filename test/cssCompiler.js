@@ -21,8 +21,7 @@ describe('css preprocessors', () => {
         error: false
       }
     },
-    expressSession: false,
-    secretsDir: 'secrets',
+    csrfProtection: false,
     htmlValidator: {
       enable: false
     },

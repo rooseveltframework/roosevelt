@@ -12,8 +12,7 @@ describe('HTML Minification Tests', function () {
   const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
     appDir,
-    expressSession: false,
-    secretsDir: 'secrets',
+    csrfProtection: false,
     port: 41002,
     logging: {
       methods: {

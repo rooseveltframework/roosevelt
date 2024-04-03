@@ -85,8 +85,10 @@ module.exports = (params, schema) => {
   }
 
   // generate csrf secret
-  if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/csrfSecret.json')) {
-    csrfSecretGenerator()
+  if (params.csrfProtection) {
+    if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/csrfSecret.json')) {
+      csrfSecretGenerator()
+    }
   }
 
   // generate https certs
