@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here.
+- Exposed the `express-session` middleware for use in Roosevelt apps.
 
 ## 0.22.00
 
