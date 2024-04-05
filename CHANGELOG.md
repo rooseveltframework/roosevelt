@@ -2,9 +2,14 @@
 
 ## Next version
 
-- Exposed the `express-session` middleware for use in Roosevelt apps.
+- Put your changes here...
 
-## 0.22.00
+## 0.22.1
+
+- Exposed the `express-session` middleware for use in Roosevelt apps.
+- Updated various dependencies.
+
+## 0.22.0
 
 - Breaking: Added a unified `secrets` directory for various app secrets such as HTTPS certs, session secret, CSRF secret, etc. The name of the directory is configurable, but when upgrading an app from the previous version, you may need to alter your rooseveltConfig to remove directories from your `cert` or `key` paths. You must now specify only a file name in those params.
 - Added support for `express-session` for session support.
