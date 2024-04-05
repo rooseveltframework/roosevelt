@@ -48,7 +48,7 @@ Some notable features:
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
 - [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
   - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-  
+
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
 - [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
@@ -1301,6 +1301,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module Roosevelt uses internally. Used for handling multipart forms. |
 | `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module Roosevelt uses internally. HTTP request logger middleware. |
+| `expressSession`                     | The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
