@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.2
+
+- Fixed a bug that caused self-signed certs to get regenerated every time the app restarted.
+- Updated various dependencies.
+
 ## 0.22.1
 
 - Exposed the `express-session` middleware for use in Roosevelt apps.
