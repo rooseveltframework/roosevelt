@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint no-template-curly-in-string: 0 */
 
 const assert = require('assert')
 const appCleaner = require('./util/appCleaner')
@@ -14,9 +15,9 @@ describe('webpack', () => {
       env: 'prod',
       config: {
         mode: 'production',
-        entry: '${js.sourcePath}/a.js', // eslint-disable-line
+        entry: '${js.sourcePath}/a.js',
         output: {
-          path: '${publicFolder}/js', // eslint-disable-line
+          path: '${publicFolder}/js',
           filename: 'prod.js'
         }
       }
@@ -24,9 +25,9 @@ describe('webpack', () => {
     {
       env: 'dev',
       config: {
-        entry: '${js.sourcePath}/a.js', // eslint-disable-line
+        entry: '${js.sourcePath}/a.js',
         output: {
-          path: '${publicFolder}/js', // eslint-disable-line
+          path: '${publicFolder}/js',
           filename: 'dev.js'
         }
       }
@@ -160,9 +161,9 @@ describe('webpack', () => {
             {
               config: {
                 mode: 'production',
-                entry: '${js.sourcePath}/a.js', // eslint-disable-line
+                entry: '${js.sourcePath}/a.js',
                 output: {
-                  path: '${publicFolder}/js', // eslint-disable-line
+                  path: '${publicFolder}/js',
                   filename: 'any.js'
                 }
               }
@@ -202,9 +203,9 @@ describe('webpack', () => {
             {
               config: {
                 mode: 'production',
-                entry: '${js.sourcePath}/a.js', // eslint-disable-line
+                entry: '${js.sourcePath}/a.js',
                 output: {
-                  path: '${publicFolder}/js', // eslint-disable-line
+                  path: '${publicFolder}/js',
                   filename: 'any.js'
                 }
               }
@@ -247,9 +248,9 @@ describe('webpack', () => {
             {
               config: {
                 mode: 'production',
-                entry: '${js.sourcePath}/a.js', // eslint-disable-line
+                entry: '${js.sourcePath}/a.js',
                 output: {
-                  path: '${publicFolder}/js', // eslint-disable-line
+                  path: '${publicFolder}/js',
                   filename: 'any.js'
                 }
               }

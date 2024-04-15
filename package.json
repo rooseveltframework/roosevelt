@@ -57,7 +57,7 @@
   "devDependencies": {
     "c8": "9.1.0",
     "codecov": "3.8.3",
-    "eslint": "8.57.0",
+    "eslint": "9.0.0",
     "eslint-plugin-mocha": "10.4.2",
     "glob": "10.3.12",
     "less": "4.2.0",
@@ -91,17 +91,6 @@
   "preferGlobal": true,
   "_from": "roosevelt@*",
   "gitHead": "",
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": "latest"
-    },
-    "plugins": [
-      "mocha"
-    ],
-    "rules": {
-      "mocha/no-exclusive-tests": "error"
-    }
-  },
   "mocha": {
     "timeout": "60s"
   },
@@ -109,6 +98,7 @@
     "codecov": "codecov",
     "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
     "lint": "standard && eslint test/*.js",
+    "lint-fix": "standard --fix && eslint ./test",
     "test": "mocha test/*.js",
     "test-debug": "mocha --inspect-brk test/*.js"
   },

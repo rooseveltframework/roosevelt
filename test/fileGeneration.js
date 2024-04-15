@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint no-template-curly-in-string: 0 */
 
 const appCleaner = require('./util/appCleaner')
 const assert = require('assert')
@@ -124,11 +125,11 @@ describe('file creation', () => {
       symlinks: [
         {
           source: 'images',
-          dest: '${staticsRoot}/images' // eslint-disable-line
+          dest: '${staticsRoot}/images'
         },
         {
           source: 'images',
-          dest: '${publicFolder}/images' // eslint-disable-line
+          dest: '${publicFolder}/images'
         },
         {
           source: 'mvc',
