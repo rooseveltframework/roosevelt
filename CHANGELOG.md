@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Updated ESLint.
 
 ## 0.22.2
 
