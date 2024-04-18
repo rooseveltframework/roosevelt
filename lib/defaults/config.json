@@ -59,6 +59,7 @@
   },
   "expressSession": false,
   "expressSessionStore": {
+    "filename": "sessions.sqlite",
     "instance": null,
     "preset": "default",
     "presetOptions": {
