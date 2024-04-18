@@ -561,7 +561,7 @@ Resolves to:
   - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
   - `preset`: *[String]* Available presets provided by Roosevelt. Only used if `instance` is not provided.
     - Available options:
-      - `default`: Use Roosevelt's default session store, which is [memorystore](https://www.npmjs.com/package/memorystore).
+      - `default`: Use Roosevelt's default session store, which is [better-sqlite3-session-store](https://www.npmjs.com/package/better-sqlite3-session-store).
       - `express-session-default`: Use `express-session`'s default session store (not recommended).
   - `presetOptions`: Options to pass to the preset session store if one is selected. Only used if `instance` is not provided.
     - Default: *[Object]*
