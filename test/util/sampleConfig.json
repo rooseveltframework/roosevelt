@@ -47,6 +47,7 @@
   "helmet": {},
   "expressSession": false,
   "expressSessionStore": {
+    "filename": "sessions.sqlite",
     "instance": null,
     "preset": "default",
     "presetOptions": { "checkPeriod": 86400000, "ttl": null, "max": null }

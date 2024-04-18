@@ -558,6 +558,8 @@ Resolves to:
 
 - `expressSessionStore`: Define a custom session store to use with `express-session` instead of the default one provided by Roosevelt. This is recommended if you plan to shard your app across multiple separate processes or scale it to multiple servers.
 
+  - `filename`: Name of the session file.
+    - Default: *[String]* `sessions.sqlite`
   - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
   - `preset`: *[String]* Available presets provided by Roosevelt. Only used if `instance` is not provided.
     - Available options:
