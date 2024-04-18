@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Updated default session store to use sqlite.
 
 ## 0.22.2
 
