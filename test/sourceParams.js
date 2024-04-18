@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint no-template-curly-in-string: 0 */
 
 const appCleaner = require('./util/appCleaner')
 const assert = require('assert')
@@ -183,15 +184,15 @@ describe('sourceParams', () => {
         enableCLIFlags: false,
         port: 4000,
         https: {
-          port: '${(port + 1)}' // eslint-disable-line
+          port: '${(port + 1)}'
         },
         formidable: {
-          multiples: '${versionedPublic}' // eslint-disable-line
+          multiples: '${versionedPublic}'
         },
         css: {
           sourcePath: 'coolCss',
           allowlist: [
-            '${css.sourcePath}/hello.js' // eslint-disable-line
+            '${css.sourcePath}/hello.js'
           ]
         },
         js: {
@@ -199,19 +200,19 @@ describe('sourceParams', () => {
           webpack: {
             bundles: [
               {
-                output: '${css.allowlist[0]}' // eslint-disable-line
+                output: '${css.allowlist[0]}'
               }
             ]
           }
         },
         symlinks: [
           {
-            source: '${js.sourcePath}', // eslint-disable-line
-            dest: '${publicFolder}/js', // eslint-disable-line
+            source: '${js.sourcePath}',
+            dest: '${publicFolder}/js'
           }
         ],
         versionedPublic: true,
-        hostPublic: '${enableCLIFlags}' // eslint-disable-line
+        hostPublic: '${enableCLIFlags}'
       }
 
       // initialize roosevelt

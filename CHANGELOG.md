@@ -3,6 +3,7 @@
 ## Next version
 
 - Updated default session store to use sqlite.
+- Updated ESLint.
 
 ## 0.22.2
 
