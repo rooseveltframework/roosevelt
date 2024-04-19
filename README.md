@@ -548,6 +548,10 @@ Resolves to:
         "secret": [an auto-generated secret],
         "resave": false, // usually a bad idea to set to true
         "saveUninitialized": false, // usually a bad idea to set to true
+        "cookie": {
+          "secure": false, // will automatically be set to true if https is enabled
+          "sameSite": "strict" // adds same site enforcement
+        }
         "store": [the expressSessionStore.instance Roosevelt param]
       }
       ```
