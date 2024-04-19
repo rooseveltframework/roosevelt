@@ -2,8 +2,12 @@
 
 ## Next version
 
-- Updated default session store to use sqlite.
-- Updated ESLint.
+- Put your changes here...
+
+## 0.22.3
+
+- Updated default session store to use SQLite instead of an in-memory database so that sessions are not invalidated when the server restarts.
+- Updated various dependencies.
 
 ## 0.22.2
 
