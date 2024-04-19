@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.22.4
+
+- Made it possible to set `expressSession` to `true` which will set a sane default config so you don't have to spell one out.
+
 ## 0.22.3
 
 - Updated default session store to use SQLite instead of an in-memory database so that sessions are not invalidated when the server restarts.
