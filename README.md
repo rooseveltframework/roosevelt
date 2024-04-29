@@ -124,23 +124,23 @@ To do that:
 Create a Roosevelt app using one of the methods above, then set the `makeBuildArtifacts` param to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
 
   ```javascript
-require('roosevelt')({
-  makeBuildArtifacts: 'staticsOnly'
-}).init()
+  require('roosevelt')({
+    makeBuildArtifacts: 'staticsOnly'
+  }).init()
   ```
 
 You will also need to set `viewEngine` if you want to render HTML templates into static pages and supply data to the templates:
 
   ```javascript
-require('roosevelt')({
-  makeBuildArtifacts: 'staticsOnly',
-  viewEngine: 'html: teddy',
-  onServerInit: (app) => {
-    app.get('htmlModels')['index.html'] = {
-      hello: 'world!'
+  require('roosevelt')({
+    makeBuildArtifacts: 'staticsOnly',
+    viewEngine: 'html: teddy',
+    onServerInit: (app) => {
+      app.get('htmlModels')['index.html'] = {
+        hello: 'world!'
+      }
     }
-  }
-}).init()
+  }).init()
   ```
 
 If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
