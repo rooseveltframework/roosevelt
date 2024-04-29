@@ -7,6 +7,7 @@
 ## 0.22.5
 
 - Certs generator will now run in production mode as well if `https` is enabled and if the files do not already exist. This behavior can be suppressed by setting `https.autoCert` to `false`.
+- Fixed bug that prevented the static site generator feature from working in dev mode when the HTML validator was enabled.
 - Fixed README formatting typos.
 - Updated various dependencies.
 
