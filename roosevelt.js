@@ -78,21 +78,21 @@ module.exports = (params, schema) => {
   // #region certs
 
   // generate express session secret
-  if (params.expressSession) {
+  if (params.expressSession && params.makeBuildArtifacts !== 'staticsOnly') {
     if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/sessionSecret.json')) {
       sessionSecretGenerator()
     }
   }
 
   // generate csrf secret
-  if (params.csrfProtection) {
+  if (params.csrfProtection && params.makeBuildArtifacts !== 'staticsOnly') {
     if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/csrfSecret.json')) {
       csrfSecretGenerator()
     }
   }
 
   // generate https certs
-  if (httpsParams.enable) {
+  if (httpsParams.enable && params.makeBuildArtifacts !== 'staticsOnly') {
     authInfoPath = httpsParams.authInfoPath
 
     // Runs the certGenerator if httpsParams.enable
