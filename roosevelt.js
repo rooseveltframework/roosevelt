@@ -96,7 +96,7 @@ module.exports = (params, schema) => {
     authInfoPath = httpsParams.authInfoPath
 
     // Runs the certGenerator if httpsParams.enable
-    if (httpsParams.autoCert) {
+    if (httpsParams.autoCert && authInfoPath?.authCertAndKey) {
       const { authCertAndKey } = authInfoPath
 
       if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(authCertAndKey.key) || (!fs.existsSync(authCertAndKey.cert))))) {

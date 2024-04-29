@@ -576,7 +576,8 @@ describe('Roosevelt.js Tests', function () {
       localhostOnly: true,
       https: {
         enable: true,
-        port: 43203
+        port: 43203,
+        autoCert: false
       },
       csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
@@ -754,7 +755,7 @@ describe('Roosevelt.js Tests', function () {
         enable: true,
         port: 43203,
         force: true,
-        autoCert: true
+        autoCert: false
       }
     }, sOptions)
 
