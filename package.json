@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/roosevelt/graphs/contributors"
     }
   ],
-  "version": "0.22.4",
+  "version": "0.22.5",
   "files": [
     "defaultErrorPages",
     "lib",
@@ -25,7 +25,7 @@
   "dependencies": {
     "@colors/colors": "1.6.0",
     "app-module-path": "2.2.0",
-    "better-sqlite3": "9.5.0",
+    "better-sqlite3": "9.6.0",
     "better-sqlite3-session-store": "0.1.0",
     "clean-css": "5.3.3",
     "compression": "1.7.4",
@@ -69,8 +69,8 @@
     "sinon": "17.0.1",
     "standard": "17.1.0",
     "stylus": "0.63.0",
-    "supertest": "6.3.4",
-    "teddy": "0.6.5",
+    "supertest": "7.0.0",
+    "teddy": "0.6.6",
     "watcher": "2.3.1"
   },
   "repository": {

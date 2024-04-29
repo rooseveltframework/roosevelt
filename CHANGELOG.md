@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.22.5
+
+- Certs generator will now run in production mode as well if `https` is enabled and if the files do not already exist. This behavior can be suppressed by setting `https.autoCert` to `false`.
+- Fixed README formatting typos.
+- Updated various dependencies.
+
 ## 0.22.4
 
 - Made it possible to set `expressSession` to `true` which will set a sane default config so you don't have to spell one out.
