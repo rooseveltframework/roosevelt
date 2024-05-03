@@ -124,23 +124,23 @@ To do that:
 Create a Roosevelt app using one of the methods above, then set the `makeBuildArtifacts` param to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
 
   ```javascript
-require('roosevelt')({
-  makeBuildArtifacts: 'staticsOnly'
-}).init()
+  require('roosevelt')({
+    makeBuildArtifacts: 'staticsOnly'
+  }).init()
   ```
 
 You will also need to set `viewEngine` if you want to render HTML templates into static pages and supply data to the templates:
 
   ```javascript
-require('roosevelt')({
-  makeBuildArtifacts: 'staticsOnly',
-  viewEngine: 'html: teddy',
-  onServerInit: (app) => {
-    app.get('htmlModels')['index.html'] = {
-      hello: 'world!'
+  require('roosevelt')({
+    makeBuildArtifacts: 'staticsOnly',
+    viewEngine: 'html: teddy',
+    onServerInit: (app) => {
+      app.get('htmlModels')['index.html'] = {
+        hello: 'world!'
+      }
     }
-  }
-}).init()
+  }).init()
   ```
 
 If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
@@ -431,9 +431,9 @@ Resolves to:
       - Default: *[Number]* `43733`.
   - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
       - Default: *[Boolean]* `false`.
-    - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
+  - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
     - Default: *[Boolean]* `true`.
-    - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
+  - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
       - Default: *[Object]* `undefined`.
     - Object members:
         - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
@@ -448,14 +448,14 @@ Resolves to:
 
             - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
               - Default: `undefined`.
-    - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
+  - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
     - Default: `undefined`.
-    - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
-      - Default: `undefined`.
-    - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
-      - Default:  `undefined`.
-    - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
-      - Default: `undefined`.
+  - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
+    - Default: `undefined`.
+  - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
+    - Default:  `undefined`.
+  - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
+    - Default: `undefined`.
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
 

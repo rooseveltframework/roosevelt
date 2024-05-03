@@ -435,7 +435,8 @@ describe('error pages', function () {
       csrfProtection: false,
       https: {
         enable: true,
-        port: 43203
+        port: 43203,
+        autoCert: false
       },
       onServerStart: '(app) => {process.send(app.get("params"))}',
       shutdownTimeout: 7000
