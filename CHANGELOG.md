@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.6
+
+- Fixed a bug that caused self-signed certs to get regenerated every time the app restarted.
+- Updated various dependencies.
+
 ## 0.22.5
 
 - Certs generator will now run in production mode as well if `https` is enabled and if the files do not already exist. This behavior can be suppressed by setting `https.autoCert` to `false`.
