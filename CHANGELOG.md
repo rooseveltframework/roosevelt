@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Put your changes here...
+- Added a max age to the default express-session configuration.
 
 ## 0.22.6
 
