@@ -550,7 +550,7 @@ Resolves to:
         "saveUninitialized": false, // usually a bad idea to set to true
         "cookie": {
           "secure": false, // will automatically be set to true if https is enabled
-          "sameSite": "strict", // adds same site enforcement,
+          "sameSite": "strict", // adds same site enforcement
           "maxAge": 347126472000 // sets expiration very far in the future (~11 years) to basically never expire
         }
         "store": [the expressSessionStore.instance Roosevelt param]
