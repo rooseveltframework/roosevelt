@@ -559,7 +559,7 @@ Resolves to:
 
       - Roosevelt sets `express-session` to use [memorystore](https://github.com/roccomuso/memorystore) as the default session store.
 
-      - Adjust the `maxAge` parameter in a custom `express-session` configuration if you require more security for your app.
+      - The default setting for `maxAge` is ~11 years. You should set that to be shorter in use cases where you want sessions to expire regularly, e.g. if you want users to reauthorize and login again frequently for security reasons. 
 
   - If you supply your own parameters to `express-session`, it is recommended you take the above default configuration and modify it.
 
