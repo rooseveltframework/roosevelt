@@ -550,13 +550,16 @@ Resolves to:
         "saveUninitialized": false, // usually a bad idea to set to true
         "cookie": {
           "secure": false, // will automatically be set to true if https is enabled
-          "sameSite": "strict" // adds same site enforcement
+          "sameSite": "strict", // adds same site enforcement,
+          "maxAge": 347126472000 // sets expiration very far in the future to basically never expire
         }
         "store": [the expressSessionStore.instance Roosevelt param]
       }
       ```
 
       - Roosevelt sets `express-session` to use [memorystore](https://github.com/roccomuso/memorystore) as the default session store.
+
+      - Adjust the `maxAge` parameter in a custom `express-session` configuration if you require more security for your app.
 
   - If you supply your own parameters to `express-session`, it is recommended you take the above default configuration and modify it.
 
