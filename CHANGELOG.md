@@ -2,7 +2,13 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.22.7
+
 - Added a max age to the default express-session configuration.
+- Fixed an issue with cert generation in production mode.
+- Updated various dependencies.
 
 ## 0.22.6
 
