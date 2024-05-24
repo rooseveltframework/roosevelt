@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.8
+
+- Fixed an issue with cert generation from CLI scripts.
+- Updated various dependencies.
+
 ## 0.22.7
 
 - Added a max age to the default express-session configuration.
