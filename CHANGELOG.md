@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.22.9
+
+- Fixed an issue with cert generation from CLI scripts properly this time.
+
 ## 0.22.8
 
 - Fixed an issue with cert generation from CLI scripts.
