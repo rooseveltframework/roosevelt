@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.10
+
+- Enabled WAL in the SQLite instance used for session storage by default.
+- Updated various dependencies.
+
 ## 0.22.9
 
 - Fixed an issue with cert generation from CLI scripts properly this time.
