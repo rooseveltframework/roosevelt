@@ -48,11 +48,12 @@ Some notable features:
 - [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
 - [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
   - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-
 - [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
 - [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
 - [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
-- [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
+- [Upgrading to new versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#upgrading-to-new-versions-of-roosevelt)
+  - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
+
 - [Writing code for Roosevelt](https://github.com/rooseveltframework/roosevelt#writing-code-for-roosevelt)
 
 ## Create and run a Roosevelt app
@@ -1397,7 +1398,15 @@ Running the app in production-proxy mode runs the app in production mode, but wi
 
 You will then need to serve the contents of the public folder directly via Apache or nginx.
 
-## Documentation for previous versions of Roosevelt
+https://github.com/rooseveltframework/roosevelt-sample-app
+
+## Upgrading to new versions of Roosevelt
+
+When you upgrade to a new version of Roosevelt, your Roosevelt config, npm run scripts, or other ways you use Roosevelt may need to be updated to account for breaking changes. There is a config auditor built-in to Roosevelt to detect most such issues, but not everything you might need to change is automatically detected.
+
+Aside from the config auditor, one of the easiest ways to see what you might need to change in your app during a Roosevelt upgrade is to compare changes to the default sample app over time, [which you can view here](https://github.com/rooseveltframework/roosevelt-sample-app).
+
+### Documentation for previous versions of Roosevelt
 
 - *[0.21.x](https://github.com/rooseveltframework/roosevelt/blob/539e11dc9ce5f4d6340762dedb1a11134fe51b04/README.md)*
 - *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*
