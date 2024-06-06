@@ -230,6 +230,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `NODE_PORT`: Default HTTP port to run your app on.
 - `HTTP_PORT`: Default HTTP port to run your app on. Takes precedence over `NODE_PORT`.
 - `HTTPS_PORT`: Default HTTPS port to run your app on.
+- `DISABLE_HTTPS`: When set to `true`, the HTTPS server will be disabled and the app will revert to HTTP regardless of what is set in the `rooseveltConfig`.
 
 Environment variable precedence:
 
