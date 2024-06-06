@@ -32,7 +32,7 @@
     "cookie-parser": "1.4.6",
     "csrf-csrf": "3.0.6",
     "es6-template-strings": "2.0.1",
-    "execa": "9.1.0",
+    "execa": "9.2.0",
     "express": "4.19.2",
     "express-html-validator": "0.2.4",
     "express-session": "1.18.0",
