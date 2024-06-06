@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.11
+
+- Added `DISABLE_HTTPS` environment variable which when set to `true`, the HTTPS server will be disabled and the app will revert to HTTP regardless of what is set in the `rooseveltConfig`.
+- Updated various dependencies.
+
 ## 0.22.10
 
 - Enabled WAL in the SQLite instance used for session storage by default.
