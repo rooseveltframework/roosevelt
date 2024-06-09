@@ -599,7 +599,9 @@ Resolves to:
 
 - `helmet`: Parameters to pass to the [helmet](https://github.com/helmetjs/helmet) module. This module helps secure Express apps by setting HTTP response headers.
 
-  - Default: *[Object]* The default options are specified in the [helmet docs](https://helmetjs.github.io/), with the exception of the `upgrade-insecure-requests` option that helmet sets in the `Content-Security-Policy`, which has been removed by default in Roosevelt.
+  - Default: *[Object]* The default options are specified in the [helmet docs](https://helmetjs.github.io/), with the following exceptions:
+    - The `upgrade-insecure-requests` option that helmet sets in the `Content-Security-Policy` has been removed by default in Roosevelt.
+    - The `'unsafe-inline'` option has been added to the `Content-Security-Policy`'s `script-src` directive by default in Roosevelt.
 
 - `logging`: Parameters to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger parameters documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
 
