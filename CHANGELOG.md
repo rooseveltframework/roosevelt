@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.22.13
+
+- Altered helmet's defaults again. The `form-action` directive has been set to `null`. This makes it possible to submit forms to other domains in production mode.
+
 ## 0.22.12
 
 - Added `'unsafe-inline'` option to helmet's `Content-Security-Policy`'s `script-src` directive by default in Roosevelt. This will prevent inline scripts from being blocked in production mode.
