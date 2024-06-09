@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.12
+
+- Added `'unsafe-inline'` option to helmet's `Content-Security-Policy`'s `script-src` directive by default in Roosevelt. This will prevent inline scripts from being blocked in production mode.
+- Updated various dependencies.
+
 ## 0.22.11
 
 - Added `DISABLE_HTTPS` environment variable which when set to `true`, the HTTPS server will be disabled and the app will revert to HTTP regardless of what is set in the `rooseveltConfig`.
