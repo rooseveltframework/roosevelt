@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.14
+
+- The JS bundler will now add `mode: "development"` and `devtool: "source-map"` automatically to your Webpack bundles in development mode.
+- Updated various dependencies.
+
 ## 0.22.13
 
 - Altered helmet's defaults again. The `form-action` directive has been set to `null`. This makes it possible to submit forms to other domains in production mode.
