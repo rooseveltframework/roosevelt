@@ -12,7 +12,7 @@ Some notable features:
 
 - [MVC](http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller)-based default directory structure.
 - [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than common alternatives. Can be configured to use any templating system that supports Express.
-  - Need some extra speed in template parsing? Consider writing your templates in [PHP](https://php.net)! The Roosevelt team also built a view engine that lets you [use PHP as your templating engine](https://github.com/rooseveltframework/express-php-view-engine) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
+  - Need some extra speed in template parsing? Consider writing your templates in [PHP](https://php.net)! The Roosevelt team also built a view engine that lets you [use PHP as your templating engine](https://github.com/rooseveltframework/node-php-runner) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
 - [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external-facing CSS files via [clean-css](https://www.npmjs.com/package/clean-css). There's also built-in support for [Sass](https://sass-lang.com) and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
 - [Webpack](https://webpack.js.org/) fully integrated providing an easy to use interface for bundling and minifying your frontend JS.
 - Code-reloading in development mode via [nodemon](https://nodemon.io) for server-side changes and [reload](https://github.com/alallier/reload) for frontend changes.
@@ -561,7 +561,7 @@ Resolves to:
 
       - Roosevelt sets `express-session` to use [memorystore](https://github.com/roccomuso/memorystore) as the default session store.
 
-      - The default setting for `maxAge` is ~11 years. You should set that to be shorter in use cases where you want sessions to expire regularly, e.g. if you want users to reauthorize and login again frequently for security reasons. 
+      - The default setting for `maxAge` is ~11 years. You should set that to be shorter in use cases where you want sessions to expire regularly, e.g. if you want users to reauthorize and login again frequently for security reasons.
 
   - If you supply your own parameters to `express-session`, it is recommended you take the above default configuration and modify it.
 
