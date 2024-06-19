@@ -298,7 +298,7 @@
 
 ## 0.18.3
 
-- You can now [use PHP as your templating engine](https://github.com/rooseveltframework/express-php-view-engine) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
+- You can now [use PHP as your templating engine](https://github.com/rooseveltframework/node-php-runner) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
 - Breaking: blacklist/whitelist params throughout the API have been renamed to blocklist/allowlist.
 - README was copyedited to improve the clarity of the default behaviors of some of the API, remove outdated information, and other small improvements.
 - The host-public warning was made more prominent so that production mode default behavior regarding statics is less confusing to people.
