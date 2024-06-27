@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.15
+
+- Added option to exempt certain routes from CSRF protection.
+- Updated various dependencies.
+
 ## 0.22.14
 
 - The JS bundler will now add `mode: "development"` and `devtool: "source-map"` automatically to your Webpack bundles in development mode.
