@@ -516,6 +516,18 @@ Resolves to:
 - `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection.
 
   - Default: *[Boolean]* `true`.
+  - To exempt certain routes from protection, supply an object as your config with an array of exemptions.
+    - Example: *[Object]*
+
+    ```json
+    {
+      "exemptions": [
+        "/foo",
+        "/bar",
+        "/baz"
+      ]
+    }
+    ```
 
 - `enableCLIFlags`: Enables parsing of command line flags. Disable this if you want to handle them yourself or if you don't want Roosevelt to listen to the command line flags it listens for by default.
 
