@@ -616,6 +616,7 @@ Resolves to:
     - The `script-src` directive has been set to `'unsafe-inline'`. This makes it possible to use inline scripts.
     - The `form-action` directive has been set to `null`. This makes it possible to submit forms to other domains.
     - You can reverse any of these changes by configuring helmet yourself.
+  - To disable helmet entirely, set the param to `false`.
 
 - `logging`: Parameters to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger parameters documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
 
