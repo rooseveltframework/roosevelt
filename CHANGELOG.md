@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.22.16
+
+- Made it possible to disable `helmet` by setting the `helmet` param to false.
+- Updated various dependencies.
+
 ## 0.22.15
 
 - Added option to exempt certain routes from CSRF protection.
