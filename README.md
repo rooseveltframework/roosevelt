@@ -53,8 +53,7 @@ Some notable features:
 - [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
 - [Upgrading to new versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#upgrading-to-new-versions-of-roosevelt)
   - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
-
-- [Writing code for Roosevelt](https://github.com/rooseveltframework/roosevelt#writing-code-for-roosevelt)
+- [Contributing to Roosevelt](https://github.com/rooseveltframework/roosevelt#contributing-to-roosevelt)
 
 ## Create and run a Roosevelt app
 
@@ -1444,7 +1443,7 @@ Aside from the config auditor, one of the easiest ways to see what you might nee
 - *[0.6.x](https://github.com/rooseveltframework/roosevelt/blob/44bd29c2739785c7a1a4396287d49e8d9733af2b/README.md)*
 - Older… [here be dragons](https://en.wikipedia.org/wiki/Here_be_dragons).
 
-## Writing code for Roosevelt
+## Contributing to Roosevelt
 
 Here's how to set up a development environment to hack on Roosevelt's code:
 
@@ -1475,3 +1474,7 @@ Here's how to set up a development environment to hack on Roosevelt's code:
 #### Troubleshooting the automated tests
 
 If some of the automated tests fail for you when they shouldn't be, make sure you remove the `test/app` folder and kill any Node.js processes (e.g. `killall node`) before running the test suite again.
+
+#### Support Roosevelt's development
+
+You can support Roosevelt's development and maintenance by [buying merch](https://curly-braces-merch.printify.me/products) or [donating](https://www.paypal.com/donate/?hosted_button_id=2L2X8GRXZCGJ6). Please note that donations are not tax-deductible. Thank you for your support!
