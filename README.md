@@ -372,9 +372,12 @@ Resolves to:
     {
       "enable": true,
       "port": 9856,
-      "httpsPort": 9857
+      "httpsPort": 9857,
+      "excludeRoutes": []
     }
     ```
+
+  - `excludeRoutes`: Reload auto script injection happens on all HTML routes by default unless specified in `excludeRoutes`. An array of valid glob patterns is accepted
 
 - `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/rooseveltframework/express-html-validator#configuration). This feature is only available in development mode.
 
