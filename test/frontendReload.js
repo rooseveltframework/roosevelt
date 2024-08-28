@@ -163,6 +163,35 @@ describe('frontend reload', () => {
     assert(res.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'))
   })
 
+  it('should exclude multiple glob paths for auto inject reload script into rendered html', async () => {
+    // configure and start roosevelt
+
+    const app = await startRoosevelt({
+      ...config,
+      frontendReload: {
+        ...config.frontendReload,
+        excludeRoutes: [
+          '/HTMLTest/*',
+          '/HTMLTest2'
+        ]
+      }
+    })
+
+    // check that reload script is injected into response bodies
+    const res1 = await request(app)
+      .get('/HTMLTest/nested')
+
+    const res2 = await request(app)
+      .get('/HTMLTest2')
+
+    // shut down the roosevelt server
+    await killRoosevelt(app, 'HTTP')
+    await app.get('reloadHttpServer').closeServer()
+
+    assert(!res1.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'))
+    assert(!res2.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'))
+  })
+
   it('should not start reload in prod mode', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({

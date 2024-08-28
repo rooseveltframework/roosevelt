@@ -42,7 +42,8 @@
     "enable": true,
     "port": 9856,
     "httpsPort": 9857,
-    "verbose": false
+    "verbose": false,
+    "excludeRoutes": []
   },
   "cores": 1,
   "shutdownTimeout": 30000,
