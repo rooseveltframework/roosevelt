@@ -122,7 +122,6 @@
   "favicon": "value",
   "versionedPublic": "value",
   "hostPublic": "value",
-  "cores": "value",
   "frontendReload": {
     "enable": false,
     "port": 9000,

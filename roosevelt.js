@@ -3,9 +3,7 @@ require('@colors/colors')
 const http = require('http')
 const https = require('https')
 const express = require('express')
-const cluster = require('cluster')
 const path = require('path')
-const os = require('os')
 const fs = require('fs-extra')
 const fsr = require('./lib/tools/fsr')()
 const { certsGenerator } = require('./lib/scripts/certsGenerator.js')
@@ -27,11 +25,8 @@ module.exports = (params, schema) => {
   let httpsServer
   let httpsOptions
   let authInfoPath
-  let numCPUs = 1
-  let i
   let initialized = false
   let faviconPath
-  let clusterKilled = 0
   let checkConnectionsTimeout
   let shutdownType
   let httpReloadPromise
@@ -324,7 +319,6 @@ module.exports = (params, schema) => {
   // shut down all servers, connections and threads that the roosevelt app is using
   function gracefulShutdown (close) {
     let key
-    let keys
     shutdownType = close
 
     // fire user-defined onAppExit event
@@ -353,25 +347,15 @@ module.exports = (params, schema) => {
     app.set('roosevelt:state', 'disconnecting')
     logger.info('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
-    if (cluster.isMaster) {
-      keys = Object.keys(cluster.workers)
-    }
-
-    if (keys !== undefined && keys.length > 1) {
-      for (let x = 0; x < keys.length; x++) {
-        cluster.workers[keys[x]].kill('SIGINT')
+    // if the app is in development mode, kill all connections instantly and exit
+    if (appEnv === 'development') {
+      for (key in connections) {
+        connections[key].destroy()
       }
+      exitLog()
     } else {
-      // if the app is in development mode, kill all connections instantly and exit
-      if (appEnv === 'development') {
-        for (key in connections) {
-          connections[key].destroy()
-        }
-        exitLog()
-      } else {
-        // else do the normal procedure of seeing if there are still connections before closing
-        connectionCheck()
-      }
+      // else do the normal procedure of seeing if there are still connections before closing
+      connectionCheck()
     }
   }
 
@@ -401,19 +385,6 @@ module.exports = (params, schema) => {
   async function startHttpServer () {
     const interval = setInterval(() => {
       if (!initDone) return
-      // determine number of CPUs to use
-      const max = os.cpus().length
-      const cores = params.cores
-
-      if (cores) {
-        if (cores === 'max') {
-          numCPUs = max
-        } else if (cores <= max && cores > 0) {
-          numCPUs = cores
-        } else {
-          logger.warn(`Invalid value "${cores}" supplied to --cores command line argument. Defaulting to 1 core.`)
-        }
-      }
 
       function serverPush (server, serverPort, serverFormat) {
         if (params.makeBuildArtifacts !== 'staticsOnly') {
@@ -476,32 +447,15 @@ module.exports = (params, schema) => {
         }
       }
 
-      if (cluster.isMaster && numCPUs > 1) {
-        for (i = 0; i < numCPUs; i++) {
-          cluster.fork()
-        }
-        cluster.on('exit', function (worker, code, signal) {
-          logger.info('⚰️', `${appName} thread ${worker.process.pid} died`.magenta)
-          clusterKilled++
-          if (clusterKilled === parseInt(numCPUs)) {
-            exitLog()
-          }
-        })
-
-        // make it so that the master process will go to gracefulShutdown when it is killed
-        process.on('SIGTERM', gracefulShutdown)
-        process.on('SIGINT', gracefulShutdown)
-      } else {
-        if (!httpsParams.force || !httpsParams.enable) {
-          serverPush(httpServer, params.port, 'HTTP')
-        }
-        if (httpsParams.enable) {
-          serverPush(httpsServer, httpsParams.port, 'HTTPS')
-        }
-
-        process.on('SIGTERM', gracefulShutdown)
-        process.on('SIGINT', gracefulShutdown)
+      if (!httpsParams.force || !httpsParams.enable) {
+        serverPush(httpServer, params.port, 'HTTP')
       }
+      if (httpsParams.enable) {
+        serverPush(httpsServer, httpsParams.port, 'HTTPS')
+      }
+
+      process.on('SIGTERM', gracefulShutdown)
+      process.on('SIGINT', gracefulShutdown)
       clearInterval(interval)
     }, 100)
   }
