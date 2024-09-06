@@ -18,6 +18,7 @@ If you are a maintainer of Roosevelt, please follow the following release proced
 
 - Merge all desired pull requests into master.
 - Bump `package.json` to a new version and run `npm i` to generate a new `package-lock.json`.
+- If releasing a new major version, update the link to the previous versions of the documentation.
 - Alter CHANGELOG "Next version" section and stamp it with the new version.
 - Paste contents of CHANGELOG into new version commit.
 - Open and merge a pull request with those changes.

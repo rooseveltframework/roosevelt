@@ -44,7 +44,6 @@
     "httpsPort": 9857,
     "verbose": false
   },
-  "cores": 1,
   "shutdownTimeout": 30000,
   "https": {
     "enable": false,

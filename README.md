@@ -33,7 +33,6 @@ Some notable features:
   - [Available command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments)
   - [Combining npm scripts and command line arguments](https://github.com/rooseveltframework/roosevelt#combining-npm-scripts-and-command-line-arguments)
   - [Recognized environment variables](https://github.com/rooseveltframework/roosevelt#recognized-environment-variables)
-  - [Overriding recognized command line flags and environment variables](https://github.com/rooseveltframework/roosevelt#overriding-recognized-command-line-flags-and-environment-variables)
 - [Default directory structure](https://github.com/rooseveltframework/roosevelt#default-directory-structure)
 - [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
   - [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters)
@@ -199,11 +198,6 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Default shorthands:
     - `--prodproxy`
     - `-x`
-- `node app.js --cores n`: Configures how many CPUs your app will run on.
-  - `n` can be either a number representing the desired cores, or you can supply `max` to use all available CPUs.
-    - Default is `1`.
-  - Default shorthand:
-    - `-c`
 - `node app.js --enable-validator`: Forces the HTML validator to be enabled.
   - Default shorthands:
     - `--html-validator`
@@ -235,22 +229,6 @@ Environment variable precedence:
 
 - Environment variables supersede your app's [parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters).
 - Environment variables can be overridden with [command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments).
-
-### Overriding recognized command line flags and environment variables
-
-You can override the default command line flags and environment variables by providing a schema from [source-configs](https://github.com/rooseveltframework/source-configs) with a `"rooseveltConfig"` section. For instance, to set the number of cores from the command line with `"--num-cores"` or `"-n"` instead of the default `"--cores"` or `"-c"`, you could write:
-```javascript
-const schemaOverride = {
-  rooseveltConfig: { // we are overriding the Roosevelt config
-    cores: { // we are overriding the cores param in the Roosevelt config
-      commandLineArg: ['--num-cores', '-n'], // the new command line arg
-      envVar: ['NUM_CORES'] // a new environment variable to listen for
-    }
-  }
-}
-const params = {} // set any Roosevelt parameters here
-require('roosevelt')(params, schemaOverride).startServer()
-```
 
 ## Default directory structure
 
@@ -410,12 +388,6 @@ Resolves to:
     ```
 
 ### Deployment parameters
-
-- `cores`: By default, Roosevelt will run on 1 CPU, but you can change the number of cores that the app will run on with this parameter.
-
-  - Default: *[Number]* `1`.
-
-  - To use all available cores, set this value to `max`.
 
 - `hostPublic`: Whether or not to allow Roosevelt to host the public folder. By default in `production-proxy` mode Roosevelt will not expose the public folder. It's recommended instead that you host the public folder through another web server, such as Apache or nginx that is better optimized for hosting static files.
 
@@ -1407,15 +1379,13 @@ Roosevelt's default session store for `express-session` works great if your app 
 
 #### Run the app behind a reverse proxy and use all the CPU cores
 
-To do this, use the `production-proxy-mode` command line flag and the `cores` command line flag, e.g. `node app.js --production-proxy-mode --cores max`.
+To do this, use the `production-proxy-mode` command line flag and run the process on multiple cores using a tool like [pm2](https://pm2.io/docs/runtime/guide/load-balancing/).
 
 Then host your app behind a reverse proxy from a web server like Apache or nginx, which [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
 
 Running the app in production-proxy mode runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from the proxy server and does not serve anything in the public folder.
 
 You will then need to serve the contents of the public folder directly via Apache or nginx.
-
-https://github.com/rooseveltframework/roosevelt-sample-app
 
 ## Upgrading to new versions of Roosevelt
 
@@ -1425,6 +1395,7 @@ Aside from the config auditor, one of the easiest ways to see what you might nee
 
 ### Documentation for previous versions of Roosevelt
 
+- *[0.22.x](https://github.com/rooseveltframework/roosevelt/blob/e76256d82ef587d31320bcd52930a5358f9f2953/README.md)*
 - *[0.21.x](https://github.com/rooseveltframework/roosevelt/blob/539e11dc9ce5f4d6340762dedb1a11134fe51b04/README.md)*
 - *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*
 - *[0.19.x](https://github.com/rooseveltframework/roosevelt/blob/aa10ea86f986f624bef56aa2f02ade5b6c551e13/README.md)*

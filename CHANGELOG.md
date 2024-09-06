@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.23.0
+
+- Removed `cores` feature since it is largely redundant now thanks to the widespread popularity of tools like pm2. Also removed various deprecated cluster module support as well.
+- Updated various dependencies.
+
 ## 0.22.16
 
 - Made it possible to disable `helmet` by setting the `helmet` param to false.
