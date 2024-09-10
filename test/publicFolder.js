@@ -59,8 +59,8 @@ describe('Public Folder Tests', function () {
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
 
           // if a 200 status, grab the favicon from the server
@@ -68,8 +68,8 @@ describe('Public Folder Tests', function () {
             .get('/favicon.ico')
             .expect(200, (err, res) => {
               if (err) {
-                assert.fail(err)
                 testApp.send('stop')
+                assert.fail(err)
               }
               // convert buffer to base64
               const faviconData = res.body.toString('base64')
@@ -109,8 +109,8 @@ describe('Public Folder Tests', function () {
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // if we can get the page, send a request to get the favicon
           request('http://localhost:43711')
@@ -160,8 +160,8 @@ describe('Public Folder Tests', function () {
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // if we can get the page, send a request to get the favicon
           request('http://localhost:43711')

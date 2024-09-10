@@ -52,8 +52,8 @@ describe('view engines', function () {
         .get('/teddyTest')
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // test that the values rendered on the page are correct
           const test1 = res.text.includes('Teddy Test')
@@ -123,8 +123,8 @@ describe('view engines', function () {
         .get('/jcsTest')
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           assert.strictEqual(res.text.includes('jcs Test'), true)
           assert.strictEqual(res.text.includes('jcsHeader'), true)
@@ -231,8 +231,8 @@ describe('view engines', function () {
         .get('/teddyTest')
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // test the data rendered on the default teddy page
           const test1 = res.text.includes('Teddy Test')

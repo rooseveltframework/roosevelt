@@ -15,9 +15,6 @@ module.exports = params => {
     app.${params.method}()`
 
   // add a ipc listener for incrementing time with sinon
-  /*
-   * TODO: eliminate the need for this very silly way of appending this ipc listener
-   */
   appTemplate += `
     if (process.argv.includes('--hacky-sinon-timer')) {
       process.on('message', message => {

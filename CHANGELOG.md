@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.23.1
+
+- Added feature that scans the router stack to move the 404 route (the `*` route) to the end of the stack every time a new route is added, even if the route is added at runtime so that you can dynamically add routes while the app is running.
+- Updated various dependencies.
+
 ## 0.23.0
 
 - Removed `cores` feature since it is largely redundant now thanks to the widespread popularity of tools like pm2. Also removed various deprecated cluster module support as well.
