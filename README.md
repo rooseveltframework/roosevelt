@@ -1446,6 +1446,14 @@ Here's how to set up a development environment to hack on Roosevelt's code:
 
 If some of the automated tests fail for you when they shouldn't be, make sure you remove the `test/app` folder and kill any Node.js processes (e.g. `killall node`) before running the test suite again.
 
+If you want to see the output from a generated test app in one of the tests, insert this block of code into the test:
+
+```javascript
+testApp.stdout.on('data', (data) => {
+  console.log(data.toString())
+})
+```
+
 #### Support Roosevelt's development
 
 You can support Roosevelt's development and maintenance by [buying merch](https://curly-braces-merch.printify.me/products) or [donating](https://www.paypal.com/donate/?hosted_button_id=2L2X8GRXZCGJ6). Please note that donations are not tax-deductible. Thank you for your support!

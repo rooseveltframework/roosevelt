@@ -52,8 +52,8 @@ describe('error pages', function () {
         .get('/randomURL')
         .expect(404, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // data included on the 404 page
           const test1 = res.text.includes('404 Not Found')
@@ -95,8 +95,8 @@ describe('error pages', function () {
         .get('/randomURL')
         .expect(404, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // data included on the custom 404 page
           const test1 = res.text.includes('404 custom test error page')
@@ -137,8 +137,8 @@ describe('error pages', function () {
         .get('/serverError')
         .expect(500, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // data included on the custom 500 page
           const test1 = res.text.includes('500 custom test error page')
@@ -176,8 +176,8 @@ describe('error pages', function () {
         .get('/serverError')
         .expect(500, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           // data included on the default 500 page
           const test1 = res.text.includes('500 Internal Server Error')

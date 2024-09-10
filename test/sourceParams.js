@@ -698,8 +698,7 @@ describe('sourceParams', () => {
     })
   })
 
-  // TODO: this feature is broken because of too many hardcoded checks for the default flags
-  // TODO: rewrite this test to not use cores becaues the cores feature was stripped
+  // TODO: this feature is broken because of too many hardcoded checks for the default flags; also rewrite this test to not use cores becaues the cores feature was stripped
   /*
 
   cut README content:

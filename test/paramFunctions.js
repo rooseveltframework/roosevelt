@@ -134,8 +134,8 @@ describe('Parameter Function Tests', function () {
         .send({ age: '3' })
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           testApp.send('stop')
         })
@@ -179,8 +179,8 @@ describe('Parameter Function Tests', function () {
         .send({ age: '3' })
         .expect(200, (err, res) => {
           if (err) {
-            assert.fail(err)
             testApp.send('stop')
+            assert.fail(err)
           }
           testApp.send('stop')
         })
