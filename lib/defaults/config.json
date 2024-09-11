@@ -25,11 +25,6 @@
   "formidable": {
     "multiples": true
   },
-  "toobusy": {
-    "enable": true,
-    "maxLagPerRequest": 70,
-    "lagCheckInterval": 500
-  },
   "helmet": {},
   "csrfProtection": true,
   "bodyParser": {
