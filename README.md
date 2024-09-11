@@ -446,21 +446,6 @@ Resolves to:
 
   - Default: *[Number]* `30000` (30 seconds).
 
-- `toobusy`: Parameters to pass to the [node-toobusy](https://github.com/STRML/node-toobusy) module.
-
-  - `maxLagPerRequest`: *[Number]* Maximum amount of time (in milliseconds) a given request is allowed to take before being interrupted with a [503 error](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors).
-
-  - `lagCheckInterval`: *[Number]* Interval (in milliseconds) for checking event loop lag in milliseconds.
-
-  - Default: *[Object]*
-
-    ```json
-    {
-      "maxLagPerRequest": 70,
-      "lagCheckInterval": 500
-    }
-    ```
-
 ### App behavior parameters
 
 - `appDir`: Root directory of your application.
@@ -685,7 +670,7 @@ Resolves to:
 
     - Default: *[Boolean]* `true`.
 
-  - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
+  - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/terser/html-minifier-terser#options-quick-reference)'s API.
 
     - Uses the params you set in `html.minifier.options` if empty.
 

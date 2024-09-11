@@ -4,7 +4,7 @@ const assert = require('assert')
 const path = require('path')
 const cleanupTestApp = require('./util/cleanupTestApp')
 const fs = require('fs-extra')
-const { minify } = require('html-minifier')
+const { minify } = require('html-minifier-terser')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
@@ -75,11 +75,11 @@ describe('HTML Minification Tests', function () {
     function onServerStart (app) {
       request(app)
         .get('/minify')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, appConfig.html.minifier.options)
+            const testMinify = await minify(res.text, appConfig.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -100,11 +100,11 @@ describe('HTML Minification Tests', function () {
     function onServerStart (app) {
       request(app)
         .get('/callbackRoute')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, appConfig.html.minifier.options)
+            const testMinify = await minify(res.text, appConfig.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -129,11 +129,11 @@ describe('HTML Minification Tests', function () {
     function onServerStart (app) {
       request(app)
         .get('/minify')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.html.minifier.options)
+            const testMinify = await minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
           }
           done()
@@ -158,11 +158,11 @@ describe('HTML Minification Tests', function () {
     function onServerStart (app) {
       request(app)
         .get('/minify')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.html.minifier.options)
+            const testMinify = await minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
           }
           done()
@@ -187,11 +187,11 @@ describe('HTML Minification Tests', function () {
     function onServerStart (app) {
       request(app)
         .get('/minify')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.html.minifier.options)
+            const testMinify = await minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionRoutes by testing another URL
@@ -203,11 +203,11 @@ describe('HTML Minification Tests', function () {
     function checkSecondURL (app) {
       request(app)
         .get('/anotherRoute')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.html.minifier.options)
+            const testMinify = await minify(res.text, config.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()
@@ -232,11 +232,11 @@ describe('HTML Minification Tests', function () {
     function onServerStart (app) {
       request(app)
         .get('/minify')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.html.minifier.options)
+            const testMinify = await minify(res.text, config.html.minifier.options)
             assert.notStrictEqual(testMinify, res.text)
 
             // ensure minification is only disabled on the exceptionRoutes by testing another URL
@@ -248,11 +248,11 @@ describe('HTML Minification Tests', function () {
     function checkSecondURL (app) {
       request(app)
         .get('/anotherRoute')
-        .expect(200, (err, res) => {
+        .expect(200, async (err, res) => {
           if (err) {
             assert.fail(err.message)
           } else {
-            const testMinify = minify(res.text, config.html.minifier.options)
+            const testMinify = await minify(res.text, config.html.minifier.options)
             assert.strictEqual(testMinify, res.text)
           }
           done()

@@ -8,7 +8,7 @@ const { fork } = require('child_process')
 const fse = require('fs-extra')
 const path = require('path')
 const klawsync = require('klaw-sync')
-const htmlMinifier = require('html-minifier').minify
+const htmlMinifier = require('html-minifier-terser').minify
 
 const minifyOptions = {
   removeComments: true,
@@ -338,7 +338,7 @@ describe('Views Bundler Tests', function () {
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach((file) => {
+        exposedTemplatesArray.forEach(async (file) => {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
@@ -346,7 +346,7 @@ describe('Views Bundler Tests', function () {
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
-            assert.strictEqual(htmlMinifier(template, minifyOptions), template)
+            assert.strictEqual(await htmlMinifier(template, minifyOptions), template)
           }
         })
 
@@ -380,7 +380,7 @@ describe('Views Bundler Tests', function () {
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach((file) => {
+        exposedTemplatesArray.forEach(async (file) => {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
@@ -388,7 +388,7 @@ describe('Views Bundler Tests', function () {
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
-            assert.notStrictEqual(htmlMinifier(template, minifyOptions), template)
+            assert.notStrictEqual(await htmlMinifier(template, minifyOptions), template)
           }
         })
 
@@ -423,7 +423,7 @@ describe('Views Bundler Tests', function () {
 
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach((file) => {
+        exposedTemplatesArray.forEach(async (file) => {
           if (fsr.fileExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
@@ -431,7 +431,7 @@ describe('Views Bundler Tests', function () {
 
           for (const key in templateJSON) {
             const template = templateJSON[key]
-            assert.strictEqual(htmlMinifier(template, minifyOptions), template)
+            assert.strictEqual(await htmlMinifier(template, minifyOptions), template)
           }
         })
 

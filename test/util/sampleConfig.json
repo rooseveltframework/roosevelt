@@ -38,11 +38,6 @@
   "formidable": {
     "multiples": "value"
   },
-  "toobusy": {
-    "enable": false,
-    "maxLagPerRequest": "value",
-    "lagCheckInterval": "value"
-  },
   "shutdownTimeout": "value",
   "helmet": {},
   "expressSession": false,

@@ -4,6 +4,13 @@
 
 - Put your changes here...
 
+## 0.23.2
+
+- Removed `toobusy` feature since it is temperamental and the dependency is no longer maintained.
+- Refactored internal `wildcardMatch` to use `minimatch` under the hood.
+- Replaced `html-minifier` with `html-minifier-terser` since `html-minifier-terser` is better-maintained.
+- Updated various dependencies.
+
 ## 0.23.1
 
 - Added feature that scans the router stack to move the 404 route (the `*` route) to the end of the stack every time a new route is added, even if the route is added at runtime so that you can dynamically add routes while the app is running.
