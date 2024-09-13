@@ -1,21 +1,14 @@
 require('@colors/colors')
-
-const http = require('http')
-const https = require('https')
 const express = require('express')
 const path = require('path')
 const fs = require('fs-extra')
-const fsr = require('./lib/tools/fsr')()
-const { certsGenerator } = require('./lib/scripts/certsGenerator.js')
-const { sessionSecretGenerator } = require('./lib/scripts/sessionSecretGenerator.js')
-const { csrfSecretGenerator } = require('./lib/scripts/csrfSecretGenerator.js')
+const fsr = require('./lib/tools/fsr')() // TODO: kill this
+const certsGenerator = require('./lib/scripts/certsGenerator.js')
+const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
+const csrfSecretGenerator = require('./lib/scripts/csrfSecretGenerator.js')
 
-module.exports = (params, schema) => {
-  params = params || {} // ensure params are an object
-
-  // appDir is either specified by the user or sourced from the parent require
-  params.appDir = params.appDir || path.dirname(module.parent.filename)
-
+module.exports = (params = {}, schema) => {
+  params.appDir = params.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
   const reloadHttpsOptions = {}
   const servers = []
   const connections = {}
@@ -61,7 +54,7 @@ module.exports = (params, schema) => {
 
   // let's try setting up the servers with user-supplied params
   if (!httpsParams.force || !httpsParams.enable) {
-    httpServer = http.Server(app)
+    httpServer = require('http').Server(app)
     httpServer.on('connection', mapConnections)
   }
 
@@ -173,7 +166,7 @@ module.exports = (params, schema) => {
     httpsOptions.requestCert = httpsParams.requestCert
     httpsOptions.rejectUnauthorized = httpsParams.rejectUnauthorized
 
-    httpsServer = https.Server(httpsOptions, app)
+    httpsServer = require('https').Server(httpsOptions, app)
     httpsServer.on('connection', mapConnections)
   }
 
