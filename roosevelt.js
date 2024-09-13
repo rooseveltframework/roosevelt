@@ -2,28 +2,23 @@ require('@colors/colors')
 const express = require('express')
 const path = require('path')
 const fs = require('fs-extra')
-const fsr = require('./lib/tools/fsr')() // TODO: kill this
+const fsr = require('./lib/tools/fsr')()
 const certsGenerator = require('./lib/scripts/certsGenerator.js')
 const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
 const csrfSecretGenerator = require('./lib/scripts/csrfSecretGenerator.js')
 
 module.exports = (params = {}, schema) => {
   params.appDir = params.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
-  const reloadHttpsOptions = {}
   const servers = []
   const connections = {}
   let app = express() // initialize express
   const router = express.Router() // initialize router
   let httpServer
   let httpsServer
-  let httpsOptions
-  let authInfoPath
   let initialized = false
   let faviconPath
   let checkConnectionsTimeout
   let shutdownType
-  let httpReloadPromise
-  let httpsReloadPromise
   let initDone = false
 
   // expose initial vars
@@ -58,11 +53,6 @@ module.exports = (params = {}, schema) => {
     httpServer.on('connection', mapConnections)
   }
 
-  // configure reload HTTP server
-  if (appEnv === 'development' && params.frontendReload.enable) {
-    httpReloadPromise = configReloadServer('HTTP')
-  }
-
   // #region certs
 
   // generate express session secret
@@ -81,7 +71,8 @@ module.exports = (params = {}, schema) => {
 
   // generate https certs
   if (httpsParams.enable && params.makeBuildArtifacts !== 'staticsOnly') {
-    authInfoPath = httpsParams.authInfoPath
+    const authInfoPath = httpsParams.authInfoPath
+    const httpsOptions = {}
 
     // Runs the certGenerator if httpsParams.enable
     if (httpsParams.autoCert && authInfoPath?.authCertAndKey) {
@@ -92,75 +83,48 @@ module.exports = (params = {}, schema) => {
       }
     }
 
-    // options to configure to the https server
-    httpsOptions = {}
-
     if (authInfoPath) {
-      if (authInfoPath.p12 && authInfoPath.p12.p12Path) {
+      if (authInfoPath.p12?.p12Path) {
         // if the string ends with a dot and 3 alphanumeric characters (including _)
         // then we assume it's a filepath.
         if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-          httpsOptions.pfx = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + authInfoPath.p12.p12Path)
+          httpsOptions.pfx = fs.readFileSync(path.join(params.appDir, params.secretsDir, authInfoPath.p12.p12Path))
         } else { // if the string doesn't end that way, we assume it's an encrypted string
           httpsOptions.pfx = authInfoPath.p12.p12Path
         }
-
-        reloadHttpsOptions.p12 = {}
-        reloadHttpsOptions.p12.p12Path = httpsOptions.pfx
       } else if (authInfoPath.authCertAndKey) {
-        reloadHttpsOptions.certAndKey = {}
-
         function assignCertStringByKey (key) {
           const { authCertAndKey } = authInfoPath
           const certString = authCertAndKey[key]
 
-          if (isCertString(certString)) {
-            httpsOptions[key] = certString
-          } else {
-            httpsOptions[key] = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + certString)
-          }
-
-          reloadHttpsOptions.certAndKey[key] = httpsOptions[key]
+          if (isCertString(certString)) httpsOptions[key] = certString
+          else httpsOptions[key] = fs.readFileSync(path.join(params.appDir, params.secretsDir, certString))
         }
 
-        if (authInfoPath.authCertAndKey.cert) {
-          assignCertStringByKey('cert')
-        }
-
-        if (authInfoPath.authCertAndKey.key) {
-          assignCertStringByKey('key')
-        }
+        if (authInfoPath.authCertAndKey.cert) assignCertStringByKey('cert')
+        if (authInfoPath.authCertAndKey.key) assignCertStringByKey('key')
       }
 
       // set passphrase if in use
-      if (httpsParams.passphrase) {
-        httpsOptions.passphrase = httpsParams.passphrase
-        reloadHttpsOptions.passphrase = httpsParams.passphrase
-      }
+      if (httpsParams.passphrase) httpsOptions.passphrase = httpsParams.passphrase
     }
+
     if (httpsParams.caCert) {
       if (typeof httpsParams.caCert === 'string') {
         if (isCertString(httpsParams.caCert)) { // then it's the cert(s) as a string, not a file path
           httpsOptions.ca = httpsParams.caCert
         } else { // it's a file path to the file, so read file
-          httpsOptions.ca = fs.readFileSync(params.appDir + '/' + params.secretsDir + '/' + httpsParams.caCert)
+          httpsOptions.ca = fs.readFileSync(path.join(params.appDir, params.secretsDir, httpsParams.caCert))
         }
       } else if (httpsParams.caCert instanceof Array) {
         httpsOptions.ca = []
 
-        httpsParams.caCert.forEach(function (certOrPath) {
+        for (const certOrPath of httpsParams.caCert) {
           let certStr = certOrPath
-          if (!isCertString(certOrPath)) {
-            certStr = fs.readFileSync(certOrPath)
-          }
+          if (!isCertString(certOrPath)) certStr = fs.readFileSync(certOrPath)
           httpsOptions.ca.push(certStr)
-        })
+        }
       }
-    }
-
-    // configure reload HTTPS server
-    if (appEnv === 'development' && params.frontendReload.enable) {
-      httpsReloadPromise = configReloadServer('HTTPS')
     }
 
     httpsOptions.requestCert = httpsParams.requestCert
@@ -412,10 +376,10 @@ module.exports = (params = {}, schema) => {
 
               // get reload ready and bind instance to express variable
               if (proto === 'HTTP') {
-                reloadServer = await httpReloadPromise
+                reloadServer = await startReloadServer(proto)
                 app.set('reloadHttpServer', reloadServer)
               } else {
-                reloadServer = await httpsReloadPromise
+                reloadServer = await startReloadServer(proto, httpsServer)
                 app.set('reloadHttpsServer', reloadServer)
               }
 
@@ -456,9 +420,10 @@ module.exports = (params = {}, schema) => {
   /**
    * Start reload http(s) service
    * @param {String} proto - Which protocol to start
+   * @param {String} server - Instance of running https server for mirroring config to reload
    * @returns {object} - Reload server instance
    */
-  function configReloadServer (proto) {
+  function startReloadServer (proto, server) {
     const reload = require('reload')
     const config = {
       verbose: !!params.logging.methods.verbose,
@@ -472,11 +437,17 @@ module.exports = (params = {}, schema) => {
       config.route = '/reloadHttps'
       config.port = params.frontendReload.httpsPort
       config.forceWss = false // lets this work in self-signed cert situations
-      config.https = reloadHttpsOptions
+      config.https = {
+        p12: server.pfx,
+        certAndKey: {
+          cert: server.cert,
+          key: server.key
+        },
+        passphrase: server.passphrase
+      }
     }
 
-    const reloadInstance = reload(app, config)
-    return reloadInstance
+    return reload(router, config)
   }
 
   function startServer () {

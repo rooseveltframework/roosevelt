@@ -6,7 +6,6 @@ const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
 const http = require('http')
-const os = require('os')
 const path = require('path')
 const request = require('supertest')
 
