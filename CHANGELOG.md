@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.23.3
+
+- Refactored various things under the hood to improve code quality, performance, and reduce unnecessary dependencies.
+- Updated various dependencies.
+
 ## 0.23.2
 
 - Removed `toobusy` feature since it is temperamental and the dependency is no longer maintained.
