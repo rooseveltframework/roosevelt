@@ -4,8 +4,10 @@
 
 - Put your changes here...
 
-## 0.23.3
+## 0.24.0
 
+- Breaking: Removed `app.get('routes')`.
+- Breaking: `app.httpServer` is now `app.get('httpServer')` and `app.httpsServer` is now `app.get('httpsServer')`.
 - Refactored various things under the hood to improve code quality, performance, and reduce unnecessary dependencies.
 - Updated various dependencies.
 

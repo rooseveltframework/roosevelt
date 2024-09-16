@@ -51,7 +51,7 @@ describe('HTML Minification Tests', function () {
 
   // wipe out test app after each test
   afterEach(function (done) {
-    app.stopServer('close')
+    app.stopServer({ persistProcess: true })
 
     cleanupTestApp(appDir, (err) => {
       if (err) {

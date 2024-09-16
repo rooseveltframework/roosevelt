@@ -47,7 +47,7 @@ describe('body-parser', () => {
 
   after(done => {
     // stop the server
-    context.app.httpServer.close(() => {
+    context.app.get('httpServer').close(() => {
       done()
     })
   })

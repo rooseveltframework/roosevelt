@@ -42,11 +42,11 @@ describe('frontend reload', () => {
   async function killRoosevelt (app, proto) {
     return new Promise(resolve => {
       if (proto === 'HTTP') {
-        app.httpServer.close(() => {
+        app.get('httpServer').close(() => {
           resolve()
         })
       } else {
-        app.httpsServer.close(() => {
+        app.get('httpsServer').close(() => {
           resolve()
         })
       }

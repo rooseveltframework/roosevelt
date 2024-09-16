@@ -78,7 +78,7 @@ describe('validator usage', () => {
 
   after(() => {
     // stop the server
-    context.app.httpServer.close()
+    context.app.get('httpServer').close()
   })
 
   it('should respond with error page on invalid html', async () => {

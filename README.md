@@ -1278,9 +1278,12 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | Express variable                     | Description                                                  |
 | ------------------------------------ | ------------------------------------------------------------ |
 | `express`                            | The Express module.                                          |
+| `httpServer`                         | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. |
+| `httpsServer`                        | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. |
+| `reloadHttpServer`                   | The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
+| `reloadHttpsServer`                  | The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `router`                             | Instance of router module used by Roosevelt.                 |
 | `routePrefix`                        | Prefix appended to routes via the `routePrefix` param. Will be `''` if not set. |
-| `routes`                             | List of all routes loaded in the Express app by Roosevelt.   |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
 | `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module Roosevelt uses internally. Used for handling multipart forms. |
@@ -1311,14 +1314,12 @@ Additionally the Roosevelt constructor returns the following object:
 | Roosevelt constructor returned object members | Description                                                  |
 | ------------------------ | ------------------------------------------------------------ |
 | `expressApp`             | *[Object]* The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
-| `httpServer`             | *[Object]* The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
-| `httpsServer`            | *[Object]* The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
-| `reloadHttpServer`       | *[Object]* The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
-| `reloadHttpsServer`       | *[Object]* The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
+| `httpServer`             | *[Object]* The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. |
+| `httpsServer`            | *[Object]* The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. |
 | `initServer(callback)`   | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. Takes an optional callback. |
 | `init`                   | *[Method]* Shorthand for `initServer`. |
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
-| `stopServer(close)`      | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
+| `stopServer(params)`     | *[Method]* Stops the server from accepting new connections before exiting and takes an optional argument `stopServer({persistProcess: true})` which will allow the process to remain active after the server has closed. |
 
 ## Supplying your own CSS preprocessor
 
