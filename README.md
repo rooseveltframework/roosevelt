@@ -1286,8 +1286,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `routePrefix`                        | Prefix appended to routes via the `routePrefix` param. Will be `''` if not set. |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
-| `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module Roosevelt uses internally. Used for handling multipart forms. |
-| `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module Roosevelt uses internally. HTTP request logger middleware. |
 | `expressSession`                     | The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
