@@ -1379,6 +1379,7 @@ Aside from the config auditor, one of the easiest ways to see what you might nee
 
 ### Documentation for previous versions of Roosevelt
 
+- *[0.23.x](https://github.com/rooseveltframework/roosevelt/blob/88a3e64cb893bfa813b0e00e2b5aea03c1be5b98/README.md)*
 - *[0.22.x](https://github.com/rooseveltframework/roosevelt/blob/e76256d82ef587d31320bcd52930a5358f9f2953/README.md)*
 - *[0.21.x](https://github.com/rooseveltframework/roosevelt/blob/539e11dc9ce5f4d6340762dedb1a11134fe51b04/README.md)*
 - *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*

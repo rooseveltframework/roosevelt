@@ -8,6 +8,7 @@
 
 - Breaking: Removed `app.get('routes')`.
 - Breaking: `app.httpServer` is now `app.get('httpServer')` and `app.httpsServer` is now `app.get('httpsServer')`.
+- Stopped the `statics/pages` directory from being created automatically if it doesn't exist.
 - Refactored various things under the hood to improve code quality, performance, and reduce unnecessary dependencies.
 - Updated various dependencies.
 
