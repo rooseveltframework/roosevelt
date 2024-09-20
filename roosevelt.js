@@ -10,14 +10,13 @@ const csrfSecretGenerator = require('./lib/scripts/csrfSecretGenerator.js')
 module.exports = (params = {}, schema) => {
   params.appDir = params.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
   const connections = {}
-  let app = express() // initialize express
+  const app = express() // initialize express
   const router = express.Router() // initialize router
   let httpServer
   let httpsServer
   let initialized = false
   let checkConnectionsTimeout
   let persistProcess
-  let initDone = false
 
   // expose initial vars
   app.set('express', express)
@@ -160,7 +159,8 @@ module.exports = (params = {}, schema) => {
   }
 
   // configure express, express-session, and csrf
-  app = require('./lib/setExpressConfigs')(app)
+  // TODO: why was app being redefined here?
+  require('./lib/setExpressConfigs')(app)
 
   // fire user-defined onServerInit event
   if (params.onServerInit && typeof params.onServerInit === 'function') {
@@ -169,62 +169,48 @@ module.exports = (params = {}, schema) => {
 
   // utility functions
 
-  function initServer (cb) {
-    if (initialized) {
-      return cb()
-    }
+  async function initServer () {
+    if (initialized) return
     initialized = true
 
     require('./lib/generateSymlinks')(app)
 
-    require('./lib/injectReload')(app) // inject's reload's <script> tag
+    require('./lib/injectReload')(app)
 
     require('./lib/htmlMinifier')(app)
 
-    preprocessStaticPages()
+    await require('./lib/preprocessStaticPages')(app)
 
-    function preprocessStaticPages () {
-      require('./lib/preprocessStaticPages')(app, preprocessCss)
+    await require('./lib/preprocessCss')(app)
+
+    await require('./lib/jsBundler')(app)
+
+    if (app.get('env') === 'development' && params.htmlValidator.enable) {
+      // instantiate the validator if it's installed
+      // TODO: why is this wrapped in a try/catch?
+      try {
+        require('express-html-validator')(app, params.htmlValidator)
+      } catch { }
     }
 
-    function preprocessCss () {
-      require('./lib/preprocessCss')(app, bundleJs)
-    }
+    // map routes
+    // TODO: why was app being redefined here?
+    require('./lib/mapRoutes')(app)
 
-    function bundleJs () {
-      require('./lib/jsBundler')(app, validateHTML)
-    }
+    // custom error page
+    app.use((err, req, res, next) => {
+      logger.error(err.stack)
+      require(params.errorPages.internalServerError)(app, err, req, res)
+    })
 
-    function validateHTML () {
-      if (app.get('env') === 'development' && params.htmlValidator.enable) {
-        // instantiate the validator if it's installed
-        try {
-          require('express-html-validator')(app, params.htmlValidator)
-        } catch { }
-      }
-      mapRoutes()
-    }
-
-    function mapRoutes () {
-      // map routes
-      app = require('./lib/mapRoutes')(app)
-
-      // custom error page
-      app = require('./lib/500ErrorPage.js')(app)
-
-      if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
-        params.onStaticAssetsGenerated(app)
-      }
-
-      initDone = true
-      if (cb && typeof cb === 'function') {
-        cb()
-      }
+    // TODO: why is this here? there doesn't appear to be anything related to static assets being generated in this general area
+    if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
+      params.onStaticAssetsGenerated(app)
     }
 
     require('./lib/isomorphicControllersFinder')(app)
 
-    require('./lib/viewsBundler')(app)
+    await require('./lib/viewsBundler')(app)
   }
 
   function startReloadServer (proto, server) {
@@ -254,76 +240,65 @@ module.exports = (params = {}, schema) => {
     return reload(router, config)
   }
 
-  function startServer () {
-    if (!initialized) {
-      return initServer(startHttpServer)
+  async function startServer () {
+    await initServer()
+
+    if (params.makeBuildArtifacts !== 'staticsOnly') {
+      try {
+        if (!params.https.force || !params.https.enable) {
+          await httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port))
+        }
+        if (params.https.enable) {
+          await httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port))
+        }
+      } catch (err) {
+        logger.error(err)
+        if (err.message.includes('EADDRINUSE')) {
+          // TODO: figure out how to tell which server crashes and print the correct port
+          logger.error(`Another process is using port ${params.port}. Either kill that process or change this app's port number.`.bold)
+        }
+        process.exit(1)
+      }
     }
-    startHttpServer()
+
+    process.on('SIGTERM', shutdownGracefully)
+    process.on('SIGINT', shutdownGracefully)
   }
 
-  async function startHttpServer () {
-    const interval = setInterval(() => {
-      if (!initDone) return
+  function startupCallback (proto, port) {
+    return async function () {
+      // spin up reload http(s) service if enabled in dev mode
+      if (appEnv === 'development' && params.frontendReload.enable === true) {
+        let reloadServer
+        const config = params.frontendReload
 
-      function attemptServerStart (server, serverPort, serverFormat) {
-        if (params.makeBuildArtifacts !== 'staticsOnly') {
-          server.listen(serverPort, (params.localhostOnly ? 'localhost' : null), startupCallback(serverFormat, serverPort)).on('error', (err) => {
-            logger.error(err)
-            if (err.message.includes('EADDRINUSE')) {
-              logger.error(`Another process is using port ${serverPort}. Either kill that process or change this app's port number.`.bold)
-            }
-            process.exit(1)
-          })
+        // get reload ready and bind instance to express variable
+        if (proto === 'HTTP') {
+          reloadServer = await startReloadServer(proto)
+          app.set('reloadHttpServer', reloadServer)
+        } else {
+          reloadServer = await startReloadServer(proto, httpsServer)
+          app.set('reloadHttpsServer', reloadServer)
         }
+
+        // spin up the reload server
+        await reloadServer.startWebSocketServer()
+        logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
       }
 
-      function startupCallback (proto, port) {
-        return async function () {
-          // spin up reload http(s) service if enabled in dev mode
-          if (appEnv === 'development' && params.frontendReload.enable === true) {
-            let reloadServer
-            const config = params.frontendReload
-
-            // get reload ready and bind instance to express variable
-            if (proto === 'HTTP') {
-              reloadServer = await startReloadServer(proto)
-              app.set('reloadHttpServer', reloadServer)
-            } else {
-              reloadServer = await startReloadServer(proto, httpsServer)
-              app.set('reloadHttpsServer', reloadServer)
-            }
-
-            // spin up the reload server
-            await reloadServer.startWebSocketServer()
-            logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
-          }
-
-          logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
-          if (params.localhostOnly) {
-            logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
-          }
-          if (!params.hostPublic) {
-            logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
-          }
-
-          // fire user-defined onServerStart event
-          if (params.onServerStart && typeof params.onServerStart === 'function') {
-            params.onServerStart(app)
-          }
-        }
+      logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
+      if (params.localhostOnly) {
+        logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
+      }
+      if (!params.hostPublic) {
+        logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
       }
 
-      if (!params.https.force || !params.https.enable) {
-        attemptServerStart(httpServer, params.port, 'HTTP')
+      // fire user-defined onServerStart event
+      if (params.onServerStart && typeof params.onServerStart === 'function') {
+        params.onServerStart(app)
       }
-      if (params.https.enable) {
-        attemptServerStart(httpsServer, params.https.port, 'HTTPS')
-      }
-
-      process.on('SIGTERM', shutdownGracefully)
-      process.on('SIGINT', shutdownGracefully)
-      clearInterval(interval)
-    }, 100)
+    }
   }
 
   // shut down all servers, connections and threads that the roosevelt app is using
