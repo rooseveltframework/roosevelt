@@ -2,13 +2,12 @@ require('@colors/colors')
 const express = require('express')
 const path = require('path')
 const fs = require('fs-extra')
-const fsr = require('./lib/tools/fsr')()
 const certsGenerator = require('./lib/scripts/certsGenerator.js')
 const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
 const csrfSecretGenerator = require('./lib/scripts/csrfSecretGenerator.js')
 
-module.exports = (params = {}, schema) => {
-  params.appDir = params.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
+module.exports = (options = {}, schema) => {
+  options.appDir = options.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
   const connections = {}
   const app = express() // initialize express
   const router = express.Router() // initialize router
@@ -23,13 +22,13 @@ module.exports = (params = {}, schema) => {
   app.set('router', router)
 
   // source user-supplied params
-  params = require('./lib/sourceParams')(params, app, schema)
+  const params = require('./lib/sourceParams')(options, app, schema)
   const logger = app.get('logger')
   const appName = app.get('appName')
   const appEnv = app.get('env')
 
   // use existence of public folder to determine if this is the first run
-  if (!fsr.fileExists(params.publicFolder) && params.logging.methods.info) {
+  if (!fs.pathExistsSync(params.publicFolder) && params.logging.methods.info) {
     // run the param audit
     require('./lib/scripts/configAuditor').audit(params.appDir)
     require('./lib/scripts/deprecationCheck')(params.appDir)
@@ -41,14 +40,14 @@ module.exports = (params = {}, schema) => {
 
   // generate express session secret
   if (params.expressSession && params.makeBuildArtifacts !== 'staticsOnly') {
-    if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/sessionSecret.json')) {
+    if (!fs.pathExistsSync(params.secretsDir) || !fs.pathExistsSync(params.secretsDir + '/sessionSecret.json')) {
       sessionSecretGenerator()
     }
   }
 
   // generate csrf secret
   if (params.csrfProtection && params.makeBuildArtifacts !== 'staticsOnly') {
-    if (!fs.existsSync(params.secretsDir) || !fs.existsSync(params.secretsDir + '/csrfSecret.json')) {
+    if (!fs.pathExistsSync(params.secretsDir) || !fs.pathExistsSync(params.secretsDir + '/csrfSecret.json')) {
       csrfSecretGenerator()
     }
   }
@@ -68,7 +67,7 @@ module.exports = (params = {}, schema) => {
     if (params.https.autoCert && authInfoPath?.authCertAndKey) {
       const { authCertAndKey } = authInfoPath
 
-      if ((!fs.existsSync(params.secretsDir) || (!fs.existsSync(authCertAndKey.key) || (!fs.existsSync(authCertAndKey.cert))))) {
+      if ((!fs.pathExistsSync(params.secretsDir) || (!fs.pathExistsSync(authCertAndKey.key) || (!fs.pathExistsSync(authCertAndKey.cert))))) {
         certsGenerator()
       }
     }
@@ -149,7 +148,7 @@ module.exports = (params = {}, schema) => {
   // enable favicon support
   if (params.favicon !== 'none' && params.favicon !== null) {
     const faviconPath = path.join(params.staticsRoot, params.favicon)
-    if (fsr.fileExists(faviconPath)) app.use(require('serve-favicon')(faviconPath))
+    if (fs.pathExistsSync(faviconPath)) app.use(require('serve-favicon')(faviconPath))
     else logger.warn(`Favicon ${params.favicon} does not exist. Please ensure the "favicon" param is configured correctly.`)
   }
 
@@ -159,7 +158,6 @@ module.exports = (params = {}, schema) => {
   }
 
   // configure express, express-session, and csrf
-  // TODO: why was app being redefined here?
   require('./lib/setExpressConfigs')(app)
 
   // fire user-defined onServerInit event

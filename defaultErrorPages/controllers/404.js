@@ -3,7 +3,7 @@ const path = require('path')
 const template = require('../../lib/tools/templateLiteralRenderer')
 const errorPage = fs.readFileSync(path.join(__dirname, '../views/404.html'))
 
-module.exports = function (app) {
+module.exports = app => {
   app.route('*').all(function (req, res) {
     const model = {
       url: req.url,

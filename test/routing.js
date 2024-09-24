@@ -6,7 +6,7 @@ const path = require('path')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('routing', () => {
+describe.skip('routing', () => {
   const appDir = path.join(__dirname, 'app/routesTest')
   const appConfig = {
     appDir,

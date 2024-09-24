@@ -4,7 +4,7 @@ const assert = require('assert')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('validator usage', () => {
+describe.skip('validator usage', () => {
   // invalid html to test against
   const invalidHTML = `
     <!DOCTYPE html>

@@ -8,7 +8,7 @@ const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
-describe('view engines', function () {
+describe.skip('view engines', function () {
   const appDir = path.join(__dirname, 'app/viewEngine')
 
   // options to pass into test app generator

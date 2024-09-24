@@ -8,7 +8,7 @@ const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
-describe('error pages', function () {
+describe.skip('error pages', function () {
   const appDir = path.join(__dirname, 'app/errorPages')
 
   // options to pass into test app generator

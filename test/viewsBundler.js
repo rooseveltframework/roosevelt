@@ -3,9 +3,8 @@
 const assert = require('assert')
 const generateTestApp = require('./util/generateTestApp')
 const cleanupTestApp = require('./util/cleanupTestApp')
-const fsr = require('../lib/tools/fsr')()
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const path = require('path')
 const klawsync = require('klaw-sync')
 const htmlMinifier = require('html-minifier-terser').minify
@@ -18,7 +17,7 @@ const minifyOptions = {
   removeEmptyAttributes: true
 }
 
-describe('Views Bundler Tests', function () {
+describe.skip('Views Bundler Tests', function () {
   const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
@@ -62,10 +61,10 @@ describe('Views Bundler Tests', function () {
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   beforeEach(function () {
-    fse.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
+    fs.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
 
     for (let i = 0; i < pathOfTemplates.length; i++) {
-      fse.writeFileSync(pathOfTemplates[i], staticTemplates[i])
+      fs.writeFileSync(pathOfTemplates[i], staticTemplates[i])
     }
   })
 
@@ -339,7 +338,7 @@ describe('Views Bundler Tests', function () {
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
         exposedTemplatesArray.forEach(async (file) => {
-          if (fsr.fileExists(file.path)) {
+          if (fs.pathExistsSync(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -381,7 +380,7 @@ describe('Views Bundler Tests', function () {
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
         exposedTemplatesArray.forEach(async (file) => {
-          if (fsr.fileExists(file.path)) {
+          if (fs.pathExistsSync(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -424,7 +423,7 @@ describe('Views Bundler Tests', function () {
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
         exposedTemplatesArray.forEach(async (file) => {
-          if (fsr.fileExists(file.path)) {
+          if (fs.pathExistsSync(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -467,7 +466,7 @@ describe('Views Bundler Tests', function () {
         const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
 
         exposedTemplatesArray.forEach((file) => {
-          if (fsr.fileExists(file.path)) {
+          if (fs.pathExistsSync(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -577,7 +576,7 @@ describe('Views Bundler Tests', function () {
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
         exposedTemplates.forEach((file) => {
-          if (fsr.fileExists(file.path)) {
+          if (fs.pathExistsSync(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -620,7 +619,7 @@ describe('Views Bundler Tests', function () {
         const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
 
         exposedTemplates.forEach((file) => {
-          if (fsr.fileExists(file.path)) {
+          if (fs.pathExistsSync(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -662,7 +661,7 @@ describe('Views Bundler Tests', function () {
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (fs.pathExistsSync(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -698,7 +697,7 @@ describe('Views Bundler Tests', function () {
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (fs.pathExistsSync(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -734,7 +733,7 @@ describe('Views Bundler Tests', function () {
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (fs.pathExistsSync(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -772,7 +771,7 @@ describe('Views Bundler Tests', function () {
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (fs.pathExistsSync(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)

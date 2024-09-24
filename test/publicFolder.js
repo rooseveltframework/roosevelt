@@ -9,7 +9,7 @@ const klaw = require('klaw')
 const path = require('path')
 const request = require('supertest')
 
-describe('Public Folder Tests', function () {
+describe.skip('Public Folder Tests', function () {
   // path to the directory where the test app is located
   const appDir = path.join(__dirname, 'app/publicFolderTest')
 

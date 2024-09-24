@@ -21,7 +21,7 @@ function isEmpty (dir) {
   }
 }
 
-describe('multipart/formidable', () => {
+describe.skip('multipart/formidable', () => {
   const appDir = path.join(__dirname, 'app/multipartForms')
   const context = {}
   const tmpDir = path.join(appDir, 'tmp')

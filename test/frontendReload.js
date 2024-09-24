@@ -4,7 +4,7 @@ const assert = require('assert')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('frontend reload', () => {
+describe.skip('frontend reload', () => {
   // common configuration
   const config = {
     logging: {

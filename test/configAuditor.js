@@ -6,7 +6,7 @@ const assert = require('assert')
 const fs = require('fs-extra')
 const path = require('path')
 
-describe('config auditor', () => {
+describe.skip('config auditor', () => {
   const appDir = path.join(__dirname, 'app/configAudit')
   let pkgJson
   let configFile

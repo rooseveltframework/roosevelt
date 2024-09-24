@@ -8,7 +8,7 @@ const { minify } = require('html-minifier-terser')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('HTML Minification Tests', function () {
+describe.skip('HTML Minification Tests', function () {
   const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
     appDir,

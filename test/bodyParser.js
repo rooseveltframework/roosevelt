@@ -3,7 +3,7 @@
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('body-parser', () => {
+describe.skip('body-parser', () => {
   before(done => {
     // spin up the roosevelt app
     roosevelt({

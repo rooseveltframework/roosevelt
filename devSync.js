@@ -1,7 +1,7 @@
 const Logger = require('roosevelt-logger')
 const { Glob } = require('glob')
 const { execSync } = require('child_process')
-const fs = require('fs')
+const fs = require('fs-extra')
 const path = require('path')
 const prompts = require('prompts')
 const gitignoreScanner = require('./lib/tools/gitignoreScanner')
@@ -39,7 +39,7 @@ async function promptSetup (destDir) {
           if (closeCommands.includes(value.toLowerCase())) {
             fsClose()
           } else {
-            return fs.existsSync(value) ? true : 'value must be a valid path'
+            return fs.pathExistsSync(value) ? true : 'value must be a valid path'
           }
         }
       })
@@ -48,18 +48,18 @@ async function promptSetup (destDir) {
 
       // pass user to close in case they wish to stop the program
       fsClose(destDir)
-    } else if (!fs.existsSync(destDir)) { // destination doesn't exist
+    } else if (!fs.pathExistsSync(destDir)) { // destination doesn't exist
       fsError(`Provided path (${destDir}) doesn't exist.\n\n`)
     } else if (destDir === srcDir) { // destination is the same as source, log error
       fsError(`Destination path (${destDir}) is the same path as source path (${srcDir}). The destination must be a different directory than the source.`)
     } else { // destination found
-      const destinationPackage = fs.existsSync(`${destDir}/package.json`) && JSON.parse(fs.readFileSync(`${destDir}/package.json`, 'utf-8'))
+      const destinationPackage = fs.pathExistsSync(`${destDir}/package.json`) && JSON.parse(fs.readFileSync(`${destDir}/package.json`, 'utf-8'))
 
       // validate that destination is a roosevelt application
       const checks = [
         // is a node project
         {
-          result: fs.existsSync(`${destDir}/package.json`),
+          result: fs.pathExistsSync(`${destDir}/package.json`),
           errorMsg: 'The destination does not appear to be a NodeJS project.'
         },
         // has roosevelt as a dependency
@@ -69,7 +69,7 @@ async function promptSetup (destDir) {
         },
         // has node_modules/roosevelt/
         {
-          result: fs.existsSync(`${destDir}/node_modules/roosevelt/`),
+          result: fs.pathExistsSync(`${destDir}/node_modules/roosevelt/`),
           errorMsg: 'The destination does not appear to have a Roosevelt folder in the node_modules folder.'
         }
       ]

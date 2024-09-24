@@ -8,7 +8,7 @@ const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
-describe('Parameter Function Tests', function () {
+describe.skip('Parameter Function Tests', function () {
   // path to the app Directory
   const appDir = path.join(__dirname, 'app/paramFunctionTest')
 

@@ -3,7 +3,7 @@ const path = require('path')
 const template = require('../../lib/tools/templateLiteralRenderer')
 const errorPage = fs.readFileSync(path.join(__dirname, '../views/403.html'))
 
-module.exports = function (app, req, res) {
+module.exports = (app, req, res) => {
   const model = {
     url: req.url,
     mainDomain: req.headers['x-forwarded-host'] || req.headers.host,

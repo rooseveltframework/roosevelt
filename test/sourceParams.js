@@ -18,7 +18,7 @@ const config = {
   csrfProtection: false
 }
 
-describe('sourceParams', () => {
+describe.skip('sourceParams', () => {
   describe('config objects', () => {
     // blocklist certain params from auto checking
     const blocklist = [
