@@ -32,7 +32,7 @@
     "csrf-csrf": "3.0.6",
     "es6-template-strings": "2.0.1",
     "execa": "9.3.1",
-    "express": "4.20.0",
+    "express": "4.21.2",
     "express-html-validator": "0.2.4",
     "express-session": "1.18.0",
     "formidable": "3.5.1",
