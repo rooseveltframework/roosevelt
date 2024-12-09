@@ -35,7 +35,7 @@
     "express": "4.20.0",
     "express-html-validator": "0.2.4",
     "express-session": "1.18.0",
-    "formidable": "3.5.1",
+    "formidable": "3.5.2",
     "fs-extra": "11.2.0",
     "helmet": "7.1.0",
     "html-minifier-terser": "7.2.0",
