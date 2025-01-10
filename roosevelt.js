@@ -235,6 +235,8 @@ const roosevelt = (options = {}, schema) => {
 
     await require('./lib/preprocessCss')(app)
 
+    await require('./lib/viewsBundler')(app)
+
     await require('./lib/jsBundler')(app)
 
     if (app.get('env') === 'development' && params.htmlValidator.enable) {
@@ -254,8 +256,6 @@ const roosevelt = (options = {}, schema) => {
     })
 
     require('./lib/isomorphicControllersFinder')(app)
-
-    await require('./lib/viewsBundler')(app)
 
     if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
       await Promise.resolve(params.onStaticAssetsGenerated(app))
