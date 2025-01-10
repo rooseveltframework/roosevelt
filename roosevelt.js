@@ -98,6 +98,20 @@ const roosevelt = (options = {}, schema) => {
       }
     }
 
+    // assign individual keys to connections when opened so they can be destroyed gracefully
+    function mapConnections (conn) {
+      const key = conn.remoteAddress + ':' + conn.remotePort
+      connections[key] = conn
+
+      // once the connection closes, remove
+      conn.on('close', function () {
+        delete connections[key]
+        if (app.get('roosevelt:state') === 'disconnecting') {
+          Object.keys(connections).length === 0 && closeServer() // this will close the server if there are no connections
+        }
+      })
+    }
+
     // set up http server
     if (!params.https.force || !params.https.enable) {
       httpServer = require('http').Server(app)
@@ -375,28 +389,7 @@ const roosevelt = (options = {}, schema) => {
       closeServer()
     } else {
       // else do the normal procedure of seeing if there are still connections before closing
-      closeServerIfNoConnections()
-    }
-  }
-
-  // assign individual keys to connections when opened so they can be destroyed gracefully
-  function mapConnections (conn) {
-    const key = conn.remoteAddress + ':' + conn.remotePort
-    connections[key] = conn
-
-    // once the connection closes, remove
-    conn.on('close', function () {
-      delete connections[key]
-      if (app.get('roosevelt:state') === 'disconnecting') {
-        closeServerIfNoConnections()
-      }
-    })
-  }
-
-  function closeServerIfNoConnections () {
-    const connectionsAmount = Object.keys(connections)
-    if (connectionsAmount.length === 0) {
-      closeServer()
+      Object.keys(connections).length === 0 && closeServer() // this will close the server if there are no connections
     }
   }
 
