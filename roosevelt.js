@@ -212,11 +212,6 @@ const roosevelt = (options = {}, schema) => {
       else logger.warn(`Favicon ${params.favicon} does not exist. Please ensure the "favicon" param is configured correctly.`)
     }
 
-    // bind user-defined middleware which fires at the beginning of each request if supplied
-    if (params.onReqStart && typeof params.onReqStart === 'function') {
-      app.use(params.onReqStart)
-    }
-
     // configure express, express-session, and csrf
     require('./lib/setExpressConfigs')(app)
 
@@ -330,20 +325,23 @@ const roosevelt = (options = {}, schema) => {
     }
 
     if (params.makeBuildArtifacts !== 'staticsOnly') {
-      try {
-        if (!params.https.force || !params.https.enable) {
+      if (!params.https.force || !params.https.enable) {
+        try {
           await httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port))
-        }
-        if (params.https.enable) {
-          await httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port))
-        }
-      } catch (err) {
-        logger.error(err)
-        if (err.message.includes('EADDRINUSE')) {
-          // TODO: figure out how to tell which server crashes and print the correct port
+        } catch (err) {
+          logger.error(err)
           logger.error(`Another process is using port ${params.port}. Either kill that process or change this app's port number.`.bold)
+          process.exit(1)
         }
-        process.exit(1)
+      }
+      if (params.https.enable) {
+        try {
+          await httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port))
+        } catch (err) {
+          logger.error(err)
+          logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
+          process.exit(1)
+        }
       }
     }
 
@@ -410,9 +408,6 @@ const roosevelt = (options = {}, schema) => {
 
   return {
     expressApp: app,
-    // TODO: Since both of these server objects are stored in express variables we may be able to remove them from here
-    httpServer,
-    httpsServer,
     initServer,
     init: initServer,
     startServer,

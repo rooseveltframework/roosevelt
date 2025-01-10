@@ -1025,17 +1025,6 @@ require('roosevelt')({
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onAppExit(app)`: Fired when the app recieves a kill signal.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-- `onReqStart(req, res, next)`: Fired at the beginning of each new request.
-  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
-  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
-  - `next`: Callback to continue with the request. Must be called to continue the request.
-- `onReqBeforeRoute(req, res, next)`: Fired just before executing the controller.
-  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
-  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
-  - `next`: Callback to continue with the request. Must be called to continue the request.
-- `onReqAfterRoute(req, res)`: Fired after the request ends.
-  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
-  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client.
   - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc)
 
@@ -1312,12 +1301,12 @@ Additionally the Roosevelt constructor returns the following object:
 | Roosevelt constructor returned object members | Description                                                  |
 | ------------------------ | ------------------------------------------------------------ |
 | `expressApp`             | *[Object]* The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
-| `httpServer`             | *[Object]* The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. |
-| `httpsServer`            | *[Object]* The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. |
 | `initServer(callback)`   | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. Takes an optional callback. |
 | `init`                   | *[Method]* Shorthand for `initServer`. |
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
+| `start`                  | *[Method]* Shorthand for `startServer`. |
 | `stopServer(params)`     | *[Method]* Stops the server from accepting new connections before exiting and takes an optional argument `stopServer({persistProcess: true})` which will allow the process to remain active after the server has closed. |
+| `stop`                   | *[Method]* Shorthand for `stopServer`. |
 
 ## Supplying your own CSS preprocessor
 
