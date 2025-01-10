@@ -202,6 +202,11 @@ const roosevelt = (options = {}, schema) => {
     app.set('httpServer', httpServer)
     app.set('httpsServer', httpsServer)
 
+    // fire user-defined onBeforeMiddleware event
+    if (params.onBeforeMiddleware && typeof params.onBeforeMiddleware === 'function') {
+      await Promise.resolve(params.onBeforeMiddleware(app))
+    }
+
     // enable gzip compression
     app.use(require('compression')())
 
@@ -215,14 +220,7 @@ const roosevelt = (options = {}, schema) => {
     // configure express, express-session, and csrf
     require('./lib/setExpressConfigs')(app)
 
-    // fire user-defined onServerInit event
-    if (params.onServerInit && typeof params.onServerInit === 'function') {
-      await Promise.resolve(params.onServerInit(app))
-    }
-
     require('./lib/generateSymlinks')(app)
-
-    require('./lib/injectReload')(app)
 
     require('./lib/htmlMinifier')(app)
 
@@ -241,8 +239,10 @@ const roosevelt = (options = {}, schema) => {
       } catch { }
     }
 
+    require('./lib/injectReload')(app)
+
     // map routes
-    require('./lib/mapRoutes')(app)
+    await require('./lib/mapRoutes')(app)
 
     // custom error page
     app.use((err, req, res, next) => {
@@ -252,8 +252,9 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/isomorphicControllersFinder')(app)
 
-    if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
-      await Promise.resolve(params.onStaticAssetsGenerated(app))
+    // fire user-defined onServerInit event
+    if (params.onServerInit && typeof params.onServerInit === 'function') {
+      await Promise.resolve(params.onServerInit(app))
     }
   }
 
