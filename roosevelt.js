@@ -118,6 +118,21 @@ const roosevelt = (options = {}, schema) => {
         }
       }
 
+      function isCertString (stringToTest) {
+        let testString = stringToTest
+        if (typeof testString !== 'string') {
+          testString = testString.toString()
+        }
+        const lastChar = testString.substring(testString.length - 1)
+        // A file path string won't have an end of line character at the end
+        // Looking for either \n or \r allows for nearly any OS someone could
+        // use, and a few that node doesn't work on.
+        if (lastChar === '\n' || lastChar === '\r') {
+          return true
+        }
+        return false
+      }
+
       if (authInfoPath) {
         if (authInfoPath.p12?.p12Path) {
           // if the string ends with a dot and 3 alphanumeric characters (including _)
@@ -234,35 +249,71 @@ const roosevelt = (options = {}, schema) => {
     await require('./lib/viewsBundler')(app)
   }
 
-  function startReloadServer (proto, server) {
-    const reload = require('reload')
-    const config = {
-      verbose: !!params.logging.methods.verbose,
-      webSocketServerWaitStart: true
-    }
-
-    if (proto === 'HTTP') {
-      config.route = '/reloadHttp'
-      config.port = params.frontendReload.port
-    } else {
-      config.route = '/reloadHttps'
-      config.port = params.frontendReload.httpsPort
-      config.forceWss = false // lets this work in self-signed cert situations
-      config.https = {
-        p12: server.pfx,
-        certAndKey: {
-          cert: server.cert,
-          key: server.key
-        },
-        passphrase: server.passphrase
-      }
-    }
-
-    return reload(router, config)
-  }
-
   async function startServer () {
     await initServer()
+
+    function startupCallback (proto, port) {
+      async function startReloadServer (proto, server) {
+        const reload = require('reload')
+        const config = {
+          verbose: !!params.logging.methods.verbose,
+          webSocketServerWaitStart: true
+        }
+
+        if (proto === 'HTTP') {
+          config.route = '/reloadHttp'
+          config.port = params.frontendReload.port
+        } else {
+          config.route = '/reloadHttps'
+          config.port = params.frontendReload.httpsPort
+          config.forceWss = false // lets this work in self-signed cert situations
+          config.https = {
+            p12: server.pfx,
+            certAndKey: {
+              cert: server.cert,
+              key: server.key
+            },
+            passphrase: server.passphrase
+          }
+        }
+
+        return reload(router, config)
+      }
+
+      return async function () {
+        // spin up reload http(s) service if enabled in dev mode
+        if (appEnv === 'development' && params.frontendReload.enable === true) {
+          let reloadServer
+          const config = params.frontendReload
+
+          // get reload ready and bind instance to express variable
+          if (proto === 'HTTP') {
+            reloadServer = await startReloadServer(proto)
+            app.set('reloadHttpServer', reloadServer)
+          } else {
+            reloadServer = await startReloadServer(proto, httpsServer)
+            app.set('reloadHttpsServer', reloadServer)
+          }
+
+          // spin up the reload server
+          await reloadServer.startWebSocketServer()
+          logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
+        }
+
+        logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
+        if (params.localhostOnly) {
+          logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
+        }
+        if (!params.hostPublic) {
+          logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
+        }
+
+        // fire user-defined onServerStart event
+        if (params.onServerStart && typeof params.onServerStart === 'function') {
+          params.onServerStart(app)
+        }
+      }
+    }
 
     if (params.makeBuildArtifacts !== 'staticsOnly') {
       try {
@@ -284,42 +335,6 @@ const roosevelt = (options = {}, schema) => {
 
     process.on('SIGTERM', shutdownGracefully)
     process.on('SIGINT', shutdownGracefully)
-  }
-
-  function startupCallback (proto, port) {
-    return async function () {
-      // spin up reload http(s) service if enabled in dev mode
-      if (appEnv === 'development' && params.frontendReload.enable === true) {
-        let reloadServer
-        const config = params.frontendReload
-
-        // get reload ready and bind instance to express variable
-        if (proto === 'HTTP') {
-          reloadServer = await startReloadServer(proto)
-          app.set('reloadHttpServer', reloadServer)
-        } else {
-          reloadServer = await startReloadServer(proto, httpsServer)
-          app.set('reloadHttpsServer', reloadServer)
-        }
-
-        // spin up the reload server
-        await reloadServer.startWebSocketServer()
-        logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
-      }
-
-      logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
-      if (params.localhostOnly) {
-        logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
-      }
-      if (!params.hostPublic) {
-        logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
-      }
-
-      // fire user-defined onServerStart event
-      if (params.onServerStart && typeof params.onServerStart === 'function') {
-        params.onServerStart(app)
-      }
-    }
   }
 
   // shut down all servers, connections and threads that the roosevelt app is using
@@ -398,21 +413,6 @@ const roosevelt = (options = {}, schema) => {
     } else {
       process.exit()
     }
-  }
-
-  function isCertString (stringToTest) {
-    let testString = stringToTest
-    if (typeof testString !== 'string') {
-      testString = testString.toString()
-    }
-    const lastChar = testString.substring(testString.length - 1)
-    // A file path string won't have an end of line character at the end
-    // Looking for either \n or \r allows for nearly any OS someone could
-    // use, and a few that node doesn't work on.
-    if (lastChar === '\n' || lastChar === '\r') {
-      return true
-    }
-    return false
   }
 
   return {
