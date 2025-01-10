@@ -239,7 +239,6 @@ const roosevelt = (options = {}, schema) => {
 
     if (app.get('env') === 'development' && params.htmlValidator.enable) {
       // instantiate the validator if it's installed
-      // TODO: why is this wrapped in a try/catch?
       try {
         require('express-html-validator')(app, params.htmlValidator)
       } catch { }
@@ -254,18 +253,19 @@ const roosevelt = (options = {}, schema) => {
       require(params.errorPages.internalServerError)(app, err, req, res)
     })
 
-    if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
-      params.onStaticAssetsGenerated(app)
-    }
-
     require('./lib/isomorphicControllersFinder')(app)
 
     await require('./lib/viewsBundler')(app)
+
+    if (params.onStaticAssetsGenerated && typeof params.onStaticAssetsGenerated === 'function') {
+      await Promise.resolve(params.onStaticAssetsGenerated(app))
+    }
   }
 
   async function startServer () {
     await initServer()
 
+    // code that executes after the server starts
     function startupCallback (proto, port) {
       async function startReloadServer (proto, server) {
         const reload = require('reload')
@@ -324,7 +324,7 @@ const roosevelt = (options = {}, schema) => {
 
         // fire user-defined onServerStart event
         if (params.onServerStart && typeof params.onServerStart === 'function') {
-          params.onServerStart(app)
+          Promise.resolve(params.onServerStart(app))
         }
       }
     }
