@@ -250,7 +250,7 @@ const roosevelt = (options = {}, schema) => {
       require(params.errorPages.internalServerError)(app, err, req, res)
     })
 
-    require('./lib/isomorphicControllersFinder')(app)
+    await require('./lib/isomorphicControllersFinder')(app)
 
     // fire user-defined onServerInit event
     if (params.onServerInit && typeof params.onServerInit === 'function') {

@@ -4,7 +4,7 @@
 const appCleaner = require('./util/appCleaner')
 const assert = require('assert')
 const fs = require('fs-extra')
-const klawSync = require('klaw-sync')
+const { walk } = require('@nodelib/fs.walk/promises')
 const path = require('path')
 
 describe.skip('file creation', () => {
@@ -84,9 +84,9 @@ describe.skip('file creation', () => {
       }
     })
 
-    app.initServer(() => {
+    app.initServer(async () => {
       // check that the app directory is empty
-      assert.deepStrictEqual(klawSync(appDir).length, 0, 'Files were improperly generated')
+      assert.deepStrictEqual((await walk(appDir)).length, 0, 'Files were improperly generated')
 
       done()
     })
