@@ -403,24 +403,23 @@ Resolves to:
     - `port`: The port your app will run the HTTPS server on.
       - Default: *[Number]* `43733`.
   - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
-      - Default: *[Boolean]* `false`.
+    - Default: *[Boolean]* `false`.
   - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
     - Default: *[Boolean]* `true`.
   - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-      - Default: *[Object]* `undefined`.
+    - Default: *[Object]* `undefined`.
     - Object members:
-        - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
-          - Default: *[Object]* `undefined`.
-          - Object members:
-            - `p12Path`: *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
-              - Default: `undefined`.
-        - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
-          - Object members:
-            - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
-              - Default: `undefined`.
-
-            - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-              - Default: `undefined`.
+      - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
+        - Default: *[Object]* `undefined`.
+        - Object members:
+          - `p12Path`: *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
+            - Default: `undefined`.
+      - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
+        - Object members:
+          - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
+            - Default: `undefined`.
+          - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+            - Default: `undefined`.
   - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
     - Default: `undefined`.
   - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
@@ -632,6 +631,8 @@ Resolves to:
 ### Isomorphic parameters
 
 - `clientViews`: *[Object]* Allows you to expose view (template) file code to frontend JS for client-side templating.
+
+  - `enable`: *[Boolean]* Whether or not to bundle view files.
 
   - `exposeAll`: *[Boolean]* Option to expose all templates.
 

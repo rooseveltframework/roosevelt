@@ -3,10 +3,10 @@
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe.skip('body-parser', () => {
-  before(done => {
+describe('body-parser', () => {
+  before(async () => {
     // spin up the roosevelt app
-    roosevelt({
+    const rooseveltApp = roosevelt({
       makeBuildArtifacts: false,
       port: 40000,
       csrfProtection: false,
@@ -30,19 +30,18 @@ describe.skip('body-parser', () => {
         json: {
           limit: 10
         }
-      },
-      onServerStart: app => {
-        // open up simple post route
-        app.route('/bodyParser').post((req, res) => {
-          res.send('done')
-        })
-
-        // bind app to test context
-        context.app = app
-
-        done()
       }
-    }).startServer()
+    })
+
+    await rooseveltApp.startServer()
+
+    // open up simple post route
+    rooseveltApp.expressApp.route('/bodyParser').post((req, res) => {
+      res.send('done')
+    })
+
+    // bind app to test context
+    context.app = rooseveltApp.expressApp
   })
 
   after(done => {

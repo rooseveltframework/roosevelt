@@ -6,24 +6,23 @@ const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
-const request = require('supertest')
 
-describe.skip('Parameter Function Tests', function () {
+// TODO: Figure out why all these tests are failing, also add/remove tests to account for new/removed events
+describe.skip('Parameter Function Tests', () => {
   // path to the app Directory
   const appDir = path.join(__dirname, 'app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
-  beforeEach(function (done) {
+  beforeEach(() => {
     // start by copying the alreadly made mvc directory into the app directory
     fs.copySync(path.join(__dirname, 'util/mvc'), path.join(appDir, 'mvc'))
-    done()
   })
 
   // delete the test app Directory and start with a clean state after each test
-  afterEach(function (done) {
-    cleanupTestApp(appDir, (err) => {
+  afterEach(done => {
+    cleanupTestApp(appDir, err => {
       if (err) {
         throw err
       } else {
@@ -32,7 +31,7 @@ describe.skip('Parameter Function Tests', function () {
     })
   })
 
-  it('should execute what is in onServerInit', function (done) {
+  it('should execute what is in onServerInit', done => {
     // bool vars to hold whether or not the app had returned what is given to them, and if we can access the server
     let serverInitLogBool = false
     let messageCounter = 0
@@ -51,7 +50,7 @@ describe.skip('Parameter Function Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server has finished initialization, try to access the server or see if the message is the word that is suppose to be given back
-    testApp.on('message', (message) => {
+    testApp.on('message', message => {
       messageCounter++
       if (message === 'something') {
         serverInitLogBool = true
@@ -68,7 +67,7 @@ describe.skip('Parameter Function Tests', function () {
     })
   })
 
-  it('should execute onAppExit', function (done) {
+  it('should execute onAppExit', done => {
     let serverExitBool
     options.method = 'initServer'
 
@@ -84,7 +83,7 @@ describe.skip('Parameter Function Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the server has finished initialization, try to access the server or see if the message is the word that is suppose to be given back
-    testApp.on('message', (message) => {
+    testApp.on('message', message => {
       if (message === 'the big exit') {
         serverExitBool = true
       } else {
@@ -99,7 +98,7 @@ describe.skip('Parameter Function Tests', function () {
     })
   })
 
-  it('should throw an error if there is a controller that is not coded properly in the mvc', function (done) {
+  it('should throw an error if there is a controller that is not coded properly in the mvc', done => {
     // bool var to hold whether or not the controller errors logs are outputted
     let controllerErrorLogBool = false
 
@@ -136,7 +135,7 @@ describe.skip('Parameter Function Tests', function () {
     })
   })
 
-  it('should throw an error if there is a syntax error with the 404 custom error page that is passed in', function (done) {
+  it('should throw an error if there is a syntax error with the 404 custom error page that is passed in', done => {
     // bool var to hold whether or not the 404 load error was logged
     let error404LoadLogBool = false
 
@@ -158,7 +157,7 @@ describe.skip('Parameter Function Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // check the error logs to see if the 404 load error was outputted
-    testApp.stderr.on('data', (data) => {
+    testApp.stderr.on('data', data => {
       if (data.includes('failed to load 404 controller file')) {
         error404LoadLogBool = true
       }
@@ -176,7 +175,7 @@ describe.skip('Parameter Function Tests', function () {
     })
   })
 
-  it('should skip over elements that are not files when loading in controllers', function (done) {
+  it('should skip over elements that are not files when loading in controllers', done => {
     // reference list of routes to compare against
     const referenceRoutes = [
       '/controller1',
@@ -201,7 +200,7 @@ describe.skip('Parameter Function Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is finished with its initialization, kill it
-    testApp.on('message', (routes) => {
+    testApp.on('message', routes => {
       // check that routes in controllers have been populated in the app
       assert(routes.length > 0)
 

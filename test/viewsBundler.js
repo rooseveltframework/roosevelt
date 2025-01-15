@@ -17,7 +17,8 @@ const minifyOptions = {
   removeEmptyAttributes: true
 }
 
-describe.skip('Views Bundler Tests', function () {
+// TODO: The test app generator needs a heavy refactor to make these tests work
+describe.skip('Views Bundler Tests', () => {
   const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
@@ -60,7 +61,7 @@ describe.skip('Views Bundler Tests', function () {
 
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
-  beforeEach(function () {
+  beforeEach(() => {
     fs.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
 
     for (let i = 0; i < pathOfTemplates.length; i++) {
@@ -68,7 +69,7 @@ describe.skip('Views Bundler Tests', function () {
     }
   })
 
-  afterEach(function (done) {
+  afterEach(done => {
     cleanupTestApp(appDir, err => {
       if (err) {
         throw err
@@ -78,7 +79,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should properly expose template files in an allowlist', function (done) {
+  it('should properly expose template files in an allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -105,7 +106,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should add .html to a template that doesn\'t have an extension', function (done) {
+  it('should add .html to a template that doesn\'t have an extension', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -131,7 +132,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there are no items in the allowlist', function (done) {
+  it('should not create a templates folder if there are no items in the allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {},
@@ -154,7 +155,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if makeBuildArtifacts is false', function (done) {
+  it('should not create a templates folder if makeBuildArtifacts is false', done => {
     generateTestApp({
       appDir,
       clientViews: {},
@@ -177,7 +178,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there is bundles without any contents', function (done) {
+  it('should not create a templates folder if there is bundles without any contents', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -204,7 +205,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there is a bundle that is null', function (done) {
+  it('should not create a templates folder if there is a bundle that is null', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -231,7 +232,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should send an error to the console with an nonexistent template', function (done) {
+  it('should send an error to the console with an nonexistent template', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -258,7 +259,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should skip a file if it is in the allowlist but has a <!-- roosevelt-blocklist --> tag', function (done) {
+  it('should skip a file if it is in the allowlist but has a <!-- roosevelt-blocklist --> tag', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -285,7 +286,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should save a file to a specific location when the output folder option is modified', function (done) {
+  it('should save a file to a specific location when the output folder option is modified', done => {
     const customPathArray = [
       path.join(appDir, 'public/js/output.js')
     ]
@@ -316,7 +317,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should minify a template when the minify param is enabled', function (done) {
+  it('should minify a template when the minify param is enabled', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -358,7 +359,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should not minify templates when it the param is disabled', function (done) {
+  it('should not minify templates when it the param is disabled', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -400,7 +401,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should accept minify options', function (done) {
+  it('should accept minify options', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -443,7 +444,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to preprocess templates', function (done) {
+  it('should be able to preprocess templates', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -486,7 +487,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to skip exposing files in the exposeAll step when already in allowlist', function (done) {
+  it('should be able to skip exposing files in the exposeAll step when already in allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -518,7 +519,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should save a file that has an allowlist defined both in roosevelt args and the template to the location defined in the template', function (done) {
+  it('should save a file that has an allowlist defined both in roosevelt args and the template to the location defined in the template', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -554,7 +555,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to include a blocklist', function (done) {
+  it('should be able to include a blocklist', done => {
     const blocklist = ['bad.html']
 
     generateTestApp({
@@ -598,7 +599,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to blocklist files with a <!-- roosevelt-blocklist --> tag at the top of the file', function (done) {
+  it('should be able to blocklist files with a <!-- roosevelt-blocklist --> tag at the top of the file', done => {
     const blocklist = ['bad.html']
 
     generateTestApp({
@@ -641,7 +642,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should save allowlisted files with a <!-- roosevelt-allowlist --> tag to the proper location', function (done) {
+  it('should save allowlisted files with a <!-- roosevelt-allowlist --> tag to the proper location', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -677,7 +678,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should save allowlisted files without a <!-- roosevelt-allowlist --> tag to the default location', function (done) {
+  it('should save allowlisted files without a <!-- roosevelt-allowlist --> tag to the default location', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -714,7 +715,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should include nested files when using exposeAll', function (done) {
+  it('should include nested files when using exposeAll', done => {
     generateTestApp({
       appDir,
       clientViews: {
@@ -750,7 +751,7 @@ describe.skip('Views Bundler Tests', function () {
     })
   })
 
-  it('should include all files within a directory in allowlist', function (done) {
+  it('should include all files within a directory in allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {

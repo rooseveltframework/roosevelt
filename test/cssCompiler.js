@@ -10,7 +10,7 @@ const roosevelt = require('../roosevelt')
 const sass = require('sass')
 const stylus = require('stylus')
 
-describe.skip('css preprocessors', () => {
+describe('css preprocessors', () => {
   const appDir = path.join(__dirname, 'app/css')
   const appConfig = {
     logging: {
@@ -70,7 +70,7 @@ describe.skip('css preprocessors', () => {
       })()
     })
 
-    it('should compile all static css files including subdirectories', done => {
+    it('should compile all static css files including subdirectories', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -86,16 +86,14 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/file1.css')))
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/file2.css')))
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/import/file3.css')))
+      await app.initServer()
 
-        done()
-      })
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/file1.css')))
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/file2.css')))
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/import/file3.css')))
     })
 
-    it('should only compile static css files in the allowlist', done => {
+    it('should only compile static css files in the allowlist', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -115,16 +113,14 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/file1.css')))
-        assert(!fs.pathExistsSync(path.join(appDir, 'public/css/file2.css')))
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/import/file3.css')))
+      await app.initServer()
 
-        done()
-      })
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/file1.css')))
+      assert(!fs.pathExistsSync(path.join(appDir, 'public/css/file2.css')))
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/import/file3.css')))
     })
 
-    it('should compile css files in the allowlist with alt destinations set', done => {
+    it('should compile css files in the allowlist with alt destinations set', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -144,15 +140,13 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/compile/main.css')))
-        assert(fs.pathExistsSync(path.join(appDir, 'public/css/styles.css')))
+      await app.initServer()
 
-        done()
-      })
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/compile/main.css')))
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/styles.css')))
     })
 
-    it('should minify css in prod mode when enabled', done => {
+    it('should minify css in prod mode when enabled', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -168,27 +162,25 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // get contents of built files
-        const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
-        const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
-        const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
+      await app.initServer()
 
-        // manually minify each file
-        const clean1 = new CleanCSS().minify(file1).styles
-        const clean2 = new CleanCSS().minify(file2).styles
-        const clean3 = new CleanCSS().minify(file3).styles
+      // get contents of built files
+      const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
+      const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
+      const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-        // compare them
-        assert.deepStrictEqual(output1, clean1)
-        assert.deepStrictEqual(output2, clean2)
-        assert.deepStrictEqual(output3, clean3)
+      // manually minify each file
+      const clean1 = new CleanCSS().minify(file1).styles
+      const clean2 = new CleanCSS().minify(file2).styles
+      const clean3 = new CleanCSS().minify(file3).styles
 
-        done()
-      })
+      // compare them
+      assert.deepStrictEqual(output1, clean1)
+      assert.deepStrictEqual(output2, clean2)
+      assert.deepStrictEqual(output3, clean3)
     })
 
-    it('should disable minification in dev mode', done => {
+    it('should disable minification in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -204,27 +196,25 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // get contents of built files
-        const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
-        const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
-        const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
+      await app.initServer()
 
-        // manually minify each file
-        const clean1 = new CleanCSS().minify(file1).styles
-        const clean2 = new CleanCSS().minify(file2).styles
-        const clean3 = new CleanCSS().minify(file3).styles
+      // get contents of built files
+      const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
+      const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
+      const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-        // compare them
-        assert.notDeepStrictEqual(output1, clean1)
-        assert.notDeepStrictEqual(output2, clean2)
-        assert.notDeepStrictEqual(output3, clean3)
+      // manually minify each file
+      const clean1 = new CleanCSS().minify(file1).styles
+      const clean2 = new CleanCSS().minify(file2).styles
+      const clean3 = new CleanCSS().minify(file3).styles
 
-        done()
-      })
+      // compare them
+      assert.notDeepStrictEqual(output1, clean1)
+      assert.notDeepStrictEqual(output2, clean2)
+      assert.notDeepStrictEqual(output3, clean3)
     })
 
-    it('should disable minification when minify: false', done => {
+    it('should disable minification when minify: false', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -241,27 +231,25 @@ describe.skip('css preprocessors', () => {
         minify: false
       })
 
-      app.initServer(async () => {
-        // get contents of built files
-        const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
-        const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
-        const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
+      await app.initServer()
 
-        // manually minify each file
-        const clean1 = new CleanCSS().minify(file1).styles
-        const clean2 = new CleanCSS().minify(file2).styles
-        const clean3 = new CleanCSS().minify(file3).styles
+      // get contents of built files
+      const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
+      const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
+      const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-        // compare them
-        assert.notDeepStrictEqual(output1, clean1)
-        assert.notDeepStrictEqual(output2, clean2)
-        assert.notDeepStrictEqual(output3, clean3)
+      // manually minify each file
+      const clean1 = new CleanCSS().minify(file1).styles
+      const clean2 = new CleanCSS().minify(file2).styles
+      const clean3 = new CleanCSS().minify(file3).styles
 
-        done()
-      })
+      // compare them
+      assert.notDeepStrictEqual(output1, clean1)
+      assert.notDeepStrictEqual(output2, clean2)
+      assert.notDeepStrictEqual(output3, clean3)
     })
 
-    it('should disable minification when css.minifier.enable: false', done => {
+    it('should disable minification when css.minifier.enable: false', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -277,27 +265,25 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // get contents of built files
-        const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
-        const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
-        const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
+      await app.initServer()
 
-        // manually minify each file
-        const clean1 = new CleanCSS().minify(file1).styles
-        const clean2 = new CleanCSS().minify(file2).styles
-        const clean3 = new CleanCSS().minify(file3).styles
+      // get contents of built files
+      const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
+      const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
+      const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-        // compare them
-        assert.notDeepStrictEqual(output1, clean1)
-        assert.notDeepStrictEqual(output2, clean2)
-        assert.notDeepStrictEqual(output3, clean3)
+      // manually minify each file
+      const clean1 = new CleanCSS().minify(file1).styles
+      const clean2 = new CleanCSS().minify(file2).styles
+      const clean3 = new CleanCSS().minify(file3).styles
 
-        done()
-      })
+      // compare them
+      assert.notDeepStrictEqual(output1, clean1)
+      assert.notDeepStrictEqual(output2, clean2)
+      assert.notDeepStrictEqual(output3, clean3)
     })
 
-    it('should use custom css compiler method', done => {
+    it('should use custom css compiler method', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -328,20 +314,18 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // get contents of built files
-        const versionFile = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'))
-        const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
-        const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
-        const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
+      await app.initServer()
 
-        assert(versionFile.includes('@coolAppVersion: 0.2.0'))
-        assert.deepStrictEqual(output1, path.join(appDir, 'statics/css/file1.less'))
-        assert.deepStrictEqual(output2, path.join(appDir, 'statics/css/file2.less'))
-        assert.deepStrictEqual(output3, path.join(appDir, 'statics/css/import/file3.less'))
+      // get contents of built files
+      const versionFile = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'))
+      const output1 = fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8')
+      const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
+      const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-        done()
-      })
+      assert(versionFile.includes('@coolAppVersion: 0.2.0'))
+      assert.deepStrictEqual(output1, path.join(appDir, 'statics/css/file1.less'))
+      assert.deepStrictEqual(output2, path.join(appDir, 'statics/css/file2.less'))
+      assert.deepStrictEqual(output3, path.join(appDir, 'statics/css/import/file3.less'))
     })
   })
 
@@ -385,7 +369,7 @@ describe.skip('css preprocessors', () => {
       })()
     })
 
-    it('should compile less source file', done => {
+    it('should compile less source file', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -401,31 +385,17 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // manually render less file
-        const lessOutput = await renderFile()
-        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      await app.initServer()
 
-        // compare manual render with roosevelt output file
-        assert.deepStrictEqual(lessOutput, buildOutput)
+      // manually render less file
+      const lessOutput = await less.render(lessString, {})
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
-        done()
-      })
-
-      function renderFile () {
-        return new Promise(resolve => {
-          less.render(lessString, {}, (err, output) => {
-            if (err) {
-              throw err
-            }
-
-            resolve(output.css)
-          })
-        })
-      }
+      // compare manual render with roosevelt output file
+      assert.deepStrictEqual(lessOutput.css, buildOutput)
     })
 
-    it('should enable inline sourcemaps in dev mode', done => {
+    it('should enable inline sourcemaps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -441,17 +411,15 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      await app.initServer()
 
-        // check that the build file includes a source map
-        assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
-        done()
-      })
+      // check that the build file includes a source map
+      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
     })
 
-    it('should write a version file when enabled', done => {
+    it('should write a version file when enabled', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -471,14 +439,12 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        const buildOutput = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
+      await app.initServer()
 
-        // check that a version file with the correct version code is generated
-        assert(buildOutput.includes('@appVersion: \'0.3.1\''), 'version file was not properly generated')
+      const buildOutput = fs.readFileSync(path.join(appDir, 'statics/css/_version.less'), 'utf8')
 
-        done()
-      })
+      // check that a version file with the correct version code is generated
+      assert(buildOutput.includes('@appVersion: \'0.3.1\''), 'version file was not properly generated')
     })
   })
 
@@ -513,16 +479,12 @@ describe.skip('css preprocessors', () => {
       fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', rooseveltConfig: {} })
     })
 
-    afterEach(done => {
-      (async () => {
-        // wipe out the test app directory
-        await appCleaner('css')
-
-        done()
-      })()
+    afterEach(async () => {
+      // wipe out the test app directory
+      await appCleaner('css')
     })
 
-    it('should compile scss source file', done => {
+    it('should compile scss source file', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -538,31 +500,17 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // manually render less file
-        const scssOutput = await renderFile()
-        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      await app.initServer()
 
-        // compare manual render with roosevelt output file
-        assert.deepStrictEqual(scssOutput.toString(), buildOutput)
+      // manually render sass file
+      const scssOutput = sass.renderSync({ data: scssString })
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
-        done()
-      })
-
-      function renderFile () {
-        return new Promise(resolve => {
-          sass.render({ data: scssString }, (err, output) => {
-            if (err) {
-              throw err
-            }
-
-            resolve(output.css)
-          })
-        })
-      }
+      // compare manual render with roosevelt output file
+      assert.deepStrictEqual(scssOutput.css.toString(), buildOutput)
     })
 
-    it('should enable inline sourcemaps in dev mode', done => {
+    it('should enable inline sourcemaps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -578,17 +526,15 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      await app.initServer()
 
-        // check that the build file includes a source map
-        assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
-        done()
-      })
+      // check that the build file includes a source map
+      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
     })
 
-    it('should write a version file when enabled', done => {
+    it('should write a version file when enabled', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -608,14 +554,12 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        const buildOutput = fs.readFileSync(path.join(appDir, 'statics/css/_version.scss'), 'utf8')
+      await app.initServer()
 
-        // check that a version file with the correct version code is generated
-        assert(buildOutput.includes('$appVersion: \'0.3.1\''), 'version file was not properly generated')
+      const buildOutput = fs.readFileSync(path.join(appDir, 'statics/css/_version.scss'), 'utf8')
 
-        done()
-      })
+      // check that a version file with the correct version code is generated
+      assert(buildOutput.includes('$appVersion: \'0.3.1\''), 'version file was not properly generated')
     })
   })
 
@@ -644,16 +588,12 @@ describe.skip('css preprocessors', () => {
       fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', rooseveltConfig: {} })
     })
 
-    afterEach(done => {
-      (async () => {
-        // wipe out the test app directory
-        await appCleaner('css')
-
-        done()
-      })()
+    afterEach(async () => {
+      // wipe out the test app directory
+      await appCleaner('css')
     })
 
-    it('should compile styl source file', done => {
+    it('should compile styl source file', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'production',
@@ -669,16 +609,14 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        // manually render less file
-        const stylusOutput = await renderFile()
-        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      await app.initServer()
 
-        // compare manual render with roosevelt output file
-        assert.deepStrictEqual(stylusOutput.toString(), buildOutput)
+      // manually render less file
+      const stylusOutput = await renderFile()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
-        done()
-      })
+      // compare manual render with roosevelt output file
+      assert.deepStrictEqual(stylusOutput.toString(), buildOutput)
 
       function renderFile () {
         return new Promise(resolve => {
@@ -693,7 +631,7 @@ describe.skip('css preprocessors', () => {
       }
     })
 
-    it('should enable inline sourcemaps in dev mode', done => {
+    it('should enable inline sourcemaps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -709,17 +647,15 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      await app.initServer()
 
-        // check that the build file includes a source map
-        assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
-        done()
-      })
+      // check that the build file includes a source map
+      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
     })
 
-    it('should write a version file when enabled', done => {
+    it('should write a version file when enabled', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -739,14 +675,12 @@ describe.skip('css preprocessors', () => {
         }
       })
 
-      app.initServer(async () => {
-        const buildOutput = fs.readFileSync(path.join(appDir, 'statics/css/_version.styl'), 'utf8')
+      await app.initServer()
 
-        // check that a version file with the correct version code is generated
-        assert(buildOutput.includes('appVersion = \'0.3.1\''), 'version file was not properly generated')
+      const buildOutput = fs.readFileSync(path.join(appDir, 'statics/css/_version.styl'), 'utf8')
 
-        done()
-      })
+      // check that a version file with the correct version code is generated
+      assert(buildOutput.includes('appVersion = \'0.3.1\''), 'version file was not properly generated')
     })
   })
 })

@@ -18,6 +18,7 @@ const config = {
   csrfProtection: false
 }
 
+// TODO: Figure out why most of these tests are failing
 describe.skip('sourceParams', () => {
   describe('config objects', () => {
     // blocklist certain params from auto checking
@@ -33,13 +34,9 @@ describe.skip('sourceParams', () => {
       'unversionedPublic'
     ]
 
-    afterEach(done => {
-      (async () => {
-        // wipe out the test app directory
-        await appCleaner('sourceParams')
-
-        done()
-      })()
+    afterEach(async () => {
+      // wipe out the test app directory
+      await appCleaner('sourceParams')
     })
 
     it('should set params from package.json', () => {

@@ -7,7 +7,7 @@ const fs = require('fs-extra')
 const { walk } = require('@nodelib/fs.walk/promises')
 const path = require('path')
 
-describe.skip('file creation', () => {
+describe('file creation', () => {
   const appDir = path.join(__dirname, 'app/dirStructure')
 
   afterEach(async () => {
@@ -15,7 +15,7 @@ describe.skip('file creation', () => {
     await appCleaner('dirStructure')
   })
 
-  it('should generate several directories at runtime', done => {
+  it('should generate several directories at runtime', async () => {
     fs.ensureDirSync(appDir)
 
     // spin up an app configured to make lots of folders
@@ -45,19 +45,17 @@ describe.skip('file creation', () => {
       }
     })
 
-    app.initServer(() => {
-      // check that each configured directory exists
-      assert(fs.lstatSync(path.join(appDir, 'mvc/views')).isDirectory(), 'viewsPath was not properly generated')
-      assert(fs.lstatSync(path.join(appDir, 'mvc/models')).isDirectory(), 'modelsPath was not properly generated')
-      assert(fs.lstatSync(path.join(appDir, 'mvc/controllers')).isDirectory(), 'controllersPath was not properly generated')
-      assert(fs.lstatSync(path.join(appDir, 'public/css')).isDirectory(), 'css output was not properly generated')
-      assert(fs.lstatSync(path.join(appDir, 'statics/css')).isDirectory(), 'css sourcePath was not properly generated')
+    await app.initServer()
 
-      done()
-    })
+    // check that each configured directory exists
+    assert(fs.lstatSync(path.join(appDir, 'mvc/views')).isDirectory(), 'viewsPath was not properly generated')
+    assert(fs.lstatSync(path.join(appDir, 'mvc/models')).isDirectory(), 'modelsPath was not properly generated')
+    assert(fs.lstatSync(path.join(appDir, 'mvc/controllers')).isDirectory(), 'controllersPath was not properly generated')
+    assert(fs.lstatSync(path.join(appDir, 'public/css')).isDirectory(), 'css output was not properly generated')
+    assert(fs.lstatSync(path.join(appDir, 'statics/css')).isDirectory(), 'css sourcePath was not properly generated')
   })
 
-  it('should not generate any files when makeBuildArtifacts is false', done => {
+  it('should not generate any files when makeBuildArtifacts is false', async () => {
     fs.ensureDirSync(appDir)
 
     // spin up an app
@@ -84,15 +82,13 @@ describe.skip('file creation', () => {
       }
     })
 
-    app.initServer(async () => {
-      // check that the app directory is empty
-      assert.deepStrictEqual((await walk(appDir)).length, 0, 'Files were improperly generated')
+    await app.initServer()
 
-      done()
-    })
+    // check that the app directory is empty
+    assert.deepStrictEqual((await walk(appDir)).length, 0, 'Files were improperly generated')
   })
 
-  it('should generate a variety of symlinks', done => {
+  it('should generate a variety of symlinks', async () => {
     // generate app directory
     fs.ensureDirSync(appDir)
 
@@ -149,19 +145,17 @@ describe.skip('file creation', () => {
       ]
     })
 
-    app.initServer(() => {
-      // check that only the expected symlinks were generated
-      assert(fs.lstatSync(path.join(appDir, 'statics/images')).isSymbolicLink(), 'Directory symlink not generated')
-      assert(fs.lstatSync(path.join(appDir, 'public/0.2.1/images')).isSymbolicLink(), 'Directory symlink not generated in versioned public folder')
+    await app.initServer()
 
-      if (process.platform === 'win32') assert(fs.pathExistsSync(path.join(appDir, 'extras/something.json')))
-      else assert(fs.lstatSync(path.join(appDir, 'extras/something.json')).isSymbolicLink(), 'File symlink not generated')
+    // check that only the expected symlinks were generated
+    assert(fs.lstatSync(path.join(appDir, 'statics/images')).isSymbolicLink(), 'Directory symlink not generated')
+    assert(fs.lstatSync(path.join(appDir, 'public/0.2.1/images')).isSymbolicLink(), 'Directory symlink not generated in versioned public folder')
 
-      assert(!fs.lstatSync(path.join(appDir, 'safeDir')).isSymbolicLink(), 'Symlink overwrote pre-existing directory')
-      assert.deepStrictEqual(require(path.join(appDir, 'goodies/safeFile.json')), { shouldBe: 'safe' }, 'Symlink overwrote pre-existing file')
-      assert(!fs.pathExistsSync(path.join(appDir, 'goodies/nothing.json')), 'Symlink generated pointing to a source that doesn\'t exist')
+    if (process.platform === 'win32') assert(fs.pathExistsSync(path.join(appDir, 'extras/something.json')))
+    else assert(fs.lstatSync(path.join(appDir, 'extras/something.json')).isSymbolicLink(), 'File symlink not generated')
 
-      done()
-    })
+    assert(!fs.lstatSync(path.join(appDir, 'safeDir')).isSymbolicLink(), 'Symlink overwrote pre-existing directory')
+    assert.deepStrictEqual(require(path.join(appDir, 'goodies/safeFile.json')), { shouldBe: 'safe' }, 'Symlink overwrote pre-existing file')
+    assert(!fs.pathExistsSync(path.join(appDir, 'goodies/nothing.json')), 'Symlink generated pointing to a source that doesn\'t exist')
   })
 })

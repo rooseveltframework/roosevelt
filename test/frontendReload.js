@@ -4,7 +4,7 @@ const assert = require('assert')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe.skip('frontend reload', () => {
+describe('frontend reload', () => {
   // common configuration
   const config = {
     logging: {
@@ -28,14 +28,11 @@ describe.skip('frontend reload', () => {
 
   // configure and start roosevelt, returning instance of the app
   async function startRoosevelt (config) {
-    return new Promise((resolve) => {
-      roosevelt({
-        ...config,
-        onServerStart: app => {
-          resolve(app)
-        }
-      }).startServer()
+    const app = roosevelt({
+      ...config
     })
+    await app.startServer()
+    return app.expressApp
   }
 
   // stop roosevelt server

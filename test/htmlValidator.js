@@ -4,7 +4,7 @@ const assert = require('assert')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe.skip('validator usage', () => {
+describe('validator usage', () => {
   // invalid html to test against
   const invalidHTML = `
     <!DOCTYPE html>
@@ -34,46 +34,49 @@ describe.skip('validator usage', () => {
   const context = {}
 
   before(done => {
-    // spin up the roosevelt app
-    roosevelt({
-      mode: 'development',
-      csrfProtection: false,
-      makeBuildArtifacts: false,
-      port: 40001,
-      logging: {
-        methods: {
-          http: false,
-          info: false,
-          warn: false,
-          error: false
+    (async () => {
+      // spin up the roosevelt app
+      const rooseveltApp = roosevelt({
+        mode: 'development',
+        csrfProtection: false,
+        makeBuildArtifacts: false,
+        port: 40001,
+        logging: {
+          methods: {
+            http: false,
+            info: false,
+            warn: false,
+            error: false
+          }
+        },
+        htmlValidator: {
+          enable: true
+        },
+        frontendReload: {
+          enable: false
+        },
+        onServerInit: app => {
+          const router = app.get('router')
+
+          // add route to invalid html
+          router.get('/invalid', (req, res) => {
+            res.send(invalidHTML)
+          })
+
+          // add a route to valid html
+          router.get('/valid', (req, res) => {
+            res.send(validHTML)
+          })
+        },
+        onServerStart: app => {
+          // bind app to test context
+          context.app = app
+          done()
         }
-      },
-      htmlValidator: {
-        enable: true
-      },
-      frontendReload: {
-        enable: false
-      },
-      onServerInit: app => {
-        const router = app.get('router')
+      })
 
-        // add route to invalid html
-        router.get('/invalid', (req, res) => {
-          res.send(invalidHTML)
-        })
-
-        // add a route to valid html
-        router.get('/valid', (req, res) => {
-          res.send(validHTML)
-        })
-      },
-      onServerStart: app => {
-        // bind app to test context
-        context.app = app
-
-        done()
-      }
-    }).startServer()
+      await rooseveltApp.startServer()
+    })()
   })
 
   after(() => {

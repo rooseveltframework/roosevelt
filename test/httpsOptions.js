@@ -7,6 +7,7 @@ const path = require('path')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 
+// TODO: This test suite will need to be heavily refactored to account for the server not being created until later in the app lifecycle
 describe.skip('HTTPS Server Options Tests', async () => {
   // test app directory, configuration, and app variables
   const appDir = path.join(__dirname, 'app/constructorParams')
@@ -50,7 +51,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
 
     if (!appDir) {
       let processEnv
-      if (fs.pathExistsSync(path.join(process.cwd(), 'node_modules')) === false) {
+      if (fs.existsSync(path.join(process.cwd(), 'node_modules')) === false) {
         processEnv = process.cwd()
       } else {
         processEnv = undefined
@@ -100,7 +101,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
   })
 
   // reset stubs after each
-  afterEach(function () {
+  afterEach(() => {
     stubHttpsListen.resetHistory()
     stubHttpsOn.resetHistory()
     stubHttpsServer.resetHistory()
@@ -108,7 +109,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
   })
 
   // after all tests clean up the test app directory
-  after(function (done) {
+  after(done => {
     fs.rmSync('./test/app/' + config.secretsDir, { recursive: true, force: true })
 
     cleanupTestApp(appDir, (err) => {
@@ -120,14 +121,14 @@ describe.skip('HTTPS Server Options Tests', async () => {
     })
   })
 
-  it('should create a https server when https.enable is set to true', function () {
+  it('should create a https server when https.enable is set to true', () => {
     app({ appDir: './test/app', ...config })
 
     // test assertion
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should create a http server and a https server when the https.force param is false', function () {
+  it('should create a http server and a https server when the https.force param is false', () => {
     // change config
     config.https.force = false
     app({ appDir: './test/app', ...config })
@@ -137,7 +138,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should create a http server when https.enable param is false and https.force param is true', function () {
+  it('should create a http server when https.enable param is false and https.force param is true', () => {
     // change config
     config.https.force = true
     config.https.enable = false
@@ -150,7 +151,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     config.https.enable = true
   })
 
-  it('should not create a http.Server when the https.force param is set to true', function () {
+  it('should not create a http.Server when the https.force param is set to true', () => {
     // change config
     config.https.force = true
     app({ appDir: './test/app', ...config })
@@ -159,7 +160,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpServer.notCalled, 'http.Server called despite force flag')
   })
 
-  it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', function () {
+  it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', () => {
     app({ appDir: './test/app', ...config })
 
     // test assertions
@@ -170,7 +171,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', function () {
+  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', () => {
     const appDir = './test/app'
     const p12text = fs.readFileSync('./test/app/secrets/cert.p12', 'utf8')
     config.https.authInfoPath.p12.p12Path = p12text
@@ -184,7 +185,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', function () {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', () => {
     const appDir = './test/app'
     const keytext = fs.readFileSync('./test/app/secrets/key.pem')
     const certext = fs.readFileSync('./test/app/secrets/cert.pem')
@@ -202,7 +203,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', function () {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', () => {
     const appDir = './test/app'
     const keytext = fs.readFileSync('./test/app/secrets/key.pem')
     const certext = fs.readFileSync('./test/app/secrets/cert.pem')
@@ -221,7 +222,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', function () {
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', () => {
     const appDir = './test/app'
     const keytext = fs.readFileSync('./test/app/secrets/key.pem')
     const certext = fs.readFileSync('./test/app/secrets/cert.pem')
@@ -239,7 +240,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', function () {
+  it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', () => {
     config.https.authInfoPath.p12.p12Path = null
     const appDir = './test/app'
     app({ appDir, ...config })
@@ -249,7 +250,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', function () {
+  it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', () => {
     // change config
     config.https.caCert = [path.join(appDir, './../../../test/app/secrets/cert.pem'), path.join(appDir, './../../../test/app/secrets/key.pem')]
 
@@ -261,7 +262,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the caCert param directly if it is set as a certificate string', function () {
+  it('should start a https server using the caCert param directly if it is set as a certificate string', () => {
     // change config
     config.https.caCert = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'), 'UTF8')
 
@@ -272,7 +273,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', function () {
+  it('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', () => {
     const ca1 = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'))
     const ca2 = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/key.pem'))
 
@@ -287,7 +288,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', function () {
+  it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', () => {
     const ca1 = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'))
 
     // change config
@@ -301,7 +302,7 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server if the caCert param is not a string or an array', function () {
+  it('should start a https server if the caCert param is not a string or an array', () => {
     // change config
     config.https.caCert = 42
 

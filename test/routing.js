@@ -6,7 +6,7 @@ const path = require('path')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe.skip('routing', () => {
+describe('routing', () => {
   const appDir = path.join(__dirname, 'app/routesTest')
   const appConfig = {
     appDir,
@@ -43,106 +43,122 @@ describe.skip('routing', () => {
   })
 
   it('should respond to a route handled in a controller file', done => {
-    // spin up a roosevelt app
-    roosevelt({
-      ...appConfig,
-      onServerStart: app => {
+    (async () => {
+      // spin up a roosevelt app
+      const rooseveltApp = roosevelt({
+        ...appConfig,
+        onServerStart: app => {
         // bind app to test context
-        context.app = app
+          context.app = app
 
-        // send a request to a route handled in a controller file
-        request(app)
-          .get('/HTMLTest')
-          .expect(200)
-          .end((err, res) => {
-            if (err) {
-              throw err
-            }
-            // ensure that the response is correct
-            assert(res.text.includes('TitleX'), 'server did not properly respond to the request.')
+          // send a request to a route handled in a controller file
+          request(app)
+            .get('/HTMLTest')
+            .expect(200)
+            .end((err, res) => {
+              if (err) {
+                throw err
+              }
+              // ensure that the response is correct
+              assert(res.text.includes('TitleX'), 'server did not properly respond to the request.')
 
-            done()
-          })
-      }
-    }).startServer()
+              done()
+            })
+        }
+      })
+
+      await rooseveltApp.startServer()
+    })()
   })
 
   it('should resolve a request to a public file', done => {
-    // spin up a roosevelt app
-    roosevelt({
-      ...appConfig,
-      hostPublic: true,
-      onServerStart: app => {
+    (async () => {
+      // spin up a roosevelt app
+      const rooseveltApp = roosevelt({
+        ...appConfig,
+        hostPublic: true,
+        onServerStart: app => {
         // bind app to test context
-        context.app = app
+          context.app = app
 
-        const prefix = app.get('routePrefix')
+          const prefix = app.get('routePrefix')
 
-        // send a request to a route handled in a controller file
-        request(app)
-          .get(`${prefix}/text/hello.txt`)
-          .expect(200)
-          .end((err, res) => {
-            if (err) {
-              throw err
-            }
+          // send a request to a route handled in a controller file
+          request(app)
+            .get(`${prefix}/text/hello.txt`)
+            .expect(200)
+            .end((err, res) => {
+              if (err) {
+                throw err
+              }
 
-            done()
-          })
-      }
-    }).startServer()
+              done()
+            })
+        }
+      })
+
+      await rooseveltApp.startServer()
+    })()
   })
 
   it('should respond to route hosted in a subdirectory via routePrefix', done => {
-    // spin up a roosevelt app
-    roosevelt({
-      ...appConfig,
-      routePrefix: 'foo',
-      onServerStart: app => {
+    (async () => {
+      // spin up a roosevelt app
+      const rooseveltApp = roosevelt({
+        ...appConfig,
+        routePrefix: 'foo',
+        onServerStart: app => {
         // bind app to test context
-        context.app = app
+          context.app = app
 
-        // send a request to a route handled in a controller file with an appended prefix
-        request(app)
-          .get('/foo/HTMLTest')
-          .expect(200)
-          .end((err, res) => {
-            if (err) {
-              throw err
-            }
-            // ensure that the response is correct
-            assert(res.text.includes('TitleX'), 'server did not properly respond to the request.')
+          // send a request to a route handled in a controller file with an appended prefix
+          request(app)
+            .get('/foo/HTMLTest')
+            .expect(200)
+            .end((err, res) => {
+              if (err) {
+                throw err
+              }
+              // ensure that the response is correct
+              assert(res.text.includes('TitleX'), 'server did not properly respond to the request.')
 
-            done()
-          })
-      }
-    }).startServer()
+              done()
+            })
+        }
+      })
+
+      await rooseveltApp.startServer()
+    })()
   })
 
   it('should resolve a request to a public file hosted in a subdirectory via routePrefix', done => {
-    // spin up a roosevelt app
-    roosevelt({
-      ...appConfig,
-      hostPublic: true,
-      routePrefix: 'foo',
-      onServerStart: app => {
+    (async () => {
+      // spin up a roosevelt app
+      const rooseveltApp = roosevelt({
+        ...appConfig,
+        hostPublic: true,
+        routePrefix: 'foo',
+        onServerStart: app => {
         // bind app to test context
-        context.app = app
+          context.app = app
 
-        const prefix = app.get('routePrefix')
+          const prefix = app.get('routePrefix')
 
-        // send a request to a route handled in a controller file
-        request(app)
-          .get(`${prefix}/text/hello.txt`)
-          .expect(200)
-          .end((err, res) => {
-            if (err) {
-              throw err
-            }
+          // send a request to a route handled in a controller file
+          request(app)
+            .get(`${prefix}/text/hello.txt`)
+            .expect(200)
+            .end((err, res) => {
+              if (err) {
+                throw err
+              }
 
-            done()
-          })
-      }
-    }).startServer()
+              done()
+            })
+        }
+      })
+
+      await rooseveltApp.startServer()
+    })()
   })
 })
