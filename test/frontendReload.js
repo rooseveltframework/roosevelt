@@ -1,12 +1,18 @@
 /* eslint-env mocha */
 
+const path = require('path')
 const assert = require('assert')
+const fs = require('fs-extra')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
+const generateTestCerts = require('./util/generateTestCerts')
 
 describe('frontend reload', () => {
+  const appDir = path.join(__dirname, 'app/frontendReload')
+
   // common configuration
   const config = {
+    appDir,
     logging: {
       methods: {
         info: false,
@@ -50,11 +56,17 @@ describe('frontend reload', () => {
     })
   }
 
+  before(() => {
+    generateTestCerts(config.appDir, 'secrets')
+  })
+
+  after(async () => {
+    await fs.remove(config.appDir)
+  })
+
   it('should start reload http server in dev mode', async () => {
     // configure and start roosevelt
-    const app = await startRoosevelt({
-      ...config
-    })
+    const app = await startRoosevelt(config)
 
     // check that reload js is being served
     const res = await request(app)
@@ -68,7 +80,7 @@ describe('frontend reload', () => {
     assert(res.status === 200)
   })
 
-  it.skip('should start reload https server in dev mode', async () => {
+  it('should start reload https server in dev mode', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config,
@@ -78,12 +90,9 @@ describe('frontend reload', () => {
         force: true,
         autoCert: true,
         authInfoPath: {
-          p12: {
-            p12Path: 'secrets/cert.p12'
-          },
           authCertAndKey: {
-            cert: 'secrets/cert.pem',
-            key: 'secrets/key.pem'
+            cert: 'cert.pem',
+            key: 'key.pem'
           }
         },
         passphrase: 'testpass'
@@ -102,7 +111,7 @@ describe('frontend reload', () => {
     assert(res.status === 200)
   })
 
-  it.skip('should start reload http and https servers in dev mode', async () => {
+  it('should start reload http and https servers in dev mode', async () => {
     // configure and start roosevelt
     const app = await startRoosevelt({
       ...config,
@@ -112,12 +121,9 @@ describe('frontend reload', () => {
         force: false,
         autoCert: true,
         authInfoPath: {
-          p12: {
-            p12Path: 'certs/cert.p12'
-          },
           authCertAndKey: {
-            cert: 'certs/cert.pem',
-            key: 'certs/key.pem'
+            cert: 'cert.pem',
+            key: 'key.pem'
           }
         },
         passphrase: 'testpass'

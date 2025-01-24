@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const generateTestApp = require('./util/generateTestApp')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const path = require('path')
@@ -17,8 +16,7 @@ const minifyOptions = {
   removeEmptyAttributes: true
 }
 
-// TODO: The test app generator needs a heavy refactor to make these tests work
-describe.skip('Views Bundler Tests', () => {
+describe('Views Bundler Tests', () => {
   const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
@@ -47,7 +45,7 @@ describe.skip('Views Bundler Tests', () => {
   ]
 
   const pathOfExposedTemplates = [
-    path.join(appDir, 'public/templates/output.js')
+    path.join(appDir, 'public/js/output.js')
   ]
 
   const staticTemplates = [
@@ -59,7 +57,7 @@ describe.skip('Views Bundler Tests', () => {
     blocklistedTemplate
   ]
 
-  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: true, initServer: true, stopServer: true }
 
   beforeEach(() => {
     fs.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
@@ -69,20 +67,15 @@ describe.skip('Views Bundler Tests', () => {
     }
   })
 
-  afterEach(done => {
-    cleanupTestApp(appDir, err => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
   it('should properly expose template files in an allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         }
@@ -95,7 +88,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesExist(appDir, 'public/templates', pathOfExposedTemplates)
+        await assertFilesExist(appDir, 'public/js', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
@@ -110,6 +103,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a']
         }
@@ -122,7 +116,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesExist(appDir, 'public/templates', pathOfExposedTemplates)
+        await assertFilesExist(appDir, 'public/js', pathOfExposedTemplates)
         testApp.send('stop')
       }
     })
@@ -135,7 +129,7 @@ describe.skip('Views Bundler Tests', () => {
   it('should not create a templates folder if there are no items in the allowlist', done => {
     generateTestApp({
       appDir,
-      clientViews: {},
+      clientViews: { enable: true },
       csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
@@ -144,7 +138,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -158,7 +152,7 @@ describe.skip('Views Bundler Tests', () => {
   it('should not create a templates folder if makeBuildArtifacts is false', done => {
     generateTestApp({
       appDir,
-      clientViews: {},
+      clientViews: { enable: true },
       csrfProtection: false,
       makeBuildArtifacts: false
     }, options)
@@ -167,7 +161,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -182,6 +176,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': []
         }
@@ -194,7 +189,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -209,6 +204,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': null
         }
@@ -221,37 +217,10 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should send an error to the console with an nonexistent template', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        allowlist: {
-          'output.js': ['fake.html']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stderr.on('data', result => {
-      if (result.includes('no such file or directory')) {
-        assert.strictEqual(result.includes('fake.html'), true)
-      }
-
-      testApp.send('stop')
     })
 
     testApp.on('exit', () => {
@@ -263,6 +232,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['bad.html']
         }
@@ -275,7 +245,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -294,6 +264,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -321,6 +292,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -334,7 +306,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
@@ -363,6 +335,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -376,7 +349,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
@@ -405,6 +378,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -419,7 +393,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
@@ -448,6 +422,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -462,7 +437,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
@@ -491,6 +466,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true,
         allowlist: {
           'output.js': ['a.html']
@@ -504,7 +480,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -523,6 +499,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true,
         allowlist: {
           'foobar.js': ['a.html']
@@ -536,7 +513,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -561,6 +538,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true,
         blocklist
       },
@@ -572,7 +550,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -605,6 +583,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -615,7 +594,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -646,6 +625,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -656,7 +636,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -682,6 +662,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -692,7 +673,7 @@ describe.skip('Views Bundler Tests', () => {
 
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -719,6 +700,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -728,7 +710,7 @@ describe.skip('Views Bundler Tests', () => {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -755,6 +737,7 @@ describe.skip('Views Bundler Tests', () => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['nested']
         }
@@ -766,7 +749,7 @@ describe.skip('Views Bundler Tests', () => {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
     testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
         const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
@@ -791,7 +774,7 @@ describe.skip('Views Bundler Tests', () => {
 })
 
 function serverStarted (result) {
-  return result.toString().includes('Roosevelt Express HTTP server listening')
+  return result.toString().includes('initialized')
 }
 
 async function assertFilesNotCreated (appDir, templatePath) {

@@ -1,18 +1,16 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const fs = require('fs-extra')
 const path = require('path')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
+const generateTestCerts = require('./util/generateTestCerts')
 
-// TODO: This test suite will need to be heavily refactored to account for the server not being created until later in the app lifecycle
-describe.skip('HTTPS Server Options Tests', async () => {
+describe('HTTPS Server Options Tests', async () => {
   // test app directory, configuration, and app variables
-  const appDir = path.join(__dirname, 'app/constructorParams')
   const config = require('./util/testHttpsConfig.json')
-  let app
+  config.appDir = path.join(__dirname, 'app/httpsTests')
 
   // sinon stubs
   const stubHttpsListen = sinon.stub()
@@ -31,73 +29,9 @@ describe.skip('HTTPS Server Options Tests', async () => {
   const stubHttp = {
     Server: stubHttpServer
   }
-  function certsGenerator (appDir) {
-    const selfsigned = require('selfsigned')
-    const forge = require('node-forge')
-    const pem = selfsigned.generate(null, {
-      keySize: 2048, // the size for the private key in bits (default: 1024)
-      days: 365000, // how long till expiry of the signed certificate (default: 10,000)
-      algorithm: 'sha256', // sign the certificate with specified algorithm (default: 'sha1')
-      extensions: [{ name: 'basicConstraints', cA: true }], // certificate extensions array
-      pkcs7: true, // include PKCS#7 as part of the output (default: false)
-      clientCertificate: true, // generate client cert signed by the original key (default: false)
-      clientCertificateCN: 'unknown' // client certificate's common name (default: 'John Doe jdoe123')
-    })
 
-    const fs = require('fs')
-    const key = pem.private
-    const cert = pem.cert
-    const path = require('path')
-
-    if (!appDir) {
-      let processEnv
-      if (fs.existsSync(path.join(process.cwd(), 'node_modules')) === false) {
-        processEnv = process.cwd()
-      } else {
-        processEnv = undefined
-      }
-      appDir = processEnv
-    }
-    const certificate = forge.pki.certificateFromPem(cert)
-    const privateKey = forge.pki.privateKeyFromPem(key)
-
-    // generate p12 and encrypt them
-    const p12Info = forge.pkcs12.toPkcs12Asn1(privateKey, certificate, '', { generateLocalKeyId: true, algorithm: '3des' })
-    const p12Cert = forge.asn1.toDer(p12Info).getBytes()
-
-    try {
-      const secretDir = './test/app/' + config.secretsDir
-
-      if (!fs.pathExistsSync(secretDir)) {
-        fs.mkdirSync(secretDir)
-      }
-
-      fs.writeFileSync(secretDir + '/key.pem', key, err => {
-        if (err) {
-          console.error(err)
-        }
-        // file written successfully
-      })
-
-      fs.writeFileSync(secretDir + '/cert.pem', cert, err => {
-        if (err) {
-          console.error(err)
-        }
-        // file written successfully
-      })
-
-      fs.writeFileSync(secretDir + '/cert.p12', p12Cert, err => {
-        if (err) {
-          console.error(err)
-        }
-        // file written successfully
-      })
-    } catch (e) { console.log(e) }
-  }
-
-  before(async () => {
-    app = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
-    certsGenerator()
+  before(() => {
+    generateTestCerts(config.appDir, config.secretsDir)
   })
 
   // reset stubs after each
@@ -108,93 +42,95 @@ describe.skip('HTTPS Server Options Tests', async () => {
     stubHttpServer.resetHistory()
   })
 
-  // after all tests clean up the test app directory
-  after(done => {
-    fs.rmSync('./test/app/' + config.secretsDir, { recursive: true, force: true })
-
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  after(async () => {
+    await fs.remove(config.appDir)
   })
 
-  it('should create a https server when https.enable is set to true', () => {
-    app({ appDir: './test/app', ...config })
+  it('should create a https server when https.enable is set to true', async () => {
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(config)
+    await app.initServer()
 
     // test assertion
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should create a http server and a https server when the https.force param is false', () => {
-    // change config
-    config.https.force = false
-    app({ appDir: './test/app', ...config })
+  it('should create a http server and a https server when the https.force param is false', async () => {
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.force = false
+
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertion
     assert(stubHttpServer.called, 'http.Server was not called')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should create a http server when https.enable param is false and https.force param is true', () => {
-    // change config
-    config.https.force = true
-    config.https.enable = false
-    app({ appDir: './test/app', ...config })
+  it('should create a http server when https.enable param is false and https.force param is true', async () => {
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.enable = false
+
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertion
     assert(stubHttpServer.called, 'http.Server was not called')
     assert(stubHttpsServer.notCalled, 'https.Server was called')
-
-    config.https.enable = true
   })
 
-  it('should not create a http.Server when the https.force param is set to true', () => {
-    // change config
-    config.https.force = true
-    app({ appDir: './test/app', ...config })
+  it('should not create a http.Server when the https.force param is set to true', async () => {
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(config)
+    await app.initServer()
 
     // test assertion
     assert(stubHttpServer.notCalled, 'http.Server called despite force flag')
   })
 
-  it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', () => {
-    app({ appDir: './test/app', ...config })
+  it('should start a https server using the given p12 file and passphrase if the p12Path param is set to a file path string and the passphrase is set', async () => {
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(config)
+    await app.initServer()
 
     // test assertions
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
     assert(typeof stubHttpsServer.args[0][0].key === 'undefined', 'https.Server had key when using p12')
-    assert(fs.pathExistsSync('./test/app/secrets/cert.p12') === true, 'file at config p12 file path does not exist')
+    assert(fs.pathExistsSync(path.join(config.appDir, 'secrets/cert.p12')) === true, 'file at config p12 file path does not exist')
     assert(stubHttpsServer.args[0][0].passphrase === config.https.passphrase, 'https.Server passphrase did not match config passphrase')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', () => {
-    const appDir = './test/app'
-    const p12text = fs.readFileSync('./test/app/secrets/cert.p12', 'utf8')
-    config.https.authInfoPath.p12.p12Path = p12text
-    app({ appDir, ...config })
+  it('should start a https server using the given p12 buffer and passphrase if the p12.p12Path param is set to a PKCS#12 formatted buffer and passphrase is set', async () => {
+    const p12text = fs.readFileSync(path.join(config.appDir, 'secrets/cert.p12'), 'utf8')
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.authInfoPath.p12.p12Path = p12text
+
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
     assert(typeof stubHttpsServer.args[0][0].cert === 'undefined', 'https.Server had cert when using p12')
     assert(typeof stubHttpsServer.args[0][0].key === 'undefined', 'https.Server had key when using p12')
     assert(stubHttpsServer.args[0][0].pfx.toString() === p12text, 'https.Server p12 file did not match supplied')
-    assert(stubHttpsServer.args[0][0].passphrase === config.https.passphrase, 'https.Server passphrase did not match supplied')
+    assert(stubHttpsServer.args[0][0].passphrase === options.https.passphrase, 'https.Server passphrase did not match supplied')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', () => {
-    const appDir = './test/app'
-    const keytext = fs.readFileSync('./test/app/secrets/key.pem')
-    const certext = fs.readFileSync('./test/app/secrets/cert.pem')
-    // change config - unset p12Path
-    config.https.authInfoPath.p12.p12Path = ''
-    config.https.authInfoPath.authCertAndKey.key = keytext
-    config.https.authInfoPath.authCertAndKey.cert = certext
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with file path strings', async () => {
+    const keytext = fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))
+    const certext = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.authInfoPath.p12.p12Path = ''
+    options.https.authInfoPath.authCertAndKey.key = keytext
+    options.https.authInfoPath.authCertAndKey.cert = certext
 
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
@@ -203,35 +139,18 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', () => {
-    const appDir = './test/app'
-    const keytext = fs.readFileSync('./test/app/secrets/key.pem')
-    const certext = fs.readFileSync('./test/app/secrets/cert.pem')
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if one is a certificate string and one is a file path', async () => {
+    const keytext = fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))
+    const certext = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
 
-    // change config - change key to a string
-    config.https.authInfoPath.p12.p12Path = null
-    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync('./test/app/secrets/key.pem')
-    config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync('./test/app/secrets/cert.pem')
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.authInfoPath.p12.p12Path = null
+    options.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))
+    options.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
 
-    app({ appDir, ...config })
-
-    // test assertions
-    assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
-    assert(stubHttpsServer.args[0][0].cert.equals(certext), 'https.Server cert file did not match supplied')
-    assert(typeof stubHttpsServer.args[0][0].pfx === 'undefined', 'https.Server options had pfx set when p12Path was null')
-    assert(stubHttpsServer.called, 'https.Server was not called')
-  })
-
-  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', () => {
-    const appDir = './test/app'
-    const keytext = fs.readFileSync('./test/app/secrets/key.pem')
-    const certext = fs.readFileSync('./test/app/secrets/cert.pem')
-
-    // change config - change cert to a  string
-    config.https.authInfoPath.authCertAndKey.key = fs.readFileSync('./test/app/secrets/key.pem')
-    config.https.authInfoPath.authCertAndKey.cert = fs.readFileSync('./test/app/secrets/cert.pem')
-
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
     assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
@@ -240,47 +159,75 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', () => {
-    config.https.authInfoPath.p12.p12Path = null
-    const appDir = './test/app'
-    app({ appDir, ...config })
+  it('should start a https server using the given certAndKey.cert and certAndKey.key params if they are set with certificate strings', async () => {
+    const keytext = fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))
+    const certext = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
+
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.authInfoPath.p12.p12Path = null
+    options.https.authInfoPath.authCertAndKey.key = fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))
+    options.https.authInfoPath.authCertAndKey.cert = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
+
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
+
+    // test assertions
+    assert(stubHttpsServer.args[0][0].key.equals(keytext), 'https.Server key file did not match supplied')
+    assert(stubHttpsServer.args[0][0].cert.equals(certext), 'https.Server cert file did not match supplied')
+    assert(typeof stubHttpsServer.args[0][0].pfx === 'undefined', 'https.Server options had pfx set when p12Path was null')
+    assert(stubHttpsServer.called, 'https.Server was not called')
+  })
+
+  it('should start a https server using the certificate authority certificate from a file if the caCert param is set with a file path', async () => {
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.authInfoPath.p12.p12Path = null
+
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertion
-    assert(config.https.caCert === 'cert.pem', 'https.Server CA did not match supplied CA')
+    assert(options.https.caCert === 'cert.pem', 'https.Server CA did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', () => {
-    // change config
-    config.https.caCert = [path.join(appDir, './../../../test/app/secrets/cert.pem'), path.join(appDir, './../../../test/app/secrets/key.pem')]
+  it('should start a https using a certificate chain as an array of certificates when the caCert param is set with an array of file paths', async () => {
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.caCert = [path.join(config.appDir, 'secrets/cert.pem'), path.join(config.appDir, 'secrets/key.pem')]
 
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
-    assert(stubHttpsServer.args[0][0].ca[0].equals(fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'))), 'https.Server CA (1) did not match supplied CA')
-    assert(stubHttpsServer.args[0][0].ca[1].equals(fs.readFileSync(path.join(appDir, './../../../test/app/secrets/key.pem'))), 'https.Server CA (1) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[0].equals(fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))), 'https.Server CA (1) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[1].equals(fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))), 'https.Server CA (1) did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the caCert param directly if it is set as a certificate string', () => {
-    // change config
-    config.https.caCert = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'), 'UTF8')
+  it('should start a https server using the caCert param directly if it is set as a certificate string', async () => {
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.caCert = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'), 'UTF8')
 
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertion
-    assert.strictEqual(stubHttpsServer.args[0][0].ca, config.https.caCert, 'https.Server CA did not match supplied CA')
+    assert.strictEqual(stubHttpsServer.args[0][0].ca, options.https.caCert, 'https.Server CA did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', () => {
-    const ca1 = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'))
-    const ca2 = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/key.pem'))
+  it('should start a https server using the caCert certificate chain if the caCert param is set as an array of certificate strings', async () => {
+    const ca1 = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
+    const ca2 = fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.caCert = [ca1, ca2]
 
-    // change config
-    config.https.caCert = [ca1, ca2]
-
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
@@ -288,25 +235,28 @@ describe.skip('HTTPS Server Options Tests', async () => {
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', () => {
-    const ca1 = fs.readFileSync(path.join(appDir, './../../../test/app/secrets/cert.pem'))
+  it('should start a https server using the caCert certificate chain if it the caCert param set as an array of mixed file paths and certificate strings', async () => {
+    const ca1 = fs.readFileSync(path.join(config.appDir, 'secrets/cert.pem'))
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.caCert = [ca1, path.join(config.appDir, 'secrets/key.pem')]
 
-    // change config
-    config.https.caCert = [ca1, path.join(appDir, './../../../test/app/secrets/key.pem')]
-
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
     assert(stubHttpsServer.args[0][0].ca[0].equals(ca1), 'https.Server CA (1) did not match supplied CA')
-    assert(stubHttpsServer.args[0][0].ca[1].equals(fs.readFileSync(path.join(appDir, './../../../test/app/secrets/key.pem'))), 'https.Server CA (2) did not match supplied CA')
+    assert(stubHttpsServer.args[0][0].ca[1].equals(fs.readFileSync(path.join(config.appDir, 'secrets/key.pem'))), 'https.Server CA (2) did not match supplied CA')
     assert(stubHttpsServer.called, 'https.Server was not called')
   })
 
-  it('should start a https server if the caCert param is not a string or an array', () => {
-    // change config
-    config.https.caCert = 42
+  it('should start a https server if the caCert param is not a string or an array', async () => {
+    const options = JSON.parse(JSON.stringify(config))
+    options.https.caCert = 42
 
-    app({ appDir, ...config })
+    const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
+    const app = roosevelt(options)
+    await app.initServer()
 
     // test assertions
     assert(stubHttpsServer.called, 'https.Server was not called')

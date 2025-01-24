@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
@@ -14,21 +13,13 @@ describe('view engines', () => {
   // options to pass into test app generator
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
-  beforeEach(done => {
+  beforeEach(() => {
     // copy the mvc directory into the test app directory for each test
     fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
-    done()
   })
 
-  afterEach(done => {
-    // clean up the test app directory after each test
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
   it('should render the teddy test page', done => {
@@ -66,11 +57,11 @@ describe('view engines', () => {
           assert.strictEqual(test4, true)
           testApp.send('stop')
         })
+    })
 
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
-      })
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
     })
   })
 
@@ -92,8 +83,10 @@ describe('view engines', () => {
 
     // checks to see if the view engine returned is the first element
     testApp.on('message', viewEngine => {
-      assert.strictEqual(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
-      testApp.send('stop')
+      if (typeof viewEngine === 'string') {
+        assert.strictEqual(viewEngine, 'html', 'The view Engine has been set to something else other than the first element')
+        testApp.send('stop')
+      }
     })
 
     // when the child process exits, finish the test
@@ -218,8 +211,7 @@ describe('view engines', () => {
       makeBuildArtifacts: true,
       appDir,
       viewEngine: 'html: teddy',
-      csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}'
+      csrfProtection: false
     }, options)
 
     // fork and run app.js as a child process

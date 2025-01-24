@@ -2,7 +2,6 @@
 
 const assert = require('assert')
 const path = require('path')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const fs = require('fs-extra')
 const { minify } = require('html-minifier-terser')
 const request = require('supertest')
@@ -50,16 +49,10 @@ describe('HTML Minification Tests', () => {
   })
 
   // wipe out test app after each test
-  afterEach(done => {
+  afterEach(async () => {
     app.stopServer({ persistProcess: true })
 
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+    await fs.remove(appDir)
   })
 
   it('should minify HTML when enabled', done => {

@@ -44,42 +44,50 @@ module.exports = (params, options) => {
       case options.noFunction:
         contents += `await app.${options.method}('something')\n`
         break
+      case options.initServer:
+        contents += 'await app.initServer()\n'
+        contents += 'console.log("initialized")\n'
+        contents += `${defaultMessages}\n`
+        break
       case options.initStart:
         contents += 'await app.initServer()\n'
-        contents += 'await app.startServer(() => {\n'
-        contents += `${defaultMessages}\n})\n`
+        contents += 'await app.startServer()\n'
+        contents += `${defaultMessages}\n`
+        break
+      case options.justStart:
+        contents += 'await app.startServer()\n'
         break
       case options.initTwice:
         contents += 'await app.initServer()\n'
-        contents += 'await app.initServer(() => {\n'
-        contents += `${defaultMessages}\n})\n`
+        contents += 'await app.initServer()\n'
+        contents += `${defaultMessages}\n`
         break
       case options.startTwice:
         contents += 'await app.startServer()\n'
-        contents += 'await app.startServer(() => {\n'
-        contents += `${defaultMessages}\n})\n`
+        contents += 'await app.startServer()\n'
+        contents += `${defaultMessages}\n`
         break
       case options.msgEnabled:
-        contents += `await app.${options.method}(() => {\n`
-        contents += `  ${defaultMessages}\n})\n`
+        contents += `await app.${options.method}()\n`
+        contents += `${defaultMessages}\n`
         contents += 'const sinon = require(\'sinon\')\n'
         contents += 'let config = {shouldAdvanceTime: true}\n'
         contents += 'let clock = sinon.useFakeTimers(config)\n'
-        contents += '\nprocess.on(\'message\', function (){\n'
+        contents += '\nprocess.on(\'message\', () => {\n'
         contents += 'console.log(\'msg recieved\')\n'
         contents += 'clock.tick(30000)\n'
         contents += '})\n'
         break
       case options.exitProcess:
-        contents += `await app.${options.method}(() => {\n`
-        contents += `  ${defaultMessages}\n})\n`
-        contents += `app.${options.serverType}.on('close', function () {\n`
+        contents += `await app.${options.method}()\n`
+        contents += `${defaultMessages}\n`
+        contents += `app.expressApp.get('${options.serverType}').on('close', () => {\n`
         contents += '  process.exit()\n'
         contents += '})\n'
         break
       default:
-        contents += `await app.${options.method}(() => {\n`
-        contents += `  ${defaultMessages}\n})\n`
+        contents += `await app.${options.method}()\n`
+        contents += `${defaultMessages}\n`
     }
     // server can be stopped by passing a message to the child process
     if (options.stopServer) {

@@ -503,7 +503,7 @@ describe('css preprocessors', () => {
       await app.initServer()
 
       // manually render sass file
-      const scssOutput = sass.renderSync({ data: scssString })
+      const scssOutput = sass.compileString(scssString)
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
       // compare manual render with roosevelt output file
@@ -531,7 +531,7 @@ describe('css preprocessors', () => {
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
       // check that the build file includes a source map
-      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
+      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json'), 'build file is missing source map')
     })
 
     it('should write a version file when enabled', async () => {

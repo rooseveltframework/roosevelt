@@ -1,19 +1,17 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 
-// TODO: Figure out why all these tests are failing, also add/remove tests to account for new/removed events
-describe.skip('Parameter Function Tests', () => {
+describe('Parameter Function Tests', () => {
   // path to the app Directory
   const appDir = path.join(__dirname, 'app/paramFunctionTest')
 
   // specify the options that will be passed to the generateTestApp
-  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', stopServer: true }
 
   beforeEach(() => {
     // start by copying the alreadly made mvc directory into the app directory
@@ -21,22 +19,14 @@ describe.skip('Parameter Function Tests', () => {
   })
 
   // delete the test app Directory and start with a clean state after each test
-  afterEach(done => {
-    cleanupTestApp(appDir, err => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
   it('should execute what is in onServerInit', done => {
     // bool vars to hold whether or not the app had returned what is given to them, and if we can access the server
     let serverInitLogBool = false
     let messageCounter = 0
-    // change what options method is for this test
-    options.method = 'initServer'
 
     // generate the app
     generateTestApp({
@@ -44,7 +34,10 @@ describe.skip('Parameter Function Tests', () => {
       makeBuildArtifacts: true,
       csrfProtection: false,
       onServerInit: '(app) => {process.send("something")}'
-    }, options)
+    }, {
+      ...options,
+      method: 'initServer'
+    })
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -69,7 +62,6 @@ describe.skip('Parameter Function Tests', () => {
 
   it('should execute onAppExit', done => {
     let serverExitBool
-    options.method = 'initServer'
 
     // generate the app
     generateTestApp({
@@ -77,7 +69,10 @@ describe.skip('Parameter Function Tests', () => {
       makeBuildArtifacts: true,
       csrfProtection: false,
       onAppExit: '(app) => {process.send("the big exit")}'
-    }, options)
+    }, {
+      ...options,
+      method: 'initServer'
+    })
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -109,9 +104,11 @@ describe.skip('Parameter Function Tests', () => {
     generateTestApp({
       appDir,
       makeBuildArtifacts: true,
-      csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}'
-    }, options)
+      csrfProtection: false
+    }, {
+      ...options,
+      method: 'initServer'
+    })
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -147,11 +144,13 @@ describe.skip('Parameter Function Tests', () => {
       appDir,
       makeBuildArtifacts: true,
       csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}',
       errorPages: {
         notFound: '404errController.js'
       }
-    }, options)
+    }, {
+      ...options,
+      method: 'initServer'
+    })
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -194,22 +193,27 @@ describe.skip('Parameter Function Tests', () => {
       makeBuildArtifacts: true,
       csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("routes"))}'
-    }, options)
+    }, {
+      ...options,
+      method: 'startServer'
+    })
 
     // fork the app.js file and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app is finished with its initialization, kill it
     testApp.on('message', routes => {
-      // check that routes in controllers have been populated in the app
-      assert(routes.length > 0)
+      if (Array.isArray(routes)) {
+        // check that routes in controllers have been populated in the app
+        assert(routes.length > 0)
 
-      // check app's routes against reference list
-      referenceRoutes.forEach(route => {
-        assert(routes.includes(route))
-      })
+        // check app's routes against reference list
+        referenceRoutes.forEach(route => {
+          assert(routes.includes(route))
+        })
 
-      testApp.send('stop')
+        testApp.send('stop')
+      }
     })
 
     // when the child process exits, finish the test

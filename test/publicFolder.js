@@ -1,15 +1,13 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
-// const { walk } = require('@nodelib/fs.walk/promises')
 const path = require('path')
 const request = require('supertest')
 
-describe('Public Folder Tests', function () {
+describe('Public Folder Tests', () => {
   // path to the directory where the test app is located
   const appDir = path.join(__dirname, 'app/publicFolderTest')
 
@@ -26,14 +24,8 @@ describe('Public Folder Tests', function () {
   })
 
   // clean up the test app directory after each test
-  afterEach(done => {
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
   it('should allow for a custom favicon and GET that favicon on request', done => {
@@ -96,7 +88,6 @@ describe('Public Folder Tests', function () {
       appDir,
       makeBuildArtifacts: true,
       csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: null
     }, options)
 
@@ -140,7 +131,6 @@ describe('Public Folder Tests', function () {
       appDir,
       makeBuildArtifacts: true,
       csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}',
       favicon: 'images/nothingHere.ico'
     }, options)
 
@@ -184,7 +174,7 @@ describe('Public Folder Tests', function () {
     })
   })
 
-  it.skip('should set the name of folder inside of public to the version inside of package.json', done => {
+  it('should set the name of folder inside of public to the version inside of package.json', done => {
     // write the package json file with the source code from above
     fs.writeFileSync(path.join(appDir, 'package.json'), packageSource)
 
@@ -200,36 +190,11 @@ describe('Public Folder Tests', function () {
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // on the server message back on start up, look for if the public file was changed to the version number
-    // testApp.on('message', () => {
-    //   // var to keep track of whether or not the public folder name was changed to the version number
-    //   let publicNameChange = false
-    //   // get the what is in the app folder
-    //   const dirs = []
-    //   // TODO: Replace the complex usage of klaw with a simpler usage of fsWalk
-    //   klaw(path.join(appDir, 'public'), { nofile: true, preserveSymlinks: true })
-    //     .on('readable', function () {
-    //       let item
-    //       while ((item = this.read())) {
-    //         dirs.push(item.path)
-    //       }
-    //     })
-    //     .on('end', () => {
-    //       // Loop through dirs
-    //       dirs.forEach((dir) => {
-    //         // Check if dir exists
-    //         if (dir === path.join(appDir, 'public/0.5.1')) {
-    //           publicNameChange = true
-    //         }
-    //       })
-    //       if (publicNameChange) {
-    //         testApp.send('stop')
-    //       } else {
-    //         assert.fail('public folder name was not changed to version number')
-    //         testApp.send('stop')
-    //       }
-    //     })
-    // })
+    // check for the existence of the directory once the server is started up
+    testApp.on('message', () => {
+      assert(fs.existsSync(path.join(appDir, 'public/0.5.1')), 'Versioned public folder was not generated')
+      testApp.send('stop')
+    })
 
     // when the child process exits, finish the test
     testApp.on('exit', () => {

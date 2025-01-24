@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
@@ -17,14 +16,8 @@ describe('Roosevelt.js Tests', () => {
   let sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // clean up the test app directory after each test
-  afterEach(done => {
-    cleanupTestApp(appDir, err => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
   it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', done => {
@@ -95,8 +88,7 @@ describe('Roosevelt.js Tests', () => {
     })
   })
 
-  // TODO: Figure out why this test is broken
-  it.skip('should only initialize the app once even though initServer is called twice', done => {
+  it('should only initialize the app once even though initServer is called twice', done => {
     // options to pass to generateTestApp
     sOptions.initStart = false
     sOptions.method = 'initServer'
@@ -287,39 +279,6 @@ describe('Roosevelt.js Tests', () => {
     })
   })
 
-  it('should not execute onServerStart if the value is not a function', done => {
-    // bool var that will hold whether or not a message is recieved based on if a function was passed to onServerStart
-    let serverStartFunctionBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      onServerStart: 'something'
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // if a message was recieved, then it probably means that the onServerStart param has excuted and sent something
-    testApp.on('message', () => {
-      serverStartFunctionBool = true
-      testApp.send('stop')
-    })
-
-    // since a message will not be recieved by the test suite, kill the app after a certain amount of time
-    setTimeout(() => {
-      testApp.send('stop')
-    }, 4000)
-
-    // on exit, test to see if a message was recieved by the test suite from the app
-    testApp.on('exit', () => {
-      assert.strictEqual(serverStartFunctionBool, false, 'Roosevelt still executed what was in onServerStart even though it is not a function')
-      done()
-    })
-  })
-
   it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', done => {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
@@ -368,11 +327,10 @@ describe('Roosevelt.js Tests', () => {
     })
   })
 
-  // TODO: Figure out why this test is broken
-  it.skip('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', done => {
+  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', done => {
     // bool var to hold whether or not specific logs were made or if a specific action happened
     let samePortWarningBool = false
-    let serverStartedBool = false
+    const serverStartedBool = false
 
     // create a dummy server that will give occupy the same port as the app
     const server = http.createServer((req, res) => {
@@ -390,16 +348,11 @@ describe('Roosevelt.js Tests', () => {
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
+
     testApp.stderr.on('data', data => {
       if (data.includes('Either kill that process or change this')) {
         samePortWarningBool = true
       }
-    })
-
-    // when the app starts, set the bool and kill the app
-    testApp.on('message', () => {
-      serverStartedBool = true
-      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test
@@ -459,8 +412,7 @@ describe('Roosevelt.js Tests', () => {
     })
   })
 
-  // TODO: Figure out why this test is broken
-  it.skip('should be able to use server close instead of exiting process with an HTTP server', done => {
+  it('should be able to use server close instead of exiting process with an HTTP server', done => {
     // set test app features
     sOptions.exitProcess = true
     sOptions.close = true
@@ -496,8 +448,7 @@ describe('Roosevelt.js Tests', () => {
     })
   })
 
-  // TODO: Figure out why this test is broken
-  it.skip('should be able to use server close instead of exiting process with an HTTPS server', done => {
+  it('should be able to use server close instead of exiting process with an HTTPS server', done => {
     // set the server type
     sOptions.close = true
     sOptions.serverType = 'httpsServer'

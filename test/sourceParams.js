@@ -18,8 +18,7 @@ const config = {
   csrfProtection: false
 }
 
-// TODO: Figure out why most of these tests are failing
-describe.skip('sourceParams', () => {
+describe('sourceParams', () => {
   describe('config objects', () => {
     // blocklist certain params from auto checking
     const blocklist = [
@@ -27,11 +26,12 @@ describe.skip('sourceParams', () => {
       'cssCompiler',
       'onClientViewsProcess',
       'onServerInit',
-      'onStaticAssetsGenerated',
+      'onBeforeMiddleware',
       'onServerStart',
       'onAppExit',
       'routePrefix',
-      'unversionedPublic'
+      'unversionedPublic',
+      'pkg'
     ]
 
     afterEach(async () => {

@@ -27,6 +27,8 @@ const roosevelt = (options = {}, schema) => {
   const appDir = params.appDir
   const pkg = params.pkg
 
+  app.set('params', params) // expose app configuration
+
   // use existence of public folder to determine if this is the first run
   if (!fs.pathExistsSync(params.publicFolder) && params.logging.methods.info) {
     // run the param audit
@@ -48,7 +50,6 @@ const roosevelt = (options = {}, schema) => {
     app.set('router', router)
     app.set('env', params.mode === 'production-proxy' ? 'production' : params.mode)
     app.set('logger', logger) // expose instance of roosevelt-logger module
-    app.set('params', params) // expose app configuration
     app.set('appDir', appDir)
     app.set('package', pkg) // expose contents of package.json if any
     app.set('appName', pkg.name || 'Roosevelt Express')
@@ -261,6 +262,9 @@ const roosevelt = (options = {}, schema) => {
   async function startServer () {
     await initServer()
 
+    const numberOfServers = params.https.enable && !params.https.force ? 2 : 1
+    let listeningServers = 0
+
     // code that executes after the server starts
     function startupCallback (proto, port) {
       async function startReloadServer (proto, server) {
@@ -318,31 +322,31 @@ const roosevelt = (options = {}, schema) => {
           logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
         }
 
-        // fire user-defined onServerStart event
-        if (params.onServerStart && typeof params.onServerStart === 'function') {
-          Promise.resolve(params.onServerStart(app))
+        listeningServers++
+
+        // fire user-defined onServerStart event if all servers are started
+        if (listeningServers === numberOfServers) {
+          if (params.onServerStart && typeof params.onServerStart === 'function') {
+            Promise.resolve(params.onServerStart(app))
+          }
         }
       }
     }
 
     if (params.makeBuildArtifacts !== 'staticsOnly') {
       if (!params.https.force || !params.https.enable) {
-        try {
-          await httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port))
-        } catch (err) {
+        httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port)).on('error', err => {
           logger.error(err)
           logger.error(`Another process is using port ${params.port}. Either kill that process or change this app's port number.`.bold)
           process.exit(1)
-        }
+        })
       }
       if (params.https.enable) {
-        try {
-          await httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port))
-        } catch (err) {
+        httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port)).on('error', err => {
           logger.error(err)
           logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
           process.exit(1)
-        }
+        })
       }
     }
 
