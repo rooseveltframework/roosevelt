@@ -6,13 +6,10 @@
 
 ## 0.24.0
 
-- Breaking: Removed `app.get('routes')`.
-- Breaking: `app.httpServer` is now `app.get('httpServer')` and `app.httpsServer` is now `app.get('httpsServer')`.
-- Breaking: Removed `onReqAfterRoute`, `onReqBeforeRoute`, `onReqStart`.
-- Breaking: `onStaticAssetsGenerated` deprecated. Use `onServerInit` instead.
+- Breaking: Removed `app.get('routes')`, `onReqAfterRoute`, `onReqBeforeRoute`, `onReqStart`, and `onStaticAssetsGenerated`.
+- Breaking: Renamed `app.httpServer` to `app.get('httpServer')` and `app.httpsServer` to `app.get('httpsServer')`.
 - Added new method `onBeforeMiddleware`.
 - Added `start` and `stop` method shorthands for `startServer` and `stopServer` respectively.
-- Stopped the `statics/pages` directory from being created automatically if it doesn't exist.
 - Refactored various things under the hood to improve code quality, performance, and reduce unnecessary dependencies.
 - Updated various dependencies.
 

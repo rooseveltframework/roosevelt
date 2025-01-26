@@ -692,10 +692,10 @@ describe('sourceParams', () => {
     })
   })
 
-  // TODO: this feature is broken because of too many hardcoded checks for the default flags; also rewrite this test to not use cores becaues the cores feature was stripped
+  // TODO: the CLI flag override tests are skipped because the feature doesn't work due to https://github.com/rooseveltframework/source-configs/issues/355
+  // to implement this feature, first the source-configs feature needs to be implemented, then we need to alter the skipped tests to test a different command line flag being overridden (e.g. --development-mode) because the `cores` feature has since been deprecated since we set the tests to skip
   /*
-
-  cut README content:
+  below is the now-cut README content for the feature back when it previously existed:
 
   - [Overriding recognized command line flags and environment variables](https://github.com/rooseveltframework/roosevelt#overriding-recognized-command-line-flags-and-environment-variables)
 

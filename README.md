@@ -1018,9 +1018,9 @@ require('roosevelt')({
 
 ### Event list
 
-- `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Some [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
+- `onBeforeMiddleware(app)`: Fired when the app begins initializing, prior to any middleware being loaded into the app.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-- `onStaticAssetsGenerated(app)`: Fired when the server finishes init but before the server starts.
+- `onServerInit(app)`: Fired when the server is fully initialized and all middleware has been loaded but before the server has started.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerStart(app)`: Fired when the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
