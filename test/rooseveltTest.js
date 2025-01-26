@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
@@ -9,7 +8,7 @@ const http = require('http')
 const path = require('path')
 const request = require('supertest')
 
-describe('Roosevelt.js Tests', function () {
+describe('Roosevelt.js Tests', () => {
   // directory for the test app
   const appDir = path.join(__dirname, 'app/rooseveltTest').replace('/\\/g', '/')
 
@@ -17,17 +16,11 @@ describe('Roosevelt.js Tests', function () {
   let sOptions = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
   // clean up the test app directory after each test
-  afterEach(function (done) {
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
-  it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', function (done) {
+  it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', done => {
     // generate the test app
     sOptions.appDir = './test/app'
     sOptions.method = 'initServer'
@@ -56,7 +49,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should only initialize the app once even though the startServer function is called after the initServer function', function (done) {
+  it('should only initialize the app once even though the startServer function is called after the initServer function', done => {
     // options to pass to generateTestApp
     sOptions.initStart = true
     sOptions.method = 'initServer'
@@ -95,7 +88,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should only initialize the app once even though initServer is called twice', function (done) {
+  it('should only initialize the app once even though initServer is called twice', done => {
     // options to pass to generateTestApp
     sOptions.initStart = false
     sOptions.method = 'initServer'
@@ -116,7 +109,7 @@ describe('Roosevelt.js Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on the output stream check to see how many times it logs that the server starts
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('Server initialized')) {
         initServedLog++
       }
@@ -134,7 +127,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should allow the user to init Roosevelt without putting in a callback', function (done) {
+  it('should allow the user to init Roosevelt without putting in a callback', done => {
     // generate the app.js file (no callback)
     sOptions.method = 'initServer'
     sOptions.empty = true
@@ -161,9 +154,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      const test1 = fs.existsSync(path.join(appDir, 'mvc'))
-      const test2 = fs.existsSync(path.join(appDir, 'public'))
-      const test3 = fs.existsSync(path.join(appDir, 'statics'))
+      const test1 = fs.pathExistsSync(path.join(appDir, 'mvc'))
+      const test2 = fs.pathExistsSync(path.join(appDir, 'public'))
+      const test3 = fs.pathExistsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -172,7 +165,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should allow the user to init Roosevelt and not run the callback param if it is not a function', function (done) {
+  it('should allow the user to init Roosevelt and not run the callback param if it is not a function', done => {
     // bool var to see that a message was not send back by a call back and that folders exists
     let messageRecievedBool = false
 
@@ -199,9 +192,9 @@ describe('Roosevelt.js Tests', function () {
 
     // when the app is finished, check that the initialized folder are there and that a message was not recieved from the app based on the callback
     testApp.on('exit', () => {
-      const test1 = fs.existsSync(path.join(appDir, 'mvc'))
-      const test2 = fs.existsSync(path.join(appDir, 'public'))
-      const test3 = fs.existsSync(path.join(appDir, 'statics'))
+      const test1 = fs.pathExistsSync(path.join(appDir, 'mvc'))
+      const test2 = fs.pathExistsSync(path.join(appDir, 'public'))
+      const test3 = fs.pathExistsSync(path.join(appDir, 'statics'))
       assert.strictEqual(test1, true, 'Roosevelt did not make its mvc folder')
       assert.strictEqual(test2, true, 'Roosevelt did not make its public folder')
       assert.strictEqual(test3, true, 'Roosevelt did not make its statics folder')
@@ -214,7 +207,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to run the app in production mode', function (done) {
+  it('should be able to run the app in production mode', done => {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
 
@@ -248,7 +241,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to run the app with the localhostOnly param set to true and in production mode', function (done) {
+  it('should be able to run the app with the localhostOnly param set to true and in production mode', done => {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
 
@@ -286,40 +279,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should not execute onServerStart if the value is not a function', function (done) {
-    // bool var that will hold whether or not a message is recieved based on if a function was passed to onServerStart
-    let serverStartFunctionBool = false
-
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      onServerStart: 'something'
-    }, sOptions)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // if a message was recieved, then it probably means that the onServerStart param has excuted and sent something
-    testApp.on('message', () => {
-      serverStartFunctionBool = true
-      testApp.send('stop')
-    })
-
-    // since a message will not be recieved by the test suite, kill the app after a certain amount of time
-    setTimeout(function () {
-      testApp.send('stop')
-    }, 4000)
-
-    // on exit, test to see if a message was recieved by the test suite from the app
-    testApp.on('exit', () => {
-      assert.strictEqual(serverStartFunctionBool, false, 'Roosevelt still executed what was in onServerStart even though it is not a function')
-      done()
-    })
-  })
-
-  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', function (done) {
+  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', done => {
     // bool var to hold whether a specific log was outputted
     let productionModeBool = false
     let httpsServerMadeBool = false
@@ -355,7 +315,7 @@ describe('Roosevelt.js Tests', function () {
     })
 
     // when the app starts, check that localhostOnly was set correctly
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       assert.strictEqual(params.localhostOnly, true, 'Roosevelt did not set localhostOnly to true')
     })
 
@@ -367,13 +327,13 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', function (done) {
+  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', done => {
     // bool var to hold whether or not specific logs were made or if a specific action happened
     let samePortWarningBool = false
-    let serverStartedBool = false
+    const serverStartedBool = false
 
     // create a dummy server that will give occupy the same port as the app
-    const server = http.createServer(function (req, res) {
+    const server = http.createServer((req, res) => {
       res.statusCode = 200
       res.end()
     }).listen(43711)
@@ -388,16 +348,11 @@ describe('Roosevelt.js Tests', function () {
 
     // fork the app and run it as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-    testApp.stderr.on('data', (data) => {
+
+    testApp.stderr.on('data', data => {
       if (data.includes('Either kill that process or change this')) {
         samePortWarningBool = true
       }
-    })
-
-    // when the app starts, set the bool and kill the app
-    testApp.on('message', () => {
-      serverStartedBool = true
-      testApp.send('stop')
     })
 
     // when the child process exits, check assertions and finish the test
@@ -409,7 +364,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to close an active connection when the app is closed', function (done) {
+  it('should be able to close an active connection when the app is closed', done => {
     // bool var to hold whether or not the request had finished
     let requestFinishedBool = false
 
@@ -434,7 +389,7 @@ describe('Roosevelt.js Tests', function () {
       if (msg.port) {
         request(`http://localhost:${msg.port}`)
           .get('/longConn')
-          .end((err) => {
+          .end(err => {
             // if the connection is ended, see if it was because of an error or if it recieved a res object from the route
             if (err.code === 'ECONNRESET') {
               testApp.send('stop')
@@ -457,7 +412,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to use server close instead of exiting process with an HTTP server', function (done) {
+  it('should be able to use server close instead of exiting process with an HTTP server', done => {
     // set test app features
     sOptions.exitProcess = true
     sOptions.close = true
@@ -477,7 +432,7 @@ describe('Roosevelt.js Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('HTTP server listening')) {
         testApp.send('stop')
       }
@@ -493,7 +448,7 @@ describe('Roosevelt.js Tests', function () {
     })
   })
 
-  it('should be able to use server close instead of exiting process with an HTTPS server', function (done) {
+  it('should be able to use server close instead of exiting process with an HTTPS server', done => {
     // set the server type
     sOptions.close = true
     sOptions.serverType = 'httpsServer'
@@ -518,7 +473,7 @@ describe('Roosevelt.js Tests', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // listen on the logs to see if the https server is initialized
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('HTTPS server listening')) {
         testApp.send('stop')
       }

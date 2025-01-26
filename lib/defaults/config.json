@@ -121,6 +121,7 @@
   "versionedPublic": false,
   "hostPublic": true,
   "clientViews": {
+    "enable": false,
     "allowlist": {},
     "blocklist": [],
     "output": "js",

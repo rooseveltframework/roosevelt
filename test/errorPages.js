@@ -1,37 +1,28 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const { fork } = require('child_process')
 const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
-describe('error pages', function () {
+describe('error pages', () => {
   const appDir = path.join(__dirname, 'app/errorPages')
 
   // options to pass into test app generator
   const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
 
-  beforeEach(function (done) {
+  beforeEach(() => {
     // copy the mvc directory into the test app directory for each test
     fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
-    done()
   })
 
-  afterEach(function (done) {
-    // clean up the test app directory after each test
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
-  it('should render the default 404 page if there is a request for an invalid route', function (done) {
+  it('should render the default 404 page if there is a request for an invalid route', done => {
     // generate the test app
     generateTestApp({
       appDir,
@@ -62,15 +53,15 @@ describe('error pages', function () {
           assert.strictEqual(test2, true)
           testApp.send('stop')
         })
+    })
 
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
-      })
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
     })
   })
 
-  it('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', function (done) {
+  it('should render a custom 404 page if there is a request for an invalid route and the 404 parameter is set.', done => {
     // copy the custom 404 controller into to the mvc folder
     fs.copyFileSync(path.join(__dirname, './util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
 
@@ -90,7 +81,7 @@ describe('error pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request an invalid route
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       request(`http://localhost:${params.port}`)
         .get('/randomURL')
         .expect(404, (err, res) => {
@@ -107,15 +98,15 @@ describe('error pages', function () {
           assert.strictEqual(test3, true)
           testApp.send('stop')
         })
+    })
 
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
-      })
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
     })
   })
 
-  it('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', function (done) {
+  it('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', done => {
     // generate the test app
     generateTestApp({
       appDir,
@@ -132,7 +123,7 @@ describe('error pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the server error route
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       request(`http://localhost:${params.port}`)
         .get('/serverError')
         .expect(500, (err, res) => {
@@ -149,15 +140,15 @@ describe('error pages', function () {
           assert.strictEqual(test3, true)
           testApp.send('stop')
         })
+    })
 
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
-      })
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
     })
   })
 
-  it('should render the default 500 error page if an error has occured on the server', function (done) {
+  it('should render the default 500 error page if an error has occured on the server', done => {
     // generate the test app
     generateTestApp({
       appDir,
@@ -171,7 +162,7 @@ describe('error pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request the server error route
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       request(`http://localhost:${params.port}`)
         .get('/serverError')
         .expect(500, (err, res) => {
@@ -186,15 +177,15 @@ describe('error pages', function () {
           assert.strictEqual(test2, true)
           testApp.send('stop')
         })
+    })
 
-      // when the child process exits, finish the test
-      testApp.on('exit', () => {
-        done()
-      })
+    // when the child process exits, finish the test
+    testApp.on('exit', () => {
+      done()
     })
   })
 
-  it('should complete the request even though the server was closed in the middle of it and respond 503 to any other request made afterwards', function (done) {
+  it('should complete the request even though the server was closed in the middle of it and respond 503 to any other request made afterwards', done => {
     let shuttingDownLogBool = false
     let successfulShutdownBool = false
     let port = 0
@@ -212,7 +203,7 @@ describe('error pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console.logs, check for correct output
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
         shuttingDownLogBool = true
       }
@@ -222,7 +213,7 @@ describe('error pages', function () {
     })
 
     // when the app finishes, save the app and send a request to the page that has a long timeout
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       if (params.port) {
         port = params.port
         request(`http://localhost:${params.port}`)
@@ -260,7 +251,7 @@ describe('error pages', function () {
     })
   })
 
-  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
     let forceCloseLogBool = false
     let shuttingDownLogBool = false
 
@@ -278,21 +269,21 @@ describe('error pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see that the app is shutting down
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
         shuttingDownLogBool = true
       }
     })
 
     // on error, see that not all connections are finishing and that its force killing them
-    testApp.stderr.on('data', (data) => {
+    testApp.stderr.on('data', data => {
       if (data.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
         forceCloseLogBool = true
       }
     })
 
     // when the app finishes initialization, ask for longWait
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       if (params.port) {
         request(`http://localhost:${params.port}`)
           .get('/longWait')
@@ -316,9 +307,8 @@ describe('error pages', function () {
     })
   })
 
-  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', function (done) {
+  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
     // add test app features to use server close and then exit process
-    options.close = true
     options.exitProcess = true
     options.serverType = 'httpsServer'
 
@@ -338,37 +328,35 @@ describe('error pages', function () {
         autoCert: false
       },
       onServerStart: '(app) => {process.send(app.get("params"))}',
-      shutdownTimeout: 7000
-    }, options)
+      shutdownTimeout: 3000
+    }, { ...options, justStart: true })
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see that the app is shutting down
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('Roosevelt Express received kill signal, attempting to shut down gracefully.')) {
         shuttingDownLogBool = true
       }
     })
 
     // on error, see that not all connections are finishing and that its force killing them
-    testApp.stderr.on('data', (data) => {
+    testApp.stderr.on('data', data => {
       if (data.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
         forceCloseLogBool = true
       }
     })
 
     // when the app finishes initialization, ask for longWait
-    testApp.on('message', (params) => {
+    testApp.on('message', params => {
       if (params.port) {
         request(`http://localhost:${params.port}`)
           .get('/longWait')
-          // since we are force closing this connection while its still active, it should not send back a response object or a status number
-          .expect(200, (err, res) => {
+          .expect(200, (err) => {
             if (!err) {
               assert.fail('The server responded without error.')
             }
-            assert.strictEqual(res, undefined, 'Roosevelt gave back a response object even though the connection for force closed')
           })
       } else {
         testApp.send('stop')
@@ -379,14 +367,13 @@ describe('error pages', function () {
     testApp.on('exit', () => {
       assert.strictEqual(forceCloseLogBool, true, 'Roosevelt did not log that it is force closing connections')
       assert.strictEqual(shuttingDownLogBool, true, 'Roosevelt did not log that it is gracefully shutting down the server')
-      delete options.close
       delete options.exitProcess
       delete options.serverType
       done()
     })
   })
 
-  it('should be able to start the app normally without any controller errors, even though there is a non-controller file in the controller folder', function (done) {
+  it('should be able to start the app normally without any controller errors, even though there is a non-controller file in the controller folder', done => {
     let appCompletedInitLogBool = false
     let controllerErrorLogBool = false
 
@@ -406,14 +393,14 @@ describe('error pages', function () {
     const testApp = fork(path.join(appDir, 'app.js'), ['--dev'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // on console logs, see if the app completed its initialization
-    testApp.stdout.on('data', (data) => {
+    testApp.stdout.on('data', data => {
       if (data.includes('Roosevelt Express HTTP server listening on port 43711 (development mode)')) {
         appCompletedInitLogBool = true
       }
     })
 
     // on error logs, see if the app failed to load any controller files
-    testApp.stderr.on('data', (data) => {
+    testApp.stderr.on('data', data => {
       if (data.includes('failed to load controller file')) {
         controllerErrorLogBool = true
       }

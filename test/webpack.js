@@ -4,7 +4,6 @@
 const assert = require('assert')
 const appCleaner = require('./util/appCleaner')
 const fs = require('fs-extra')
-const fsr = require('../lib/tools/fsr')()
 const path = require('path')
 const roosevelt = require('../roosevelt')
 
@@ -69,16 +68,12 @@ describe('webpack', () => {
     fs.writeFileSync(path.join(appDir, 'config.js'), webpackConfigFile)
   })
 
-  afterEach(done => {
-    (async () => {
-      // wipe out the test app directory
-      await appCleaner('webpack')
-
-      done()
-    })()
+  afterEach(async () => {
+    // wipe out the test app directory
+    await appCleaner('webpack')
   })
 
-  it('should build prod bundle using supplied webpack config', done => {
+  it('should build prod bundle using supplied webpack config', async () => {
     const app = roosevelt({
       logging: {
         methods: {
@@ -101,14 +96,13 @@ describe('webpack', () => {
       }
     })
 
-    app.initServer(() => {
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/prod.js')), true, 'webpack prod bundle was not created')
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/dev.js')), false, 'webpack dev bundle was created for some reason')
-      done()
-    })
+    await app.initServer()
+
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/prod.js')), true, 'webpack prod bundle was not created')
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/dev.js')), false, 'webpack dev bundle was created for some reason')
   })
 
-  it('should build dev bundle using supplied webpack config', done => {
+  it('should build dev bundle using supplied webpack config', async () => {
     const app = roosevelt({
       mode: 'development',
       logging: {
@@ -133,14 +127,13 @@ describe('webpack', () => {
       }
     })
 
-    app.initServer(() => {
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/dev.js')), true, 'webpack dev bundle was not created')
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/prod.js')), false, 'webpack prod bundle was created for some reason')
-      done()
-    })
+    await app.initServer()
+
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/dev.js')), true, 'webpack dev bundle was not created')
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/prod.js')), false, 'webpack prod bundle was created for some reason')
   })
 
-  it('should bundle in prod mode when env is not set', done => {
+  it('should bundle in prod mode when env is not set', async () => {
     const app = roosevelt({
       logging: {
         methods: {
@@ -173,13 +166,12 @@ describe('webpack', () => {
       }
     })
 
-    app.initServer(() => {
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/any.js')), true, 'webpack bundle was not created')
-      done()
-    })
+    await app.initServer()
+
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/any.js')), true, 'webpack bundle was not created')
   })
 
-  it('should bundle in dev mode when env is not set', done => {
+  it('should bundle in dev mode when env is not set', async () => {
     const app = roosevelt({
       logging: {
         methods: {
@@ -215,13 +207,12 @@ describe('webpack', () => {
       }
     })
 
-    app.initServer(() => {
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/any.js')), true, 'webpack bundle was not created')
-      done()
-    })
+    await app.initServer()
+
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/any.js')), true, 'webpack bundle was not created')
   })
 
-  it('should bundle from a mix of config objects and files', done => {
+  it('should bundle from a mix of config objects and files', async () => {
     const app = roosevelt({
       logging: {
         methods: {
@@ -260,10 +251,9 @@ describe('webpack', () => {
       }
     })
 
-    app.initServer(() => {
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/any.js')), true, 'webpack bundle was not created')
-      assert.deepStrictEqual(fsr.fileExists(path.join(appDir, 'public/js/configBundle.js')), true, 'webpack bundle was not created')
-      done()
-    })
+    await app.initServer()
+
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/any.js')), true, 'webpack bundle was not created')
+    assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/configBundle.js')), true, 'webpack bundle was not created')
   })
 })

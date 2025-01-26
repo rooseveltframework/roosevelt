@@ -2,13 +2,12 @@
 
 const assert = require('assert')
 const path = require('path')
-const cleanupTestApp = require('./util/cleanupTestApp')
 const fs = require('fs-extra')
 const { minify } = require('html-minifier-terser')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('HTML Minification Tests', function () {
+describe('HTML Minification Tests', () => {
   const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
     appDir,
@@ -42,7 +41,7 @@ describe('HTML Minification Tests', function () {
   let app
 
   // generate test app directory structure
-  beforeEach(function () {
+  beforeEach(() => {
     fs.ensureDirSync(path.join(appDir, 'mvc'))
     fs.copySync(path.join(__dirname, './util/mvc/controllers/htmlMinifier.js'), path.join(appDir, 'mvc/controllers/htmlMinifier.js'))
     fs.copySync(path.join(__dirname, './util/mvc/models/teddyModel.js'), path.join(appDir, 'mvc/models/teddyModel.js'))
@@ -50,213 +49,219 @@ describe('HTML Minification Tests', function () {
   })
 
   // wipe out test app after each test
-  afterEach(function (done) {
-    app.stopServer('close')
+  afterEach(async () => {
+    app.stopServer({ persistProcess: true })
 
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
+    await fs.remove(appDir)
+  })
+
+  it('should minify HTML when enabled', done => {
+    (async () => {
+      // initialize test app
+      app = roosevelt({
+        ...appConfig,
+        onServerStart
+      })
+
+      await app.startServer()
+
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .get('/minify')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, appConfig.html.minifier.options)
+              assert.strictEqual(testMinify, res.text)
+            }
+            done()
+          })
       }
-    })
+    })()
   })
 
-  it('should minify HTML when enabled', function (done) {
-    // initialize test app
-    app = roosevelt({
-      ...appConfig,
-      onServerStart
-    })
+  it('should minify HTML on routes with callbacks', done => {
+    (async () => {
+      // initialize test app
+      app = roosevelt({
+        ...appConfig,
+        onServerStart
+      })
 
-    app.startServer()
+      await app.startServer()
 
-    // run the test once the server is started
-    function onServerStart (app) {
-      request(app)
-        .get('/minify')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, appConfig.html.minifier.options)
-            assert.strictEqual(testMinify, res.text)
-          }
-          done()
-        })
-    }
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .get('/callbackRoute')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, appConfig.html.minifier.options)
+              assert.strictEqual(testMinify, res.text)
+            }
+            done()
+          })
+      }
+    })()
   })
 
-  it('should minify HTML on routes with callbacks', function (done) {
-    // initialize test app
-    app = roosevelt({
-      ...appConfig,
-      onServerStart
-    })
+  it('should not minify HTML when "html.minifier.enable" param is set to false', done => {
+    (async () => {
+      // copy root config and disable HTML minifier
+      const config = JSON.parse(JSON.stringify(appConfig))
+      config.html.minifier.enable = false
 
-    app.startServer()
+      // initialize test app
+      app = roosevelt({
+        ...config,
+        onServerStart
+      })
 
-    // run the test once the server is started
-    function onServerStart (app) {
-      request(app)
-        .get('/callbackRoute')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, appConfig.html.minifier.options)
-            assert.strictEqual(testMinify, res.text)
-          }
-          done()
-        })
-    }
+      await app.startServer()
+
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .get('/minify')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, config.html.minifier.options)
+              assert.notStrictEqual(testMinify, res.text)
+            }
+            done()
+          })
+      }
+    })()
   })
 
-  it('should not minify HTML when "html.minifier.enable" param is set to false', function (done) {
-    // copy root config and disable HTML minifier
-    const config = JSON.parse(JSON.stringify(appConfig))
-    config.html.minifier.enable = false
+  it('should not minify HTML when "minify" param is set to false', done => {
+    (async () => {
+      // copy root config and disable HTML minifier
+      const config = JSON.parse(JSON.stringify(appConfig))
+      config.minify = false
 
-    // initialize test app
-    app = roosevelt({
-      ...config,
-      onServerStart
-    })
+      // initialize test app
+      app = roosevelt({
+        ...config,
+        onServerStart
+      })
 
-    app.startServer()
+      await app.startServer()
 
-    // run the test once the server is started
-    function onServerStart (app) {
-      request(app)
-        .get('/minify')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, config.html.minifier.options)
-            assert.notStrictEqual(testMinify, res.text)
-          }
-          done()
-        })
-    }
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .get('/minify')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, config.html.minifier.options)
+              assert.notStrictEqual(testMinify, res.text)
+            }
+            done()
+          })
+      }
+    })()
   })
 
-  it('should not minify HTML when "minify" param is set to false', function (done) {
-    // copy root config and disable HTML minifier
-    const config = JSON.parse(JSON.stringify(appConfig))
-    config.minify = false
+  it('should not minify HTML when requesting exceptionRoutes (string format)', done => {
+    (async () => {
+      // copy root config and set exceptionRoutes as string
+      const config = JSON.parse(JSON.stringify(appConfig))
+      config.html.minifier.exceptionRoutes = '/minify'
 
-    // initialize test app
-    app = roosevelt({
-      ...config,
-      onServerStart
-    })
+      // initialize test app
+      app = roosevelt({
+        ...config,
+        onServerStart
+      })
 
-    app.startServer()
+      await app.startServer()
 
-    // run the test once the server is started
-    function onServerStart (app) {
-      request(app)
-        .get('/minify')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, config.html.minifier.options)
-            assert.notStrictEqual(testMinify, res.text)
-          }
-          done()
-        })
-    }
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .get('/minify')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, config.html.minifier.options)
+              assert.notStrictEqual(testMinify, res.text)
+
+              // ensure minification is only disabled on the exceptionRoutes by testing another URL
+              checkSecondURL(app)
+            }
+          })
+      }
+
+      function checkSecondURL (app) {
+        request(app)
+          .get('/anotherRoute')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, config.html.minifier.options)
+              assert.strictEqual(testMinify, res.text)
+            }
+            done()
+          })
+      }
+    })()
   })
 
-  it('should not minify HTML when requesting exceptionRoutes (string format)', function (done) {
-    // copy root config and set exceptionRoutes as string
-    const config = JSON.parse(JSON.stringify(appConfig))
-    config.html.minifier.exceptionRoutes = '/minify'
+  it('should not minify HTML when requesting exceptionRoutes (array format)', done => {
+    (async () => {
+      // copy root config and set exceptionRoutes as array
+      const config = JSON.parse(JSON.stringify(appConfig))
+      config.html.minifier.exceptionRoutes = ['/minify']
 
-    // initialize test app
-    app = roosevelt({
-      ...config,
-      onServerStart
-    })
+      // initialize test app
+      app = roosevelt({
+        ...config,
+        onServerStart
+      })
 
-    app.startServer()
+      await app.startServer()
 
-    // run the test once the server is started
-    function onServerStart (app) {
-      request(app)
-        .get('/minify')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, config.html.minifier.options)
-            assert.notStrictEqual(testMinify, res.text)
+      // run the test once the server is started
+      function onServerStart (app) {
+        request(app)
+          .get('/minify')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, config.html.minifier.options)
+              assert.notStrictEqual(testMinify, res.text)
 
-            // ensure minification is only disabled on the exceptionRoutes by testing another URL
-            checkSecondURL(app)
-          }
-        })
-    }
+              // ensure minification is only disabled on the exceptionRoutes by testing another URL
+              checkSecondURL(app)
+            }
+          })
+      }
 
-    function checkSecondURL (app) {
-      request(app)
-        .get('/anotherRoute')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, config.html.minifier.options)
-            assert.strictEqual(testMinify, res.text)
-          }
-          done()
-        })
-    }
-  })
-
-  it('should not minify HTML when requesting exceptionRoutes (array format)', function (done) {
-    // copy root config and set exceptionRoutes as array
-    const config = JSON.parse(JSON.stringify(appConfig))
-    config.html.minifier.exceptionRoutes = ['/minify']
-
-    // initialize test app
-    app = roosevelt({
-      ...config,
-      onServerStart
-    })
-
-    app.startServer()
-
-    // run the test once the server is started
-    function onServerStart (app) {
-      request(app)
-        .get('/minify')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, config.html.minifier.options)
-            assert.notStrictEqual(testMinify, res.text)
-
-            // ensure minification is only disabled on the exceptionRoutes by testing another URL
-            checkSecondURL(app)
-          }
-        })
-    }
-
-    function checkSecondURL (app) {
-      request(app)
-        .get('/anotherRoute')
-        .expect(200, async (err, res) => {
-          if (err) {
-            assert.fail(err.message)
-          } else {
-            const testMinify = await minify(res.text, config.html.minifier.options)
-            assert.strictEqual(testMinify, res.text)
-          }
-          done()
-        })
-    }
+      function checkSecondURL (app) {
+        request(app)
+          .get('/anotherRoute')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, config.html.minifier.options)
+              assert.strictEqual(testMinify, res.text)
+            }
+            done()
+          })
+      }
+    })()
   })
 })

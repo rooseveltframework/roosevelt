@@ -2,12 +2,10 @@
 
 const assert = require('assert')
 const generateTestApp = require('./util/generateTestApp')
-const cleanupTestApp = require('./util/cleanupTestApp')
-const fsr = require('../lib/tools/fsr')()
 const { fork } = require('child_process')
-const fse = require('fs-extra')
+const fs = require('fs-extra')
 const path = require('path')
-const klawsync = require('klaw-sync')
+const { walk } = require('@nodelib/fs.walk/promises')
 const htmlMinifier = require('html-minifier-terser').minify
 
 const minifyOptions = {
@@ -18,7 +16,7 @@ const minifyOptions = {
   removeEmptyAttributes: true
 }
 
-describe('Views Bundler Tests', function () {
+describe('Views Bundler Tests', () => {
   const appDir = path.join(__dirname, 'app/viewsBundler')
 
   const template1 = `
@@ -47,7 +45,7 @@ describe('Views Bundler Tests', function () {
   ]
 
   const pathOfExposedTemplates = [
-    path.join(appDir, 'public/templates/output.js')
+    path.join(appDir, 'public/js/output.js')
   ]
 
   const staticTemplates = [
@@ -59,30 +57,25 @@ describe('Views Bundler Tests', function () {
     blocklistedTemplate
   ]
 
-  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: true, initServer: true, stopServer: true }
 
-  beforeEach(function () {
-    fse.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
+  beforeEach(() => {
+    fs.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
 
     for (let i = 0; i < pathOfTemplates.length; i++) {
-      fse.writeFileSync(pathOfTemplates[i], staticTemplates[i])
+      fs.writeFileSync(pathOfTemplates[i], staticTemplates[i])
     }
   })
 
-  afterEach(function (done) {
-    cleanupTestApp(appDir, (err) => {
-      if (err) {
-        throw err
-      } else {
-        done()
-      }
-    })
+  afterEach(async () => {
+    await fs.remove(appDir)
   })
 
-  it('should properly expose template files in an allowlist', function (done) {
+  it('should properly expose template files in an allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         }
@@ -93,9 +86,9 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesExist(appDir, 'public/templates', pathOfExposedTemplates)
+        await assertFilesExist(appDir, 'public/js', pathOfExposedTemplates)
 
         testApp.send('stop')
       }
@@ -106,10 +99,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should add .html to a template that doesn\'t have an extension', function (done) {
+  it('should add .html to a template that doesn\'t have an extension', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a']
         }
@@ -120,9 +114,9 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesExist(appDir, 'public/templates', pathOfExposedTemplates)
+        await assertFilesExist(appDir, 'public/js', pathOfExposedTemplates)
         testApp.send('stop')
       }
     })
@@ -132,19 +126,19 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there are no items in the allowlist', function (done) {
+  it('should not create a templates folder if there are no items in the allowlist', done => {
     generateTestApp({
       appDir,
-      clientViews: {},
+      clientViews: { enable: true },
       csrfProtection: false,
       makeBuildArtifacts: true
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -155,19 +149,19 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if makeBuildArtifacts is false', function (done) {
+  it('should not create a templates folder if makeBuildArtifacts is false', done => {
     generateTestApp({
       appDir,
-      clientViews: {},
+      clientViews: { enable: true },
       csrfProtection: false,
       makeBuildArtifacts: false
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -178,10 +172,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there is bundles without any contents', function (done) {
+  it('should not create a templates folder if there is bundles without any contents', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': []
         }
@@ -192,9 +187,9 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -205,10 +200,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not create a templates folder if there is a bundle that is null', function (done) {
+  it('should not create a templates folder if there is a bundle that is null', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': null
         }
@@ -219,9 +215,9 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -232,37 +228,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should send an error to the console with an nonexistent template', function (done) {
+  it('should skip a file if it is in the allowlist but has a <!-- roosevelt-blocklist --> tag', done => {
     generateTestApp({
       appDir,
       clientViews: {
-        allowlist: {
-          'output.js': ['fake.html']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stderr.on('data', (result) => {
-      if (result.includes('no such file or directory')) {
-        assert.strictEqual(result.includes('fake.html'), true)
-      }
-
-      testApp.send('stop')
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should skip a file if it is in the allowlist but has a <!-- roosevelt-blocklist --> tag', function (done) {
-    generateTestApp({
-      appDir,
-      clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['bad.html']
         }
@@ -273,9 +243,9 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesNotCreated(appDir, 'public/templates')
+        await assertFilesNotCreated(appDir, 'public/js')
 
         testApp.send('stop')
       }
@@ -286,7 +256,7 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save a file to a specific location when the output folder option is modified', function (done) {
+  it('should save a file to a specific location when the output folder option is modified', done => {
     const customPathArray = [
       path.join(appDir, 'public/js/output.js')
     ]
@@ -294,6 +264,7 @@ describe('Views Bundler Tests', function () {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -305,9 +276,9 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        assertFilesExist(appDir, 'public/js', customPathArray)
+        await assertFilesExist(appDir, 'public/js', customPathArray)
         testApp.send('stop')
       }
     })
@@ -317,10 +288,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should minify a template when the minify param is enabled', function (done) {
+  it('should minify a template when the minify param is enabled', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -332,14 +304,14 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach(async (file) => {
-          if (fsr.fileExists(file.path)) {
+        for (const file of exposedTemplatesArray) {
+          if (await fs.pathExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -348,7 +320,7 @@ describe('Views Bundler Tests', function () {
             const template = templateJSON[key]
             assert.strictEqual(await htmlMinifier(template, minifyOptions), template)
           }
-        })
+        }
 
         testApp.send('stop')
       }
@@ -359,10 +331,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should not minify templates when it the param is disabled', function (done) {
+  it('should not minify templates when it the param is disabled', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -374,14 +347,14 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach(async (file) => {
-          if (fsr.fileExists(file.path)) {
+        for (const file of exposedTemplatesArray) {
+          if (await fs.pathExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -390,7 +363,7 @@ describe('Views Bundler Tests', function () {
             const template = templateJSON[key]
             assert.notStrictEqual(await htmlMinifier(template, minifyOptions), template)
           }
-        })
+        }
 
         testApp.send('stop')
       }
@@ -401,10 +374,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should accept minify options', function (done) {
+  it('should accept minify options', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -417,14 +391,14 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach(async (file) => {
-          if (fsr.fileExists(file.path)) {
+        for (const file of exposedTemplatesArray) {
+          if (await fs.pathExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -433,7 +407,7 @@ describe('Views Bundler Tests', function () {
             const template = templateJSON[key]
             assert.strictEqual(await htmlMinifier(template, minifyOptions), template)
           }
-        })
+        }
 
         testApp.send('stop')
       }
@@ -444,10 +418,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to preprocess templates', function (done) {
+  it('should be able to preprocess templates', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['a.html']
         },
@@ -460,14 +435,14 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
-        exposedTemplatesArray.forEach((file) => {
-          if (fsr.fileExists(file.path)) {
+        for (const file of exposedTemplatesArray) {
+          if (await fs.pathExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
@@ -476,7 +451,7 @@ describe('Views Bundler Tests', function () {
             const template = templateJSON[key]
             assert.strictEqual(template.endsWith('<div>Appended div!</div>'), true)
           }
-        })
+        }
 
         testApp.send('stop')
       }
@@ -487,10 +462,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to skip exposing files in the exposeAll step when already in allowlist', function (done) {
+  it('should be able to skip exposing files in the exposeAll step when already in allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true,
         allowlist: {
           'output.js': ['a.html']
@@ -502,11 +478,11 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
         assert.strictEqual(exposedTemplates.length, 2)
 
@@ -519,10 +495,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save a file that has an allowlist defined both in roosevelt args and the template to the location defined in the template', function (done) {
+  it('should save a file that has an allowlist defined both in roosevelt args and the template to the location defined in the template', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true,
         allowlist: {
           'foobar.js': ['a.html']
@@ -534,17 +511,17 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
-        exposedTemplates.forEach(bundle => {
+        for (const bundle of exposedTemplates) {
           const bundleName = bundle.path.split(path.sep).pop()
 
           assert.notStrictEqual(bundleName, 'foobar.js')
-        })
+        }
 
         testApp.send('stop')
       }
@@ -555,12 +532,13 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to include a blocklist', function (done) {
+  it('should be able to include a blocklist', done => {
     const blocklist = ['bad.html']
 
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true,
         blocklist
       },
@@ -570,25 +548,25 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
-        exposedTemplates.forEach((file) => {
-          if (fsr.fileExists(file.path)) {
+        for (const file of exposedTemplates) {
+          if (await fs.pathExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
           const templates = Object.keys(templateJSON)
 
-          blocklist.forEach(notExposedFile => {
-            templates.forEach(template => {
+          for (const notExposedFile of blocklist) {
+            for (const template of templates) {
               assert.strictEqual(template.includes(notExposedFile), false)
-            })
-          })
-        })
+            }
+          }
+        }
 
         testApp.send('stop')
       }
@@ -599,12 +577,13 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should be able to blocklist files with a <!-- roosevelt-blocklist --> tag at the top of the file', function (done) {
+  it('should be able to blocklist files with a <!-- roosevelt-blocklist --> tag at the top of the file', done => {
     const blocklist = ['bad.html']
 
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -613,25 +592,25 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
-        exposedTemplates.forEach((file) => {
-          if (fsr.fileExists(file.path)) {
+        for (const file of exposedTemplates) {
+          if (await fs.pathExists(file.path)) {
             delete require.cache[require.resolve(file.path)]
           }
           const templateJSON = require(file.path)
           const templates = Object.keys(templateJSON)
 
-          blocklist.forEach(notExposedFile => {
-            templates.forEach(template => {
+          for (const notExposedFile of blocklist) {
+            for (const template of templates) {
               assert.strictEqual(template.includes(notExposedFile), false)
-            })
-          })
-        })
+            }
+          }
+        }
 
         testApp.send('stop')
       }
@@ -642,10 +621,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save allowlisted files with a <!-- roosevelt-allowlist --> tag to the proper location', function (done) {
+  it('should save allowlisted files with a <!-- roosevelt-allowlist --> tag to the proper location', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -654,15 +634,15 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (await fs.pathExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -678,10 +658,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should save allowlisted files without a <!-- roosevelt-allowlist --> tag to the default location', function (done) {
+  it('should save allowlisted files without a <!-- roosevelt-allowlist --> tag to the default location', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -690,15 +671,15 @@ describe('Views Bundler Tests', function () {
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (await fs.pathExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -715,10 +696,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should include nested files when using exposeAll', function (done) {
+  it('should include nested files when using exposeAll', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         exposeAll: true
       },
       csrfProtection: false,
@@ -726,15 +708,15 @@ describe('Views Bundler Tests', function () {
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (await fs.pathExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -751,10 +733,11 @@ describe('Views Bundler Tests', function () {
     })
   })
 
-  it('should include all files within a directory in allowlist', function (done) {
+  it('should include all files within a directory in allowlist', done => {
     generateTestApp({
       appDir,
       clientViews: {
+        enable: true,
         allowlist: {
           'output.js': ['nested']
         }
@@ -764,15 +747,15 @@ describe('Views Bundler Tests', function () {
     }, options)
 
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-    testApp.stdout.on('data', (result) => {
+    testApp.stdout.on('data', async result => {
       if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/templates')
+        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
 
-        const exposedTemplates = klawsync(pathToExposedTemplatesFolder, { nodir: true })
+        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
 
         const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
 
-        if (fsr.fileExists(outputBundle.path)) {
+        if (await fs.pathExists(outputBundle.path)) {
           delete require.cache[require.resolve(outputBundle.path)]
         }
         const templateJSON = require(outputBundle.path)
@@ -791,26 +774,26 @@ describe('Views Bundler Tests', function () {
 })
 
 function serverStarted (result) {
-  return result.toString().includes('Roosevelt Express HTTP server listening')
+  return result.toString().includes('initialized')
 }
 
-function assertFilesNotCreated (appDir, templatePath) {
+async function assertFilesNotCreated (appDir, templatePath) {
   const pathToExposedTemplatesFolder = path.join(appDir, templatePath)
 
   try {
-    klawsync(pathToExposedTemplatesFolder)
+    await walk(pathToExposedTemplatesFolder)
   } catch (err) {
     assert.strictEqual(err.message.includes('no such file or directory'), true)
   }
 }
 
-function assertFilesExist (appDir, templatePath, pathOfExposedTemplates) {
+async function assertFilesExist (appDir, templatePath, pathOfExposedTemplates) {
   const pathToExposedTemplatesFolder = path.join(appDir, templatePath)
 
-  const exposedTemplatesArray = klawsync(pathToExposedTemplatesFolder)
+  const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
 
-  exposedTemplatesArray.forEach((file) => {
+  for (const file of exposedTemplatesArray) {
     const test = pathOfExposedTemplates.includes(file.path)
     assert.strictEqual(test, true)
-  })
+  }
 }

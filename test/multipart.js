@@ -28,69 +28,73 @@ describe('multipart/formidable', () => {
   const completeDir = path.join(appDir, 'complete')
 
   before(done => {
-    // generate tmp dir for file uploads
-    fs.ensureDirSync(tmpDir)
+    (async () => {
+      // generate tmp dir for file uploads
+      fs.ensureDirSync(tmpDir)
 
-    // generate dir for completed file uploads
-    fs.ensureDirSync(completeDir)
+      // generate dir for completed file uploads
+      fs.ensureDirSync(completeDir)
 
-    // spin up the roosevelt app
-    roosevelt({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      port: 40003,
-      logging: {
-        methods: {
-          http: false,
-          info: false,
-          warn: false,
-          error: false
-        }
-      },
-      frontendReload: {
-        enable: false
-      },
-      // set some stingy limitations to easily test the config takes effect
-      formidable: {
-        uploadDir: tmpDir,
-        multiples: false,
-        maxFieldsSize: 2
-      },
-      onServerInit: app => {
-        const router = app.get('router')
+      // spin up the roosevelt app
+      const rooseveltApp = roosevelt({
+        appDir,
+        makeBuildArtifacts: true,
+        csrfProtection: false,
+        port: 40003,
+        logging: {
+          methods: {
+            http: false,
+            info: false,
+            warn: false,
+            error: false
+          }
+        },
+        frontendReload: {
+          enable: false
+        },
+        // set some stingy limitations to easily test the config takes effect
+        formidable: {
+          uploadDir: tmpDir,
+          multiples: false,
+          maxFieldsSize: 2
+        },
+        onServerInit: app => {
+          const router = app.get('router')
 
-        router.route('/multipart').post((req, res) => {
-          const files = req.files
+          router.route('/multipart').post((req, res) => {
+            const files = req.files
 
-          // move files to 'complete' directory
-          for (const fileArray of Object.values(files)) {
-            for (const file of fileArray) {
-              const filePath = file.filepath
-              const originalFilename = file.originalFilename
-              const destPath = path.join(completeDir, originalFilename)
+            // move files to 'complete' directory
+            for (const fileArray of Object.values(files)) {
+              for (const file of fileArray) {
+                const filePath = file.filepath
+                const originalFilename = file.originalFilename
+                const destPath = path.join(completeDir, originalFilename)
 
-              if (typeof filePath === 'string') {
-                try {
-                  fs.moveSync(filePath, destPath)
-                } catch (error) {
-                  console.error(`Error moving file: ${error}`)
+                if (typeof filePath === 'string') {
+                  try {
+                    fs.moveSync(filePath, destPath)
+                  } catch (error) {
+                    console.error(`Error moving file: ${error}`)
+                  }
                 }
               }
             }
-          }
 
-          // send a response
-          res.status(200).send('done')
-        })
-      },
-      onServerStart: app => {
+            // send a response
+            res.status(200).send('done')
+          })
+        },
+        onServerStart: app => {
         // bind app to test context
-        context.app = app
+          context.app = app
 
-        done()
-      }
-    }).startServer()
+          done()
+        }
+      })
+
+      await rooseveltApp.startServer()
+    })()
   })
 
   afterEach(() => {
@@ -100,7 +104,7 @@ describe('multipart/formidable', () => {
 
   after(done => {
     // stop the server
-    context.app.httpServer.close(() => {
+    context.app.get('httpServer').close(() => {
       // wipe out the app directory
       fs.removeSync(appDir)
 

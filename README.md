@@ -403,24 +403,23 @@ Resolves to:
     - `port`: The port your app will run the HTTPS server on.
       - Default: *[Number]* `43733`.
   - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
-      - Default: *[Boolean]* `false`.
+    - Default: *[Boolean]* `false`.
   - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
     - Default: *[Boolean]* `true`.
   - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-      - Default: *[Object]* `undefined`.
+    - Default: *[Object]* `undefined`.
     - Object members:
-        - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
-          - Default: *[Object]* `undefined`.
-          - Object members:
-            - `p12Path`: *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
-              - Default: `undefined`.
-        - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
-          - Object members:
-            - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
-              - Default: `undefined`.
-
-            - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-              - Default: `undefined`.
+      - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
+        - Default: *[Object]* `undefined`.
+        - Object members:
+          - `p12Path`: *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
+            - Default: `undefined`.
+      - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
+        - Object members:
+          - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
+            - Default: `undefined`.
+          - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+            - Default: `undefined`.
   - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
     - Default: `undefined`.
   - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
@@ -632,6 +631,8 @@ Resolves to:
 ### Isomorphic parameters
 
 - `clientViews`: *[Object]* Allows you to expose view (template) file code to frontend JS for client-side templating.
+
+  - `enable`: *[Boolean]* Whether or not to bundle view files.
 
   - `exposeAll`: *[Boolean]* Option to expose all templates.
 
@@ -1017,25 +1018,14 @@ require('roosevelt')({
 
 ### Event list
 
-- `onServerInit(app)`: Fired when the server begins starting, prior to any actions taken by Roosevelt. Some [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt) are not available yet during this event.
+- `onBeforeMiddleware(app)`: Fired when the app begins initializing, prior to any middleware being loaded into the app.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-- `onStaticAssetsGenerated(app)`: Fired when the server finishes init but before the server starts.
+- `onServerInit(app)`: Fired when the server is fully initialized and all middleware has been loaded but before the server has started.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerStart(app)`: Fired when the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onAppExit(app)`: Fired when the app recieves a kill signal.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
-- `onReqStart(req, res, next)`: Fired at the beginning of each new request.
-  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
-  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
-  - `next`: Callback to continue with the request. Must be called to continue the request.
-- `onReqBeforeRoute(req, res, next)`: Fired just before executing the controller.
-  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
-  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
-  - `next`: Callback to continue with the request. Must be called to continue the request.
-- `onReqAfterRoute(req, res)`: Fired after the request ends.
-  - `req`: The [request object](http://expressjs.com/api.html#req.params) created by Express.
-  - `res`: The [response object](http://expressjs.com/api.html#res.status) created by Express.
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client.
   - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc)
 
@@ -1278,13 +1268,14 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | Express variable                     | Description                                                  |
 | ------------------------------------ | ------------------------------------------------------------ |
 | `express`                            | The Express module.                                          |
+| `httpServer`                         | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. |
+| `httpsServer`                        | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. |
+| `reloadHttpServer`                   | The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
+| `reloadHttpsServer`                  | The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `router`                             | Instance of router module used by Roosevelt.                 |
 | `routePrefix`                        | Prefix appended to routes via the `routePrefix` param. Will be `''` if not set. |
-| `routes`                             | List of all routes loaded in the Express app by Roosevelt.   |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
-| `formidable`                         | The [formidable](https://github.com/felixge/node-formidable) module Roosevelt uses internally. Used for handling multipart forms. |
-| `morgan`                             | The [morgan](https://github.com/expressjs/morgan) module Roosevelt uses internally. HTTP request logger middleware. |
 | `expressSession`                     | The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
@@ -1311,14 +1302,12 @@ Additionally the Roosevelt constructor returns the following object:
 | Roosevelt constructor returned object members | Description                                                  |
 | ------------------------ | ------------------------------------------------------------ |
 | `expressApp`             | *[Object]* The [Express app](http://expressjs.com/api.html#express) created by Roosevelt. |
-| `httpServer`             | *[Object]* The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. `httpServer` is also available as a direct child of `app`, e.g. `app.httpServer`. |
-| `httpsServer`            | *[Object]* The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. `httpsServer` is also available as a direct child of `app`, e.g. `app.httpsServer`. |
-| `reloadHttpServer`       | *[Object]* The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
-| `reloadHttpsServer`       | *[Object]* The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `initServer(callback)`   | *[Method]* Starts the HTML validator, sets up some middleware, runs the CSS and JS preprocessors, and maps routes, but does not start the HTTP server. Call this method manually first instead of `startServer` if you need to setup the Express app, but still need to do additional setup before the HTTP server is started. This method is automatically called by `startServer` once per instance if it has not yet already been called. Takes an optional callback. |
 | `init`                   | *[Method]* Shorthand for `initServer`. |
 | `startServer`            | *[Method]* Calls the `listen` method of `http`, `https`, or both (depending on your configuration) to start the web server with Roosevelt's config. |
-| `stopServer(close)`      | *[Method]* Stops the server and takes an optional argument `stopServer('close')` which stops the server from accepting new connections before exiting. |
+| `start`                  | *[Method]* Shorthand for `startServer`. |
+| `stopServer(params)`     | *[Method]* Stops the server from accepting new connections before exiting and takes an optional argument `stopServer({persistProcess: true})` which will allow the process to remain active after the server has closed. |
+| `stop`                   | *[Method]* Shorthand for `stopServer`. |
 
 ## Supplying your own CSS preprocessor
 
@@ -1380,6 +1369,7 @@ Aside from the config auditor, one of the easiest ways to see what you might nee
 
 ### Documentation for previous versions of Roosevelt
 
+- *[0.23.x](https://github.com/rooseveltframework/roosevelt/blob/88a3e64cb893bfa813b0e00e2b5aea03c1be5b98/README.md)*
 - *[0.22.x](https://github.com/rooseveltframework/roosevelt/blob/e76256d82ef587d31320bcd52930a5358f9f2953/README.md)*
 - *[0.21.x](https://github.com/rooseveltframework/roosevelt/blob/539e11dc9ce5f4d6340762dedb1a11134fe51b04/README.md)*
 - *[0.20.x](https://github.com/rooseveltframework/roosevelt/blob/430a9bf8d193b177527872602b23ef3df08a9afa/README.md)*
