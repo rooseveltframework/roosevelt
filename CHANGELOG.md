@@ -13,7 +13,6 @@
 - Breaking: Removed `app.get('routes')`, `onReqAfterRoute`, `onReqBeforeRoute`, `onReqStart`, and `onStaticAssetsGenerated`.
 - Breaking: Renamed `app.httpServer` to `app.get('httpServer')` and `app.httpsServer` to `app.get('httpsServer')`.
 - Breaking: Added `enable` param to `clientViews`. If your app uses the `clientViews` feature, you will need to add this param to continue using the feature.
-  - In apps being migrated to this version this param will need to be added to turn the feature on.
 - Added new method `onBeforeMiddleware`.
 - Added `start` and `stop` method shorthands for `startServer` and `stopServer` respectively.
 - Refactored various things under the hood to improve code quality, performance, and reduce unnecessary dependencies.
