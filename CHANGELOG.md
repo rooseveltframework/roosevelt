@@ -8,7 +8,7 @@
 ## 0.24.0
 
 - Breaking: Altered `startServer` and `initServer` methods to now be async. They now need to be awaited to avoid possible race conditions.
-  - As a result starting the app in a single line needs to be updated to `await (require('roosevelt').startServer())`
+  - As a result, starting the app in a single line needs to be updated to `await (require('roosevelt').startServer())`.
   - Callback arguments have been removed from these methods as well.
 - Breaking: Removed `app.get('routes')`, `onReqAfterRoute`, `onReqBeforeRoute`, `onReqStart`, and `onStaticAssetsGenerated`.
 - Breaking: Renamed `app.httpServer` to `app.get('httpServer')` and `app.httpsServer` to `app.get('httpsServer')`.
