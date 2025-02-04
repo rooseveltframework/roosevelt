@@ -2,7 +2,7 @@
 
 ## Next version
 
-- Fixed a bug where views bundler feature could fail to load in some rare instances.
+- Fixed a bug where the views bundler feature could fail to load in some rare instances.
 - Updated various dependencies.
 
 ## 0.24.0
