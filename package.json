@@ -37,6 +37,7 @@
     "express-session": "1.18.1",
     "formidable": "3.5.2",
     "fs-extra": "11.3.0",
+    "glob": "11.0.1",
     "helmet": "8.0.0",
     "html-minifier-terser": "7.2.0",
     "method-override": "3.0.0",
@@ -57,7 +58,6 @@
     "codecov": "3.8.3",
     "eslint": "9.19.0",
     "eslint-plugin-mocha": "10.5.0",
-    "glob": "11.0.1",
     "less": "4.2.2",
     "mocha": "11.1.0",
     "prompts": "2.4.2",
@@ -67,7 +67,7 @@
     "standard": "17.1.2",
     "stylus": "0.64.0",
     "supertest": "7.0.0",
-    "teddy": "0.6.19",
+    "teddy": "0.6.20",
     "watcher": "2.3.1"
   },
   "repository": {

@@ -2,12 +2,17 @@
 
 ## Next version
 
-- Put your changes here...
+- Fixed a bug where the views bundler feature could fail to load in some rare instances.
+- Updated various dependencies.
 
 ## 0.24.0
 
+- Breaking: Altered `startServer` and `initServer` methods to now be async. They now need to be awaited to avoid possible race conditions.
+  - As a result, starting the app in a single line needs to be updated to `await (require('roosevelt').startServer())`.
+  - Callback arguments have been removed from these methods as well.
 - Breaking: Removed `app.get('routes')`, `onReqAfterRoute`, `onReqBeforeRoute`, `onReqStart`, and `onStaticAssetsGenerated`.
 - Breaking: Renamed `app.httpServer` to `app.get('httpServer')` and `app.httpsServer` to `app.get('httpsServer')`.
+- Breaking: Added `enable` param to `clientViews`. If your app uses the `clientViews` feature, you will need to add this param to continue using the feature.
 - Added new method `onBeforeMiddleware`.
 - Added `start` and `stop` method shorthands for `startServer` and `stopServer` respectively.
 - Refactored various things under the hood to improve code quality, performance, and reduce unnecessary dependencies.
