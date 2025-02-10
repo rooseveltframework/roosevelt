@@ -28,7 +28,7 @@
     "better-sqlite3": "11.8.1",
     "better-sqlite3-session-store": "0.1.0",
     "clean-css": "5.3.3",
-    "compression": "1.7.5",
+    "compression": "1.8.0",
     "cookie-parser": "1.4.7",
     "csrf-csrf": "3.1.0",
     "execa": "9.5.2",
