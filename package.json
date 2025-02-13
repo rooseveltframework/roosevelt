@@ -51,7 +51,7 @@
     "selfsigned": "2.4.1",
     "serve-favicon": "2.5.0",
     "source-configs": "0.3.6",
-    "webpack": "5.97.1"
+    "webpack": "5.98.0"
   },
   "devDependencies": {
     "c8": "10.1.3",
