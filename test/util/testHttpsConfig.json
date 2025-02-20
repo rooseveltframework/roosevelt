@@ -9,7 +9,7 @@
     }
   },
   "expressSession": false,
-  "secretsDir": "secrets",
+  "secretsPath": "secrets",
   "csrfProtection": false,
   "https": {
     "enable": true,

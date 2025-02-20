@@ -1,13 +1,10 @@
 /* eslint-env mocha */
 
 const assert = require('assert')
-const generateTestApp = require('./util/generateTestApp')
-const { fork } = require('child_process')
 const fs = require('fs-extra')
 const path = require('path')
-const { walk } = require('@nodelib/fs.walk/promises')
 const htmlMinifier = require('html-minifier-terser').minify
-
+const roosevelt = require('../roosevelt')
 const minifyOptions = {
   removeComments: true,
   collapseWhitespace: true,
@@ -16,784 +13,345 @@ const minifyOptions = {
   removeEmptyAttributes: true
 }
 
-describe('Views Bundler Tests', () => {
+describe('views bundler', () => {
   const appDir = path.join(__dirname, 'app/viewsBundler')
+  const appConfig = {
+    appDir,
+    logging: {
+      methods: {
+        http: false,
+        info: false,
+        warn: false,
+        verbose: false
+      }
+    },
+    makeBuildArtifacts: true,
+    csrfProtection: false
+  }
 
-  const template1 = `
+  const sampleTemplate = `
+    <p>I'm going to be bundled!</p>
+  `
+
+  const anotherSampleTemplate = `
+    <h1>Being in a bundle is cool!</h1>
+  `
+
+  const allowlistedTemplate = `
     <!-- roosevelt-allowlist output.js -->
     <h1>Hello World</h1>
-    <div>
-        <p>lorem ipsum dolor set</p>
-    </div>
-  `
-  const template2 = `
-    <div>This will be put in bundle.js</div>
+    <p>The first line makes me a VIP!</p>
   `
 
   const blocklistedTemplate = `
     <!-- roosevelt-blocklist -->
-    <p>This is in a blocklist</p>
+    <p>Oh no I've been banned!</p>
   `
-
-  const pathOfTemplates = [
-    path.join(appDir, 'mvc/views/a.html'),
-    path.join(appDir, 'mvc/views/b.html'),
-    path.join(appDir, 'mvc/views/bad.html'),
-    path.join(appDir, 'mvc/views/nested/a.html'),
-    path.join(appDir, 'mvc/views/nested/b.html'),
-    path.join(appDir, 'mvc/views/nested/bad.html')
-  ]
-
-  const pathOfExposedTemplates = [
-    path.join(appDir, 'public/js/output.js')
-  ]
-
-  const staticTemplates = [
-    template1,
-    template2,
-    blocklistedTemplate,
-    template1,
-    template2,
-    blocklistedTemplate
-  ]
-
-  const options = { rooseveltPath: '../../../roosevelt', method: true, initServer: true, stopServer: true }
-
-  beforeEach(() => {
-    fs.ensureDirSync(path.join(appDir, 'mvc/views/nested'))
-
-    for (let i = 0; i < pathOfTemplates.length; i++) {
-      fs.writeFileSync(pathOfTemplates[i], staticTemplates[i])
-    }
-  })
 
   afterEach(async () => {
     await fs.remove(appDir)
   })
 
-  it('should properly expose template files in an allowlist', done => {
-    generateTestApp({
-      appDir,
+  it('should bundle templates in allowlist while ignoring templates in the blocklist', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/allowed.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), sampleTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
       clientViews: {
         enable: true,
+        exposeAll: true,
         allowlist: {
-          'output.js': ['a.html']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesExist(appDir, 'public/js', pathOfExposedTemplates)
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should add .html to a template that doesn\'t have an extension', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        allowlist: {
-          'output.js': ['a']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesExist(appDir, 'public/js', pathOfExposedTemplates)
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should not create a templates folder if there are no items in the allowlist', done => {
-    generateTestApp({
-      appDir,
-      clientViews: { enable: true },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/js')
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should not create a templates folder if makeBuildArtifacts is false', done => {
-    generateTestApp({
-      appDir,
-      clientViews: { enable: true },
-      csrfProtection: false,
-      makeBuildArtifacts: false
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/js')
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should not create a templates folder if there is bundles without any contents', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        allowlist: {
-          'output.js': []
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/js')
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should not create a templates folder if there is a bundle that is null', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        allowlist: {
-          'output.js': null
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/js')
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should skip a file if it is in the allowlist but has a <!-- roosevelt-blocklist --> tag', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        allowlist: {
-          'output.js': ['bad.html']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesNotCreated(appDir, 'public/js')
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should save a file to a specific location when the output folder option is modified', done => {
-    const customPathArray = [
-      path.join(appDir, 'public/js/output.js')
-    ]
-
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        allowlist: {
-          'output.js': ['a.html']
+          'allowed.js': ['**/**']
         },
-        output: 'js'
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        await assertFilesExist(appDir, 'public/js', customPathArray)
-        testApp.send('stop')
+        blocklist: ['blocked.html']
       }
     })
 
-    testApp.on('exit', () => {
-      done()
-    })
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/allowed.js'))
+    assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
+    assert.strictEqual(bundle['allowed.html'], sampleTemplate.trim(), 'Expected allowed.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/allowed.js'))]
   })
 
-  it('should minify a template when the minify param is enabled', done => {
-    generateTestApp({
-      appDir,
+  it('should bundle a directory of templates when allowlist references a directory', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/notNested.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/nested/aTemplate.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/nested/anotherTemplate.html'), anotherSampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/nested/blocked.html'), blocklistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
       clientViews: {
         enable: true,
+        exposeAll: true,
         allowlist: {
-          'output.js': ['a.html']
-        },
-        minify: true
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
-
-        for (const file of exposedTemplatesArray) {
-          if (await fs.pathExists(file.path)) {
-            delete require.cache[require.resolve(file.path)]
-          }
-          const templateJSON = require(file.path)
-
-          for (const key in templateJSON) {
-            const template = templateJSON[key]
-            assert.strictEqual(await htmlMinifier(template, minifyOptions), template)
-          }
+          'allowed.js': ['nested/**']
         }
-
-        testApp.send('stop')
       }
     })
 
-    testApp.on('exit', () => {
-      done()
-    })
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/allowed.js'))
+    assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
+    assert.strictEqual(bundle['nested/aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the bundle!')
+    assert.strictEqual(bundle['nested/anotherTemplate.html'], anotherSampleTemplate.trim(), 'Expected anotherTemplate.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/allowed.js'))]
   })
 
-  it('should not minify templates when it the param is disabled', done => {
-    generateTestApp({
-      appDir,
+  it('should bundle all templates except contents of the blocklist when exposeAll is enabled', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/allowed.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/nest/allowed.html'), anotherSampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), sampleTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
       clientViews: {
         enable: true,
-        allowlist: {
-          'output.js': ['a.html']
-        },
-        minify: false
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
-
-        for (const file of exposedTemplatesArray) {
-          if (await fs.pathExists(file.path)) {
-            delete require.cache[require.resolve(file.path)]
-          }
-          const templateJSON = require(file.path)
-
-          for (const key in templateJSON) {
-            const template = templateJSON[key]
-            assert.notStrictEqual(await htmlMinifier(template, minifyOptions), template)
-          }
-        }
-
-        testApp.send('stop')
+        exposeAll: true,
+        blocklist: ['blocked.html']
       }
     })
 
-    testApp.on('exit', () => {
-      done()
-    })
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/views.js'))
+    assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
+    assert.strictEqual(bundle['allowed.html'], sampleTemplate.trim(), 'Expected allowed.html template to be included in the bundle!')
+    assert.strictEqual(bundle['nest/allowed.html'], anotherSampleTemplate.trim(), 'Expected nest/allowed.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/views.js'))]
   })
 
-  it('should accept minify options', done => {
-    generateTestApp({
-      appDir,
+  it('should respect defaultBundle setting when exposeAll is enabled', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/allowed.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/nest/allowed.html'), anotherSampleTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
       clientViews: {
         enable: true,
+        exposeAll: true,
+        defaultBundle: 'coolBundle.js'
+      }
+    })
+
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/coolBundle.js'))
+    assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
+    assert.strictEqual(bundle['allowed.html'], sampleTemplate.trim(), 'Expected allowed.html template to be included in the bundle!')
+    assert.strictEqual(bundle['nest/allowed.html'], anotherSampleTemplate.trim(), 'Expected nest/allowed.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/coolBundle.js'))]
+  })
+
+  it('should exclusively bundle allowlist commented templates when exposeAll is enabled', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aTemplate.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/allowlistedTemplate.html'), allowlistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
+      clientViews: {
+        enable: true,
+        exposeAll: true
+      }
+    })
+
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
+    assert.strictEqual(bundle['allowlistedTemplate.html'], allowlistedTemplate.trim(), 'Expected allowlistedTemplate.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
+  })
+
+  it('should bundle every template except for blocklist commented ones when exposeAll is enabled', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aTemplate.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/anotherTemplate.html'), anotherSampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), blocklistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
+      clientViews: {
+        enable: true,
+        exposeAll: true
+      }
+    })
+
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/views.js'))
+    assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
+    assert.strictEqual(bundle['aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the bundle!')
+    assert.strictEqual(bundle['anotherTemplate.html'], anotherSampleTemplate.trim(), 'Expected anotherTemplate.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/views.js'))]
+  })
+
+  it('should create multiple bundles via a combination of allowlist config and template comments', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aTemplate.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/allowedComment.html'), allowlistedTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), blocklistedTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/anotherBlocked.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blockedComment.html'), blocklistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
+      clientViews: {
+        enable: true,
+        exposeAll: true,
         allowlist: {
-          'output.js': ['a.html']
+          'allowed.js': ['aTemplate.html', 'blockedComment.html']
         },
+        blocklist: ['anotherBlocked.html']
+      }
+    })
+
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 2, 'Expected two template bundles to be written!')
+    const firstBundle = require(path.join(appDir, 'public/js/allowed.js'))
+    assert.strictEqual(Object.keys(firstBundle).length, 1, 'Expected a single template in the first bundle!')
+    assert.strictEqual(firstBundle['aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the first bundle!')
+    const secondBundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual(Object.keys(firstBundle).length, 1, 'Expected a single template in the second bundle!')
+    assert.strictEqual(secondBundle['allowedComment.html'], allowlistedTemplate.trim(), 'Expected allowedComment.html template to be included in the second bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/allowed.js'))]
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
+  })
+
+  it('should write bundle to configured output directory', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aTemplate.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), blocklistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
+      clientViews: {
+        enable: true,
+        exposeAll: true,
+        output: 'templateBundles'
+      }
+    })
+
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/templateBundles'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/templateBundles/views.js'))
+    assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
+    assert.strictEqual(bundle['aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/templateBundles/views.js'))]
+  })
+
+  it('should minify bundled templates when minifier is enabled', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aMiniTemplate.html'), allowlistedTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), blocklistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
+      clientViews: {
+        enable: true,
         minify: true,
         minifyOptions
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
-
-        for (const file of exposedTemplatesArray) {
-          if (await fs.pathExists(file.path)) {
-            delete require.cache[require.resolve(file.path)]
-          }
-          const templateJSON = require(file.path)
-
-          for (const key in templateJSON) {
-            const template = templateJSON[key]
-            assert.strictEqual(await htmlMinifier(template, minifyOptions), template)
-          }
-        }
-
-        testApp.send('stop')
       }
     })
 
-    testApp.on('exit', () => {
-      done()
-    })
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
+    assert.strictEqual(bundle['aMiniTemplate.html'], await htmlMinifier(allowlistedTemplate, minifyOptions), 'Expected aMiniTemplate.html template to be minified in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
   })
 
-  it('should be able to preprocess templates', done => {
-    generateTestApp({
-      appDir,
+  it('should minify templates with top level html minifier options if no minifyOptions are specified', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aMiniTemplate.html'), allowlistedTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), blocklistedTemplate)
+
+    const app = roosevelt({
+      ...appConfig,
+      html: {
+        minifier: {
+          enable: true,
+          options: minifyOptions
+        }
+      },
       clientViews: {
         enable: true,
-        allowlist: {
-          'output.js': ['a.html']
-        },
-        minifyOptions
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true,
-      onClientViewsProcess: '(template) => { return template + "<div>Appended div!</div>" }'
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
-
-        for (const file of exposedTemplatesArray) {
-          if (await fs.pathExists(file.path)) {
-            delete require.cache[require.resolve(file.path)]
-          }
-          const templateJSON = require(file.path)
-
-          for (const key in templateJSON) {
-            const template = templateJSON[key]
-            assert.strictEqual(template.endsWith('<div>Appended div!</div>'), true)
-          }
-        }
-
-        testApp.send('stop')
+        minify: true
       }
     })
 
-    testApp.on('exit', () => {
-      done()
-    })
+    await app.initServer()
+
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
+    assert.strictEqual(bundle['aMiniTemplate.html'], await htmlMinifier(allowlistedTemplate, minifyOptions), 'Expected aMiniTemplate.html template to be minified in the bundle!')
+
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
   })
 
-  it('should be able to skip exposing files in the exposeAll step when already in allowlist', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        exposeAll: true,
-        allowlist: {
-          'output.js': ['a.html']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
+  it('should process templates prior to bundling when providing a onClientViewsProcess method', async () => {
+    // write some templates
+    await fs.outputFile(path.join(appDir, 'mvc/views/aTemplate.html'), sampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/anotherTemplate.html'), anotherSampleTemplate)
+    await fs.outputFile(path.join(appDir, 'mvc/views/blocked.html'), blocklistedTemplate)
 
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        assert.strictEqual(exposedTemplates.length, 2)
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should save a file that has an allowlist defined both in roosevelt args and the template to the location defined in the template', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        exposeAll: true,
-        allowlist: {
-          'foobar.js': ['a.html']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        for (const bundle of exposedTemplates) {
-          const bundleName = bundle.path.split(path.sep).pop()
-
-          assert.notStrictEqual(bundleName, 'foobar.js')
-        }
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should be able to include a blocklist', done => {
-    const blocklist = ['bad.html']
-
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        exposeAll: true,
-        blocklist
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        for (const file of exposedTemplates) {
-          if (await fs.pathExists(file.path)) {
-            delete require.cache[require.resolve(file.path)]
-          }
-          const templateJSON = require(file.path)
-          const templates = Object.keys(templateJSON)
-
-          for (const notExposedFile of blocklist) {
-            for (const template of templates) {
-              assert.strictEqual(template.includes(notExposedFile), false)
-            }
-          }
-        }
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should be able to blocklist files with a <!-- roosevelt-blocklist --> tag at the top of the file', done => {
-    const blocklist = ['bad.html']
-
-    generateTestApp({
-      appDir,
+    const app = roosevelt({
+      ...appConfig,
       clientViews: {
         enable: true,
         exposeAll: true
       },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        for (const file of exposedTemplates) {
-          if (await fs.pathExists(file.path)) {
-            delete require.cache[require.resolve(file.path)]
-          }
-          const templateJSON = require(file.path)
-          const templates = Object.keys(templateJSON)
-
-          for (const notExposedFile of blocklist) {
-            for (const template of templates) {
-              assert.strictEqual(template.includes(notExposedFile), false)
-            }
-          }
-        }
-
-        testApp.send('stop')
-      }
+      onClientViewsProcess: template => `${template} <p>Appended stuff!</p>`
     })
 
-    testApp.on('exit', () => {
-      done()
-    })
-  })
+    await app.initServer()
 
-  it('should save allowlisted files with a <!-- roosevelt-allowlist --> tag to the proper location', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        exposeAll: true
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
+    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, 'public/js/views.js'))
+    assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
+    assert.strictEqual(bundle['aTemplate.html'], `${sampleTemplate.trim()} <p>Appended stuff!</p>`, 'Expected aTemplate.html template to be included in the bundle and include preprocessing!')
+    assert.strictEqual(bundle['anotherTemplate.html'], `${anotherSampleTemplate.trim()} <p>Appended stuff!</p>`, 'Expected anotherTemplate.html template to be included in the bundle and include preprocessing!')
 
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
-
-        if (await fs.pathExists(outputBundle.path)) {
-          delete require.cache[require.resolve(outputBundle.path)]
-        }
-        const templateJSON = require(outputBundle.path)
-        const templates = Object.keys(templateJSON)
-        assert.strictEqual(templates.length, 2)
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should save allowlisted files without a <!-- roosevelt-allowlist --> tag to the default location', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        exposeAll: true
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
-
-        if (await fs.pathExists(outputBundle.path)) {
-          delete require.cache[require.resolve(outputBundle.path)]
-        }
-        const templateJSON = require(outputBundle.path)
-        const templates = Object.keys(templateJSON)
-
-        assert.strictEqual(templates.length, 2)
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should include nested files when using exposeAll', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        exposeAll: true
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('bundle.js'))[0]
-
-        if (await fs.pathExists(outputBundle.path)) {
-          delete require.cache[require.resolve(outputBundle.path)]
-        }
-        const templateJSON = require(outputBundle.path)
-        const templates = Object.keys(templateJSON)
-
-        assert.strictEqual(templates.length, 2)
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
-  })
-
-  it('should include all files within a directory in allowlist', done => {
-    generateTestApp({
-      appDir,
-      clientViews: {
-        enable: true,
-        allowlist: {
-          'output.js': ['nested']
-        }
-      },
-      csrfProtection: false,
-      makeBuildArtifacts: true
-    }, options)
-
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-    testApp.stdout.on('data', async result => {
-      if (serverStarted(result)) {
-        const pathToExposedTemplatesFolder = path.join(appDir, 'public/js')
-
-        const exposedTemplates = await walk(pathToExposedTemplatesFolder, { stats: true, entryFilter: entry => !entry.stats.isDirectory() })
-
-        const outputBundle = exposedTemplates.filter(exposedTemp => exposedTemp.path.endsWith('output.js'))[0]
-
-        if (await fs.pathExists(outputBundle.path)) {
-          delete require.cache[require.resolve(outputBundle.path)]
-        }
-        const templateJSON = require(outputBundle.path)
-        const templates = Object.keys(templateJSON)
-
-        assert.strictEqual(templates.length, 2)
-
-        testApp.send('stop')
-      }
-    })
-
-    testApp.on('exit', () => {
-      done()
-    })
+    // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
+    delete require.cache[require.resolve(path.join(appDir, 'public/js/views.js'))]
   })
 })
-
-function serverStarted (result) {
-  return result.toString().includes('initialized')
-}
-
-async function assertFilesNotCreated (appDir, templatePath) {
-  const pathToExposedTemplatesFolder = path.join(appDir, templatePath)
-
-  try {
-    await walk(pathToExposedTemplatesFolder)
-  } catch (err) {
-    assert.strictEqual(err.message.includes('no such file or directory'), true)
-  }
-}
-
-async function assertFilesExist (appDir, templatePath, pathOfExposedTemplates) {
-  const pathToExposedTemplatesFolder = path.join(appDir, templatePath)
-
-  const exposedTemplatesArray = await walk(pathToExposedTemplatesFolder)
-
-  for (const file of exposedTemplatesArray) {
-    const test = pathOfExposedTemplates.includes(file.path)
-    assert.strictEqual(test, true)
-  }
-}
