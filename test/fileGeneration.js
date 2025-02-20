@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 /* eslint no-template-curly-in-string: 0 */
 
-const appCleaner = require('./util/appCleaner')
 const assert = require('assert')
 const fs = require('fs-extra')
 const { walk } = require('@nodelib/fs.walk/promises')
@@ -12,7 +11,7 @@ describe('file creation', () => {
 
   afterEach(async () => {
     // wipe out test app
-    await appCleaner('dirStructure')
+    await fs.remove(path.join(__dirname, 'app'))
   })
 
   it('should generate several directories at runtime', async () => {
@@ -72,7 +71,7 @@ describe('file creation', () => {
       },
       expressSession: false,
       csrfProtection: false,
-      secretsDir: './test/app/secrets',
+      secretsPath: './test/app/secrets',
       css: {
         sourcePath: 'css',
         compiler: {
@@ -116,7 +115,7 @@ describe('file creation', () => {
       },
       expressSession: false,
       csrfProtection: false,
-      secretsDir: './test/app/secrets',
+      secretsPath: './test/app/secrets',
       symlinks: [
         {
           source: 'images',

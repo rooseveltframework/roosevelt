@@ -2,7 +2,6 @@
 /* eslint no-template-curly-in-string: 0 */
 
 const assert = require('assert')
-const appCleaner = require('./util/appCleaner')
 const fs = require('fs-extra')
 const path = require('path')
 const roosevelt = require('../roosevelt')
@@ -70,7 +69,7 @@ describe('webpack', () => {
 
   afterEach(async () => {
     // wipe out the test app directory
-    await appCleaner('webpack')
+    await fs.remove(path.join(__dirname, 'app'))
   })
 
   it('should build prod bundle using supplied webpack config', async () => {
@@ -83,7 +82,7 @@ describe('webpack', () => {
         }
       },
       csrfProtection: false,
-      secretsDir: 'secrets',
+      secretsPath: 'secrets',
       mode: 'production',
       appDir,
       makeBuildArtifacts: true,

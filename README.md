@@ -334,7 +334,7 @@ Resolves to:
 - `viewsPath`: Relative path on filesystem to where your view files are located.
   - Default: *[String]* `"mvc/views"`.
 
-- `secretsDir`: Directory that stores certs, keys, and secrets.
+- `secretsPath`: Directory that stores certs, keys, and secrets.
 
   - Default: *[String]* `secrets`.
 
@@ -412,13 +412,13 @@ Resolves to:
       - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
         - Default: *[Object]* `undefined`.
         - Object members:
-          - `p12Path`: *[String]* Either the path to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
+          - `p12Path`: *[String]* Either the path relative to `secretsPath` to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
             - Default: `undefined`.
       - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
         - Object members:
-          - `cert`: *[String]* Either the path to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
+          - `cert`: *[String]* Either the path relative to `secretsPath` to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
             - Default: `undefined`.
-          - `key`: *[String]* Either the path to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
+          - `key`: *[String]* Either the path relative to `secretsPath` to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
             - Default: `undefined`.
   - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
     - Default: `undefined`.
@@ -426,7 +426,7 @@ Resolves to:
     - Default: `undefined`.
   - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
     - Default:  `undefined`.
-  - `caCert`: *[String]* Either the path to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
+  - `caCert`: *[String]* Either the path relative to `secretsPath` to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
     - Default: `undefined`.
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
@@ -669,7 +669,7 @@ Resolves to:
 
   - `minify`: *[Boolean]* Option to minify templates that are exposed via this feature.
 
-    - Default: *[Boolean]* `true`.
+    - Default: *[Boolean]* `false`.
 
   - `minifyOptions`: *[Object]* Parameters to supply to [html-minifier](https://github.com/terser/html-minifier-terser#options-quick-reference)'s API.
 

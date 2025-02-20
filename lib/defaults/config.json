@@ -62,7 +62,7 @@
       "max": null
     }
   },
-  "secretsDir": "secrets",
+  "secretsPath": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
   "viewEngine": "none",

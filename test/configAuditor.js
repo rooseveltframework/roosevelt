@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 
-const appCleaner = require('./util/appCleaner')
 const appGenerator = require('./util/appGenerator')
 const assert = require('assert')
 const fs = require('fs-extra')
@@ -35,8 +34,7 @@ describe('config auditor', () => {
 
   // wipe out the test app directory after each test
   afterEach(async () => {
-    // wipe out the test app directory
-    await appCleaner('configAudit')
+    await fs.remove(path.join(__dirname, 'app'))
   })
 
   it('should start the config audit automatically on first app run', async () => {

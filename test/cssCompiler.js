@@ -1,6 +1,5 @@
 /* eslint-env mocha */
 
-const appCleaner = require('./util/appCleaner')
 const assert = require('assert')
 const CleanCSS = require('clean-css')
 const fs = require('fs-extra')
@@ -61,13 +60,8 @@ describe('css preprocessors', () => {
       fs.writeFileSync(path.join(appDir, 'statics/css/import/file3.less'), file3)
     })
 
-    afterEach(done => {
-      (async () => {
-        // wipe out the test app directory
-        await appCleaner('css')
-
-        done()
-      })()
+    afterEach(async () => {
+      await fs.remove(path.join(__dirname, 'app'))
     })
 
     it('should compile all static css files including subdirectories', async () => {
@@ -360,13 +354,8 @@ describe('css preprocessors', () => {
       fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', rooseveltConfig: {} })
     })
 
-    afterEach(done => {
-      (async () => {
-        // wipe out the test app directory
-        await appCleaner('css')
-
-        done()
-      })()
+    afterEach(async () => {
+      await fs.remove(path.join(__dirname, 'app'))
     })
 
     it('should compile less source file', async () => {
@@ -480,8 +469,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      // wipe out the test app directory
-      await appCleaner('css')
+      await fs.remove(path.join(__dirname, 'app'))
     })
 
     it('should compile scss source file', async () => {
@@ -589,8 +577,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      // wipe out the test app directory
-      await appCleaner('css')
+      await fs.remove(path.join(__dirname, 'app'))
     })
 
     it('should compile styl source file', async () => {
