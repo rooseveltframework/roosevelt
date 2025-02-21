@@ -2,12 +2,16 @@
 
 ## Next version
 
+- Put your changes here...
+
+## 0.25.0
+
 - Breaking: Supplying an `allowlist` to the views bundler will now implicitly disable `exposeAll`.
 - Breaking: Renamed `secretsDir` param to `secretsPath`.
 - Updated all file path express variables to include full absolute paths.
 - Fixed various bugs in the views bundler feature.
-- Fixed a rare bug where csrf and session secrets could be written to the wrong directory.
-- Fixed a bug where https certs could be automatically generated when they shouldn't be.
+- Fixed a rare bug where CSRF and session secrets could be written to the wrong directory.
+- Fixed a bug where HTTPS certs could be automatically generated when they shouldn't be.
 - Updated various dependencies.
 
 ## 0.24.0
