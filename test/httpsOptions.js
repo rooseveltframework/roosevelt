@@ -31,7 +31,7 @@ describe('HTTPS Server Options Tests', async () => {
   }
 
   before(() => {
-    generateTestCerts(config.appDir, config.secretsDir)
+    generateTestCerts(config.appDir, config.secretsPath)
   })
 
   // reset stubs after each
@@ -130,6 +130,7 @@ describe('HTTPS Server Options Tests', async () => {
 
     const roosevelt = proxyquire('../roosevelt', { https: stubHttps, http: stubHttp })
     const app = roosevelt(options)
+
     await app.initServer()
 
     // test assertions

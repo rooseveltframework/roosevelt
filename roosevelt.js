@@ -55,9 +55,9 @@ const roosevelt = (options = {}, schema) => {
     app.set('appName', pkg.name || 'Roosevelt Express')
     app.set('appVersion', pkg.version)
     app.set('routePrefix', params.routePrefix)
-    app.set('modelsPath', path.join(appDir, params.modelsPath))
-    app.set('viewsPath', path.join(appDir, params.viewsPath))
-    app.set('controllersPath', path.join(appDir, params.controllersPath))
+    app.set('modelsPath', params.modelsPath)
+    app.set('viewsPath', params.viewsPath)
+    app.set('controllersPath', params.controllersPath)
     app.set('staticsRoot', params.staticsRoot)
     app.set('htmlPath', params.html.sourcePath)
     app.set('htmlModels', params.html.models)
@@ -73,10 +73,10 @@ const roosevelt = (options = {}, schema) => {
     appModulePath.addPath(appDir)
 
     // make the models directory requirable
-    appModulePath.addPath(path.join(appDir, params.modelsPath, '../'))
+    appModulePath.addPath(path.join(params.modelsPath, '../'))
 
     // make the controllers directory requirable
-    appModulePath.addPath(path.join(appDir, params.controllersPath, '../'))
+    appModulePath.addPath(path.join(params.controllersPath, '../'))
 
     appName = app.get('appName')
     appEnv = app.get('env')
@@ -87,15 +87,15 @@ const roosevelt = (options = {}, schema) => {
 
     // generate express session secret
     if (params.expressSession && params.makeBuildArtifacts !== 'staticsOnly') {
-      if (!fs.pathExistsSync(params.secretsDir) || !fs.pathExistsSync(params.secretsDir + '/sessionSecret.json')) {
-        sessionSecretGenerator()
+      if (!fs.pathExistsSync(path.join(params.secretsPath, 'sessionSecret.json'))) {
+        sessionSecretGenerator(params.secretsPath)
       }
     }
 
     // generate csrf secret
     if (params.csrfProtection && params.makeBuildArtifacts !== 'staticsOnly') {
-      if (!fs.pathExistsSync(params.secretsDir) || !fs.pathExistsSync(params.secretsDir + '/csrfSecret.json')) {
-        csrfSecretGenerator()
+      if (!fs.pathExistsSync(path.join(params.secretsPath, 'csrfSecret.json'))) {
+        csrfSecretGenerator(params.secretsPath)
       }
     }
 
@@ -124,15 +124,6 @@ const roosevelt = (options = {}, schema) => {
       const authInfoPath = params.https.authInfoPath
       const httpsOptions = {}
 
-      // runs the certGenerator if params.https.enable
-      if (params.https.autoCert && authInfoPath?.authCertAndKey) {
-        const { authCertAndKey } = authInfoPath
-
-        if ((!fs.pathExistsSync(params.secretsDir) || (!fs.pathExistsSync(authCertAndKey.key) || (!fs.pathExistsSync(authCertAndKey.cert))))) {
-          certsGenerator()
-        }
-      }
-
       function isCertString (stringToTest) {
         let testString = stringToTest
         if (typeof testString !== 'string') {
@@ -153,17 +144,27 @@ const roosevelt = (options = {}, schema) => {
           // if the string ends with a dot and 3 alphanumeric characters (including _)
           // then we assume it's a filepath.
           if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-            httpsOptions.pfx = fs.readFileSync(path.join(params.appDir, params.secretsDir, authInfoPath.p12.p12Path))
+            httpsOptions.pfx = fs.readFileSync(path.join(params.secretsPath, authInfoPath.p12.p12Path))
           } else { // if the string doesn't end that way, we assume it's an encrypted string
             httpsOptions.pfx = authInfoPath.p12.p12Path
           }
         } else if (authInfoPath.authCertAndKey) {
+          // auto generate certs if in dev mode, autoCert is enabled, the cert configuration points at file paths, and those cert files don't exist already
+          if (app.get('env') === 'development' && params.https.autoCert) {
+            const { authCertAndKey } = authInfoPath
+
+            if (!isCertString(authCertAndKey.cert) && !isCertString(authCertAndKey.key)) {
+              if (!fs.pathExistsSync(authCertAndKey.key) && !fs.pathExistsSync(authCertAndKey.cert)) {
+                certsGenerator(params.secretsPath, params.https)
+              }
+            }
+          }
           function assignCertStringByKey (key) {
             const { authCertAndKey } = authInfoPath
             const certString = authCertAndKey[key]
 
             if (isCertString(certString)) httpsOptions[key] = certString
-            else httpsOptions[key] = fs.readFileSync(path.join(params.appDir, params.secretsDir, certString))
+            else httpsOptions[key] = fs.readFileSync(path.join(params.secretsPath, certString))
           }
 
           if (authInfoPath.authCertAndKey.cert) assignCertStringByKey('cert')
@@ -179,7 +180,7 @@ const roosevelt = (options = {}, schema) => {
           if (isCertString(params.https.caCert)) { // then it's the cert(s) as a string, not a file path
             httpsOptions.ca = params.https.caCert
           } else { // it's a file path to the file, so read file
-            httpsOptions.ca = fs.readFileSync(path.join(params.appDir, params.secretsDir, params.https.caCert))
+            httpsOptions.ca = fs.readFileSync(path.join(params.secretsPath, params.https.caCert))
           }
         } else if (params.https.caCert instanceof Array) {
           httpsOptions.ca = []

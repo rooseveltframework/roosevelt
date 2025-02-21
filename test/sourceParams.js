@@ -1,7 +1,6 @@
 /* eslint-env mocha */
 /* eslint no-template-curly-in-string: 0 */
 
-const appCleaner = require('./util/appCleaner')
 const assert = require('assert')
 const fs = require('fs-extra')
 const path = require('path')
@@ -36,7 +35,7 @@ describe('sourceParams', () => {
 
     afterEach(async () => {
       // wipe out the test app directory
-      await appCleaner('sourceParams')
+      await fs.remove(path.join(__dirname, 'app'))
     })
 
     it('should set params from package.json', () => {
@@ -66,6 +65,10 @@ describe('sourceParams', () => {
 
       // do some param post-processing that matches what we expect from roosevelt
       pkg.rooseveltConfig.staticsRoot = path.join(appDir, pkg.rooseveltConfig.staticsRoot)
+      pkg.rooseveltConfig.modelsPath = path.join(appDir, pkg.rooseveltConfig.modelsPath)
+      pkg.rooseveltConfig.viewsPath = path.join(appDir, pkg.rooseveltConfig.viewsPath)
+      pkg.rooseveltConfig.controllersPath = path.join(appDir, pkg.rooseveltConfig.controllersPath)
+      pkg.rooseveltConfig.secretsPath = path.join(appDir, pkg.rooseveltConfig.secretsPath)
       pkg.rooseveltConfig.publicFolder = (path.join(appDir, pkg.rooseveltConfig.publicFolder))
       pkg.rooseveltConfig.html.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.html.sourcePath)
       pkg.rooseveltConfig.html.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.html.output)
@@ -100,6 +103,10 @@ describe('sourceParams', () => {
 
       // do some param post-processing that matches what we expect from roosevelt
       config.staticsRoot = path.join(config.appDir, config.staticsRoot)
+      config.modelsPath = path.join(config.appDir, config.modelsPath)
+      config.viewsPath = path.join(config.appDir, config.viewsPath)
+      config.controllersPath = path.join(config.appDir, config.controllersPath)
+      config.secretsPath = path.join(config.appDir, config.secretsPath)
       config.publicFolder = (path.join(config.appDir, config.publicFolder))
       config.html.sourcePath = path.join(config.staticsRoot, config.html.sourcePath)
       config.html.output = path.join(config.publicFolder, config.html.output)
@@ -144,6 +151,10 @@ describe('sourceParams', () => {
 
       // do some param post-processing that matches what we expect from roosevelt
       configJson.staticsRoot = path.join(appDir, configJson.staticsRoot)
+      configJson.modelsPath = path.join(appDir, configJson.modelsPath)
+      configJson.viewsPath = path.join(appDir, configJson.viewsPath)
+      configJson.controllersPath = path.join(appDir, configJson.controllersPath)
+      configJson.secretsPath = path.join(appDir, configJson.secretsPath)
       configJson.publicFolder = (path.join(appDir, configJson.publicFolder))
       configJson.html.sourcePath = path.join(configJson.staticsRoot, configJson.html.sourcePath)
       configJson.html.output = path.join(configJson.publicFolder, configJson.html.output)
