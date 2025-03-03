@@ -57,6 +57,7 @@ const roosevelt = (options = {}, schema) => {
     app.set('routePrefix', params.routePrefix)
     app.set('modelsPath', params.modelsPath)
     app.set('viewsPath', params.viewsPath)
+    app.set('preprocessedViewsPath', params.preprocessedViewsPath)
     app.set('controllersPath', params.controllersPath)
     app.set('staticsRoot', params.staticsRoot)
     app.set('htmlPath', params.html.sourcePath)
@@ -86,30 +87,18 @@ const roosevelt = (options = {}, schema) => {
     else logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
 
     // generate express session secret
-    if (params.expressSession && params.makeBuildArtifacts !== 'staticsOnly') {
-      if (!fs.pathExistsSync(path.join(params.secretsPath, 'sessionSecret.json'))) {
-        sessionSecretGenerator(params.secretsPath)
-      }
-    }
+    if (params.expressSession && params.makeBuildArtifacts !== 'staticsOnly' && !fs.pathExistsSync(path.join(params.secretsPath, 'sessionSecret.json'))) sessionSecretGenerator(params.secretsPath)
 
     // generate csrf secret
-    if (params.csrfProtection && params.makeBuildArtifacts !== 'staticsOnly') {
-      if (!fs.pathExistsSync(path.join(params.secretsPath, 'csrfSecret.json'))) {
-        csrfSecretGenerator(params.secretsPath)
-      }
-    }
+    if (params.csrfProtection && params.makeBuildArtifacts !== 'staticsOnly' && !fs.pathExistsSync(path.join(params.secretsPath, 'csrfSecret.json'))) csrfSecretGenerator(params.secretsPath)
 
     // assign individual keys to connections when opened so they can be destroyed gracefully
     function mapConnections (conn) {
       const key = conn.remoteAddress + ':' + conn.remotePort
       connections[key] = conn
-
-      // once the connection closes, remove
       conn.on('close', function () {
         delete connections[key]
-        if (app.get('roosevelt:state') === 'disconnecting') {
-          Object.keys(connections).length === 0 && closeServer() // this will close the server if there are no connections
-        }
+        if (app.get('roosevelt:state') === 'disconnecting') Object.keys(connections).length === 0 && closeServer() // this will close the server if there are no connections
       })
     }
 
@@ -126,16 +115,11 @@ const roosevelt = (options = {}, schema) => {
 
       function isCertString (stringToTest) {
         let testString = stringToTest
-        if (typeof testString !== 'string') {
-          testString = testString.toString()
-        }
+        if (typeof testString !== 'string') testString = testString.toString()
         const lastChar = testString.substring(testString.length - 1)
-        // A file path string won't have an end of line character at the end
-        // Looking for either \n or \r allows for nearly any OS someone could
-        // use, and a few that node doesn't work on.
-        if (lastChar === '\n' || lastChar === '\r') {
-          return true
-        }
+        // a file path string won't have an end of line character at the end
+        // looking for either \n or \r allows for nearly any OS someone could use, and a few that node doesn't work on.
+        if (lastChar === '\n' || lastChar === '\r') return true
         return false
       }
 
@@ -205,9 +189,7 @@ const roosevelt = (options = {}, schema) => {
     app.set('httpsServer', httpsServer)
 
     // fire user-defined onBeforeMiddleware event
-    if (params.onBeforeMiddleware && typeof params.onBeforeMiddleware === 'function') {
-      await Promise.resolve(params.onBeforeMiddleware(app))
-    }
+    if (params.onBeforeMiddleware && typeof params.onBeforeMiddleware === 'function') await Promise.resolve(params.onBeforeMiddleware(app))
 
     // enable gzip compression
     app.use(require('compression')())
@@ -219,7 +201,6 @@ const roosevelt = (options = {}, schema) => {
       else logger.warn(`Favicon ${params.favicon} does not exist. Please ensure the "favicon" param is configured correctly.`)
     }
 
-    // configure express, express-session, and csrf
     require('./lib/setExpressConfigs')(app)
 
     require('./lib/generateSymlinks')(app)
@@ -255,99 +236,43 @@ const roosevelt = (options = {}, schema) => {
     await require('./lib/isomorphicControllersFinder')(app)
 
     // fire user-defined onServerInit event
-    if (params.onServerInit && typeof params.onServerInit === 'function') {
-      await Promise.resolve(params.onServerInit(app))
-    }
+    if (params.onServerInit && typeof params.onServerInit === 'function') await Promise.resolve(params.onServerInit(app))
   }
 
   async function startServer () {
     await initServer()
-
     const numberOfServers = params.https.enable && !params.https.force ? 2 : 1
     let listeningServers = 0
 
     // code that executes after the server starts
     function startupCallback (proto, port) {
-      async function startReloadServer (proto, server) {
-        const reload = require('reload')
-        const config = {
-          verbose: !!params.logging.methods.verbose,
-          webSocketServerWaitStart: true
-        }
-
-        if (proto === 'HTTP') {
-          config.route = '/reloadHttp'
-          config.port = params.frontendReload.port
-        } else {
-          config.route = '/reloadHttps'
-          config.port = params.frontendReload.httpsPort
-          config.forceWss = false // lets this work in self-signed cert situations
-          config.https = {
-            p12: server.pfx,
-            certAndKey: {
-              cert: server.cert,
-              key: server.key
-            },
-            passphrase: server.passphrase
-          }
-        }
-
-        return reload(router, config)
-      }
-
       return async function () {
-        // spin up reload http(s) service if enabled in dev mode
-        if (appEnv === 'development' && params.frontendReload.enable === true) {
-          let reloadServer
-          const config = params.frontendReload
-
-          // get reload ready and bind instance to express variable
-          if (proto === 'HTTP') {
-            reloadServer = await startReloadServer(proto)
-            app.set('reloadHttpServer', reloadServer)
-          } else {
-            reloadServer = await startReloadServer(proto, httpsServer)
-            app.set('reloadHttpsServer', reloadServer)
-          }
-
-          // spin up the reload server
-          await reloadServer.startWebSocketServer()
-          logger.log('🎧', `${appName} frontend reload ${proto} server is listening on port ${proto === 'HTTP' ? config.port : config.httpsPort}`)
-        }
-
-        logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port}`.bold)
-        if (params.localhostOnly) {
-          logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
-        }
-        if (!params.hostPublic) {
-          logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
-        }
-
+        logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port} (${proto.toLowerCase()}://${require('ip').address()}:${port})`.bold)
+        if (params.localhostOnly) logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
+        if (!params.hostPublic) logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
         listeningServers++
 
         // fire user-defined onServerStart event if all servers are started
-        if (listeningServers === numberOfServers) {
-          if (params.onServerStart && typeof params.onServerStart === 'function') {
-            Promise.resolve(params.onServerStart(app))
-          }
-        }
+        if (listeningServers === numberOfServers && params.onServerStart && typeof params.onServerStart === 'function') Promise.resolve(params.onServerStart(app))
       }
     }
 
     if (params.makeBuildArtifacts !== 'staticsOnly') {
       if (!params.https.force || !params.https.enable) {
-        httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port)).on('error', err => {
+        const server = httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port)).on('error', err => {
           logger.error(err)
           logger.error(`Another process is using port ${params.port}. Either kill that process or change this app's port number.`.bold)
           process.exit(1)
         })
+        if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
       }
       if (params.https.enable) {
-        httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port)).on('error', err => {
+        const server = httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port)).on('error', err => {
           logger.error(err)
           logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
           process.exit(1)
         })
+        if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
       }
     }
 
@@ -360,26 +285,16 @@ const roosevelt = (options = {}, schema) => {
     persistProcess = args?.persistProcess
 
     // fire user-defined onAppExit event
-    if (params.onAppExit && typeof params.onAppExit === 'function') {
-      params.onAppExit(app)
-    }
+    if (params.onAppExit && typeof params.onAppExit === 'function') params.onAppExit(app)
 
     // force destroy connections if the server takes too long to shut down
     checkConnectionsTimeout = setTimeout(() => {
       logger.error(`${appName} could not close all connections in time; forcefully shutting down`)
-      for (const key in connections) {
-        connections[key].destroy()
-      }
+      for (const key in connections) connections[key].destroy()
       if (persistProcess) {
-        if (httpServer) {
-          httpServer.close()
-        }
-        if (httpsServer) {
-          httpsServer.close()
-        }
-      } else {
-        process.exit()
-      }
+        if (httpServer) httpServer.close()
+        if (httpsServer) httpsServer.close()
+      } else process.exit()
     }, params.shutdownTimeout)
 
     app.set('roosevelt:state', 'disconnecting')
@@ -387,9 +302,7 @@ const roosevelt = (options = {}, schema) => {
 
     // if the app is in development mode, kill all connections instantly and exit
     if (appEnv === 'development') {
-      for (const key in connections) {
-        connections[key].destroy()
-      }
+      for (const key in connections) connections[key].destroy()
       closeServer()
     } else {
       // else do the normal procedure of seeing if there are still connections before closing
@@ -401,15 +314,9 @@ const roosevelt = (options = {}, schema) => {
     clearTimeout(checkConnectionsTimeout)
     logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
     if (persistProcess) {
-      if (httpServer) {
-        httpServer.close()
-      }
-      if (httpsServer) {
-        httpsServer.close()
-      }
-    } else {
-      process.exit()
-    }
+      if (httpServer) httpServer.close()
+      if (httpsServer) httpsServer.close()
+    } else process.exit()
   }
 
   return {

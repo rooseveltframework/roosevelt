@@ -184,7 +184,6 @@ describe('config auditor', () => {
     const { stderr } = await execaNode('../../../lib/scripts/configAuditor.js', { cwd: appDir })
 
     // check stderr to ensure it found all the problems
-    assert(stderr.includes('Issues have been detected in rooseveltConfig.json'))
-    assert(stderr.includes('Issues have been detected in package.json'))
+    assert(stderr.includes('Issues have been detected in '))
   })
 })

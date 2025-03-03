@@ -4,6 +4,36 @@
 
 - Put your changes here...
 
+## 0.26.0
+
+- Breaking: Added new param `preprocessedViewsPath`: Relative path on filesystem to where your preprocessed view files will be written to. Preprocessed view files are view files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.
+  - Default: *[String]* `"mvc/.preprocessed_views"`.
+  - To disable this feature, set the value to `false`.
+  - This is breaking because if you leave it enabled by default (recommended), you will need to add `.preprocessed_views` to your `.gitignore`.
+- Breaking: Switched to external source maps for the CSS preprocessor. This necessitated changing the custom CSS preprocessor API to require returning an object instead of a string.
+  - If you have written a custom CSS preprocessor, the new return value is:
+    ```javascript
+    return {
+      css: 'write code to output css here',
+      sourceMap: 'write code to output source map here (optional)'
+    }
+    ```
+- Added new param `prodSourceMaps` to allow source maps to be generated in prod mode for both CSS and JS.
+- Added IP address to the output when the server starts.
+- Added new CLI script `secretsGenerator.js` that allows you to combine `certsGenerator.js`, `csrfSecretGEnerator.js`, and `sessionSecretGenerator.js` into one command.
+- Added feature to override `appDir` and `secretsPath` for the CLI scripts using `--appDir somewhere` and `--secretsPath somewhere` CLI flags.
+- Added `exceptionRoutes` option to the `frontendReload` param.
+- Added a check for broken symlinks in the public folder, which will be purged if any exist.
+- Added support for placing your Roosevelt config in a `roosevelt.config.json` file in addition to the previous options.
+- Added better error when attempting to start a Roosevelt app on a file system that does not support symlinks.
+- Changed source maps from inline to external.
+- Fixed a bug that caused the JS bundler to not log when it was writing JS files.
+- Fixed a bug that caused a `statics/pages` directory being created when it isn't needed.
+- Fixed a bug that could cause the public folder and statics folder to be created even when `makeBuildArtifacts` is disabled.
+- Fixed a bug that caused the views bundler and isomorphic controllers finder to write a new views bundle to disk even when it wasn't needed.
+- Fixed `frontendReload` not working in Firefox with the default HTTPS config.
+- Updated various dependencies.
+
 ## 0.25.0
 
 - Breaking: Supplying an `allowlist` to the views bundler will now implicitly disable `exposeAll`.

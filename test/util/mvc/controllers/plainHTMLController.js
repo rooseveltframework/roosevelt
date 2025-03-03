@@ -7,4 +7,18 @@ module.exports = (router) => {
     // send the plain HTML page back
     res.sendFile(htmlPath)
   })
+
+  router.route('/HTMLTest/nested').get((req, res) => {
+    // save the path of the plain HTML page
+    const htmlPath = path.join(__dirname, '../views/plainHTMLTest.html')
+    // send the plain HTML page back
+    res.sendFile(htmlPath)
+  })
+
+  router.route('/HTMLTest2').get((req, res) => {
+    // save the path of the plain HTML page
+    const htmlPath = path.join(__dirname, '../views/plainHTMLTest.html')
+    // send the plain HTML page back
+    res.sendFile(htmlPath)
+  })
 }

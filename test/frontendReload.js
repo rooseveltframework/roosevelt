@@ -70,82 +70,13 @@ describe('frontend reload', () => {
 
     // check that reload js is being served
     const res = await request(app)
-      .get('/reloadHttp/reload.js')
+      .get('/express-browser-reload.js')
 
     // shut down the roosevelt server
     await killRoosevelt(app, 'HTTP')
-    await app.get('reloadHttpServer').closeServer()
 
     // assertion last because mocha
     assert(res.status === 200)
-  })
-
-  it('should start reload https server in dev mode', async () => {
-    // configure and start roosevelt
-    const app = await startRoosevelt({
-      ...config,
-      https: {
-        enable: true,
-        port: 43712,
-        force: true,
-        autoCert: true,
-        authInfoPath: {
-          authCertAndKey: {
-            cert: 'cert.pem',
-            key: 'key.pem'
-          }
-        },
-        passphrase: 'testpass'
-      }
-    })
-
-    // check that reload js is being served
-    const res = await request(app)
-      .get('/reloadHttps/reload.js')
-
-    // shut down the roosevelt server
-    await killRoosevelt(app, 'HTTPS')
-    await app.get('reloadHttpsServer').closeServer()
-
-    // assertion last because mocha
-    assert(res.status === 200)
-  })
-
-  it('should start reload http and https servers in dev mode', async () => {
-    // configure and start roosevelt
-    const app = await startRoosevelt({
-      ...config,
-      https: {
-        enable: true,
-        port: 43712,
-        force: false,
-        autoCert: true,
-        authInfoPath: {
-          authCertAndKey: {
-            cert: 'cert.pem',
-            key: 'key.pem'
-          }
-        },
-        passphrase: 'testpass'
-      }
-    })
-
-    // check that reload js is being served
-    const httpRes = await request(app)
-      .get('/reloadHttp/reload.js')
-
-    const httpsRes = await request(app)
-      .get('/reloadHttps/reload.js')
-
-    // shut down the roosevelt server
-    await killRoosevelt(app, 'HTTP')
-    await killRoosevelt(app, 'HTTPS')
-    await app.get('reloadHttpServer').closeServer()
-    await app.get('reloadHttpsServer').closeServer()
-
-    // assertion last because mocha
-    assert(httpRes.status === 200)
-    assert(httpsRes.status === 200)
   })
 
   it('should auto inject reload script into rendered html', async () => {
@@ -160,10 +91,9 @@ describe('frontend reload', () => {
 
     // shut down the roosevelt server
     await killRoosevelt(app, 'HTTP')
-    await app.get('reloadHttpServer').closeServer()
 
     // assertion last because mocha
-    assert(res.text.includes('<script src=\'/reloadHttp/reload.js\'></script>'))
+    assert(res.text.includes('<script src="/express-browser-reload.js"></script>'))
   })
 
   it('should not start reload in prod mode', async () => {
@@ -175,7 +105,54 @@ describe('frontend reload', () => {
 
     // check that reload js is being served
     const res = await request(app)
-      .get('/reloadHttp/reload.js')
+      .get('/express-browser-reload.js')
+
+    // shut down the roosevelt server
+    await killRoosevelt(app, 'HTTP')
+
+    // assertion last because mocha
+    assert(res.status === 404)
+    assert(app.get('reloadHttpServer') === undefined)
+  })
+
+  it('should exclude multiple glob paths for auto inject reload script into rendered html', async () => {
+    // configure and start roosevelt
+
+    const app = await startRoosevelt({
+      ...config,
+      frontendReload: {
+        ...config.frontendReload,
+        exceptionRoutes: [
+          '/HTMLTest/*',
+          '/HTMLTest2'
+        ]
+      }
+    })
+
+    // check that reload script is injected into response bodies
+    const res1 = await request(app)
+      .get('/HTMLTest/nested')
+
+    const res2 = await request(app)
+      .get('/HTMLTest2')
+
+    // shut down the roosevelt server
+    await killRoosevelt(app, 'HTTP')
+
+    assert(!res1.text.includes('<script src="/express-browser-reload.js"></script>'))
+    assert(!res2.text.includes('<script src="/express-browser-reload.js"></script>'))
+  })
+
+  it('should not start reload in prod mode', async () => {
+    // configure and start roosevelt
+    const app = await startRoosevelt({
+      ...config,
+      mode: 'production'
+    })
+
+    // check that reload js is being served
+    const res = await request(app)
+      .get('/express-browser-reload.js')
 
     // shut down the roosevelt server
     await killRoosevelt(app, 'HTTP')
@@ -196,7 +173,7 @@ describe('frontend reload', () => {
 
     // check that reload js is being served
     const res = await request(app)
-      .get('/reloadHttp/reload.js')
+      .get('/express-browser-reload.js')
 
     // shut down the roosevelt server
     await killRoosevelt(app, 'HTTP')

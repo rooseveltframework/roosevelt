@@ -302,7 +302,7 @@ describe('css preprocessors', () => {
               return `@coolAppVersion: ${app.get('version')}`
             },
             parse: (app, filePath) => {
-              return filePath
+              return { css: filePath }
             }
           }
         }
@@ -384,7 +384,7 @@ describe('css preprocessors', () => {
       assert.deepStrictEqual(lessOutput.css, buildOutput)
     })
 
-    it('should enable inline sourcemaps in dev mode', async () => {
+    it('should enable source maps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -401,11 +401,30 @@ describe('css preprocessors', () => {
       })
 
       await app.initServer()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
+      assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+    })
 
-      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+    it('should enable source maps in prod mode with prodSourceMaps param', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'development',
+        prodSourceMaps: true,
+        css: {
+          compiler: {
+            enable: true,
+            module: 'less'
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
 
-      // check that the build file includes a source map
-      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
+      await app.initServer()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
+      assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
     })
 
     it('should write a version file when enabled', async () => {
@@ -498,7 +517,7 @@ describe('css preprocessors', () => {
       assert.deepStrictEqual(scssOutput.css.toString(), buildOutput)
     })
 
-    it('should enable inline sourcemaps in dev mode', async () => {
+    it('should enable source maps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -515,11 +534,30 @@ describe('css preprocessors', () => {
       })
 
       await app.initServer()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
+      assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+    })
 
-      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+    it('should enable source maps in prod mode with prodSourceMaps param', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'development',
+        prodSourceMaps: true,
+        css: {
+          compiler: {
+            enable: true,
+            module: 'sass'
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
 
-      // check that the build file includes a source map
-      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json'), 'build file is missing source map')
+      await app.initServer()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
+      assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
     })
 
     it('should write a version file when enabled', async () => {
@@ -598,7 +636,7 @@ describe('css preprocessors', () => {
 
       await app.initServer()
 
-      // manually render less file
+      // manually render styl file
       const stylusOutput = await renderFile()
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
 
@@ -618,7 +656,7 @@ describe('css preprocessors', () => {
       }
     })
 
-    it('should enable inline sourcemaps in dev mode', async () => {
+    it('should enable source maps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
         mode: 'development',
@@ -635,11 +673,30 @@ describe('css preprocessors', () => {
       })
 
       await app.initServer()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
+      assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+    })
 
-      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+    it('should enable source maps in prod mode with prodSourceMaps param', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'development',
+        prodSourceMaps: true,
+        css: {
+          compiler: {
+            enable: true,
+            module: 'stylus'
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
 
-      // check that the build file includes a source map
-      assert(buildOutput.includes('/*# sourceMappingURL=data:application/json;base64'), 'build file is missing source map')
+      await app.initServer()
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
+      assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
     })
 
     it('should write a version file when enabled', async () => {
