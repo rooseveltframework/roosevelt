@@ -23,6 +23,7 @@ describe('sourceParams', () => {
     const blocklist = [
       'appDir',
       'cssCompiler',
+      'preprocessedViewsPath',
       'onClientViewsProcess',
       'onServerInit',
       'onBeforeMiddleware',

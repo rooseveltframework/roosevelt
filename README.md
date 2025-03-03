@@ -15,7 +15,7 @@ Some notable features:
   - Need some extra speed in template parsing? Consider writing your templates in [PHP](https://php.net)! The Roosevelt team also built a view engine that lets you [use PHP as your templating engine](https://github.com/rooseveltframework/node-php-runner) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
 - [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external-facing CSS files via [clean-css](https://www.npmjs.com/package/clean-css). There's also built-in support for [Sass](https://sass-lang.com) and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
 - [Webpack](https://webpack.js.org/) fully integrated providing an easy to use interface for bundling and minifying your frontend JS.
-- Code-reloading in development mode via [nodemon](https://nodemon.io) for server-side changes and [reload](https://github.com/alallier/reload) for frontend changes.
+- Code-reloading in development mode via [nodemon](https://nodemon.io) for server-side changes and [express-browser-reload](https://github.com/rooseveltframework/express-browser-reload) for frontend changes.
 - HTML validation done automatically in development mode for your post-server rendered HTML powered by [express-html-validator](https://github.com/rooseveltframework/express-html-validator).
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/main/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
@@ -166,9 +166,15 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Script is short for: `nodemon app.js --production-proxy-mode`
 - `npm run generate-certs`: Generates self-signed HTTPS certs for your app.
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certsGenerator.js`
+  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
+- `npm run generate-csrf-secret`: Generates a secret key for the CSRF protection.
+  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/csrfSecretGenerator.js`
+  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
 - `npm run generate-session-secret`: Generates a secret key for the `express-session` module.
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/sessionSecretGenerator.js`
-- `npm run generate-secrets`: Generates self-signed HTTPS certs and a `express-session` secret.
+  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
+- `npm run generate-secrets`: Runs the above three scripts.
+  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
 - `npm run audit-config`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/configAuditor.js`
   - This will run automatically whenever you run `npm i` or `npm ci` as well.
@@ -333,6 +339,9 @@ Resolves to:
   - Default: *[String]* `"mvc/models"`.
 - `viewsPath`: Relative path on filesystem to where your view files are located.
   - Default: *[String]* `"mvc/views"`.
+- `preprocessedViewsPath`: Relative path on filesystem to where your preprocessed view files will be written to. Preprocessed view files are view files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.
+  - Default: *[String]* `"mvc/.preprocessed_views"`.
+  - To disable this feature, set the value to `false`.
 
 - `secretsPath`: Directory that stores certs, keys, and secrets.
 
@@ -342,15 +351,33 @@ Resolves to:
 
 ### Development mode parameters
 
-- `frontendReload`: Settings to use for the [reload](https://github.com/alallier/reload) module which automatically reloads your browser when your frontend code changes. This feature is only available in development mode.
-
+- `frontendReload`: Settings to use for the browser reload feature which automatically reloads your browser when your frontend code changes. This feature is only available in development mode.
+  - Options:
+    - `enable`: Whether or not to enable `reload`.
+      - Default: *[Boolean]* `true`.
+    - `port`: What HTTP port to run `reload` on.
+      - Default: *[Number]* `9856`.
+    - `httpsPort`: What HTTPS port to run `reload` on.
+      - Default: *[Number]* `9857`.
+    - `exceptionRoutes`: List of routes to exclude from Reload automatically injecting its script onto.
+      - Default: *[Array]* with no items in it. This means Reload will inject its script on all routes by default.
+    - `expressBrowserReloadParams`: Params to pass to [express-browser-reload](https://github.com/rooseveltframework/express-browser-reload).
+      - Default: *[Object]*
+      ```json
+      {
+        "skipDeletingConnections": true
+      }
+      ```
   - Default: *[Object]*
-
     ```json
     {
       "enable": true,
       "port": 9856,
-      "httpsPort": 9857
+      "httpsPort": 9857,
+      "exceptionRoutes": [],
+      "expressBrowserReloadParams": {
+        "skipDeletingConnections": true
+      }
     }
     ```
 
@@ -710,6 +737,69 @@ Resolves to:
 
 ### Statics parameters
 
+- `html`: Generate static HTML pages:
+
+  - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
+
+  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
+
+  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
+
+  - `models`: Data to pass to templates by file path / file name.
+
+    - Example:
+
+      ```json
+      {
+        "models": {
+          "index.html": {
+            "some": "data"
+          },
+          "subdirectory/otherFile.html": {
+            "someOther": "data"
+          }
+        }
+      }
+      ```
+
+    - If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
+
+  - `output`: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
+
+  - `minifier`: How you want Roosevelt to minify your HTML:
+
+    - `enable`: *[Boolean]* Whether or not to minify HTML.
+
+      - Can also be disabled by the `minify` param.
+      - Minification is automatically disabled in development mode.
+
+    - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
+
+    - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
+
+  - Default: *[Object]*
+
+    ```json
+    {
+      "sourcePath": "pages",
+      "allowlist": null,
+      "blocklist": null,
+      "models": {},
+      "output": "",
+      "minifier": {
+        "enable": true,
+        "exceptionRoutes": false,
+        "options": {
+          "removeComments": true,
+          "collapseWhitespace": true,
+          "collapseBooleanAttributes": true,
+          "removeAttributeQuotes": true,
+          "removeEmptyAttributes": true
+        }
+      }
+    }
+    ```
+
 - `css`: *[Object]* How you want Roosevelt to configure your CSS preprocessor:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your CSS files are located. By default this folder will not be made public, but is instead meant to store unminified CSS source files which will be minified and written to the `public` folder when the app is started.
@@ -786,69 +876,6 @@ Resolves to:
 
   - Default: *[String]* `"none"`.
     - Will be set to `"images/favicon.ico"` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
-
-- `html`: Generate static HTML pages:
-
-  - `sourcePath`: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered, minified, and written to the `public` folder when the app is started.
-
-  - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
-
-  - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
-
-  - `models`: Data to pass to templates by file path / file name.
-
-    - Example:
-
-      ```json
-      {
-        "models": {
-          "index.html": {
-            "some": "data"
-          },
-          "subdirectory/otherFile.html": {
-            "someOther": "data"
-          }
-        }
-      }
-      ```
-
-    - If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
-
-  - `output`: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
-
-  - `minifier`: How you want Roosevelt to minify your HTML:
-
-    - `enable`: *[Boolean]* Whether or not to minify HTML.
-
-      - Can also be disabled by the `minify` param.
-      - Minification is automatically disabled in development mode.
-
-    - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
-
-    - `options`: *[Object]* Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
-
-  - Default: *[Object]*
-
-    ```json
-    {
-      "sourcePath": "pages",
-      "allowlist": null,
-      "blocklist": null,
-      "models": {},
-      "output": "",
-      "minifier": {
-        "enable": true,
-        "exceptionRoutes": false,
-        "options": {
-          "removeComments": true,
-          "collapseWhitespace": true,
-          "collapseBooleanAttributes": true,
-          "removeAttributeQuotes": true,
-          "removeEmptyAttributes": true
-        }
-      }
-    }
-    ```
 
 - `js`: *[Object]* How you want Roosevelt to handle module bundling and minifying your frontend JS:
 
@@ -998,9 +1025,13 @@ Resolves to:
       ]
       ```
 
-- `minify`: Enables HTML and CSS minification. This feature is automatically disabled during development mode.
+- `minify`: Enables HTML and CSS minification. This feature is automatically disabled during development mode. Minification for JS files is handled by the `js` params above.
 
   - Default: *[Boolean]* `true`.
+
+- `prodSourceMaps`: Enables source maps for minified CSS and JS files in production mode.
+
+  - Default: *[Boolean]* `false`.
 
 - `versionedPublic`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version.
 
@@ -1270,8 +1301,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `express`                            | The Express module.                                          |
 | `httpServer`                         | The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt. |
 | `httpsServer`                        | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. |
-| `reloadHttpServer`                   | The [http instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
-| `reloadHttpsServer`                  | The [https instance of reload](https://github.com/alallier/reload#returns) created by Roosevelt. |
 | `router`                             | Instance of router module used by Roosevelt.                 |
 | `routePrefix`                        | Prefix appended to routes via the `routePrefix` param. Will be `''` if not set. |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
@@ -1280,6 +1309,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
+| `preprocessedViewsPath` or `preprocessedViews`               | Full path on the file system to where your app's views folder is located. |
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
@@ -1319,9 +1349,14 @@ let app = require('roosevelt')({
     return {
       versionCode: app => {
         // write code to return the version of your app here
+        // generally you should return a css variable with your app version
       },
       parse: (app, filePath) => {
         // write code to preprocess CSS here
+        return {
+          css: 'write code to output css here',
+          sourceMap: 'write code to output source map here (optional)
+        }
       }
     }
   }

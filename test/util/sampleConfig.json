@@ -68,6 +68,7 @@
   "secretsPath": "secrets",
   "modelsPath": "value",
   "viewsPath": "value",
+  "preprocessedViewsPath": "value",
   "controllersPath": "value",
   "viewEngine": "none",
   "errorPages": {
@@ -115,13 +116,13 @@
   "symlinks": "value",
   "publicFolder": "value",
   "favicon": "value",
+  "prodSourceMaps": "value",
   "versionedPublic": "value",
   "hostPublic": "value",
   "frontendReload": {
     "enable": false,
-    "port": 9000,
-    "httpsPort": "value",
-    "verbose": "value"
+    "exceptionRoutes": "value",
+    "expressBrowserReloadParams": "value"
   },
   "cleanTimer": "value",
   "clientViews": {

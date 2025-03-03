@@ -35,9 +35,10 @@
   },
   "frontendReload": {
     "enable": true,
-    "port": 9856,
-    "httpsPort": 9857,
-    "verbose": false
+    "exceptionRoutes": [],
+    "expressBrowserReloadParams": {
+      "skipDeletingConnections": true
+    }
   },
   "shutdownTimeout": 30000,
   "https": {
@@ -65,6 +66,7 @@
   "secretsPath": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
+  "preprocessedViewsPath": "mvc/.preprocessed_views",
   "viewEngine": "none",
   "controllersPath": "mvc/controllers",
   "errorPages": {
@@ -118,6 +120,7 @@
   "publicFolder": "public",
   "favicon": "none",
   "symlinks": [],
+  "prodSourceMaps": false,
   "versionedPublic": false,
   "hostPublic": true,
   "clientViews": {
