@@ -69,7 +69,7 @@
     "standard": "17.1.2",
     "stylus": "0.64.0",
     "supertest": "7.0.0",
-    "teddy": "0.6.23",
+    "teddy": "0.6.26",
     "watcher": "2.3.1"
   },
   "repository": {
