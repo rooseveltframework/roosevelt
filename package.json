@@ -52,7 +52,7 @@
     "roosevelt-logger": "0.2.3",
     "selfsigned": "2.4.1",
     "serve-favicon": "2.5.0",
-    "source-configs": "0.3.6",
+    "source-configs": "1.0.0",
     "webpack": "5.98.0"
   },
   "devDependencies": {
