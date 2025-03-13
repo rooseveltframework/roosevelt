@@ -4,6 +4,41 @@
 
 - Put your changes here...
 
+## 0.26.1
+
+- Added new Express variable `debugMarkup` that contains HTML you can add to your custom error pages if you define any that will print server errors if any exist, display the route list, add some inline JavaScript that will serialize the request's `err`, `req`, and `res` objects so you can interactively examine them in the browser's developer tools. Only available in development mode.
+- Added the aforementioned debug markup to the default error pages in development mode as well.
+- Added `routes` Express variable which will list all routes in the app.
+- Added new recognized environment variable: `MAKE_BUILD_ARTIFACTS` will allow you to set Roosevelt's `makeBuildArtifacts` config.
+- Added new param `minifyHtmlAttributes`: Settings to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+  - Options:
+    - `enable`: Whether or not to enable `minify-html-attributes`.
+      - Default: *[Boolean]* `false`.
+      - Available options:
+        - `'production'`: Enable only in production mode.
+        - `'development'`: Enable in all modes.
+        - `true`: Will be taken to mean `'production'`.
+    - `minifyHtmlAttributesParams`: Params to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+      - Default: *[Object]* `{}`
+  - Default: *[Object]*
+    ```json
+    {
+      "enable": true,
+      "minifyHtmlAttributesParams": {}
+    }
+    ```
+  - Note: Roosevelt will always override 3 params from [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes):
+    - `htmlDir` will always be set to Roosevelt's `preprocessedViewsPath`.
+    - `cssDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
+    - `jsDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
+- Added new param `preprocessedStaticsPath`: Relative path on filesystem to where your preprocessed static files will be written to. Preprocessed static files are view files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
+  - Default: *[String]* `".preprocessed_statics"`.
+  - This feature will only be active if `minifyHtmlAttributes` is enabled.
+- Replaced `isomorphicControllers` param with `clientControllers` param and made it function similarly to `clientViews`.
+- Fixed a bug with displaying app version on default error pages.
+- Fixed a bug that could lead to a counter-intuitive error if your template rendered an empty response in dev mode.
+- Updated various dependencies.
+
 ## 0.26.0
 
 - Breaking: Added new param `preprocessedViewsPath`: Relative path on filesystem to where your preprocessed view files will be written to. Preprocessed view files are view files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.

@@ -24,6 +24,8 @@ describe('sourceParams', () => {
       'appDir',
       'cssCompiler',
       'preprocessedViewsPath',
+      'preprocessedStaticsPath',
+      'minifyHtmlAttributes',
       'onClientViewsProcess',
       'onServerInit',
       'onBeforeMiddleware',
@@ -77,7 +79,7 @@ describe('sourceParams', () => {
       pkg.rooseveltConfig.css.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.css.output)
       pkg.rooseveltConfig.js.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.js.sourcePath)
       pkg.rooseveltConfig.clientViews.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.clientViews.output)
-      pkg.rooseveltConfig.isomorphicControllers.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.isomorphicControllers.output)
+      pkg.rooseveltConfig.clientControllers.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.clientControllers.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -115,7 +117,7 @@ describe('sourceParams', () => {
       config.css.output = path.join(config.publicFolder, config.css.output)
       config.js.sourcePath = path.join(config.staticsRoot, config.js.sourcePath)
       config.clientViews.output = path.join(config.staticsRoot, config.clientViews.output)
-      config.isomorphicControllers.output = path.join(config.staticsRoot, config.isomorphicControllers.output)
+      config.clientControllers.output = path.join(config.staticsRoot, config.clientControllers.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -163,7 +165,7 @@ describe('sourceParams', () => {
       configJson.css.output = path.join(configJson.publicFolder, configJson.css.output)
       configJson.js.sourcePath = path.join(configJson.staticsRoot, configJson.js.sourcePath)
       configJson.clientViews.output = path.join(configJson.staticsRoot, configJson.clientViews.output)
-      configJson.isomorphicControllers.output = path.join(configJson.staticsRoot, configJson.isomorphicControllers.output)
+      configJson.clientControllers.output = path.join(configJson.staticsRoot, configJson.clientControllers.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -704,8 +706,7 @@ describe('sourceParams', () => {
     })
   })
 
-  // TODO: the CLI flag override tests are skipped because the feature doesn't work due to https://github.com/rooseveltframework/source-configs/issues/355
-  // to implement this feature, first the source-configs feature needs to be implemented, then we need to alter the skipped tests to test a different command line flag being overridden (e.g. --development-mode) because the `cores` feature has since been deprecated since we set the tests to skip
+  // TODO: the CLI flag override tests are skipped because we need to alter the skipped tests to test a different command line flag being overridden (e.g. --development-mode) because the `cores` feature has since been deprecated since we set the tests to skip
   /*
   below is the now-cut README content for the feature back when it previously existed:
 

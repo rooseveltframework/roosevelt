@@ -16,6 +16,3 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run coverage
-      - run: npm run codecov
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

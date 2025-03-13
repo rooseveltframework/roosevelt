@@ -67,6 +67,7 @@
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
   "preprocessedViewsPath": "mvc/.preprocessed_views",
+  "preprocessedStaticsPath": ".preprocessed_statics",
   "viewEngine": "none",
   "controllersPath": "mvc/controllers",
   "errorPages": {
@@ -122,6 +123,10 @@
   "symlinks": [],
   "prodSourceMaps": false,
   "versionedPublic": false,
+  "minifyHtmlAttributes": {
+    "enable": false,
+    "minifyHtmlAttributesParams": {}
+  },
   "hostPublic": true,
   "clientViews": {
     "enable": false,
@@ -133,8 +138,12 @@
     "minify": false,
     "minifyOptions": {}
   },
-  "isomorphicControllers": {
+  "clientControllers": {
+    "enable": false,
+    "allowlist": {},
+    "blocklist": [],
     "output": "js",
-    "file": null
+    "exposeAll": false,
+    "defaultBundle": "views.js"
   }
 }
