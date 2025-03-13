@@ -744,7 +744,7 @@ Resolves to:
 
   - Example output to your `views.js` file:
 
-    ```json
+    ```javascript
     module.exports = {
       "index": "<p>html for some page</p>",
       "secondPage": "<p>html for some other page</p>"
