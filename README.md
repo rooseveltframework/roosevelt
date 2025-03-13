@@ -676,7 +676,10 @@ Resolves to:
 
     ```json
     module.exports = (router, app) => {
-      // TODO: put something here
+      app = app || router
+      require('homepage.js')(router, app)
+      require('secondPage.js')(router, app)
+      // etc
     }
     ```
 
