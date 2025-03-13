@@ -674,7 +674,7 @@ Resolves to:
 
   - Example output to your `controllers.js` file: *[Object]*
 
-    ```json
+    ```javascript
     module.exports = (router, app) => {
       app = app || router
       require('homepage.js')(router, app)
