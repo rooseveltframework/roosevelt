@@ -69,6 +69,7 @@
   "modelsPath": "value",
   "viewsPath": "value",
   "preprocessedViewsPath": "value",
+  "preprocessedStaticsPath": "value",
   "controllersPath": "value",
   "viewEngine": "none",
   "errorPages": {
@@ -124,6 +125,10 @@
     "exceptionRoutes": "value",
     "expressBrowserReloadParams": "value"
   },
+  "minifyHtmlParams": {
+    "enable": false,
+    "minifyHtmlParamsParams": "value"
+  },
   "cleanTimer": "value",
   "clientViews": {
     "enable": "value",
@@ -135,8 +140,12 @@
     "minify": "value",
     "minifyOptions": "value"
   },
-  "isomorphicControllers": {
-    "output": "value",
-    "file": "value"
+  "clientControllers": {
+    "enable": "value",
+    "exposeAll": "value",
+    "blocklist": "value",
+    "allowlist": "value",
+    "defaultBundle": "value",
+    "output": "value"
   }
 }

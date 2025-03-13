@@ -1,7 +1,7 @@
 # Roosevelt MVC web framework
 
 [![Build Status](https://github.com/rooseveltframework/roosevelt/workflows/CI/badge.svg
-)](https://github.com/rooseveltframework/roosevelt/actions?query=workflow%3ACI) [![codecov](https://codecov.io/gh/rooseveltframework/roosevelt/branch/master/graph/badge.svg)](https://codecov.io/gh/rooseveltframework/roosevelt) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
+)](https://github.com/rooseveltframework/roosevelt/actions?query=workflow%3ACI) [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
 Roosevelt is a web application development framework based on [Express](http://expressjs.com) that aims to be the easiest web framework on the [Node.js](https://nodejs.org) stack to learn and use.
 
@@ -17,42 +17,12 @@ Some notable features:
 - [Webpack](https://webpack.js.org/) fully integrated providing an easy to use interface for bundling and minifying your frontend JS.
 - Code-reloading in development mode via [nodemon](https://nodemon.io) for server-side changes and [express-browser-reload](https://github.com/rooseveltframework/express-browser-reload) for frontend changes.
 - HTML validation done automatically in development mode for your post-server rendered HTML powered by [express-html-validator](https://github.com/rooseveltframework/express-html-validator).
+- Optional HTML attribute minification of your HTML attribute class names, IDs, and `data-*` attributes in a coordinated fashion across your HTML, CSS, and JS files powered by [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+- Optional isomorphic (aka universal, [amphibious](https://twitter.com/kethinov/status/566896168324825088), etc) controller and view support based on [single-page-express](https://github.com/rooseveltframework/single-page-express) so your routes and template code can be shared on the client and the server without modification for building single page apps with maximal code reuse on both sides without having to use a big JS framework to accomplish the task instead.
 
 ![Teddy Roosevelt's facial hair is a curly brace.](https://github.com/rooseveltframework/generator-roosevelt/blob/main/generators/app/templates/statics/images/teddy.jpg "Teddy Roosevelt's facial hair is a curly brace.")
 
 *This is documentation for the current version of Roosevelt. If you need API documentation for a previous version of Roosevelt, [look here](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt).*
-
-## Table of contents
-
-- [Create and run a Roosevelt app](https://github.com/rooseveltframework/roosevelt#create-and-run-a-roosevelt-app)
-  - [Prerequisites](https://github.com/rooseveltframework/roosevelt#prerequisites)
-  - [Roosevelt app generator](https://github.com/rooseveltframework/roosevelt#roosevelt-app-generator)
-  - [Create a Roosevelt app manually](https://github.com/rooseveltframework/roosevelt#create-a-roosevelt-app-manually)
-  - [Use Roosevelt as a static site generator](https://github.com/rooseveltframework/roosevelt#use-roosevelt-as-a-static-site-generator)
-  - [Available npm scripts](https://github.com/rooseveltframework/roosevelt#available-npm-scripts)
-  - [Available command line arguments](https://github.com/rooseveltframework/roosevelt#available-command-line-arguments)
-  - [Combining npm scripts and command line arguments](https://github.com/rooseveltframework/roosevelt#combining-npm-scripts-and-command-line-arguments)
-  - [Recognized environment variables](https://github.com/rooseveltframework/roosevelt#recognized-environment-variables)
-- [Default directory structure](https://github.com/rooseveltframework/roosevelt#default-directory-structure)
-- [Configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters)
-  - [MVC parameters](https://github.com/rooseveltframework/roosevelt#mvc-parameters)
-  - [Development mode parameters](https://github.com/rooseveltframework/roosevelt#development-mode-parameters)
-  - [Deployment parameters](https://github.com/rooseveltframework/roosevelt#deployment-parameters)
-  - [App behavior parameters](https://github.com/rooseveltframework/roosevelt#app-behavior-parameters)
-  - [Isomorphic parameters](https://github.com/rooseveltframework/roosevelt#isomorphic-parameters)
-  - [Statics parameters](https://github.com/rooseveltframework/roosevelt#statics-parameters)
-  - [Events](https://github.com/rooseveltframework/roosevelt#events)
-  - [Event list](https://github.com/rooseveltframework/roosevelt#event-list)
-- [Making model files](https://github.com/rooseveltframework/roosevelt#making-model-files)
-- [Making view files](https://github.com/rooseveltframework/roosevelt#making-view-files)
-- [Making controller files](https://github.com/rooseveltframework/roosevelt#making-controller-files)
-  - [Making isomorphic controller files](https://github.com/rooseveltframework/roosevelt#making-isomorphic-controller-files)
-- [Express variables exposed by Roosevelt](https://github.com/rooseveltframework/roosevelt#express-variables-exposed-by-roosevelt)
-- [Supplying your own CSS and JS preprocessor](https://github.com/rooseveltframework/roosevelt#authoring-your-own-css-and-js-preprocessor)
-- [Deploying Roosevelt apps](https://github.com/rooseveltframework/roosevelt#deploying-roosevelt-apps)
-- [Upgrading to new versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#upgrading-to-new-versions-of-roosevelt)
-  - [Documentation for previous versions of Roosevelt](https://github.com/rooseveltframework/roosevelt#documentation-for-previous-versions-of-roosevelt)
-- [Contributing to Roosevelt](https://github.com/rooseveltframework/roosevelt#contributing-to-roosevelt)
 
 ## Create and run a Roosevelt app
 
@@ -230,6 +200,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `HTTP_PORT`: Default HTTP port to run your app on. Takes precedence over `NODE_PORT`.
 - `HTTPS_PORT`: Default HTTPS port to run your app on.
 - `DISABLE_HTTPS`: When set to `true`, the HTTPS server will be disabled and the app will revert to HTTP regardless of what is set in the `rooseveltConfig`.
+- `MAKE_BUILD_ARTIFACTS`: Lets you set Roosevelt's `makeBuildArtifacts` param via environment variable.
 
 Environment variable precedence:
 
@@ -355,10 +326,6 @@ Resolves to:
   - Options:
     - `enable`: Whether or not to enable `reload`.
       - Default: *[Boolean]* `true`.
-    - `port`: What HTTP port to run `reload` on.
-      - Default: *[Number]* `9856`.
-    - `httpsPort`: What HTTPS port to run `reload` on.
-      - Default: *[Number]* `9857`.
     - `exceptionRoutes`: List of routes to exclude from Reload automatically injecting its script onto.
       - Default: *[Array]* with no items in it. This means Reload will inject its script on all routes by default.
     - `expressBrowserReloadParams`: Params to pass to [express-browser-reload](https://github.com/rooseveltframework/express-browser-reload).
@@ -372,13 +339,12 @@ Resolves to:
     ```json
     {
       "enable": true,
-      "port": 9856,
-      "httpsPort": 9857,
       "exceptionRoutes": [],
       "expressBrowserReloadParams": {
         "skipDeletingConnections": true
       }
     }
+  - Note: This feature will only be active on pages with a `<body>` tag.
     ```
 
 - `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/rooseveltframework/express-html-validator#configuration). This feature is only available in development mode.
@@ -657,6 +623,63 @@ Resolves to:
 
 ### Isomorphic parameters
 
+- `clientControllers`: *[Object]* Allows you to expose controller (route) file code to frontend JS for client-side routing.
+
+  - `enable`: *[Boolean]* Whether or not to bundle view files.
+
+  - `exposeAll`: *[Boolean]* Option to expose all templates.
+
+    - Default: *[Boolean]* `false`.
+
+  - `blocklist`: *[Array]* of *[Strings]* List of files or folders to exclude when `exposeAll` is enabled.
+
+    - Default: *[Array]* `[]`.
+
+    - Can also be set declaratively by putting a `// roosevelt-blocklist` comment at the top of any controller file.
+
+  - `allowlist`: *[Object]* of *[Arrays]* List of JS files to create mapped to which view files to expose.
+
+    - Default: *[Object]* `{}`.
+
+    - Example:
+
+      ```json
+      {
+        "mainPages.js": ["index.js", "about.js"],
+        "account.js": ["login.js"]
+      }
+      ```
+
+    - Can also be set declaratively by putting a `// roosevelt-allowlist <filepath>` comment at the top of any controller file.
+
+  - `defaultBundle`: *[String]* File name for the default JS view bundle.
+
+    - Default: *[String]* `"controllers.js"`.
+
+  - `output`: *[String]* Subdirectory within `publicFolder` to write JS view bundles to.
+
+    - Default: *[String]* `"js"`.
+
+  - Default: *[Object]*
+
+    ```json
+    "clientViews": {
+      "exposeAll": false,
+      "blocklist": [],
+      "allowlist": {},
+      "defaultBundle": "views.js",
+      "output": "js"
+    }
+    ```
+
+  - Example output to your `controllers.js` file: *[Object]*
+
+    ```json
+    module.exports = (router, app) => {
+      // TODO: put something here
+    }
+    ```
+
 - `clientViews`: *[Object]* Allows you to expose view (template) file code to frontend JS for client-side templating.
 
   - `enable`: *[Boolean]* Whether or not to bundle view files.
@@ -669,7 +692,7 @@ Resolves to:
 
     - Default: *[Array]* `[]`.
 
-  - Can also be set declaratively by putting a `<!-- roosevelt-blocklist -->` tag at the top of any template.
+    - Can also be set declaratively by putting a `<!-- roosevelt-blocklist -->` tag at the top of any template.
 
   - `allowlist`: *[Object]* of *[Arrays]* List of JS files to create mapped to which view files to expose.
 
@@ -716,22 +739,12 @@ Resolves to:
     }
     ```
 
-- `isomorphicControllers`: *[Object]* Allows you to expose controller (route) file code to frontend JS for client-side routing.
-
-  - `file`: *[String]* File name for the default JS controller auto-loader file. Set to `null` to disable this feature.
-
-    - Default: `null`.
-
-  - `output`: *[String]* Subdirectory within `publicFolder` to write JS controller auto-loader file to.
-
-    - Default: *[String]* `"js"`.
-
-  - Default: *[Object]*
+  - Example output to your `views.js` file: *[Object]*
 
     ```json
-    "isomorphicControllers": {
-      "file": null
-      "output": "js"
+    module.exports = {
+      "index": "<p>html for some page</p>",
+      "secondPage": "<p>html for some other page</p>"
     }
     ```
 
@@ -1033,6 +1046,32 @@ Resolves to:
 
   - Default: *[Boolean]* `false`.
 
+- `minifyHtmlAttributes`: Settings to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+  - Options:
+    - `enable`: Whether or not to enable `minify-html-attributes`.
+      - Default: *[Boolean]* `false`.
+      - Available options:
+        - `'production'`: Enable only in production mode.
+        - `'development'`: Enable in all modes.
+        - `true`: Will be taken to mean `'production'`.
+    - `minifyHtmlAttributesParams`: Params to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+      - Default: *[Object]* `{}`
+  - Default: *[Object]*
+    ```json
+    {
+      "enable": true,
+      "minifyHtmlAttributesParams": {}
+    }
+    ```
+  - Note: Roosevelt will always override 3 params from [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes):
+    - `htmlDir` will always be set to Roosevelt's `preprocessedViewsPath`.
+    - `cssDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
+    - `jsDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
+
+- `preprocessedStaticsPath`: Relative path on filesystem to where your preprocessed static files will be written to. Preprocessed static files are view files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
+  - Default: *[String]* `".preprocessed_statics"`.
+  - This feature will only be active if `minifyHtmlAttributes` is enabled.
+
 - `versionedPublic`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version.
 
   - Default: *[Boolean]* `false`.
@@ -1148,150 +1187,6 @@ module.exports = (router, app) => {
 }
 ```
 
-### Making isomorphic controller files
-
-You can also write isomorphic controller files that can be shared on both the client and the server:
-
-```js
-// isomorphic controller file about.js
-module.exports = (router, app) => {
-  router.route('/about').get((req, res) => {
-    let model
-
-    // do any pre-render server-side stuff here
-    if (router.server) {
-      // populate the model with database queries and other transformations that are exclusive to the server
-      // isoRequire allows you to require a file only on the server; it will always return false on the client
-      // this makes it possible to share this file with frontend module bundlers without server-exclusive files
-      // being included in your bundle
-      model = router.isoRequire('models/global')(req, res) // get some data common to all pages
-
-      // do things you only need to do if it's a server-side render (when serving HTML from the server, not JSON)
-      if (router.serverSideRender(req)) {
-        // do SSR-exclusive things here
-      }
-    }
-
-    // do any pre-render client-side stuff here
-    if (router.client) {
-      model = window.model // assuming this was fetched from somewhere at some point beforehand
-    }
-
-    // do any pre-render stuff common to both the backend and frontend here before calling the render method
-    model.content.pageTitle = 'About'
-
-    // if it's an API request (as defined by a request with content-type: 'application/json'), then it will send JSON data
-    // if not, it will render HTML
-    router.apiRender(req, res, model) || res.render('about', model)
-
-    if (router.client) {
-      // do any post-render client-side stuff here (e.g. DOM manipulation)
-    }
-  })
-}
-```
-
-#### roosevelt-router
-
-When using controller files on the client, you will need to include and configure `roosevelt-router` in your main JS bundle before loading your controller files:
-
- ```js
- // main.js — frontend JS bundle entry point
-
- // require and configure roosevelt-router
- const router = require('roosevelt/lib/roosevelt-router')({
-
-   // your templating system (required)
-   templatingSystem: require('teddy'),
-
-   // your templates (required)
-   // requires use of clientViews feature of roosevelt
-   templateBundle: require('views'),
-
-   // supply a function to be called immediately when roosevelt-router's constructor is invoked
-   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
-   // required if not using teddy, optional if using teddy
-   onLoad: null,
-
-   // define a res.render(template, model) function to render your templates
-   // you can leave this undefined if you're using teddy and you don't want to customize the default SPA rendering behavior
-   // required if not using teddy, optional if using teddy
-   renderMethod: null
- })
-
-// load all isomorphic controllers
-// leverages isomorphicControllers roosevelt feature
-require('controllers')(router)
-
-router.init() // activate router
- ```
-
-##### API
-
-**Constructor parameters:**
-
-When you call `roosevelt-router`'s constructor, e.g. `const router = require('roosevelt/lib/roosevelt-router')(params)`, the `params` object can accept the following methods:
-
-- `templatingSystem` (required): Which HTML templating system you would like to use. Supply the Node.js module. `teddy` is recommended, but not required.
-- `templateBundle` (required): A JavaScript object containing a bundle of HTML templates. It is recommended that you use the `clientViews` feature of Roosevelt to supply this, but not required.
-- `onLoad`: A function that will be called immediately after `roosevelt-router`'s constructor is invoked. You can leave this undefined if you're using Teddy and you don't want to customize the default SPA rendering behavior.
-  - Optional if using Teddy. Required if not using Teddy.
-- `renderMethod`: Define a `res.render(template, model)` function to render your templates. You can leave this undefined if you're using Teddy and you don't want to customize the default SPA rendering behavior.
-  - Optional if using Teddy. Required if not using Teddy.
-
-**Instance members:**
-
-When you get a `router` object after instantiating `roosevelt-router` e.g. `const router = require('roosevelt/lib/roosevelt-router')(params)`, the following properties and methods are available to you:
-
-- `router.isoRequire(module)`: *[Function]* Like `require` but designed to fail silently allowing `||` chaining.
-  - Example: `let model = router.isoRequire('models/dataModel') || window.model`.
-    - Thus, if `models/dataModel` does not exist, it will fall back to `window.model`.
-
-- `router.apiRender(req, res, model)`: *[Function]* Server-side method to send JSON data in response to the request instead of HTML, but only when the request's `content-type` is `application/json`. Otherwise, fails silently allowing `||` chaining.
-
-  - Arguments:
-    - `req`: Express request object for this request.
-    - `res`: Express response object for this request.
-    - `model`: Data model to send to the template.
-
-  - Example: `router.apiRender(req, res, model) || res.render('about', model)`.
-
-- `router.onSubmit(callback)`: *[Function]* Client-side convenience method for handling form submits to the server in a SPA-friendly way. You can of course define your own DOM events however you like, but `router.onSubmit` gives you some stuff for free, such as preventing the page reload when the form is submitted, automatically sending a fetch to the server with the form data, automatically detecting if the response is JSON or text, and giving you an easy callback interface to handle the response with minimal boilerplate.
-
-  - Arguments:
-    - `callback`: Callback function to execute when the request is complete. The callback function will be provided with two arguments: a standard event object for the DOM event and the data that was sent back from the request.
-
-  - Example:
-
-    - ```javascript
-      router.onSubmit((e, data) => {
-        // e is the submit event object
-        // data is the response from the server
-      })
-      ```
-
-- `router.updatePage(markup, targetContainer)`: *[Function]* Convenience method for replacing some or all of the page with new markup.
-
-  - Arguments:
-    - `markup`: String of markup to update the page with.
-    - `targetContainer`: What DOM element will be the container for your new markup. If none is specified, the entire `<body>` tag will be replaced and the `<title>` tag will be updated if the markup fragement containts a `<title>` tag.
-
-  - Example with a `targetContainer`: `router.updatePage(markupFragment, document.getElementById('some-container))`
-  - Example without a `targetContainer`: `router.updatePage(fullPageMarkup)`
-
-- `router.serverSideRender(req)` and `router.ssr(req)`: *[Function]* Server-side method to check to see if the request is full page load (a server-side render) or if it's an API request. Retruns true if it's a full page load or returns false if it is an API request.
-
-  - Arguments:
-    - `req`: Express request object for this request.
-
-- `router.backend`: *[Boolean]* True if the execution context is the Node.js server.
-
-- `router.server`: *[Boolean]* True if the execution context is the Node.js server.
-
-- `router.frontend`: *[Boolean]* True if the execution context is the browser.
-
-- `router.client`: *[Boolean]* True if the execution context is the browser.
-
 ## Express variables exposed by Roosevelt
 
 Roosevelt supplies several variables to Express that you may find handy. Access them using `app.get('variableName')`.
@@ -1303,13 +1198,16 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `httpsServer`                        | The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt. |
 | `router`                             | Instance of router module used by Roosevelt.                 |
 | `routePrefix`                        | Prefix appended to routes via the `routePrefix` param. Will be `''` if not set. |
+| `routes`                             | List of all routes in the app. |
 | *viewEngine* e.g. `teddy` by default | Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module. |
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
+| `debugMarkup`                        | HTML you can add to your custom error pages if you define any that will print server errors if any exist, display the route list, add some inline JavaScript that will serialize the request's `err`, `req`, and `res` objects so you can interactively examine them in the browser's developer tools. Only available in development mode. |
 | `expressSession`                     | The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
-| `preprocessedViewsPath` or `preprocessedViews`               | Full path on the file system to where your app's views folder is located. |
+| `preprocessedViewsPath` or `preprocessedViews`               | Full path on the file system to where your app's preprocessed views folder is located. |
+| `preprocessedStaticsPath` or `preprocessedStatics`               | Full path on the file system to where your app's preprocessed statics folder is located. |
 | `controllersPath`                    | Full path on the file system to where your app's controllers folder is located. |
 | `staticsRoot`                        | Full path on the file system to where your app's statics folder is located. |
 | `publicFolder`                       | Full path on the file system to where your app's public folder is located. |
@@ -1318,6 +1216,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `jsPath`                             | Full path on the file system to where your app's JS source files are located. |
 | `htmlRenderedOutput`                 | Full path on the file system to where your app's rendered and minified staic HTML files are located. |
 | `cssCompiledOutput`                  | Full path on the file system to where your app's minified CSS files are located. |
+| `clientControllersBundledOutput`     | Full path on the file system to where your app's client-exposed controllers folder is located. |
 | `clientViewsBundledOutput`           | Full path on the file system to where your app's client-exposed views folder is located. |
 | `env`                                | Either `development` or `production`.                        |
 | `params`                             | The parameters you sent to Roosevelt.                        |

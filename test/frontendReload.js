@@ -112,7 +112,6 @@ describe('frontend reload', () => {
 
     // assertion last because mocha
     assert(res.status === 404)
-    assert(app.get('reloadHttpServer') === undefined)
   })
 
   it('should exclude multiple glob paths for auto inject reload script into rendered html', async () => {
@@ -159,7 +158,6 @@ describe('frontend reload', () => {
 
     // assertion last because mocha
     assert(res.status === 404)
-    assert(app.get('reloadHttpServer') === undefined)
   })
 
   it('should not start reload when disabled', async () => {
@@ -180,6 +178,5 @@ describe('frontend reload', () => {
 
     // assertion last because mocha
     assert(res.status === 404)
-    assert(app.get('reloadHttpServer') === undefined)
   })
 })

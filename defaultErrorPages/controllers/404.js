@@ -8,10 +8,10 @@ module.exports = app => {
     const model = {
       url: req.url,
       mainDomain: req.headers['x-forwarded-host'] || req.headers.host,
-      appVersion: app.get('appVersion')
+      appVersion: req.app.get('appVersion')
     }
-    const errorTemplate = template(errorPage, model)
-
+    let errorTemplate = template(errorPage, model)
+    if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${req.app.get('debugMarkup')}</footer>`)
     res.status(404)
     res.send(errorTemplate)
   })

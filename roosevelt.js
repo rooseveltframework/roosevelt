@@ -58,6 +58,7 @@ const roosevelt = (options = {}, schema) => {
     app.set('modelsPath', params.modelsPath)
     app.set('viewsPath', params.viewsPath)
     app.set('preprocessedViewsPath', params.preprocessedViewsPath)
+    app.set('preprocessedStaticsPath', params.preprocessedStaticsPath)
     app.set('controllersPath', params.controllersPath)
     app.set('staticsRoot', params.staticsRoot)
     app.set('htmlPath', params.html.sourcePath)
@@ -66,8 +67,8 @@ const roosevelt = (options = {}, schema) => {
     app.set('jsPath', params.js.sourcePath)
     app.set('htmlRenderedOutput', params.html.output)
     app.set('cssCompiledOutput', params.css.output)
+    app.set('clientControllersBundledOutput', params.clientControllers.output)
     app.set('clientViewsBundledOutput', params.clientViews.output)
-    app.set('isomorphicControllersListOutput', params.isomorphicControllers.output)
     app.set('publicFolder', params.unversionedPublic)
 
     // make the app directory requirable
@@ -207,14 +208,6 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/htmlMinifier')(app)
 
-    await require('./lib/preprocessStaticPages')(app)
-
-    await require('./lib/preprocessCss')(app)
-
-    await require('./lib/viewsBundler')(app)
-
-    await require('./lib/jsBundler')(app)
-
     if (app.get('env') === 'development' && params.htmlValidator.enable) {
       // instantiate the validator if it's installed
       try {
@@ -224,16 +217,19 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/injectReload')(app)
 
-    // map routes
     await require('./lib/mapRoutes')(app)
 
-    // custom error page
-    app.use((err, req, res, next) => {
-      logger.error(err.stack)
-      require(params.errorPages.internalServerError)(app, err, req, res)
-    })
+    await require('./lib/preprocessViewsAndStatics')(app)
 
-    await require('./lib/isomorphicControllersFinder')(app)
+    await require('./lib/preprocessStaticPages')(app)
+
+    await require('./lib/preprocessCss')(app)
+
+    await require('./lib/controllersBundler')(app)
+
+    await require('./lib/viewsBundler')(app)
+
+    await require('./lib/jsBundler')(app)
 
     // fire user-defined onServerInit event
     if (params.onServerInit && typeof params.onServerInit === 'function') await Promise.resolve(params.onServerInit(app))

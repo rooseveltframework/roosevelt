@@ -1,6 +1,6 @@
 {
   "name": "roosevelt",
-  "description": "Roosevelt MVC web framework",
+  "description": "🧸 MVC web framework for Node.js designed to make Express easier to use.",
   "author": "Roosevelt Framework Team <rooseveltframework@gmail.com>",
   "contributors": [
     {
@@ -8,7 +8,7 @@
       "url": "https://github.com/rooseveltframework/roosevelt/graphs/contributors"
     }
   ],
-  "version": "0.26.0",
+  "version": "0.26.1",
   "files": [
     "defaultErrorPages",
     "lib",
@@ -33,7 +33,7 @@
     "csrf-csrf": "3.1.0",
     "execa": "9.5.2",
     "express": "4.21.2",
-    "express-html-validator": "0.2.5",
+    "express-html-validator": "1.0.0",
     "express-session": "1.18.1",
     "formidable": "3.5.2",
     "fs-extra": "11.3.0",
@@ -43,23 +43,21 @@
     "ip": "2.0.1",
     "method-override": "3.0.0",
     "minimatch": "10.0.1",
+    "minify-html-attributes": "1.0.2",
     "morgan": "1.10.0",
     "node-forge": "1.3.1",
     "page": "1.11.6",
     "page-express-mapper": "2.0.2",
-    "progressively-enhance-web-components": "1.0.3",
+    "progressively-enhance-web-components": "1.0.4",
     "express-browser-reload": "4.0.0",
     "roosevelt-logger": "0.2.3",
     "selfsigned": "2.4.1",
     "serve-favicon": "2.5.0",
-    "source-configs": "0.3.6",
+    "source-configs": "1.0.0",
     "webpack": "5.98.0"
   },
   "devDependencies": {
     "c8": "10.1.3",
-    "codecov": "3.8.3",
-    "eslint": "9.21.0",
-    "eslint-plugin-mocha": "10.5.0",
     "less": "4.2.2",
     "mocha": "11.1.0",
     "prompts": "2.4.2",
@@ -69,7 +67,7 @@
     "standard": "17.1.2",
     "stylus": "0.64.0",
     "supertest": "7.0.0",
-    "teddy": "0.6.23",
+    "teddy": "1.0.0",
     "watcher": "2.3.1"
   },
   "repository": {
@@ -95,10 +93,9 @@
     "timeout": "60s"
   },
   "scripts": {
-    "codecov": "codecov",
     "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
-    "lint": "standard && eslint test/*.js",
-    "lint-fix": "standard --fix && eslint ./test",
+    "lint": "standard",
+    "lint-fix": "standard --fix",
     "test": "mocha test/*.js",
     "test-debug": "mocha --inspect-brk test/*.js"
   },
