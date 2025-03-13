@@ -672,7 +672,7 @@ Resolves to:
     }
     ```
 
-  - Example output to your `controllers.js` file: *[Object]*
+  - Example output to your `controllers.js` file:
 
     ```javascript
     module.exports = (router, app) => {
@@ -742,7 +742,7 @@ Resolves to:
     }
     ```
 
-  - Example output to your `views.js` file: *[Object]*
+  - Example output to your `views.js` file:
 
     ```json
     module.exports = {
