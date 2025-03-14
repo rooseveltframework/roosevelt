@@ -115,7 +115,7 @@ const roosevelt = (options = {}, schema) => {
 
       // auto generate certs if in dev mode, autoCert is enabled, the cert configuration points at file paths, and those cert files don't exist already
       if (app.get('env') === 'development' && params.https.autoCert && params.makeBuildArtifacts !== 'staticsOnly') {
-        if (certStringIsPath(httpsOptions.cert) && certStringIsPath(httpsOptions.key)) {
+        if (await certStringIsPath(httpsOptions.cert) && await certStringIsPath(httpsOptions.key)) {
           if (!fs.pathExistsSync(httpsOptions.key) && !fs.pathExistsSync(httpsOptions.cert)) {
             certsGenerator(params.secretsPath, httpsOptions)
           }
