@@ -4,7 +4,7 @@ const assert = require('assert')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('validator usage', () => {
+describe('HTML validator', () => {
   // invalid html to test against
   const invalidHTML = `
     <!DOCTYPE html>
@@ -40,7 +40,9 @@ describe('validator usage', () => {
         mode: 'development',
         csrfProtection: false,
         makeBuildArtifacts: false,
-        port: 40001,
+        http: {
+          port: 40001
+        },
         logging: {
           methods: {
             http: false,

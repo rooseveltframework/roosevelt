@@ -8,7 +8,7 @@ const http = require('http')
 const path = require('path')
 const request = require('supertest')
 
-describe('Roosevelt.js Tests', () => {
+describe('Roosevelt.js', () => {
   // directory for the test app
   const appDir = path.join(__dirname, 'app/rooseveltTest').replace('/\\/g', '/')
 
@@ -27,7 +27,9 @@ describe('Roosevelt.js Tests', () => {
     generateTestApp(undefined, sOptions)
 
     const sampleJSON = {
-      port: 43711,
+      http: {
+        port: 43711
+      },
       viewEngine: 'none',
       favicon: 'none'
     }
@@ -336,7 +338,7 @@ describe('Roosevelt.js Tests', () => {
     const server = http.createServer((req, res) => {
       res.statusCode = 200
       res.end()
-    }).listen(43711)
+    }).listen(43763)
 
     // generate the test app
     generateTestApp({
@@ -461,10 +463,12 @@ describe('Roosevelt.js Tests', () => {
       appDir,
       makeBuildArtifacts: true,
       csrfProtection: false,
+      http: {
+        enable: false
+      },
       https: {
         enable: true,
         port: 43203,
-        force: true,
         autoCert: false
       }
     }, sOptions)

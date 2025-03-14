@@ -6,7 +6,7 @@ const fs = require('fs-extra')
 const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 
-describe('Parameter Function Tests', () => {
+describe('Method params', () => {
   // path to the app Directory
   const appDir = path.join(__dirname, 'app/paramFunctionTest')
 

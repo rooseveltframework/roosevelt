@@ -7,12 +7,14 @@ const { minify } = require('html-minifier-terser')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
-describe('HTML Minification Tests', () => {
+describe('HTML minification', () => {
   const appDir = path.join(__dirname, 'app/htmlMinifier')
   const appConfig = {
     appDir,
     csrfProtection: false,
-    port: 41002,
+    http: {
+      port: 41002
+    },
     logging: {
       methods: {
         http: false,

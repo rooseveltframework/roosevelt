@@ -7,7 +7,7 @@ const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
 const request = require('supertest')
 
-describe('Public Folder Tests', () => {
+describe('Public directory', () => {
   // path to the directory where the test app is located
   const appDir = path.join(__dirname, 'app/publicFolderTest')
 
@@ -47,7 +47,7 @@ describe('Public Folder Tests', () => {
     // when the server starts,
     testApp.on('message', () => {
       // see if we can get an html page from the server
-      request('http://localhost:43711')
+      request('http://localhost:43763')
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
@@ -56,7 +56,7 @@ describe('Public Folder Tests', () => {
           }
 
           // if a 200 status, grab the favicon from the server
-          request('http://localhost:43711')
+          request('http://localhost:43763')
             .get('/favicon.ico')
             .expect(200, (err, res) => {
               if (err) {
@@ -96,7 +96,7 @@ describe('Public Folder Tests', () => {
 
     // when the server starts, send a request to the server
     testApp.on('message', () => {
-      request('http://localhost:43711')
+      request('http://localhost:43763')
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
@@ -104,7 +104,7 @@ describe('Public Folder Tests', () => {
             assert.fail(err)
           }
           // if we can get the page, send a request to get the favicon
-          request('http://localhost:43711')
+          request('http://localhost:43763')
             .get('/favicon.ico')
             .expect(404, (err, res) => {
               if (err) {
@@ -146,7 +146,7 @@ describe('Public Folder Tests', () => {
 
     // when the server starts, send a request to the server
     testApp.on('message', () => {
-      request('http://localhost:43711')
+      request('http://localhost:43763')
         .get('/HTMLTest')
         .expect(200, (err, res) => {
           if (err) {
@@ -154,7 +154,7 @@ describe('Public Folder Tests', () => {
             assert.fail(err)
           }
           // if we can get the page, send a request to get the favicon
-          request('http://localhost:43711')
+          request('http://localhost:43763')
             .get('/favicon.ico')
             .expect(404, (err, res) => {
               if (err) {

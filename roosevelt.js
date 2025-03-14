@@ -103,85 +103,59 @@ const roosevelt = (options = {}, schema) => {
       })
     }
 
-    // set up http server
-    if (!params.https.force || !params.https.enable) {
-      httpServer = require('http').Server(app)
+    // setup http server
+    if (params.http.enable) {
+      httpServer = require('http').createServer(app)
       httpServer.on('connection', mapConnections)
     }
 
-    // setup https server if https is enabled
-    if (params.https.enable && params.makeBuildArtifacts !== 'staticsOnly') {
-      const authInfoPath = params.https.authInfoPath
-      const httpsOptions = {}
+    // setup https server
+    if (params.https.enable) {
+      const httpsOptions = params.https.options
 
-      function isCertString (stringToTest) {
-        let testString = stringToTest
-        if (typeof testString !== 'string') testString = testString.toString()
-        const lastChar = testString.substring(testString.length - 1)
-        // a file path string won't have an end of line character at the end
-        // looking for either \n or \r allows for nearly any OS someone could use, and a few that node doesn't work on.
-        if (lastChar === '\n' || lastChar === '\r') return true
-        return false
+      // auto generate certs if in dev mode, autoCert is enabled, the cert configuration points at file paths, and those cert files don't exist already
+      if (app.get('env') === 'development' && params.https.autoCert && params.makeBuildArtifacts !== 'staticsOnly') {
+        if (certStringIsPath(httpsOptions.cert) && certStringIsPath(httpsOptions.key)) {
+          if (!fs.pathExistsSync(httpsOptions.key) && !fs.pathExistsSync(httpsOptions.cert)) {
+            certsGenerator(params.secretsPath, httpsOptions)
+          }
+        }
       }
 
-      if (authInfoPath) {
-        if (authInfoPath.p12?.p12Path) {
-          // if the string ends with a dot and 3 alphanumeric characters (including _)
-          // then we assume it's a filepath.
-          if (typeof authInfoPath.p12.p12Path === 'string' && authInfoPath.p12.p12Path.match(/\.\w{3}$/)) {
-            httpsOptions.pfx = fs.readFileSync(path.join(params.secretsPath, authInfoPath.p12.p12Path))
-          } else { // if the string doesn't end that way, we assume it's an encrypted string
-            httpsOptions.pfx = authInfoPath.p12.p12Path
-          }
-        } else if (authInfoPath.authCertAndKey) {
-          // auto generate certs if in dev mode, autoCert is enabled, the cert configuration points at file paths, and those cert files don't exist already
-          if (app.get('env') === 'development' && params.https.autoCert) {
-            const { authCertAndKey } = authInfoPath
+      // add support for supplying file paths to some https options
+      if (httpsOptions.ca) httpsOptions.ca = await preprocessCertParams(httpsOptions.ca)
+      if (httpsOptions.cert) httpsOptions.cert = await preprocessCertParams(httpsOptions.cert)
+      if (httpsOptions.key) httpsOptions.key = await preprocessCertParams(httpsOptions.key)
+      if (httpsOptions.pfx) httpsOptions.pfx = await preprocessCertParams(httpsOptions.pfx)
 
-            if (!isCertString(authCertAndKey.cert) && !isCertString(authCertAndKey.key)) {
-              if (!fs.pathExistsSync(authCertAndKey.key) && !fs.pathExistsSync(authCertAndKey.cert)) {
-                certsGenerator(params.secretsPath, params.https)
-              }
+      // if a given cert param is a file path replace it with the contents of the cert file
+      // cert params natively support passing strings, buffers, and arrays of strings and/or buffers
+      async function preprocessCertParams (certParam) {
+        if (Array.isArray(certParam)) {
+          for (let i = 0; i < certParam.length; i++) {
+            if (typeof certParam[i] === 'string') {
+              const certPath = path.join(params.secretsPath, certParam[i])
+              if (await certStringIsPath(certPath)) certParam[i] = await fs.readFile(certPath)
             }
           }
-          function assignCertStringByKey (key) {
-            const { authCertAndKey } = authInfoPath
-            const certString = authCertAndKey[key]
-
-            if (isCertString(certString)) httpsOptions[key] = certString
-            else httpsOptions[key] = fs.readFileSync(path.join(params.secretsPath, certString))
-          }
-
-          if (authInfoPath.authCertAndKey.cert) assignCertStringByKey('cert')
-          if (authInfoPath.authCertAndKey.key) assignCertStringByKey('key')
+        } else if (typeof certParam === 'string') {
+          const certPath = path.join(params.secretsPath, certParam)
+          if (await certStringIsPath(certPath)) certParam = await fs.readFile(certPath)
         }
-
-        // set passphrase if in use
-        if (params.https.passphrase) httpsOptions.passphrase = params.https.passphrase
+        return certParam
       }
 
-      if (params.https.caCert) {
-        if (typeof params.https.caCert === 'string') {
-          if (isCertString(params.https.caCert)) { // then it's the cert(s) as a string, not a file path
-            httpsOptions.ca = params.https.caCert
-          } else { // it's a file path to the file, so read file
-            httpsOptions.ca = fs.readFileSync(path.join(params.secretsPath, params.https.caCert))
-          }
-        } else if (params.https.caCert instanceof Array) {
-          httpsOptions.ca = []
-
-          for (const certOrPath of params.https.caCert) {
-            let certStr = certOrPath
-            if (!isCertString(certOrPath)) certStr = fs.readFileSync(certOrPath)
-            httpsOptions.ca.push(certStr)
-          }
+      async function certStringIsPath (certPath) {
+        try {
+          const stats = await fs.lstat(certPath)
+          if (stats.isFile()) return true
+          else return false
+        } catch {
+          return false
         }
       }
 
-      httpsOptions.requestCert = params.https.requestCert
-      httpsOptions.rejectUnauthorized = params.https.rejectUnauthorized
-
-      httpsServer = require('https').Server(httpsOptions, app)
+      httpsServer = require('https').createServer(httpsOptions, app)
       httpsServer.on('connection', mapConnections)
     }
 
@@ -237,8 +211,10 @@ const roosevelt = (options = {}, schema) => {
 
   async function startServer () {
     await initServer()
-    const numberOfServers = params.https.enable && !params.https.force ? 2 : 1
     let listeningServers = 0
+    let numberOfServers = 0
+    if (params.http.enable) numberOfServers++
+    if (params.https.enable) numberOfServers++
 
     // code that executes after the server starts
     function startupCallback (proto, port) {
@@ -254,10 +230,12 @@ const roosevelt = (options = {}, schema) => {
     }
 
     if (params.makeBuildArtifacts !== 'staticsOnly') {
-      if (!params.https.force || !params.https.enable) {
-        const server = httpServer.listen(params.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.port)).on('error', err => {
+      if (!numberOfServers) logger.warn('You called startServer but both http and https are disabled, so no servers are starting.')
+
+      if (params.http.enable) {
+        const server = httpServer.listen(params.http.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.http.port)).on('error', err => {
           logger.error(err)
-          logger.error(`Another process is using port ${params.port}. Either kill that process or change this app's port number.`.bold)
+          logger.error(`Another process is using port ${params.http.port}. Either kill that process or change this app's port number.`.bold)
           process.exit(1)
         })
         if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
