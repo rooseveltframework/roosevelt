@@ -311,7 +311,7 @@ Resolves to:
 - `viewsPath`: Relative path on filesystem to where your view files are located.
   - Default: *[String]* `"mvc/views"`.
 - `preprocessedViewsPath`: Relative path on filesystem to where your preprocessed view files will be written to. Preprocessed view files are view files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.
-  - Default: *[String]* `"mvc/.preprocessed_views"`.
+  - Default: *[String]* `".build/.preprocessed_views"`.
   - To disable this feature, set the value to `false`.
 
 - `secretsPath`: Directory that stores certs, keys, and secrets.
@@ -1072,7 +1072,7 @@ Resolves to:
     - `jsDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
 
 - `preprocessedStaticsPath`: Relative path on filesystem to where your preprocessed static files will be written to. Preprocessed static files are view files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
-  - Default: *[String]* `".preprocessed_statics"`.
+  - Default: *[String]* `".builds/.preprocessed_statics"`.
   - This feature will only be active if `minifyHtmlAttributes` is enabled.
 
 - `versionedPublic`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version.

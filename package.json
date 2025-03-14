@@ -53,8 +53,7 @@
     "roosevelt-logger": "1.0.1",
     "selfsigned": "2.4.1",
     "serve-favicon": "2.5.0",
-    "source-configs": "1.0.0",
-    "webpack": "5.98.0"
+    "source-configs": "1.0.0"
   },
   "devDependencies": {
     "c8": "10.1.3",
@@ -68,7 +67,8 @@
     "stylus": "0.64.0",
     "supertest": "7.0.0",
     "teddy": "1.0.1",
-    "watcher": "2.3.1"
+    "watcher": "2.3.1",
+    "webpack": "5.98.0"
   },
   "repository": {
     "type": "git",
