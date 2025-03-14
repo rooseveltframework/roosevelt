@@ -146,6 +146,7 @@ const roosevelt = (options = {}, schema) => {
       }
 
       async function certStringIsPath (certPath) {
+        if (typeof certPath !== 'string') return false
         try {
           const stats = await fs.lstat(certPath)
           if (stats.isFile()) return true
