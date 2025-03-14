@@ -434,6 +434,8 @@ Resolves to:
 
     - Note: For convenience, the `ca`, `cert`, `key`, and `pfx` params can take file path strings or arrays of file path strings relative to your `secretsDir` in addition to the native strings and buffers.
 
+    - Default: *[Object]* `{}`.
+
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
 
   - Default: *[Boolean]* `true`.
