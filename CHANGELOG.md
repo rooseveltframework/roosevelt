@@ -14,7 +14,7 @@
     - The `ca`, `cert`, `key`, and `pfx` params can take file paths relative to your `secretsDir` in addition to everything else natively supported (strings, buffers, and arrays of strings or buffers).
     - The file paths get resolved within arrays if you pass arrays to any of those as well.
   - These collective changes mean most Roosevelt apps will need to alter their Roosevelt configs from something that looks like:
-    
+
     ```
     "port": 19679,
     "https": {
@@ -30,7 +30,7 @@
     },
     ```
   - To be something like this instead:
-    
+
     ```
     "http": {
       "enable": false
@@ -46,7 +46,12 @@
     ```
 - Breaking: Changed behavior of `NODE_PORT` environment variable to now set `https` port when `https` is enabled and fall back to `http` if `https` is disabled.
 - Breaking: Moved the versioning of webpack from Roosevelt itself to the app. You will need to declare webpack as a dependency in your app if you intend to use the JS bundler feature in Roosevelt.
+- Breaking: Changed `js.webpack.bundles.env` param to require values `development` or `production` instead of `dev` or `prod`.
+- Breaking: Changed `js.webpack.bundles.verbose` param to `js.verbose`.
+- Breaking: Changed `--webpack`, `--wp`, and `--w` CLI flags to `--jsbundler`, `--jsb`, and `--j` respectively.
 - Breaking: Changed default of `preprocessedViewsPath` param from `'mvc/.preprocessed_views'` to `'.build/.preprocessed_views'` and changed default of `preprocessedStaticsPath` param from `'.preprocessed_statics'` to `'.build/.preprocessed_statics'`. Collectively these changes mean most Roosevelt apps should remove `.preprocessed_views` and `.preprocessed_statics` from `.gitignore` and add `.build` instead.
+- Added new param `js.customBundler` that will let you define a custom JS bundler.
+- Added new param `js[bundler].customBundlerFunction` that will let you define custom behavior for default supported JS bundlers like Webpack.
 - Updated dependencies.
 
 ## 0.26.1
@@ -66,7 +71,7 @@
     - `minifyHtmlAttributesParams`: Params to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
       - Default: *[Object]* `{}`
   - Default: *[Object]*
-    
+
     ```json
     {
       "enable": true,
@@ -93,7 +98,7 @@
   - This is breaking because if you leave it enabled by default (recommended), you will need to add `.preprocessed_views` to your `.gitignore`.
 - Breaking: Switched to external source maps for the CSS preprocessor. This necessitated changing the custom CSS preprocessor API to require returning an object instead of a string.
   - If you have written a custom CSS preprocessor, the new return value is:
-    
+
     ```javascript
     return {
       css: 'write code to output css here',

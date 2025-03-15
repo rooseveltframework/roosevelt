@@ -109,8 +109,14 @@
     "webpack": {
       "enable": "value",
       "bundles": "value",
-      "verbose" : false
-    }
+      "customBundlerFunction": null
+    },
+    "customBundler": {
+      "enable": "value",
+      "bundles": "value",
+      "customBundlerFunction": null
+    },
+    "verbose" : false
   },
   "symlinks": "value",
   "publicFolder": "value",

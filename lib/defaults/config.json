@@ -113,8 +113,14 @@
     "webpack": {
       "enable": false,
       "bundles": [],
-      "verbose": false
-    }
+      "customBundlerFunction": null
+    },
+    "customBundler": {
+      "enable": false,
+      "bundles": [],
+      "customBundlerFunction": null
+    },
+    "verbose": false
   },
   "publicFolder": "public",
   "favicon": "none",

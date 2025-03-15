@@ -162,14 +162,14 @@ Roosevelt apps created with the app generator come with the following notable [n
 - `node app.js --build`: Only runs the build scripts and doesn't start the app.
   - Default shorthands:
     - `-b`
-- `node app.js --webpack=verbose`: Enables webpack to print verbose errors to the console.
+- `node app.js --jsbundler=verbose`: Enables JS bundler to print verbose errors to the console.
   - Default shorthands:
-    - `--wp=verbose`
-    - `-w=verbose`
-- `node app.js --webpack=verbose-file`: Enables webpack to print verbose errors to the console as well as write a webpackError file to the app's root directory containing the full error.
+    - `--jsb=verbose`
+    - `-j=verbose`
+- `node app.js --jsbundler=verbose-file`: Enables JS bundler to print verbose errors to the console as well as write a jsBundlerError.txt file to the app's root directory containing the full error.
   - Default shorthands:
-    - `--wp=verbose-file`
-    - `-w=verbose-file`
+    - `--jsb=verbose-file`
+    - `-j=verbose-file`
 - `node app.js --production-proxy-mode`: Runs the app in production mode, but with `localhostOnly` set to true and `hostPublic` set to false. This mode will make it so your app only listens to requests coming from localhost and does not serve anything in the public folder. This mode is useful when you want to host your app behind a reverse proxy from a web server like Apache or nginx and [is considered a best practice for Node.js deployments](https://expressjs.com/en/advanced/best-practice-performance.html#use-a-reverse-proxy).
   - Default shorthands:
     - `--prodproxy`
@@ -931,78 +931,34 @@ Resolves to:
 
   - `sourcePath`: Subdirectory within `staticsRoot` where your JS files are located. By default this folder will not be made public, but is instead meant to store unminified JS source files which will be minified and written to the `public` folder when the app is started.
 
-  - `webpack`: Parameters related to bundling JS with [Webpack](https://webpack.js.org/):
+  - `[bundler]`: Parameters related to bundling JS the specified bundler module:
+    - Values you can supply to `bundler`:
+      - `webpack`: See [Webpack site](https://webpack.js.org/) for more details about [Webpack configuration](https://webpack.js.org/configuration/).
+      - `customBundler`: Allows you to define your own custom bundler.
 
-    - `enable`: Enable Webpack bundling.
+    - Params you can pass to your chosen bundler:
+      - `enable`: Enable the bundler.
 
-    - `bundles`: *[Array]* Declare one or more Webpack configurations to bundle JS with.
+      - `bundles`: *[Array]* of *[Objects]* Declare one or more JavaScript bundle files.
 
-      - `env`: *[String]* Bundle only in `dev` or `prod` mode. Omitting `env` will result in bundling in both modes.
+        - `env`: *[String]* Bundle only in development or production mode.
+          - Accepted values:
+            - `'development'`: Development mode.
+            - `'production'`: Production mode.
+            - If no value is set, it will bundle in both modes.
 
-      - `config`: *[Object]* or *[String]* The [Webpack configuration](https://webpack.js.org/configuration/) to send to Webpack. Can also be a path to a [Webpack config file](https://webpack.js.org/configuration/#use-different-config-file) relative to the app directory.
+        - `config`: *[Object]* or *[String]* The config to send to the module bundler. Can also be a path to a config file relative to the app directory.
 
-      - Examples: *[Array]* of *[Objects]*
+        - `customBundlerFunction`: *[Function]* A custom async function to execute for this bundler instead of executing the default one supplied by Roosevelt. This param is required if your bundler is set to `customBundler`.
+          - Arguments provided:
+            - `bundle`: The bundle object supplied by Roosevelt.
+            - `config`: The config object after it has been postprocessed by Roosevelt.
+            - `app`: The Roosevelt app.
 
-        - Webpack bundle example declaring one bundle:
-
-          ```json
-          [
-            {
-              "config": {
-                "entry": "${js.sourcePath}/main.js",
-                "output": {
-                  "path": "${publicFolder}/js",
-                  "filename": "bundle.js"
-                }
-              }
-            }
-          ]
-          ```
-
-        - Webpack bundle example declaring one bundle only used in `dev` mode:
-
-          ```json
-          [
-            {
-              "env": "dev",
-              "config": {
-                "entry": "${js.sourcePath}/main.js",
-                "output": {
-                  "path": "${publicFolder}/js",
-                  "filename": "bundle.js"
-                }
-              }
-            }
-          ]
-          ```
-
-        - Webpack bundle example declaring multiple bundles:
-
-          ```json
-          [
-            {
-              "config": {
-                "entry": "${js.sourcePath}/main.js",
-                "output": {
-                  "path": "${publicFolder}/js",
-                  "filename": "bundle.js"
-                }
-              }
-            },
-            {
-              "config": {
-                "entry": "${js.sourcePath}/moreStuff.js",
-                "output": {
-                  "path": "${publicFolder}/js",
-                  "filename": "bundle2.js"
-                }
-              }
-            },
-            etc...
-          ]
-          ```
-
-    - `verbose`: *[string]* Enable Webpack verbose error handler.
+  - `verbose`: *[String]* Enable verbose error handling.
+    - Accepted values:
+      - `true`: Will print verbose logs to the console.
+      - `'file'`: Will print verbose logs to the console and write them to a file for debugging.
 
   - Default: *[Object]* for manually created apps.
 
@@ -1011,9 +967,9 @@ Resolves to:
       "sourcePath": "js",
       "webpack": {
         "enable": false,
-        "bundles": [],
-        "verbose": false
-      }
+        "bundles": []
+      },
+      "verbose": false
     }
     ```
 
