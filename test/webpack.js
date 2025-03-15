@@ -69,7 +69,7 @@ describe('webpack', () => {
 
   afterEach(async () => {
     // wipe out the test app directory
-    await fs.remove(path.join(__dirname, 'app'))
+    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
   })
 
   it('should build prod bundle using supplied webpack config', async () => {

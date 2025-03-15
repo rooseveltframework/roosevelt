@@ -49,7 +49,7 @@ describe('views bundler', () => {
   `
 
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should bundle templates in allowlist while ignoring templates in the blocklist', async () => {

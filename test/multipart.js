@@ -99,14 +99,14 @@ describe('multipart/formidable', () => {
 
   afterEach(() => {
     // wipe out contents of 'complete' directory
-    fs.emptyDirSync(completeDir)
+    fs.rmSync(completeDir, { recursive: true, force: true })
   })
 
   after(done => {
     // stop the server
     context.app.get('httpServer').close(() => {
       // wipe out the app directory
-      fs.removeSync(appDir)
+      fs.rmSync(appDir, { recursive: true, force: true })
 
       done()
     })

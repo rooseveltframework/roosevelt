@@ -28,7 +28,7 @@ describe('error pages', () => {
   })
 
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should render the default 404 page if there is a request for an invalid route', done => {

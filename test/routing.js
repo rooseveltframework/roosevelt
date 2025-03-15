@@ -36,7 +36,7 @@ describe('routing', () => {
     // stop the server
     context.app.get('httpServer').close(() => {
       // wipe out the app directory
-      fs.removeSync(appDir)
+      fs.rmSync(appDir, { recursive: true, force: true })
       done()
     })
   })

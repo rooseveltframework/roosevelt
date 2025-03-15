@@ -61,7 +61,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      await fs.remove(path.join(__dirname, 'app'))
+      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
     })
 
     it('should compile all static css files including subdirectories', async () => {
@@ -355,7 +355,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      await fs.remove(path.join(__dirname, 'app'))
+      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
     })
 
     it('should compile less source file', async () => {
@@ -488,7 +488,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      await fs.remove(path.join(__dirname, 'app'))
+      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
     })
 
     it('should compile scss source file', async () => {
@@ -615,7 +615,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      await fs.remove(path.join(__dirname, 'app'))
+      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
     })
 
     it('should compile styl source file', async () => {

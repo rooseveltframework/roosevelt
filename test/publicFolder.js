@@ -25,7 +25,7 @@ describe('Public directory', () => {
 
   // clean up the test app directory after each test
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should allow for a custom favicon and GET that favicon on request', done => {

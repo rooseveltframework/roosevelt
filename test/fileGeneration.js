@@ -11,7 +11,7 @@ describe('file creation', () => {
 
   afterEach(async () => {
     // wipe out test app
-    await fs.remove(path.join(__dirname, 'app'))
+    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
   })
 
   it('should generate several directories at runtime', async () => {

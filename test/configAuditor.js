@@ -34,7 +34,7 @@ describe('config auditor', () => {
 
   // wipe out the test app directory after each test
   afterEach(async () => {
-    await fs.remove(path.join(__dirname, 'app'))
+    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
   })
 
   it('should start the config audit automatically on first app run', async () => {
