@@ -68,7 +68,7 @@ describe('config auditor', () => {
     const { execaNode } = await import('execa')
 
     // add a whole lot of invalid stuff to a default config
-    pkgJson.rooseveltConfig.port = []
+    pkgJson.rooseveltConfig.http.port = []
     pkgJson.rooseveltConfig.extraParam = true
     pkgJson.rooseveltConfig.bodyParser.extraParam = true
     pkgJson.rooseveltConfig.css.extraParam = true
@@ -137,7 +137,7 @@ describe('config auditor', () => {
     const { execaNode } = await import('execa')
 
     // add a whole lot of invalid stuff to a default config
-    configFile.port = []
+    configFile.http.port = []
     configFile.extraParam = true
     configFile.bodyParser.extraParam = true
     configFile.css.extraParam = true

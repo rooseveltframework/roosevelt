@@ -9,9 +9,18 @@ const request = require('supertest')
 
 describe('error pages', () => {
   const appDir = path.join(__dirname, 'app/errorPages')
+  const baseAppConfig = {
+    appDir,
+    http: {
+      port: 43711
+    },
+    makeBuildArtifacts: true,
+    csrfProtection: false,
+    expressSession: false
+  }
 
   // options to pass into test app generator
-  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', justStart: true, stopServer: true }
 
   beforeEach(() => {
     // copy the mvc directory into the test app directory for each test
@@ -25,12 +34,10 @@ describe('error pages', () => {
   it('should render the default 404 page if there is a request for an invalid route', done => {
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
+      ...baseAppConfig,
       viewEngine: [
         'html: teddy'
       ],
-      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -38,8 +45,8 @@ describe('error pages', () => {
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
     // when the app starts and sends a message back to the parent try and request an invalid route
-    testApp.on('message', () => {
-      request('http://localhost:43711')
+    testApp.on('message', params => {
+      request(`http://localhost:${params.http.port}`)
         .get('/randomURL')
         .expect(404, (err, res) => {
           if (err) {
@@ -67,22 +74,27 @@ describe('error pages', () => {
 
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
+      ...baseAppConfig,
       errorPages: {
         notFound: '404test.js'
       },
-      expressSession: false,
-      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
+    // testApp.stdout.on('data', data => {
+    //   console.log(data.toString())
+    // })
+
+    // testApp.stderr.on('data', data => {
+    //   console.log(data.toString())
+    // })
+
     // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', params => {
-      request(`http://localhost:${params.port}`)
+      request(`http://localhost:${params.http.port}`)
         .get('/randomURL')
         .expect(404, (err, res) => {
           if (err) {
@@ -109,13 +121,10 @@ describe('error pages', () => {
   it('should render a custom 500 page if there is a request for a route that will respond with a server error and the 500 parameter is set', done => {
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
+      ...baseAppConfig,
       errorPages: {
         internalServerError: '500test.js'
       },
-      expressSession: false,
-      csrfProtection: false,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -124,7 +133,7 @@ describe('error pages', () => {
 
     // when the app starts and sends a message back to the parent try and request the server error route
     testApp.on('message', params => {
-      request(`http://localhost:${params.port}`)
+      request(`http://localhost:${params.http.port}`)
         .get('/serverError')
         .expect(500, (err, res) => {
           if (err) {
@@ -151,10 +160,7 @@ describe('error pages', () => {
   it('should render the default 500 error page if an error has occured on the server', done => {
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      expressSession: false,
-      csrfProtection: false,
+      ...baseAppConfig,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -163,7 +169,7 @@ describe('error pages', () => {
 
     // when the app starts and sends a message back to the parent try and request the server error route
     testApp.on('message', params => {
-      request(`http://localhost:${params.port}`)
+      request(`http://localhost:${params.http.port}`)
         .get('/serverError')
         .expect(500, (err, res) => {
           if (err) {
@@ -192,10 +198,7 @@ describe('error pages', () => {
 
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      expressSession: false,
-      csrfProtection: false,
+      ...baseAppConfig,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
@@ -214,9 +217,9 @@ describe('error pages', () => {
 
     // when the app finishes, save the app and send a request to the page that has a long timeout
     testApp.on('message', params => {
-      if (params.port) {
-        port = params.port
-        request(`http://localhost:${params.port}`)
+      if (params.http?.port) {
+        port = params.http.port
+        request(`http://localhost:${port}`)
           .get('/longWait')
           .expect(200, (err, res) => {
             // it should still respond with longWait done
@@ -257,12 +260,9 @@ describe('error pages', () => {
 
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      expressSession: false,
-      csrfProtection: false,
+      ...baseAppConfig,
       onServerStart: '(app) => {process.send(app.get("params"))}',
-      shutdownTimeout: 7000
+      shutdownTimeout: 500
     }, options)
 
     // fork and run app.js as a child process
@@ -284,8 +284,8 @@ describe('error pages', () => {
 
     // when the app finishes initialization, ask for longWait
     testApp.on('message', params => {
-      if (params.port) {
-        request(`http://localhost:${params.port}`)
+      if (params?.http?.port) {
+        request(`http://localhost:${params.http.port}`)
           .get('/longWait')
           // since we are force closing this connection while its still active, it should not send back a response object or a status number
           .expect(200, (err, res) => {
@@ -318,18 +318,15 @@ describe('error pages', () => {
 
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      expressSession: false,
-      csrfProtection: false,
+      ...baseAppConfig,
       https: {
         enable: true,
         port: 43203,
         autoCert: false
       },
       onServerStart: '(app) => {process.send(app.get("params"))}',
-      shutdownTimeout: 3000
-    }, { ...options, justStart: true })
+      shutdownTimeout: 500
+    }, options)
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), ['--prod'], { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
@@ -350,8 +347,8 @@ describe('error pages', () => {
 
     // when the app finishes initialization, ask for longWait
     testApp.on('message', params => {
-      if (params.port) {
-        request(`http://localhost:${params.port}`)
+      if (params?.http?.port) {
+        request(`http://localhost:${params.http.port}`)
           .get('/longWait')
           .expect(200, (err) => {
             if (!err) {
@@ -382,10 +379,7 @@ describe('error pages', () => {
 
     // generate the test app
     generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      expressSession: false,
-      csrfProtection: false,
+      ...baseAppConfig,
       onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 

@@ -2,7 +2,16 @@
 
 ## Next version
 
-- Put your changes here...
+- Breaking: `port` is now `http.port` and changed the default to `43763`.
+- Breaking: `https.force` was removed in favor of `http.enable`.
+- Breaking:  `authInfoPath`, `passphrase`, `caCert`, `requestCert`, and `rejectUnauthorized` have all been removed from `https` and replaced with `options` where you can pass any [native option](https://nodejs.org/api/tls.html#tlscreatesecurecontextoptions).
+  - The `ca`, `cert`, `key`, and `pfx` params can take file paths relative to your secretsDir in addition to everything else natively supported (strings, buffers, and arrays of strings or buffers).
+  - The file paths get resolved within arrays if you pass arrays to any of those as well.
+- Breaking: `NODE_PORT` env var now sets https port when https is enabled and falls back to http if https is disabled.
+- Breaking: Moved the versioning of webpack from Roosevelt itself to the app.
+- Changed default of `preprocessedViewsPath` param from `'mvc/.preprocessed_views'` to `'.build/.preprocessed_views'`.
+- Changed default of `preprocessedStaticsPath` param from `.preprocessed_statics'` to `'.build/.preprocessed_statics'`.
+- Updated various dependencies.
 
 ## 0.26.1
 

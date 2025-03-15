@@ -8,7 +8,9 @@ describe('body-parser', () => {
     // spin up the roosevelt app
     const rooseveltApp = roosevelt({
       makeBuildArtifacts: false,
-      port: 40000,
+      http: {
+        port: 40000
+      },
       csrfProtection: false,
       logging: {
         methods: {

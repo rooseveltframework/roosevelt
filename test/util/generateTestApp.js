@@ -1,4 +1,5 @@
 // generate app.js and deposit it into test/app
+// TODO: using the routing.js tests as a guide it may be possible to rip out this entire app generator concept
 
 const fs = require('fs-extra')
 const path = require('path')

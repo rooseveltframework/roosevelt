@@ -190,9 +190,11 @@ describe('sourceParams', () => {
         },
         csrfProtection: false,
         enableCLIFlags: false,
-        port: 4000,
+        http: {
+          port: 4000
+        },
         https: {
-          port: '${(port + 1)}'
+          port: '${(http.port + 1)}'
         },
         formidable: {
           multiples: '${versionedPublic}'
@@ -788,32 +790,36 @@ describe('sourceParams', () => {
           warn: false
         }
       },
-      port: 12345
+      http: {
+        port: 12345
+      }
     }
 
     const schema = {
       rooseveltConfig: {
         csrfProtection: false,
-        port: {
-          envVar: ['HTTP_PORT_NEW']
+        http: {
+          port: {
+            envVar: ['HTTP_PORT_NEW']
+          }
         }
       }
     }
 
-    it('should not set param value from default env var', function (done) {
+    it('should not set param value from default env var', done => {
       process.env.HTTP_PORT = 45678
 
       const app = require('../roosevelt')(appConfig, schema)
-      assert.strictEqual(app.expressApp.get('params').port, 12345)
+      assert.strictEqual(app.expressApp.get('params').http.port, 12345)
       delete process.env.HTTP_PORT
       done()
     })
 
-    it('should get param value from specified env var', function (done) {
+    it('should get param value from specified env var', done => {
       process.env.HTTP_PORT_NEW = 45678
 
       const app = require('../roosevelt')(appConfig, schema)
-      assert.strictEqual(app.expressApp.get('params').port, 45678)
+      assert.strictEqual(app.expressApp.get('params').http.port, 45678)
       delete process.env.HTTP_PORT_NEW
       done()
     })

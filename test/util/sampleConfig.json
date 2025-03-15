@@ -1,5 +1,8 @@
 {
-  "port": "value",
+  "http": {
+    "enable": false,
+    "port": "value"
+  },
   "mode": "production",
   "makeBuildArtifacts": false,
   "localhostOnly": "value",
@@ -56,14 +59,9 @@
   },
   "https": {
     "enable" : false,
-    "force": "value",
     "autoCert": true,
     "port": "value",
-    "authInfoPath": "value",
-    "passphrase": "value",
-    "caCert": "value",
-    "requestCert": "value",
-    "rejectUnauthorized": "value"
+    "options": {}
   },
   "secretsPath": "secrets",
   "modelsPath": "value",

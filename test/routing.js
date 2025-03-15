@@ -37,7 +37,6 @@ describe('routing', () => {
     context.app.get('httpServer').close(() => {
       // wipe out the app directory
       fs.removeSync(appDir)
-
       done()
     })
   })
@@ -48,7 +47,7 @@ describe('routing', () => {
       const rooseveltApp = roosevelt({
         ...appConfig,
         onServerStart: app => {
-        // bind app to test context
+          // bind app to test context
           context.app = app
 
           // send a request to a route handled in a controller file
@@ -78,7 +77,7 @@ describe('routing', () => {
         ...appConfig,
         hostPublic: true,
         onServerStart: app => {
-        // bind app to test context
+          // bind app to test context
           context.app = app
 
           const prefix = app.get('routePrefix')
@@ -108,7 +107,7 @@ describe('routing', () => {
         ...appConfig,
         routePrefix: 'foo',
         onServerStart: app => {
-        // bind app to test context
+          // bind app to test context
           context.app = app
 
           // send a request to a route handled in a controller file with an appended prefix
@@ -139,7 +138,7 @@ describe('routing', () => {
         hostPublic: true,
         routePrefix: 'foo',
         onServerStart: app => {
-        // bind app to test context
+          // bind app to test context
           context.app = app
 
           const prefix = app.get('routePrefix')

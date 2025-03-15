@@ -196,7 +196,8 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `NODE_ENV`:
   - Set to `production` to force the app into production mode.
   - Set to `development` to force the app into development mode.
-- `NODE_PORT`: Default HTTP port to run your app on.
+- `NODE_PORT`: Default HTTPS port to run your app on.
+  - Will set HTTP port instead if HTTPS is disabled.
 - `HTTP_PORT`: Default HTTP port to run your app on. Takes precedence over `NODE_PORT`.
 - `HTTPS_PORT`: Default HTTPS port to run your app on.
 - `DISABLE_HTTPS`: When set to `true`, the HTTPS server will be disabled and the app will revert to HTTP regardless of what is set in the `rooseveltConfig`.
@@ -212,35 +213,32 @@ Environment variable precedence:
 Below is the default directory structure for an app created using the Roosevelt app generator:
 
 - Application logic:
-
   - `app.js`: Entry point to your application. Feel free to rename this, but make sure to update `package.json`'s references to it.
-
   - `lib`: Random includable JS files that don't belong in any of the other directories. It has been added to the `require` stack so you can simply `require('lib/someFile')`.
-
   - `mvc`: Folder for models, views, and controllers. All configurable via parameters (see below).
     - `controllers`: Folder for controller files; the "C" in MVC. This is where your HTTP routes will go.
     - `models`: Folder for model files; the "M" in MVC. This is where you will get data to display in your views e.g. by querying a database or do other business logic.
     - `views`: Folder for view files; the "V" in MVC. This is where your HTML templates will go.
 
 - Static files:
-
   - `public`: All contents within this folder will be exposed as static files.
-
   - `statics`: Folder for source CSS, image, JS, and other static files. By default some of the contents of this folder are symlinked to from `public`, which you can configure via params. See [configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters) for more information about parameter configuration.
     - `css`: Folder for source CSS files.
     - `images`: Folder for source image files.
     - `js`: Folder for source JS files.
     - `pages`: Folder for HTML templates that get rendered and minified into static pages.
 
-- Application infrastructure:
+- Built files:
+  - `.build`:
+    - `.preprocessed_views`: View files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.
 
+- Application infrastructure:
   - `.gitignore`: A standard file which contains a list of files and folders to ignore if your project is in a [git](https://git-scm.com/) repo. Delete it if you're not using git. The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to your liking before committing a fresh Roosevelt app to your git repo.
     - Some notable things ignored by default and why:
       - `node_modules`: This folder is created when installing dependencies using the `npm i` step to set up your app. It's generally not recommended to commit the `node_modules` folder or any other build artifacts to git.
       - `public`: It's recommended that you don't create files in this folder manually, but instead use the `statics` parameter detailed below to expose folders in your `statics` directory to `public` via auto-generated symlinks.
       - `secrets`: A folder for "secret" files, e.g. session keys, HTTPS certs, passwords, etc. Since this folder contains sensitive information, it should not be committed to git.
   - `node_modules`: A standard folder created by Node.js where all modules your app depends on (such as Roosevelt) are installed to. This folder is created when installing dependencies using the `npm i` command.
-
   - `package.json`: A file common to most Node.js apps for configuring your app.
   - `package-lock.json`: An auto-generated file common to most Node.js apps containing a map of your dependency tree. This is created after you run `npm i` for the first time.
   - `rooseveltConfig.json`: Where your Roosevelt config is stored and what your params are set to. See [configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters) for more information about parameter configuration.
@@ -276,7 +274,9 @@ In addition, all parameters support [template literal](https://developer.mozilla
 
 ```json
 {
-  "port": 4000,
+  "http": {
+    "port": 4000
+  },
   "https": {
     "port": "${port + 1}"
   },
@@ -291,7 +291,9 @@ Resolves to:
 
 ```json
 {
-  "port": 4000,
+  "http": {
+    "port": 4000
+  },
   "https": {
     "port": 4001
   },
@@ -305,13 +307,21 @@ Resolves to:
 ### MVC parameters
 
 - `controllersPath`: Relative path on filesystem to where your controller files are located.
+
   - Default: *[String]* `"mvc/controllers"`.
+
 - `modelsPath`: Relative path on filesystem to where your model files are located.
+
   - Default: *[String]* `"mvc/models"`.
+
 - `viewsPath`: Relative path on filesystem to where your view files are located.
+
   - Default: *[String]* `"mvc/views"`.
+
 - `preprocessedViewsPath`: Relative path on filesystem to where your preprocessed view files will be written to. Preprocessed view files are view files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.
-  - Default: *[String]* `"mvc/.preprocessed_views"`.
+
+  - Default: *[String]* `".build/.preprocessed_views"`.
+
   - To disable this feature, set the value to `false`.
 
 - `secretsPath`: Directory that stores certs, keys, and secrets.
@@ -324,18 +334,27 @@ Resolves to:
 
 - `frontendReload`: Settings to use for the browser reload feature which automatically reloads your browser when your frontend code changes. This feature is only available in development mode.
   - Options:
+
     - `enable`: Whether or not to enable `reload`.
+
       - Default: *[Boolean]* `true`.
+
     - `exceptionRoutes`: List of routes to exclude from Reload automatically injecting its script onto.
+
       - Default: *[Array]* with no items in it. This means Reload will inject its script on all routes by default.
+
     - `expressBrowserReloadParams`: Params to pass to [express-browser-reload](https://github.com/rooseveltframework/express-browser-reload).
+
       - Default: *[Object]*
+
       ```json
       {
         "skipDeletingConnections": true
       }
       ```
+
   - Default: *[Object]*
+
     ```json
     {
       "enable": true,
@@ -344,8 +363,9 @@ Resolves to:
         "skipDeletingConnections": true
       }
     }
-  - Note: This feature will only be active on pages with a `<body>` tag.
     ```
+
+  - Note: This feature will only be active on pages with a `<body>` tag.
 
 - `htmlValidator`: Parameters to send to [express-html-validator](https://github.com/rooseveltframework/express-html-validator#configuration). This feature is only available in development mode.
 
@@ -386,41 +406,35 @@ Resolves to:
 
   - Default: *[Boolean]* `false`.
 
-- `https`: *[Object]* params for configuring the HTTPS server. HTTPS is disabled by default in apps created manually and enabled by default in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
+- `http`: Parameters for configuring the HTTP server. HTTP is enabled by default in apps created manuallt and disabled by default in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
 
-  - Default: *[Object]* `{}`.
-  - Object members:
+  - `enable`: Enable HTTP server.
 
-    - `enable`: Enable HTTPS server.
-    - Default: *[Boolean]* `false`.
-    - `port`: The port your app will run the HTTPS server on.
-      - Default: *[Number]* `43733`.
-  - `force`: Disallow unencrypted HTTP and route all traffic through HTTPS.
-    - Default: *[Boolean]* `false`.
-  - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
     - Default: *[Boolean]* `true`.
-  - `authInfoPath`: *[Object]* Specify either the paths where the server certificate files can be found or set the appropriate parameters to be a PKCS#12-formatted string or certificate or key strings.
-    - Default: *[Object]* `undefined`.
-    - Object members:
-      - `p12`: *[Object]* Parameter used when the server certificate/key is in PKCS#12 format.
-        - Default: *[Object]* `undefined`.
-        - Object members:
-          - `p12Path`: *[String]* Either the path relative to `secretsPath` to a PKCS#12-formatted file (e.g. a .p12 or .pfx file) or a PKCS#12-formatted string or buffer (e.g. the result of reading in the contents of a .p12 file).
-            - Default: `undefined`.
-      - `authCertAndKey`: *[Object]* Parameter used when the server certificate and key are in separate PEM-encoded files.
-        - Object members:
-          - `cert`: *[String]* Either the path relative to `secretsPath` to a PEM-encoded certificate file (e.g. .crt, .cer, etc.) or a PEM-encoded certificate string.
-            - Default: `undefined`.
-          - `key`: *[String]* Either the path relative to `secretsPath` to a PEM-encoded key file (e.g. .crt, .cer, etc.) or a PEM-encoded key string for the certificate given in `cert`.
-            - Default: `undefined`.
-  - `passphrase`: *[String]* Shared passphrase used for a single private key and/or a P12.
-    - Default: `undefined`.
-  - `requestCert`: *[Boolean]* Set whether to request a certificate from the client attempting to connect to the server to verify the client's identity.
-    - Default: `undefined`.
-  - `rejectUnauthorized`: *[Boolean]* Set whether to reject connections from clients that do no present a valid certificate to the server. (Ignored if `requestCert` is set to `false`.)
-    - Default:  `undefined`.
-  - `caCert`: *[String]* Either the path relative to `secretsPath` to a PEM-encoded Certificate Authority root certificate or certificate chain or a PEM-encoded Certificate Authority root certificate or certificate chain string. This certificate (chain) will be used to verify client certificates presented to the server. It is only needed if `requestCert` and `rejectUnauthorized` are both set to `true` and the client certificates are not signed by a Certificate Authority in the default publicly trusted list of CAs [curated by Mozilla](https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt).
-    - Default: `undefined`.
+
+  - `port`: The HTTP port your app will run on.
+
+    - Default: *[Number]* `43763`.
+
+- `https`: Parameters for configuring the HTTPS server. HTTPS is disabled by default in apps created manually and enabled by default in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
+
+  - `enable`: Enable HTTPS server.
+
+    - Default: *[Boolean]* `false`.
+
+  - `port`: The port your app will run the HTTPS server on.
+
+    - Default: *[Number]* `43733`.
+
+  - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
+
+    - Default: *[Boolean]* `true`.
+
+  - `options`: Configuration that gets passed directly to the HTTPS server instance. Accepts [all native settings](https://nodejs.org/api/tls.html#tlscreatesecurecontextoptions).
+
+    - Note: For convenience, the `ca`, `cert`, `key`, and `pfx` params can take file path strings or arrays of file path strings relative to your `secretsDir` in addition to the native strings and buffers.
+
+    - Default: *[Object]* `{}`.
 
 - `localhostOnly`: Listen only to requests coming from localhost in production mode. This is useful in environments where it is expected that HTTP requests to your app will be proxied through a more traditional web server like Apache or nginx. This setting is ignored in development mode.
 
@@ -429,10 +443,6 @@ Resolves to:
 - `mode`: Decides whether your app starts in production mode or development mode by default.
 
   - Default: *[String]* `production`.
-
-- `port`: The HTTP port your app will run on. This setting is ignored if the app is set to force HTTPS-only mode.
-
-  - Default: *[Number]* `43711`.
 
 - `shutdownTimeout`: Maximum amount of time in milliseconds given to Roosevelt to gracefully shut itself down when sent the kill signal.
 
@@ -464,7 +474,9 @@ Resolves to:
 - `csrfProtection`: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection.
 
   - Default: *[Boolean]* `true`.
+
   - To exempt certain routes from protection, supply an object as your config with an array of exemptions.
+
     - Example: *[Object]*
 
     ```json
@@ -528,19 +540,33 @@ Resolves to:
 - `expressSessionStore`: Define a custom session store to use with `express-session` instead of the default one provided by Roosevelt. This is recommended if you plan to shard your app across multiple separate processes or scale it to multiple servers.
 
   - `filename`: Name of the session file.
+
     - Default: *[String]* `sessions.sqlite`
+
   - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
+
   - `preset`: *[String]* Available presets provided by Roosevelt. Only used if `instance` is not provided.
+
     - Available options:
+
       - `default`: Use Roosevelt's default session store, which is [better-sqlite3-session-store](https://www.npmjs.com/package/better-sqlite3-session-store).
+
       - `express-session-default`: Use `express-session`'s default session store (not recommended).
+
   - `presetOptions`: Options to pass to the preset session store if one is selected. Only used if `instance` is not provided.
+
     - Default: *[Object]*
+
       - `checkPeriod`: How long, in milliseconds, the memory store will check for expired items.
+
         - Default: *[Number]* `86400000` (1 day).
+
       - `ttl`: How long, in milliseconds, before a session is expired.
+
         - Default: *[Number]* the value of `checkPeriod`.
+
       - `max`: The maximum size of the cache, checked by applying the length function to all values in the cache.
+
         - Default: *[Number]* `Infinity`.
 
   - Either `instance` or `preset` must be set for this param to work properly.
@@ -560,10 +586,15 @@ Resolves to:
 - `helmet`: Parameters to pass to the [helmet](https://github.com/helmetjs/helmet) module. This module helps secure Express apps by setting HTTP response headers.
 
   - Default: *[Object]* The default options are specified in the [helmet docs](https://helmetjs.github.io/), with the following exceptions that Roosevelt makes to the default `Content-Security-Policy` settings:
+
     - The `upgrade-insecure-requests` directive has been removed. This change prevents [this bug](https://github.com/rooseveltframework/roosevelt/issues/964).
+
     - The `script-src` directive has been set to `'unsafe-inline'`. This makes it possible to use inline scripts.
+
     - The `form-action` directive has been set to `null`. This makes it possible to submit forms to other domains.
+
     - You can reverse any of these changes by configuring helmet yourself.
+
   - To disable helmet entirely, set the param to `false`.
 
 - `logging`: Parameters to pass to [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger). See [roosevelt-logger parameters documentation](https://github.com/rooseveltframework/roosevelt-logger#configure-logger) for configuration options.
@@ -587,6 +618,7 @@ Resolves to:
   - Default: *[Boolean]* `false` for apps created manually.
 
   - Will be set to `true` in apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt).
+
   - Can also accept a value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
 
 - `routePrefix`: *[String]* A prefix prepended to your application's routes. Applies to all routes and static files.
@@ -787,6 +819,7 @@ Resolves to:
     - `enable`: *[Boolean]* Whether or not to minify HTML.
 
       - Can also be disabled by the `minify` param.
+
       - Minification is automatically disabled in development mode.
 
     - `exceptionRoutes`: *[Array]* List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
@@ -1050,29 +1083,46 @@ Resolves to:
   - Default: *[Boolean]* `false`.
 
 - `minifyHtmlAttributes`: Settings to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+
   - Options:
+
     - `enable`: Whether or not to enable `minify-html-attributes`.
+
       - Default: *[Boolean]* `false`.
+
       - Available options:
+
         - `'production'`: Enable only in production mode.
+
         - `'development'`: Enable in all modes.
+
         - `true`: Will be taken to mean `'production'`.
+
     - `minifyHtmlAttributesParams`: Params to pass to [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
+
       - Default: *[Object]* `{}`
+
   - Default: *[Object]*
+
     ```json
     {
       "enable": true,
       "minifyHtmlAttributesParams": {}
     }
     ```
+
   - Note: Roosevelt will always override 3 params from [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes):
+
     - `htmlDir` will always be set to Roosevelt's `preprocessedViewsPath`.
+
     - `cssDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
+
     - `jsDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
 
 - `preprocessedStaticsPath`: Relative path on filesystem to where your preprocessed static files will be written to. Preprocessed static files are view files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
-  - Default: *[String]* `".preprocessed_statics"`.
+
+  - Default: *[String]* `".build/.preprocessed_statics"`.
+
   - This feature will only be active if `minifyHtmlAttributes` is enabled.
 
 - `versionedPublic`: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version.

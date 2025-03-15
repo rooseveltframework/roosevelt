@@ -1,5 +1,14 @@
 {
-  "port": 43711,
+  "http": {
+    "enable": true,
+    "port": 43763
+  },
+  "https": {
+    "enable": false,
+    "autoCert": true,
+    "port": 43733,
+    "options": {}
+  },
   "mode": "production",
   "enableCLIFlags": true,
   "makeBuildArtifacts": false,
@@ -41,17 +50,6 @@
     }
   },
   "shutdownTimeout": 30000,
-  "https": {
-    "enable": false,
-    "force": false,
-    "autoCert": true,
-    "port": 43733,
-    "authInfoPath": null,
-    "passphrase": null,
-    "caCert": null,
-    "requestCert": null,
-    "rejectUnauthorized": null
-  },
   "expressSession": false,
   "expressSessionStore": {
     "filename": "sessions.sqlite",
@@ -66,8 +64,8 @@
   "secretsPath": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
-  "preprocessedViewsPath": "mvc/.preprocessed_views",
-  "preprocessedStaticsPath": ".preprocessed_statics",
+  "preprocessedViewsPath": ".build/.preprocessed_views",
+  "preprocessedStaticsPath": ".build/.preprocessed_statics",
   "viewEngine": "none",
   "controllersPath": "mvc/controllers",
   "errorPages": {

@@ -11,7 +11,7 @@ describe('view engines', () => {
   const appDir = path.join(__dirname, 'app/viewEngine')
 
   // options to pass into test app generator
-  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
+  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true, justStart: true }
 
   beforeEach(() => {
     // copy the mvc directory into the test app directory for each test
@@ -39,7 +39,7 @@ describe('view engines', () => {
 
     // when the app starts and sends a message back to the parent try and request the test page
     testApp.on('message', params => {
-      request(`http://localhost:${params.port}`)
+      request(`http://localhost:${params.http.port}`)
         .get('/teddyTest')
         .expect(200, (err, res) => {
           if (err) {
@@ -112,7 +112,7 @@ describe('view engines', () => {
 
     // when the app starts test the custom view engine
     testApp.on('message', params => {
-      request(`http://localhost:${params.port}`)
+      request(`http://localhost:${params.http.port}`)
         .get('/jcsTest')
         .expect(200, (err, res) => {
           if (err) {
@@ -211,7 +211,8 @@ describe('view engines', () => {
       makeBuildArtifacts: true,
       appDir,
       viewEngine: 'html: teddy',
-      csrfProtection: false
+      csrfProtection: false,
+      onServerStart: '(app) => {process.send(app.get("params"))}'
     }, options)
 
     // fork and run app.js as a child process
@@ -219,7 +220,7 @@ describe('view engines', () => {
 
     // when the app finishes its initialization, send a request to the teddy page
     testApp.on('message', params => {
-      request(`http://localhost:${params.port}`)
+      request(`http://localhost:${params.http.port}`)
         .get('/teddyTest')
         .expect(200, (err, res) => {
           if (err) {
