@@ -17,7 +17,7 @@ describe('Roosevelt.js', () => {
 
   // clean up the test app directory after each test
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should compile and run what is on initServer even though we haven\'t passed a parameter object to roosevelt', done => {

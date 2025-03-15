@@ -6,7 +6,7 @@
   "https": {
     "enable": false,
     "autoCert": true,
-    "port": 43733,
+    "port": 43711,
     "options": {}
   },
   "mode": "production",
@@ -113,8 +113,14 @@
     "webpack": {
       "enable": false,
       "bundles": [],
-      "verbose": false
-    }
+      "customBundlerFunction": null
+    },
+    "customBundler": {
+      "enable": false,
+      "bundles": [],
+      "customBundlerFunction": null
+    },
+    "verbose": false
   },
   "publicFolder": "public",
   "favicon": "none",

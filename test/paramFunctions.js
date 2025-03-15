@@ -20,7 +20,7 @@ describe('Method params', () => {
 
   // delete the test app Directory and start with a clean state after each test
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should execute what is in onServerInit', done => {

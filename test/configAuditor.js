@@ -34,7 +34,7 @@ describe('config auditor', () => {
 
   // wipe out the test app directory after each test
   afterEach(async () => {
-    await fs.remove(path.join(__dirname, 'app'))
+    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
   })
 
   it('should start the config audit automatically on first app run', async () => {
@@ -78,6 +78,7 @@ describe('config auditor', () => {
     pkgJson.rooseveltConfig.logging.extraParam = true
     pkgJson.rooseveltConfig.js.extraParam = true
     pkgJson.rooseveltConfig.js.webpack.extraParam = true
+    pkgJson.rooseveltConfig.js.customBundler.extraParam = true
 
     // write package.json to app directory
     fs.ensureDirSync(path.join(appDir))
@@ -97,6 +98,7 @@ describe('config auditor', () => {
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js.webpack,'))
+    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js.customBundler,'))
   })
 
   it('should detect and complain about a missing script', async () => {
@@ -147,6 +149,7 @@ describe('config auditor', () => {
     configFile.logging.extraParam = true
     configFile.js.extraParam = true
     configFile.js.webpack.extraParam = true
+    configFile.js.customBundler.extraParam = true
 
     // write rooseveltConfig.json to app directory
     fs.ensureDirSync(path.join(appDir))
@@ -166,6 +169,7 @@ describe('config auditor', () => {
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.htmlValidator,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js,'))
     assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js.webpack,'))
+    assert(stderr.includes('Extra param "extraParam" found in rooseveltConfig.js.customBundler,'))
   })
 
   it('should scan and detect problems in both package.json and rooseveltConfig.json', async () => {

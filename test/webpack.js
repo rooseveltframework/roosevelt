@@ -10,7 +10,7 @@ describe('webpack', () => {
   const appDir = path.join(__dirname, 'app/webpack')
   const webpackConfig = [
     {
-      env: 'prod',
+      env: 'production',
       config: {
         mode: 'production',
         entry: '${js.sourcePath}/a.js',
@@ -21,7 +21,7 @@ describe('webpack', () => {
       }
     },
     {
-      env: 'dev',
+      env: 'development',
       config: {
         entry: '${js.sourcePath}/a.js',
         output: {
@@ -69,7 +69,7 @@ describe('webpack', () => {
 
   afterEach(async () => {
     // wipe out the test app directory
-    await fs.remove(path.join(__dirname, 'app'))
+    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
   })
 
   it('should build prod bundle using supplied webpack config', async () => {
@@ -87,7 +87,7 @@ describe('webpack', () => {
       appDir,
       makeBuildArtifacts: true,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         webpack: {
           enable: true,
           bundles: webpackConfig
@@ -118,7 +118,7 @@ describe('webpack', () => {
       appDir,
       makeBuildArtifacts: true,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         webpack: {
           enable: true,
           bundles: webpackConfig
@@ -146,7 +146,7 @@ describe('webpack', () => {
       appDir,
       makeBuildArtifacts: true,
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         webpack: {
           enable: true,
           bundles: [
@@ -187,7 +187,7 @@ describe('webpack', () => {
         enable: false
       },
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         webpack: {
           enable: true,
           bundles: [
@@ -228,7 +228,7 @@ describe('webpack', () => {
         enable: false
       },
       js: {
-        sourceDir: 'js',
+        sourcePath: 'js',
         webpack: {
           enable: true,
           bundles: [

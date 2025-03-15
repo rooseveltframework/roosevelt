@@ -19,7 +19,7 @@ describe('view engines', () => {
   })
 
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should render the teddy test page', done => {

@@ -54,7 +54,7 @@ describe('HTML minification', () => {
   afterEach(async () => {
     app.stopServer({ persistProcess: true })
 
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should minify HTML when enabled', done => {

@@ -28,7 +28,7 @@ describe('error pages', () => {
   })
 
   afterEach(async () => {
-    await fs.remove(appDir)
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should render the default 404 page if there is a request for an invalid route', done => {
@@ -83,14 +83,6 @@ describe('error pages', () => {
 
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // testApp.stdout.on('data', data => {
-    //   console.log(data.toString())
-    // })
-
-    // testApp.stderr.on('data', data => {
-    //   console.log(data.toString())
-    // })
 
     // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', params => {
