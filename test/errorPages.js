@@ -84,14 +84,6 @@ describe('error pages', () => {
     // fork and run app.js as a child process
     const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
 
-    // testApp.stdout.on('data', data => {
-    //   console.log(data.toString())
-    // })
-
-    // testApp.stderr.on('data', data => {
-    //   console.log(data.toString())
-    // })
-
     // when the app starts and sends a message back to the parent try and request an invalid route
     testApp.on('message', params => {
       request(`http://localhost:${params.http.port}`)

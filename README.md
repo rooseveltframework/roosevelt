@@ -230,7 +230,8 @@ Below is the default directory structure for an app created using the Roosevelt 
 
 - Built files:
   - `.build`:
-    - `.preprocessed_views`: View files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module.
+    - `.preprocessed_statics`: Static files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
+    - `.preprocessed_views`: View files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://github.com/rooseveltframework/progressively-enhance-web-components) module and/or preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
 
 - Application infrastructure:
   - `.gitignore`: A standard file which contains a list of files and folders to ignore if your project is in a [git](https://git-scm.com/) repo. Delete it if you're not using git. The default `.gitignore` file contains many common important things to ignore, however you may need to tweak it to your liking before committing a fresh Roosevelt app to your git repo.
@@ -424,7 +425,7 @@ Resolves to:
 
   - `port`: The port your app will run the HTTPS server on.
 
-    - Default: *[Number]* `43733`.
+    - Default: *[Number]* `43711`.
 
   - `autoCert`: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
 
@@ -1119,7 +1120,7 @@ Resolves to:
 
     - `jsDir` will always be set to Roosevelt's `preprocessedStaticsPath`.
 
-- `preprocessedStaticsPath`: Relative path on filesystem to where your preprocessed static files will be written to. Preprocessed static files are view files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
+- `preprocessedStaticsPath`: Relative path on filesystem to where your preprocessed static files will be written to. Preprocessed static files are static files that have been preprocessed by the [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
 
   - Default: *[String]* `".build/.preprocessed_statics"`.
 

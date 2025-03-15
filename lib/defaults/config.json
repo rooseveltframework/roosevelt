@@ -6,7 +6,7 @@
   "https": {
     "enable": false,
     "autoCert": true,
-    "port": 43733,
+    "port": 43711,
     "options": {}
   },
   "mode": "production",
