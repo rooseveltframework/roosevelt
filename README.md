@@ -14,7 +14,7 @@ Some notable features:
 - [Teddy](https://github.com/rooseveltframework/teddy) HTML templates by default which are much easier to read and maintain than common alternatives. Can be configured to use any templating system that supports Express.
   - Need some extra speed in template parsing? Consider writing your templates in [PHP](https://php.net)! The Roosevelt team also built a view engine that lets you [use PHP as your templating engine](https://github.com/rooseveltframework/node-php-runner) in a Roosevelt app or any other Express application. PHP should be faster than any JS-based templating engine for complex templates since its parser is written in C rather than JS.
 - [LESS](http://lesscss.org) preconfigured out of the box to intelligently minify your external-facing CSS files via [clean-css](https://www.npmjs.com/package/clean-css). There's also built-in support for [Sass](https://sass-lang.com) and [Stylus](https://stylus-lang.com). Other CSS preprocessors can be used as well with a bit of extra configuration.
-- [Webpack](https://webpack.js.org/) fully integrated providing an easy to use interface for bundling and minifying your frontend JS.
+- [Webpack](https://webpack.js.org/) fully integrated providing an easy to use interface for bundling and minifying your frontend JS. Other JS bundlers can be used as well with a bit of extra configuration.
 - Code-reloading in development mode via [nodemon](https://nodemon.io) for server-side changes and [express-browser-reload](https://github.com/rooseveltframework/express-browser-reload) for frontend changes.
 - HTML validation done automatically in development mode for your post-server rendered HTML powered by [express-html-validator](https://github.com/rooseveltframework/express-html-validator).
 - Optional HTML attribute minification of your HTML attribute class names, IDs, and `data-*` attributes in a coordinated fashion across your HTML, CSS, and JS files powered by [minify-html-attributes](https://github.com/rooseveltframework/minify-html-attributes).
@@ -1313,6 +1313,8 @@ Aside from the config auditor, one of the easiest ways to see what you might nee
 
 ### Documentation for previous versions of Roosevelt
 
+- *[0.26.x](https://github.com/rooseveltframework/roosevelt/blob/98577ac9fbcbadbbfb40eccb7dab88ea43568fe0/README.md)*
+- *[0.25.x](https://github.com/rooseveltframework/roosevelt/blob/305cb056a44108896e4d21f0da59fd06ffcaafe0/README.md)*
 - *[0.24.x](https://github.com/rooseveltframework/roosevelt/blob/808198978eddc32fc588528b52ec97beb0f3eaf6/README.md)*
 - *[0.23.x](https://github.com/rooseveltframework/roosevelt/blob/88a3e64cb893bfa813b0e00e2b5aea03c1be5b98/README.md)*
 - *[0.22.x](https://github.com/rooseveltframework/roosevelt/blob/e76256d82ef587d31320bcd52930a5358f9f2953/README.md)*
