@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.28.0
+
+- Breaking: Removed config auditor feature.
+- Added more checks to the deprecation checker.
+- Updated dependencies.
+
 ## 0.27.0
 
 - Breaking: Changed `http/s` param structure:
@@ -107,7 +113,7 @@
     ```
 - Added new param `prodSourceMaps` to allow source maps to be generated in prod mode for both CSS and JS.
 - Added IP address to the output when the server starts.
-- Added new CLI script `secretsGenerator.js` that allows you to combine `certsGenerator.js`, `csrfSecretGEnerator.js`, and `sessionSecretGenerator.js` into one command.
+- Added new CLI script `secretsGenerator.js` that allows you to combine `certsGenerator.js`, `csrfSecretGenerator.js`, and `sessionSecretGenerator.js` into one command.
 - Added feature to override `appDir` and `secretsPath` for the CLI scripts using `--appDir somewhere` and `--secretsPath somewhere` CLI flags.
 - Added `exceptionRoutes` option to the `frontendReload` param.
 - Added a check for broken symlinks in the public folder, which will be purged if any exist.

@@ -28,13 +28,7 @@ const roosevelt = (options = {}, schema) => {
   const pkg = params.pkg
 
   app.set('params', params) // expose app configuration
-
-  // use existence of public folder to determine if this is the first run
-  if (!fs.pathExistsSync(params.publicFolder) && params.logging.methods.info) {
-    // run the param audit
-    require('./lib/scripts/configAuditor').audit(params.appDir)
-    require('./lib/scripts/deprecationCheck')(params.appDir)
-  }
+  require('./lib/scripts/deprecationChecker')(options, params)
 
   // utility functions
 
