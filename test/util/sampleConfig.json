@@ -135,7 +135,7 @@
   },
   "cleanTimer": "value",
   "clientViews": {
-    "enable": "value",
+    "enable": false,
     "exposeAll": "value",
     "blocklist": "value",
     "allowlist": "value",

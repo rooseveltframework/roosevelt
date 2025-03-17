@@ -53,6 +53,7 @@ describe('HTML minification', () => {
   // wipe out test app after each test
   afterEach(async () => {
     app.stopServer({ persistProcess: true })
+    process.removeAllListeners()
 
     fs.rmSync(appDir, { recursive: true, force: true })
   })

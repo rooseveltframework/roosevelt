@@ -145,9 +145,6 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
 - `npm run generate-secrets`: Runs the above three scripts.
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
-- `npm run audit-config`: Scans current `rooseveltConfig` and `scripts` in `package.json` and warns about any parameters or npm scripts that don't match the current Roosevelt API:
-  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/configAuditor.js`
-  - This will run automatically whenever you run `npm i` or `npm ci` as well.
 
 ### Available command line arguments
 
@@ -1313,6 +1310,7 @@ Aside from the config auditor, one of the easiest ways to see what you might nee
 
 ### Documentation for previous versions of Roosevelt
 
+- *[0.27.x](https://github.com/rooseveltframework/roosevelt/blob/8283bf15a724033357ca28a1f9e04d605a641f87/README.md)*
 - *[0.26.x](https://github.com/rooseveltframework/roosevelt/blob/98577ac9fbcbadbbfb40eccb7dab88ea43568fe0/README.md)*
 - *[0.25.x](https://github.com/rooseveltframework/roosevelt/blob/305cb056a44108896e4d21f0da59fd06ffcaafe0/README.md)*
 - *[0.24.x](https://github.com/rooseveltframework/roosevelt/blob/808198978eddc32fc588528b52ec97beb0f3eaf6/README.md)*
