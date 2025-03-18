@@ -28,7 +28,7 @@ const roosevelt = (options = {}, schema) => {
   const pkg = params.pkg
 
   app.set('params', params) // expose app configuration
-  require('./lib/scripts/deprecationChecker')(options, params)
+  require('./lib/deprecationChecker.js')(options, params)
 
   // utility functions
 
@@ -109,7 +109,7 @@ const roosevelt = (options = {}, schema) => {
 
       // auto generate certs if in dev mode, autoCert is enabled, the cert configuration points at file paths, and those cert files don't exist already
       if (app.get('env') === 'development' && params.https.autoCert && params.makeBuildArtifacts !== 'staticsOnly') {
-        if (await certStringIsPath(httpsOptions.cert) && await certStringIsPath(httpsOptions.key)) {
+        if (await certParamIsPath(httpsOptions.cert) && await certParamIsPath(httpsOptions.key)) {
           if (!fs.pathExistsSync(httpsOptions.key) && !fs.pathExistsSync(httpsOptions.cert)) {
             certsGenerator(params.secretsPath, httpsOptions)
           }
@@ -126,27 +126,32 @@ const roosevelt = (options = {}, schema) => {
       // cert params natively support passing strings, buffers, and arrays of strings and/or buffers
       async function preprocessCertParams (certParam) {
         if (Array.isArray(certParam)) {
+          // this type of loop allows redefining the values in the array
           for (let i = 0; i < certParam.length; i++) {
-            if (typeof certParam[i] === 'string') {
-              const certPath = path.join(params.secretsPath, certParam[i])
-              if (await certStringIsPath(certPath)) certParam[i] = await fs.readFile(certPath)
-            }
+            if (await certParamIsPath(certParam[i], true)) certParam[i] = await fs.readFile(path.join(params.secretsPath, certParam[i]))
           }
-        } else if (typeof certParam === 'string') {
-          const certPath = path.join(params.secretsPath, certParam)
-          if (await certStringIsPath(certPath)) certParam = await fs.readFile(certPath)
+        } else {
+          if (await certParamIsPath(certParam, true)) certParam = await fs.readFile(path.join(params.secretsPath, certParam))
         }
+
         return certParam
       }
 
-      async function certStringIsPath (certPath) {
-        if (typeof certPath !== 'string') return false
-        try {
-          const stats = await fs.lstat(certPath)
-          if (stats.isFile()) return true
+      async function certParamIsPath (certParam, checkIfExists) {
+        if (typeof certParam !== 'string') return false
+
+        if (checkIfExists) {
+          const certPath = path.join(params.secretsPath, certParam)
+          try {
+            const stats = await fs.lstat(certPath)
+            if (stats.isFile()) return true
+            else return false
+          } catch {
+            return false
+          }
+        } else {
+          if (certParam.endsWith('.pem')) return true
           else return false
-        } catch {
-          return false
         }
       }
 
