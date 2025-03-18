@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.28.1
+
+- Fixed a bug where HTTPS certs wouldn't always automatically generate when they should.
+- Updated various dependencies.
+
 ## 0.28.0
 
 - Breaking: Removed config auditor feature.
