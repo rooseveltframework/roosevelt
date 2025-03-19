@@ -64,8 +64,9 @@
   "secretsPath": "secrets",
   "modelsPath": "mvc/models",
   "viewsPath": "mvc/views",
-  "preprocessedViewsPath": ".build/.preprocessed_views",
-  "preprocessedStaticsPath": ".build/.preprocessed_statics",
+  "buildFolder": ".build",
+  "preprocessedViewsPath": ".build/preprocessed_views",
+  "preprocessedStaticsPath": ".build/preprocessed_statics",
   "viewEngine": "none",
   "controllersPath": "mvc/controllers",
   "errorPages": {

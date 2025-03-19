@@ -119,6 +119,7 @@
     "verbose" : false
   },
   "symlinks": "value",
+  "buildFolder": "value",
   "publicFolder": "value",
   "favicon": "value",
   "prodSourceMaps": "value",

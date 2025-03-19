@@ -71,13 +71,13 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/allowed.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/allowed.js'))
     assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
     assert.strictEqual(bundle['allowed.html'], sampleTemplate.trim(), 'Expected allowed.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/allowed.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/allowed.js'))]
   })
 
   it('should bundle a directory of templates when allowlist references a directory', async () => {
@@ -100,14 +100,14 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/allowed.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/allowed.js'))
     assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
     assert.strictEqual(bundle['nested/aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the bundle!')
     assert.strictEqual(bundle['nested/anotherTemplate.html'], anotherSampleTemplate.trim(), 'Expected anotherTemplate.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/allowed.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/allowed.js'))]
   })
 
   it('should bundle all templates except contents of the blocklist when exposeAll is enabled', async () => {
@@ -127,14 +127,14 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/views.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/views.js'))
     assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
     assert.strictEqual(bundle['allowed.html'], sampleTemplate.trim(), 'Expected allowed.html template to be included in the bundle!')
     assert.strictEqual(bundle['nest/allowed.html'], anotherSampleTemplate.trim(), 'Expected nest/allowed.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/views.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/views.js'))]
   })
 
   it('should respect defaultBundle setting when exposeAll is enabled', async () => {
@@ -153,14 +153,14 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/coolBundle.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/coolBundle.js'))
     assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
     assert.strictEqual(bundle['allowed.html'], sampleTemplate.trim(), 'Expected allowed.html template to be included in the bundle!')
     assert.strictEqual(bundle['nest/allowed.html'], anotherSampleTemplate.trim(), 'Expected nest/allowed.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/coolBundle.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/coolBundle.js'))]
   })
 
   it('should exclusively bundle allowlist commented templates when exposeAll is enabled', async () => {
@@ -178,13 +178,13 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/output.js'))
     assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
     assert.strictEqual(bundle['allowlistedTemplate.html'], allowlistedTemplate.trim(), 'Expected allowlistedTemplate.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/output.js'))]
   })
 
   it('should bundle every template except for blocklist commented ones when exposeAll is enabled', async () => {
@@ -203,14 +203,14 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/views.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/views.js'))
     assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
     assert.strictEqual(bundle['aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the bundle!')
     assert.strictEqual(bundle['anotherTemplate.html'], anotherSampleTemplate.trim(), 'Expected anotherTemplate.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/views.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/views.js'))]
   })
 
   it('should create multiple bundles via a combination of allowlist config and template comments', async () => {
@@ -235,17 +235,17 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 2, 'Expected two template bundles to be written!')
-    const firstBundle = require(path.join(appDir, 'public/js/allowed.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 2, 'Expected two template bundles to be written!')
+    const firstBundle = require(path.join(appDir, '.build/js/allowed.js'))
     assert.strictEqual(Object.keys(firstBundle).length, 1, 'Expected a single template in the first bundle!')
     assert.strictEqual(firstBundle['aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the first bundle!')
-    const secondBundle = require(path.join(appDir, 'public/js/output.js'))
+    const secondBundle = require(path.join(appDir, '.build/js/output.js'))
     assert.strictEqual(Object.keys(firstBundle).length, 1, 'Expected a single template in the second bundle!')
     assert.strictEqual(secondBundle['allowedComment.html'], allowlistedTemplate.trim(), 'Expected allowedComment.html template to be included in the second bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/allowed.js'))]
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/allowed.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/output.js'))]
   })
 
   it('should write bundle to configured output directory', async () => {
@@ -264,13 +264,13 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/templateBundles'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/templateBundles/views.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/templateBundles'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/templateBundles/views.js'))
     assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
     assert.strictEqual(bundle['aTemplate.html'], sampleTemplate.trim(), 'Expected aTemplate.html template to be included in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/templateBundles/views.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/templateBundles/views.js'))]
   })
 
   it('should minify bundled templates when minifier is enabled', async () => {
@@ -289,13 +289,13 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/output.js'))
     assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
     assert.strictEqual(bundle['aMiniTemplate.html'], await htmlMinifier(allowlistedTemplate, minifyOptions), 'Expected aMiniTemplate.html template to be minified in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/output.js'))]
   })
 
   it('should minify templates with top level html minifier options if no minifyOptions are specified', async () => {
@@ -319,13 +319,13 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/output.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/output.js'))
     assert.strictEqual(Object.keys(bundle).length, 1, 'Expected a single template in the bundle!')
     assert.strictEqual(bundle['aMiniTemplate.html'], await htmlMinifier(allowlistedTemplate, minifyOptions), 'Expected aMiniTemplate.html template to be minified in the bundle!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/output.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/output.js'))]
   })
 
   it('should process templates prior to bundling when providing a onClientViewsProcess method', async () => {
@@ -345,13 +345,13 @@ describe('views bundler', () => {
 
     await app.initServer()
 
-    assert.strictEqual((await fs.readdir(path.join(appDir, 'public/js'))).length, 1, 'Expected a single template bundle to be written!')
-    const bundle = require(path.join(appDir, 'public/js/views.js'))
+    assert.strictEqual((await fs.readdir(path.join(appDir, '.build/js'))).length, 1, 'Expected a single template bundle to be written!')
+    const bundle = require(path.join(appDir, '.build/js/views.js'))
     assert.strictEqual(Object.keys(bundle).length, 2, 'Expected two templates in the bundle!')
     assert.strictEqual(bundle['aTemplate.html'], `${sampleTemplate.trim()} <p>Appended stuff!</p>`, 'Expected aTemplate.html template to be included in the bundle and include preprocessing!')
     assert.strictEqual(bundle['anotherTemplate.html'], `${anotherSampleTemplate.trim()} <p>Appended stuff!</p>`, 'Expected anotherTemplate.html template to be included in the bundle and include preprocessing!')
 
     // wiping the bundle reference out of the require cache is necessary to avoid test environment pollution
-    delete require.cache[require.resolve(path.join(appDir, 'public/js/views.js'))]
+    delete require.cache[require.resolve(path.join(appDir, '.build/js/views.js'))]
   })
 })
