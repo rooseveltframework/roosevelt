@@ -61,6 +61,7 @@ const roosevelt = (options = {}, schema) => {
     app.set('jsPath', params.js.sourcePath)
     app.set('htmlRenderedOutput', params.html.output)
     app.set('cssCompiledOutput', params.css.output)
+    app.set('buildFolder', params.buildFolder)
     app.set('clientControllersBundledOutput', params.clientControllers.output)
     app.set('clientViewsBundledOutput', params.clientViews.output)
     app.set('publicFolder', params.unversionedPublic)

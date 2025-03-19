@@ -4,6 +4,15 @@
 
 - Put your changes here...
 
+## 0.29.0
+
+- Breaking: Moved default output location for `clientControllers` and `clientViews` to the `.build` folder.
+  - To migrate your app, you will likely need to change `js.webpack.bundles.config.resolve.modules` to replace any entry that has `"${publicFolder}/js"` with `"${buildFolder}/js"`.
+- Breaking: Changed default of `preprocessedViewsPath` param from `".build/.preprocessed_views"` to `".build/preprocessed_views"` and changed default of `preprocessedStaticsPath` param from `".build/.preprocessed_statics"` to `".build/preprocessed_statics"`.
+- Added `buildFolder` param to customize the name of the `.build` folder.
+- Altered output of `controllersBundler` and `viewsBundler` feature to produce files that are easier to read.
+- Updated dependencies.
+
 ## 0.28.1
 
 - Fixed a bug where HTTPS certs wouldn't always automatically generate when they should.
