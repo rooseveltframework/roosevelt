@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.29.2
+
+- Fixed a bug that would cause `MAKE_BUILD_ARTIFACTS` to supersede the `--build` CLI flag.
+- Fixed a bug that would cause an error to falsely print about not being able to create symlinks.
+- Updated dependencies.
+
 ## 0.29.1
 
 - Fixed bugs associated with `MAKE_BUILD_ARTIFACTS` sometimes not working properly.
