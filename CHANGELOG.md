@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.29.1
+
+- Fixed bugs associated with `MAKE_BUILD_ARTIFACTS` sometimes not working properly.
+- Updated dependencies.
+
 ## 0.29.0
 
 - Breaking: Moved default output location for `clientControllers` and `clientViews` to the `.build` folder.
