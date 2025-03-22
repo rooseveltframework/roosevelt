@@ -4,6 +4,12 @@
 
 - Put your changes here...
 
+## 0.29.3
+
+- Fixed a bug that could cause some routes not to load.
+- Fixed a bug that could cause more than one `*` route to end up in the router stack.
+- Updated dependencies.
+
 ## 0.29.2
 
 - Fixed a bug that would cause `MAKE_BUILD_ARTIFACTS` to supersede the `--build` CLI flag.
