@@ -81,9 +81,11 @@ To do that:
 - Put this code in `app.js`:
 
   ```javascript
-  require('roosevelt')({
-    'makeBuildArtifacts': true
-  }).startServer()
+  (async () => {
+    await require('roosevelt')({
+      makeBuildArtifacts: true
+    }).startServer()
+  })()
   ```
 
 - Then `node app.js`. If the `makeBuildArtifacts` parameter is set to true like the above code example, an entire Roosevelt app with bare minimum viability will be created and the server will be started. See [configure your app with parameters](https://github.com/rooseveltframework/roosevelt#configure-your-app-with-parameters) for more information about parameter configuration.
@@ -93,23 +95,27 @@ To do that:
 Create a Roosevelt app using one of the methods above, then set the `makeBuildArtifacts` param to the value of `'staticsOnly'` which will allow Roosevelt to create static files but skip the creation of the MVC directories:
 
   ```javascript
-  require('roosevelt')({
-    makeBuildArtifacts: 'staticsOnly'
-  }).initServer()
+  (async () => {
+    await require('roosevelt')({
+      makeBuildArtifacts: 'staticsOnly'
+    }).initServer()
+  })()
   ```
 
 You will also need to set `viewEngine` if you want to render HTML templates into static pages and supply data to the templates:
 
   ```javascript
-  require('roosevelt')({
-    makeBuildArtifacts: 'staticsOnly',
-    viewEngine: 'html: teddy',
-    onServerInit: (app) => {
-      app.get('htmlModels')['index.html'] = {
-        hello: 'world!'
+  (async () => {
+    await require('roosevelt')({
+      makeBuildArtifacts: 'staticsOnly',
+      viewEngine: 'html: teddy',
+      onServerInit: (app) => {
+        app.get('htmlModels')['index.html'] = {
+          hello: 'world!'
+        }
       }
-    }
-  }).initServer()
+    }).initServer()
+  })()
   ```
 
 If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
@@ -248,7 +254,9 @@ Below is the default directory structure for an app created using the Roosevelt 
 Roosevelt is designed to have a minimal amount of boilerplate so you can spend less time focused on configuration and more time writing your app. All parameters are optional. As such, by default, all that's in app.js is this:
 
 ```js
-require('roosevelt')().startServer()
+(async () => {
+  await require('roosevelt')().startServer()
+})()
 ```
 
 Roosevelt will determine your app's name by examining `"name"` in `package.json`. If none is provided, it will use `Roosevelt Express` instead.
@@ -262,11 +270,13 @@ There are multiple ways to pass a configuration to Roosevelt:
 - Programmatically via Roosevelt's constructor like so:
 
   ```js
-  require('roosevelt')({
-    paramName: 'paramValue',
-    param2:    'value2',
-    etc:       'etc'
-  }).startServer()
+  (async () => {
+    await require('roosevelt')({
+      paramName: 'paramValue',
+      param2:    'value2',
+      etc:       'etc'
+    }).startServer()
+  })()
   ```
 
   - This is particularly useful for setting parameters that can't be defined in `package.json` or `rooseveltConfig.json` such as [event handlers](https://github.com/rooseveltframework/roosevelt#events).
@@ -808,6 +818,7 @@ Resolves to:
   - `allowlist`: *[Array]* of *[Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
 
   - `blocklist`: *[Array]* of *[Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
+    - You can also block a file from being exposed by adding a comment on the first line of the file with the string `roosevelt-blocklist` anywhere on the line.
 
   - `models`: Data to pass to templates by file path / file name.
 
@@ -1108,9 +1119,11 @@ Resolves to:
 Roosevelt provides a series of events you can attach code to by passing a function to the desired event as a parameter to Roosevelt's constructor like so:
 
 ```js
-require('roosevelt')({
-  onServerStart: (app) => { /* do something */ }
-}).startServer()
+(async () => {
+  await require('roosevelt')({
+    onServerStart: (app) => { /* do something */ }
+  }).startServer()
+})()
 ```
 
 ### Event list
@@ -1272,23 +1285,27 @@ Additionally the Roosevelt constructor returns the following object:
 In addition to Roosevelt's built-in support for the LESS, Sass, and Stylus preprocessors you can also define your own preprocessor on the fly at start time in Roosevelt's constructor like so:
 
 ```js
-require('roosevelt')({
-  cssCompiler: app => {
-    return {
-      versionCode: app => {
-        // write code to return the version of your app here
-        // generally you should return a css variable with your app version
-      },
-      parse: (app, filePath) => {
-        // write code to preprocess CSS here
-        return {
-          css: 'write code to output css here',
-          sourceMap: 'write code to output source map here (optional)
+(async () => {
+  await require('roosevelt')({
+    cssCompiler: app => {
+      return {
+        versionCode: app => {
+          // write code to return the version of your app here
+          // generally you should return a css variable with your app version
+        },
+        parse: (app, filePath) => {
+          // write code to preprocess CSS here
+          return {
+            css: 'write code to output css here',
+            sourceMap: 'write code to output source map here (optional)
+          }
         }
       }
     }
-  }
-})
+  }).startServer()
+})()
+
+
 ```
 
 ### API

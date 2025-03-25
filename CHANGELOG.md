@@ -4,6 +4,13 @@
 
 - Put your changes here...
 
+## 0.29.4
+
+- Added first-line comment blocklist support to the static site generator.
+- Added static site generator folder to the `require` module path.
+- Added async/await support for static site models.
+- Updated dependencies.
+
 ## 0.29.3
 
 - Fixed a bug that could cause some routes not to load.

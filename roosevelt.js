@@ -71,6 +71,7 @@ const roosevelt = (options = {}, schema) => {
 
     // make the models directory requirable
     appModulePath.addPath(path.join(params.modelsPath, '../'))
+    appModulePath.addPath(params.html.sourcePath) // make any js files in the staticsRoot html sourcePath requirable as well so you can have a models folder on static sites as well
 
     // make the controllers directory requirable
     appModulePath.addPath(path.join(params.controllersPath, '../'))
