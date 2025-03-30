@@ -986,7 +986,7 @@ Resolves to:
       - `true`: Will print verbose logs to the console.
       - `'file'`: Will print verbose logs to the console and write them to a file for debugging.
 
-  - Default: *[Object]* for manually created apps.
+  - Default: *[Object]* for manually created apps:
 
     ```json
     {
@@ -999,7 +999,7 @@ Resolves to:
     }
     ```
 
-    Default: [Object] for apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt):
+  - Default: [Object] for apps generated with [generator-roosevelt](https://github.com/rooseveltframework/generator-roosevelt):
 
     ```json
     {
@@ -1023,6 +1023,23 @@ Resolves to:
           }
         }]
       }
+    }
+    ```
+
+  - Note: Roosevelt will also postprocess your webpack config to do the following things:
+    - If your config does not set `mode`, then Roosevelt will set `mode` to `development` if Roosevelt is in development mode.
+    - If your config does not set `devtool`, then Roosevelt will set `devtool` to `source-map` if Roosevelt is in development mode.
+    - If Roosevelt's `prodSourceMaps` feature is enabled, then Roosevelt will set `devtool` to `source-map` if Roosevelt is in production mode.
+    - If your config does not set `optimization`, then Roosevelt will set `optimization` to the following:
+
+    ```javascript
+    optimization = {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          extractComments: false // disable LICENSE.txt file generation
+        })
+      ]
     }
     ```
 
@@ -1058,6 +1075,18 @@ Resolves to:
         }
       ]
       ```
+
+- `copy`: *[Array]* Declare one or more files or folders to copy at runtime.
+
+  - `source`: *[String]* Path to be copied from.
+
+    - Roosevelt will not attempt to copy files or folders that does not exist.
+
+  - `dest`: *[String]* Path to place the copy.
+
+    - If this destination path already exists **it will be overwritten**.
+
+  - Default: *[Array]* of *[Objects]* `[]`.
 
 - `minify`: Enables HTML and CSS minification. This feature is automatically disabled during development mode. Minification for JS files is handled by the `js` params above.
 
