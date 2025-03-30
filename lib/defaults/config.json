@@ -126,6 +126,7 @@
   "publicFolder": "public",
   "favicon": "none",
   "symlinks": [],
+  "copy": [],
   "prodSourceMaps": false,
   "versionedPublic": false,
   "minifyHtmlAttributes": {

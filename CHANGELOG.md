@@ -4,6 +4,13 @@
 
 - Put your changes here...
 
+## 0.29.5
+
+- Added new `copy` param that will copy files from a source location to a destination location.
+- Added new feature to integrated webpack bundler to disable LICENSE.txt generation by default. This can be overridden by supplying your own `optimization` param to your webpack config.
+- Improved docs.
+- Updated dependencies.
+
 ## 0.29.4
 
 - Added first-line comment blocklist support to the static site generator.

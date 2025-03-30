@@ -182,6 +182,8 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/generateSymlinks')(app)
 
+    require('./lib/copyFiles')(app)
+
     require('./lib/htmlMinifier')(app)
 
     if (app.get('env') === 'development' && params.htmlValidator.enable) {
