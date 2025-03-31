@@ -4,6 +4,17 @@
 
 - Put your changes here...
 
+## 0.30.0
+
+- Breaking: Upgraded to Express 5.x.
+  - To migrate:
+    - Most Roosevelt apps probably only need to change `*` routes to `*all`.
+    - Apps that use more complex routing may need other changes.
+    - Full list of considerations for migrating to Express 5: https://expressjs.com/en/guide/migrating-5.html
+- Added `expressSessionStore` Express variable, which is the session store instance used by express-session module Roosevelt uses internally.
+- Added support for catch-all `*` in static site generator model definitions.
+- Updated dependencies.
+
 ## 0.29.5
 
 - Added new `copy` param that will copy files from a source location to a destination location.
