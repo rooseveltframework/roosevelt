@@ -109,7 +109,7 @@ You will also need to set `viewEngine` if you want to render HTML templates into
     await require('roosevelt')({
       makeBuildArtifacts: 'staticsOnly',
       viewEngine: 'html: teddy',
-      onServerInit: (app) => {
+      onBeforeMiddleware: (app) => {
         app.get('htmlModels')['index.html'] = {
           hello: 'world!'
         }
@@ -119,6 +119,16 @@ You will also need to set `viewEngine` if you want to render HTML templates into
   ```
 
 If model data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
+
+You can also define a global model using a catch-all `*` character like this:
+
+  ```javascript
+  app.get('htmlModels')['*'] = {
+    hello: 'world!'
+  }
+  ```
+
+The catch-all model will load first and can be overridden by per-page models.
 
 ### Available npm scripts
 
@@ -1274,6 +1284,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 | `view engine`                        | Default view engine file extension, e.g. `.html`.            |
 | `debugMarkup`                        | HTML you can add to your custom error pages if you define any that will print server errors if any exist, display the route list, add some inline JavaScript that will serialize the request's `err`, `req`, and `res` objects so you can interactively examine them in the browser's developer tools. Only available in development mode. |
 | `expressSession`                     | The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware. |
+| `expressSessionStore`                | The session store instance used by [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. |
 | `logger`                             | The [roosevelt-logger](https://github.com/rooseveltframework/roosevelt-logger) module Roosevelt uses internally. Used for console logging. |
 | `modelsPath`                         | Full path on the file system to where your app's models folder is located. |
 | `viewsPath` or `views`               | Full path on the file system to where your app's views folder is located. |
