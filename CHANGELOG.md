@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.30.3
+
+- Fixed model overriding precedent in static site generator.
+
 ## 0.30.2
 
 - Fixed a crash associated with the default catch-all route.
