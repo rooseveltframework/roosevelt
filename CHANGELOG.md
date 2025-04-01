@@ -4,6 +4,10 @@
 
 - Put your changes here...
 
+## 0.30.2
+
+- Fixed a crash associated with the default catch-all route.
+
 ## 0.30.1
 
 - Fixed a bug that caused two catch-all routes to appear in the router stack.
