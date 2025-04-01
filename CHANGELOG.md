@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.30.1
+
+- Fixed a bug that caused two catch-all routes to appear in the router stack.
+- Updated dependencies.
+
 ## 0.30.0
 
 - Breaking: Upgraded to Express 5.x.
