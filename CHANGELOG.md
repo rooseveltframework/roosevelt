@@ -4,6 +4,11 @@
 
 - Put your changes here...
 
+## 0.30.4
+
+- Fixed bugs that prevented CSS source maps from working correctly.
+- Updated dependencies.
+
 ## 0.30.3
 
 - Fixed model overriding precedent in static site generator.
