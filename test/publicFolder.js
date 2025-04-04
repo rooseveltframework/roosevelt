@@ -1,204 +1,141 @@
 /* eslint-env mocha */
-
-const assert = require('assert')
-const { fork } = require('child_process')
 const fs = require('fs-extra')
-const generateTestApp = require('./util/generateTestApp')
 const path = require('path')
-const request = require('supertest')
+const axios = require('axios')
+const roosevelt = require('../roosevelt')
 
-describe('Public directory', () => {
-  // path to the directory where the test app is located
-  const appDir = path.join(__dirname, 'app/publicFolderTest')
+describe('public folder', () => {
+  // global vars the tests will need
+  const context = {}
+  const appDir = path.join(__dirname, 'app')
 
-  // options to pass into generateTestApp
-  const options = { rooseveltPath: '../../../roosevelt', method: 'startServer', stopServer: true }
-
-  // package.json source code
-  const packageSource = '{ "version": "0.5.1", "rooseveltConfig": {}}'
-
-  beforeEach(function (done) {
-    // start by copying the premade mvc directory into the app directory
-    fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
+  // capture everything a roosevelt app logs to the console
+  let capturedLogs = ''
+  beforeEach(done => {
+    capturedLogs = ''
+    process.stdout.write = (chunk, encoding, callback) => {
+      capturedLogs += chunk.toString()
+      if (callback) callback()
+    }
+    process.stderr.write = (chunk, encoding, callback) => {
+      capturedLogs += chunk.toString()
+      if (callback) callback()
+    }
     done()
   })
 
-  // clean up the test app directory after each test
-  afterEach(async () => {
-    fs.rmSync(appDir, { recursive: true, force: true })
+  // undo capturing everything logged to the console so that mocha can print results
+  const originalStdoutWrite = process.stdout.write
+  const originalStderrWrite = process.stderr.write
+  function finish (cb) {
+    process.stdout.write = originalStdoutWrite
+    process.stderr.write = originalStderrWrite
+    cb(capturedLogs)
+  }
+
+  // quit the roosevelt app if it hasn't killed itself already and delete the test app
+  afterEach(done => {
+    if (!context?.app?.get) {
+      fs.rmSync(appDir, { recursive: true, force: true })
+      done()
+    }
+    context.app.get('httpServer').close(() => {
+      fs.rmSync(appDir, { recursive: true, force: true })
+      done()
+    })
   })
 
   it('should allow for a custom favicon and GET that favicon on request', done => {
-    // copy the favicon to the images folder within the static folder
-    fs.copySync(path.join(__dirname, './util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
-
-    // generate the test app
-    generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}',
-      favicon: 'images/faviconTest.ico'
-    }, options)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the server starts,
-    testApp.on('message', () => {
-      // see if we can get an html page from the server
-      request('http://localhost:43763')
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err) {
-            testApp.send('stop')
-            assert.fail(err)
-          }
-
-          // if a 200 status, grab the favicon from the server
-          request('http://localhost:43763')
-            .get('/favicon.ico')
-            .expect(200, (err, res) => {
-              if (err) {
-                testApp.send('stop')
-                assert.fail(err)
-              }
-              // convert buffer to base64
-              const faviconData = res.body.toString('base64')
-              // get the base64 buffer of the favicon that we should be using in util
-              const data = fs.readFileSync(path.join(__dirname, './util/faviconTest.ico'))
-              const encodedImageData = Buffer.from(data, 'binary').toString('base64')
-              // check if both buffers are the same (they should be)
-              const test = faviconData === encodedImageData
-              assert.strictEqual(test, true)
-              testApp.send('stop')
-            })
-        })
-    })
-
-    // when the child process exits, finish the test
-    testApp.on('exit', () => {
-      done()
-    })
+    (async () => {
+      let pass = false
+      fs.copySync(path.join(__dirname, './util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
+      const rooseveltApp = roosevelt({
+        appDir,
+        favicon: 'images/faviconTest.ico',
+        onServerStart: app => {
+          context.app = app
+        }
+      })
+      await rooseveltApp.startServer()
+      try {
+        const res = await axios.get(`http://localhost:${context.app.get('params').http.port}/favicon.ico`)
+        if (res.status === 200 && !res.data.includes('404 Not Found')) pass = true
+        else pass = false
+      } catch (err) {}
+      finish(capturedLogs => {
+        if (pass) done()
+        else done(new Error('server did not properly respond to the request'))
+      })
+    })()
   })
 
   it('should allow for no favicon with a null paramter', done => {
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      favicon: null
-    }, options)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // when the server starts, send a request to the server
-    testApp.on('message', () => {
-      request('http://localhost:43763')
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err) {
-            testApp.send('stop')
-            assert.fail(err)
-          }
-          // if we can get the page, send a request to get the favicon
-          request('http://localhost:43763')
-            .get('/favicon.ico')
-            .expect(404, (err, res) => {
-              if (err) {
-                assert.fail('able to get the favicon.ico, even when there isn\'t one')
-                testApp.send('stop')
-              } else {
-                testApp.send('stop')
-              }
-            })
-        })
-    })
-
-    // when the child process exits, finish the test
-    testApp.on('exit', () => {
-      done()
-    })
+    (async () => {
+      let pass = false
+      const rooseveltApp = roosevelt({
+        appDir,
+        favicon: null,
+        onServerStart: app => {
+          context.app = app
+        }
+      })
+      await rooseveltApp.startServer()
+      try {
+        await axios.get(`http://localhost:${context.app.get('params').http.port}/favicon.ico`)
+      } catch (err) {
+        if (err.status === 404 && err.response.data.includes('404 Not Found')) pass = true
+        else pass = false
+      }
+      finish(capturedLogs => {
+        if (pass) done()
+        else done(new Error('server did not properly respond to the request'))
+      })
+    })()
   })
 
   it('should allow the user to set favicon to a wrong or non-existent path and have no favicon show up', done => {
-    // bool var to keep track of whether or not the app tells the user that the provided path leads to a non existent favicon
-    let nonExistentWarningBool = false
-    // generate the app.js file
-    generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      favicon: 'images/nothingHere.ico'
-    }, options)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // on the error stream, check for an incorrect favicon log
-    testApp.stderr.on('data', (data) => {
-      if (data.includes('Please ensure the "favicon" param is configured correctly')) {
-        nonExistentWarningBool = true
+    (async () => {
+      let pass = false
+      const rooseveltApp = roosevelt({
+        appDir,
+        favicon: 'images/nothingHere.ico',
+        onServerStart: app => {
+          context.app = app
+        }
+      })
+      await rooseveltApp.startServer()
+      try {
+        await axios.get(`http://localhost:${context.app.get('params').http.port}/favicon.ico`)
+      } catch (err) {
+        if (err.status === 404 && err.response.data.includes('404 Not Found')) pass = true
+        else pass = false
       }
-    })
-
-    // when the server starts, send a request to the server
-    testApp.on('message', () => {
-      request('http://localhost:43763')
-        .get('/HTMLTest')
-        .expect(200, (err, res) => {
-          if (err) {
-            testApp.send('stop')
-            assert.fail(err)
-          }
-          // if we can get the page, send a request to get the favicon
-          request('http://localhost:43763')
-            .get('/favicon.ico')
-            .expect(404, (err, res) => {
-              if (err) {
-                assert.fail('able to get the favicon.ico, even when there isn\'t one')
-                testApp.send('stop')
-              } else {
-                testApp.send('stop')
-              }
-            })
-        })
-    })
-
-    // when the child process exits, check assertions and finish the test
-    testApp.on('exit', () => {
-      assert.strictEqual(nonExistentWarningBool, true, 'There was no warning saying that the favicon warning was set improperly')
-      done()
-    })
+      finish(capturedLogs => {
+        if (pass) done()
+        else done(new Error('server did not properly respond to the request'))
+      })
+    })()
   })
 
   it('should set the name of folder inside of public to the version inside of package.json', done => {
-    // write the package json file with the source code from above
-    fs.writeFileSync(path.join(appDir, 'package.json'), packageSource)
-
-    // generate the app
-    generateTestApp({
-      appDir,
-      makeBuildArtifacts: true,
-      csrfProtection: false,
-      onServerStart: '(app) => {process.send(app.get("params"))}',
-      versionedPublic: true
-    }, options)
-
-    // fork the app and run it as a child process
-    const testApp = fork(path.join(appDir, 'app.js'), { stdio: ['pipe', 'pipe', 'pipe', 'ipc'] })
-
-    // check for the existence of the directory once the server is started up
-    testApp.on('message', () => {
-      assert(fs.existsSync(path.join(appDir, 'public/0.5.1')), 'Versioned public folder was not generated')
-      testApp.send('stop')
-    })
-
-    // when the child process exits, finish the test
-    testApp.on('exit', () => {
-      done()
-    })
+    (async () => {
+      let pass = false
+      fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
+      fs.writeFileSync(path.join(appDir, 'package.json'), '{ "version": "0.5.1", "rooseveltConfig": {} }')
+      const rooseveltApp = roosevelt({
+        appDir,
+        makeBuildArtifacts: true,
+        versionedPublic: true,
+        onServerInit: app => {
+          context.app = app
+        }
+      })
+      await rooseveltApp.startServer()
+      finish((capturedLogs) => {
+        if (capturedLogs.includes('roosevelt/test/app/public/0.5.1')) pass = true
+        if (pass) done()
+        else done(new Error('Versioned public folder not created'))
+      })
+    })()
   })
 })

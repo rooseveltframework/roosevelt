@@ -4,6 +4,13 @@
 
 - Put your changes here...
 
+## 0.30.5
+
+- Added error handling for if you supply Roosevelt constructor params to `initServer` or `startServer`.
+- Fixed bugs that could cause `initServer`, `startServer`, and `stopServer` to not be properly awaitable.
+- Fixed bug that would cause `undefined` to print on error pages in Roosevelt apps without a package.json version defined.
+- Updated dependencies.
+
 ## 0.30.4
 
 - Fixed bugs that prevented CSS source maps from working correctly.
