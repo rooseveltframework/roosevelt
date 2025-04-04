@@ -32,7 +32,8 @@ const roosevelt = (options = {}, schema) => {
 
   // utility functions
 
-  async function initServer () {
+  async function initServer (args) {
+    if (args) throw new Error('Roosevelt\'s initServer method does not take arguments. You may have meant to pass parameters to Roosevelt\'s constructor instead.')
     if (initialized) return
     initialized = true
 
@@ -213,88 +214,107 @@ const roosevelt = (options = {}, schema) => {
     if (params.onServerInit && typeof params.onServerInit === 'function') await Promise.resolve(params.onServerInit(app))
   }
 
-  async function startServer () {
+  async function startServer (args) {
+    if (args) throw new Error('Roosevelt\'s startServer method does not take arguments. You may have meant to pass parameters to Roosevelt\'s constructor instead.')
     await initServer()
     let listeningServers = 0
     let numberOfServers = 0
     if (params.http.enable) numberOfServers++
     if (params.https.enable) numberOfServers++
 
-    // code that executes after the server starts
-    function startupCallback (proto, port) {
-      return async function () {
-        logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port} (${proto.toLowerCase()}://${require('ip').address()}:${port})`.bold)
-        if (params.localhostOnly) logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
-        if (!params.hostPublic) logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
-        listeningServers++
+    await new Promise((resolve, reject) => {
+      function startupCallback (proto, port) {
+        return async function () {
+          logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port} (${proto.toLowerCase()}://${require('ip').address()}:${port})`.bold)
+          if (params.localhostOnly) logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
+          if (!params.hostPublic) logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
+          listeningServers++
 
-        // fire user-defined onServerStart event if all servers are started
-        if (listeningServers === numberOfServers && params.onServerStart && typeof params.onServerStart === 'function') Promise.resolve(params.onServerStart(app))
+          // fire user-defined onServerStart event if all servers are started
+          if (listeningServers === numberOfServers) {
+            if (params.onServerStart && typeof params.onServerStart === 'function') await Promise.resolve(params.onServerStart(app))
+            resolve() // resolve the promise when all servers are started
+          }
+        }
       }
-    }
 
-    if (params.makeBuildArtifacts !== 'staticsOnly') {
-      if (!numberOfServers) logger.warn('You called startServer but both http and https are disabled, so no servers are starting.')
+      if (params.makeBuildArtifacts !== 'staticsOnly') {
+        if (!numberOfServers) {
+          logger.warn('You called startServer but both http and https are disabled, so no servers are starting.')
+          resolve() // no servers to start, resolve immediately
+        }
 
-      if (params.http.enable) {
-        const server = httpServer.listen(params.http.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTP', params.http.port)).on('error', err => {
-          logger.error(err)
-          logger.error(`Another process is using port ${params.http.port}. Either kill that process or change this app's port number.`.bold)
-          process.exit(1)
-        })
-        if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+        if (params.http.enable) {
+          const server = httpServer
+            .listen(params.http.port, params.localhostOnly ? 'localhost' : null, startupCallback('HTTP', params.http.port))
+            .on('error', err => {
+              logger.error(err)
+              logger.error(`Another process is using port ${params.http.port}. Either kill that process or change this app's port number.`.bold)
+              reject(err)
+            })
+          if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+        }
+        if (params.https.enable) {
+          const server = httpsServer
+            .listen(params.https.port, params.localhostOnly ? 'localhost' : null, startupCallback('HTTPS', params.https.port))
+            .on('error', err => {
+              logger.error(err)
+              logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
+              reject(err)
+            })
+          if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+        }
       }
-      if (params.https.enable) {
-        const server = httpsServer.listen(params.https.port, (params.localhostOnly ? 'localhost' : null), startupCallback('HTTPS', params.https.port)).on('error', err => {
-          logger.error(err)
-          logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
-          process.exit(1)
-        })
-        if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
-      }
-    }
+    })
 
     process.on('SIGTERM', shutdownGracefully)
     process.on('SIGINT', shutdownGracefully)
   }
 
-  // shut down all servers, connections and threads that the roosevelt app is using
-  function shutdownGracefully (args) {
+  // shut down all servers, connections, and threads that the roosevelt app is using
+  async function shutdownGracefully (args) {
     persistProcess = args?.persistProcess
 
-    // fire user-defined onAppExit event
-    if (params.onAppExit && typeof params.onAppExit === 'function') params.onAppExit(app)
+    // return a promise to make shutdownGracefully awaitable
+    return new Promise((resolve, reject) => {
+      // fire user-defined onAppExit event
+      if (params.onAppExit && typeof params.onAppExit === 'function') params.onAppExit(app)
 
-    // force destroy connections if the server takes too long to shut down
-    checkConnectionsTimeout = setTimeout(() => {
-      logger.error(`${appName} could not close all connections in time; forcefully shutting down`)
-      for (const key in connections) connections[key].destroy()
-      if (persistProcess) {
-        if (httpServer) httpServer.close()
-        if (httpsServer) httpsServer.close()
-      } else process.exit()
-    }, params.shutdownTimeout)
+      // force destroy connections if the server takes too long to shut down
+      checkConnectionsTimeout = setTimeout(() => {
+        logger.error(`${appName} could not close all connections in time; forcefully shutting down`)
+        for (const key in connections) connections[key].destroy()
+        if (persistProcess) {
+          if (httpServer) httpServer.close()
+          if (httpsServer) httpsServer.close()
+        } else {
+          process.exit()
+        }
+        resolve() // resolve the promise after forceful shutdown
+      }, params.shutdownTimeout)
 
-    app.set('roosevelt:state', 'disconnecting')
-    logger.info('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
+      app.set('roosevelt:state', 'disconnecting')
+      logger.info('\n💭 ', `${appName} received kill signal, attempting to shut down gracefully.`.magenta)
 
-    // if the app is in development mode, kill all connections instantly and exit
-    if (appEnv === 'development') {
-      for (const key in connections) connections[key].destroy()
-      closeServer()
-    } else {
-      // else do the normal procedure of seeing if there are still connections before closing
-      Object.keys(connections).length === 0 && closeServer() // this will close the server if there are no connections
-    }
+      // if the app is in development mode, kill all connections instantly and exit
+      if (appEnv === 'development') {
+        for (const key in connections) connections[key].destroy()
+        closeServer(resolve) // pass resolve to closeServer to resolve the promise
+      } else {
+        // else do the normal procedure of seeing if there are still connections before closing
+        if (Object.keys(connections).length === 0) closeServer(resolve) // pass resolve to closeServer to resolve the promise
+      }
+    })
   }
 
-  function closeServer () {
+  function closeServer (resolve) {
     clearTimeout(checkConnectionsTimeout)
     logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
     if (persistProcess) {
       if (httpServer) httpServer.close()
       if (httpsServer) httpsServer.close()
     } else process.exit()
+    if (resolve) resolve() // resolve the promise to indicate shutdown is complete (if this was used in shutdownGracefully)
   }
 
   return {

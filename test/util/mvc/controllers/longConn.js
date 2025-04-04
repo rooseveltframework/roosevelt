@@ -1,11 +1,4 @@
-module.exports = (router) => {
-  router.route('/longConn').get((req, res) => {
-    process.send('inConn')
-    setTimeout(() => {
-      res.send('world')
-    }, 10000)
-  })
-
+module.exports = router => {
   router.route('/slow').get((req, res) => {
     const start = new Date()
     while ((new Date() - start) < 250) {
