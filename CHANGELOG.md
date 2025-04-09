@@ -4,6 +4,14 @@
 
 - Put your changes here...
 
+## 0.30.6
+
+- Added `onBeforeStatics` event.
+- Altered `makeBuildArtifacts` log to be a warning.
+- Fixed writing JS file log to be properly classified as `info` instead of `log`.
+- Fixed a bug that could cause the static site generator to not write new files even if the file has changed.
+- Updated dependencies.
+
 ## 0.30.5
 
 - Added error handling for if you supply Roosevelt constructor params to `initServer` or `startServer`.

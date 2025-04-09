@@ -198,6 +198,9 @@ const roosevelt = (options = {}, schema) => {
 
     await require('./lib/mapRoutes')(app)
 
+    // fire user-defined onBeforeStatics event
+    if (params.onBeforeStatics && typeof params.onBeforeStatics === 'function') await Promise.resolve(params.onBeforeStatics(app))
+
     await require('./lib/preprocessViewsAndStatics')(app)
 
     await require('./lib/preprocessStaticPages')(app)

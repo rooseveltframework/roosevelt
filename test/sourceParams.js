@@ -29,6 +29,7 @@ describe('sourceParams', () => {
       'onClientViewsProcess',
       'onServerInit',
       'onBeforeMiddleware',
+      'onBeforeStatics',
       'onServerStart',
       'onAppExit',
       'routePrefix',
