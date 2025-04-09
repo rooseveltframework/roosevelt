@@ -109,12 +109,12 @@ You will also need to set `viewEngine` if you want to render HTML templates into
     await require('roosevelt')({
       makeBuildArtifacts: 'staticsOnly',
       viewEngine: 'html: teddy',
-      onBeforeMiddleware: (app) => {
+      onBeforeStatics: (app) => {
         app.get('htmlModels')['index.html'] = {
           hello: 'world!'
         }
       }
-    }).initServer()
+    }).init()
   })()
   ```
 
@@ -1168,6 +1168,8 @@ Roosevelt provides a series of events you can attach code to by passing a functi
 ### Event list
 
 - `onBeforeMiddleware(app)`: Fired when the app begins initializing, prior to any middleware being loaded into the app.
+  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+- `onBeforeStatics(app)`: Fired during initialization, prior to any statics being written.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 - `onServerInit(app)`: Fired when the server is fully initialized and all middleware has been loaded but before the server has started.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
