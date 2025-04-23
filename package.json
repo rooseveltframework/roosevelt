@@ -37,7 +37,7 @@
     "express-session": "1.18.1",
     "formidable": "3.5.2",
     "fs-extra": "11.3.0",
-    "glob": "11.0.1",
+    "glob": "11.0.2",
     "helmet": "8.1.0",
     "html-minifier-terser": "7.2.0",
     "ip": "2.0.1",
