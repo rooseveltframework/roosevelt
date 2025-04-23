@@ -35,7 +35,7 @@
     "express": "5.1.0",
     "express-html-validator": "1.0.1",
     "express-session": "1.18.1",
-    "formidable": "3.5.2",
+    "formidable": "3.5.4",
     "fs-extra": "11.3.0",
     "glob": "11.0.1",
     "helmet": "8.1.0",
