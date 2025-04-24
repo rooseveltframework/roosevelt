@@ -30,7 +30,7 @@
     "clean-css": "5.3.3",
     "compression": "1.8.0",
     "cookie-parser": "1.4.7",
-    "csrf-csrf": "3.1.0",
+    "csrf-csrf": "3.2.2",
     "execa": "9.5.2",
     "express": "5.1.0",
     "express-html-validator": "1.0.1",
