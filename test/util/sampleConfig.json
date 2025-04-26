@@ -83,6 +83,7 @@
     "blocklist": null,
     "models": {},
     "output": "",
+    "folderPerPage": false,
     "minifier": {
       "enable": "value",
       "exceptionRoutes": "value",

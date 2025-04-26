@@ -196,6 +196,9 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/injectReload')(app)
 
+    // fire user-defined onBeforeControllers event
+    if (params.onBeforeControllers && typeof params.onBeforeControllers === 'function') await Promise.resolve(params.onBeforeControllers(app))
+
     await require('./lib/mapRoutes')(app)
 
     // fire user-defined onBeforeStatics event
@@ -313,11 +316,34 @@ const roosevelt = (options = {}, schema) => {
   function closeServer (resolve) {
     clearTimeout(checkConnectionsTimeout)
     logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
+
+    let serversToClose = 0
+    let closedServers = 0
+
+    function onServerClosed () {
+      closedServers++
+      if (closedServers === serversToClose) {
+        app.set('roosevelt:state', null)
+        if (resolve) resolve() // resolve the promise when all servers are closed
+      }
+    }
+
     if (persistProcess) {
-      if (httpServer) httpServer.close()
-      if (httpsServer) httpsServer.close()
+      if (httpServer) {
+        serversToClose++
+        httpServer.close(() => onServerClosed())
+      }
+      if (httpsServer) {
+        serversToClose++
+        httpsServer.close(() => onServerClosed())
+      }
     } else process.exit()
-    if (resolve) resolve() // resolve the promise to indicate shutdown is complete (if this was used in shutdownGracefully)
+
+    // if no servers are active, resolve immediately
+    if (serversToClose === 0) {
+      app.set('roosevelt:state', null)
+      if (resolve) resolve()
+    }
   }
 
   return {
