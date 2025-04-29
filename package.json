@@ -12,7 +12,8 @@
   "files": [
     "defaultErrorPages",
     "lib",
-    "roosevelt.js"
+    "roosevelt.js",
+    "*.md"
   ],
   "homepage": "https://github.com/rooseveltframework/roosevelt",
   "license": "CC-BY-4.0",
