@@ -1,8 +1,13 @@
-# Roosevelt Changelog
+## 0.30.7
 
-## Next version
-
-- Put your changes here...
+- Added new `onBeforeControllers` event.
+- Added new `html.folderPerPage` param.
+- Made it easier to debug HTML validation errors on static sites.
+- Fixed bugs associated with the `stopServer()` method.
+- Fixed bugs associated with using a `roosevelt.config.json` file in your app.
+- Fixed a bug that could cause middleware errors not to flow through the middleware stack correctly.
+- Copyedited documentation significantly.
+- Updated dependencies.
 
 ## 0.30.6
 
