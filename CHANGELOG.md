@@ -1,3 +1,7 @@
+## 0.30.8
+
+- Updated dependencies.
+
 ## 0.30.7
 
 - Added new `onBeforeControllers` event.
