@@ -332,7 +332,7 @@ Default: *[Object]*
   - `defaultBundle` *[String]*: File name for the default JS view bundle.
   - `output` *[String]*: Subdirectory within `buildFolder` to write JS view bundles to.
   - `minify` *[Boolean]*: Option to minify templates that are exposed via this feature.
-    - Be careful with this feature because it can break your templates depending on which templating system you use, and as such it is off by default. You may need to make liberal use of the `minifyOptions` param to make it work right with your tempalting system.
+    - Be careful with this feature because it can break your templates depending on which templating system you use, and as such it is off by default. You may need to make liberal use of the `minifyOptions` param to make it work right with your templating system.
   - `minifyOptions` *[Object]*: Parameters to supply to [html-minifier](https://github.com/terser/html-minifier-terser#options-quick-reference)'s API.
     - Uses the params you set in `html.minifier.options` if empty.
 
@@ -354,7 +354,7 @@ Default: *[Object]*
 
 - `copy` *[Array of Objects]*: Declare one or more files or folders to copy at runtime. Default: `[]`.
   - `source` *[String]*: Path to be copied from.
-    - Roosevelt will not attempt to copy files or folders that does not exist.
+    - Roosevelt will not attempt to copy files or folders that do not exist.
   - `dest` *[String]*: Path to place the copy.
     - If this destination path already exists **it will be overwritten**.
 
@@ -419,7 +419,7 @@ Default: *[Object]*
   - `output` *[String]*: Subdirectory within `publicFolder` where compiled CSS files will be written to.
   - `versionFile` *[Object]*: If enabled, Roosevelt will create a CSS file which declares a CSS variable containing your app's version number from `package.json`. Enable this option by supplying an object with the member variables `fileName` and `varName`. Versioning your static files is useful for resetting your users' browser cache when you release a new version of your app.
     - Example usage (with SASS): `{ "fileName": "_version.scss", "varName": "appVersion" }`
-    - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.scss` with the following content: `/* do not edit; generated automatically by Roosevelt */ $appVersion: '0.1.0';`
+      - Assuming the default Roosevelt configuration otherwise, this will result in a file `statics/css/_version.scss` with the following content: `/* do not edit; generated automatically by Roosevelt */ $appVersion: '0.1.0';`
     - Some things to note:
       - If there is already a file there with that name, this will overwrite it, so be careful!
       - It's generally a good idea to add this file to .gitignore, since it is a build artifact.
@@ -667,7 +667,7 @@ Roosevelt provides a series of events you can attach code to by passing a functi
 
 #### Event list
 
-These are sorted in order of when they are executed during the lifecyle of a Roosevelt app.
+These are sorted in order of when they are executed during the lifecycle of a Roosevelt app.
 
 - `onBeforeMiddleware(app)`: Fired when the app begins initializing, prior to any middleware being loaded into the app.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
@@ -679,7 +679,7 @@ These are sorted in order of when they are executed during the lifecyle of a Roo
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client.
-  - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc)
+  - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc).
 
 - `onServerInit(app)`: Fired when the server is fully initialized and all middleware has been loaded but before the server has started.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
@@ -708,7 +708,7 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 - `expressSession`: The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware.
 - `expressSessionStore`: The session store instance used by [express-session](https://github.com/expressjs/session) module Roosevelt uses internally.
 - `htmlPath`: Full path on the file system to where your app's HTML static page source files are located.
-- `htmlRenderedOutput`: Full path on the file system to where your app's rendered and minified staic HTML files are located.
+- `htmlRenderedOutput`: Full path on the file system to where your app's rendered and minified static HTML files are located.
 - `httpServer`: The [http server](https://nodejs.org/api/http.html#http_class_http_server) created by Roosevelt.
 - `httpsServer`: The [https server](https://nodejs.org/api/https.html#https_class_https_server) created by Roosevelt.
 - `jsPath`: Full path on the file system to where your app's JS source files are located.
