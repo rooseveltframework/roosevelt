@@ -1,5 +1,6 @@
 require('@colors/colors')
 const express = require('express')
+const express4 = require('express4')
 const path = require('path')
 const fs = require('fs-extra')
 const appModulePath = require('app-module-path')
@@ -11,8 +12,6 @@ const csrfSecretGenerator = require('./lib/scripts/csrfSecretGenerator.js')
 const roosevelt = (options = {}, schema) => {
   options.appDir = options.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
   const connections = {}
-  const app = express() // initialize express
-  const router = express.Router() // initialize router
   let httpServer
   let httpsServer
   let initialized = false
@@ -26,6 +25,9 @@ const roosevelt = (options = {}, schema) => {
   const params = require('./lib/sourceParams')(options, schema)
   const appDir = params.appDir
   const pkg = params.pkg
+
+  const app = params.expressVersion !== 5 ? express4() : express() // express 5 is the default; if it's not set to 5, it is presumed the user wants express 4; only express 5 and 4 are supported
+  const router = express.Router() // initialize router
 
   app.set('params', params) // expose app configuration
   require('./lib/deprecationChecker.js')(options, params)

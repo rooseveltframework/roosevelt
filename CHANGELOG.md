@@ -1,5 +1,7 @@
 ## 0.30.8
 
+- Added `expressVersion` param which lets you decide which version of [Express](https://expressjs.com) to use. Choose between either `4` or `5`. This option exists because there are [significant differences](https://expressjs.com/en/guide/migrating-5.html) between Express 4 and Express 5. Default: `5`.
+- Removed `enableCLIFlags` param which has been obsolete for some time and didn't actually do anything.
 - Updated dependencies.
 
 ## 0.30.7

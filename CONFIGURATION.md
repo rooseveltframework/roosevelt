@@ -153,6 +153,8 @@ Default when an app is created with the app generator: *[Object]*
 
 ### App behavior options
 
+- `expressVersion`: *[Number]*: Which version of [Express](https://expressjs.com) to use. Choose between either `4` or `5`. This option exists because there are [significant differences](https://expressjs.com/en/guide/migrating-5.html) between Express 4 and Express 5. Default: `5`.
+
 - `bodyParser` *[Object]*: Parameters to supply to the [body-parser](https://github.com/expressjs/body-parser) module which handles POST requests.
   - `urlEncoded` *[Object]*: Parameters to supply to [body-parser.urlencoded](https://github.com/expressjs/body-parser#bodyparserurlencodedoptions).
   - `json` *[Object]*: Parameters to supply to [body-parser.json](https://github.com/expressjs/body-parser#bodyparserjsonoptions).
@@ -182,8 +184,6 @@ Example of exemptions list: *[Object]*
   ]
 }
 ```
-
-- `enableCLIFlags` *[Boolean]*: Enables parsing of command line flags. Disable this if you want to handle them yourself or if you don't want Roosevelt to listen to the command line flags it listens for by default. Default: `true`.
 
 - `expressSession` *[Boolean or Object]*: Parameters to pass to the [express-session](https://github.com/expressjs/session) module. Default: `true`.
 
