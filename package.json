@@ -15,7 +15,7 @@
     "roosevelt.js",
     "*.md"
   ],
-  "homepage": "https://github.com/rooseveltframework/roosevelt",
+  "homepage": "https://rooseveltframework.org/docs/roosevelt/latest",
   "license": "CC-BY-4.0",
   "main": "roosevelt.js",
   "readmeFilename": "README.md",
