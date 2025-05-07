@@ -4,6 +4,7 @@
     "port": "value"
   },
   "mode": "production",
+  "expressVersion": 5,
   "makeBuildArtifacts": false,
   "localhostOnly": "value",
   "logging": {

@@ -49,10 +49,7 @@ describe('sourceParams', () => {
 
       // build roosevelt config from sample
       const pkg = {
-        rooseveltConfig: {
-          ...sampleConfig,
-          enableCLIFlags: false
-        }
+        rooseveltConfig: { ...sampleConfig }
       }
 
       // create app directory
@@ -98,8 +95,7 @@ describe('sourceParams', () => {
       // build roosevelt config from sample
       const config = {
         ...sampleConfig,
-        appDir: 'value',
-        enableCLIFlags: false
+        appDir: 'value'
       }
 
       // initialize roosevelt
@@ -138,10 +134,7 @@ describe('sourceParams', () => {
       const appDir = path.join(__dirname, 'app/sourceParams')
 
       // build roosevelt config from sample
-      const configJson = {
-        ...sampleConfig,
-        enableCLIFlags: false
-      }
+      const configJson = { ...sampleConfig }
 
       // create app directory
       fs.ensureDirSync(path.join(appDir))
@@ -194,7 +187,6 @@ describe('sourceParams', () => {
           }
         },
         csrfProtection: false,
-        enableCLIFlags: false,
         http: {
           port: 4000
         },
@@ -227,7 +219,7 @@ describe('sourceParams', () => {
           }
         ],
         versionedPublic: true,
-        hostPublic: '${enableCLIFlags}'
+        hostPublic: '${makeBuildArtifacts}'
       }
 
       // initialize roosevelt
@@ -638,7 +630,6 @@ describe('sourceParams', () => {
   describe('environment variables', () => {
     const appConfig = {
       appDir: path.join(__dirname, '../app/envParams'),
-      enableCLIFlags: false,
       csrfProtection: false,
       logging: {
         methods: {
@@ -786,7 +777,6 @@ describe('sourceParams', () => {
   describe('overriding environment variables', () => {
     const appConfig = {
       appDir: path.join(__dirname, '../app/envParams'),
-      enableCLIFlags: false,
       csrfProtection: false,
       logging: {
         methods: {
