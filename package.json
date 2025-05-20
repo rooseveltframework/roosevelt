@@ -70,7 +70,7 @@
     "supertest": "7.1.0",
     "teddy": "1.1.4",
     "watcher": "2.3.1",
-    "webpack": "5.99.7"
+    "webpack": "5.99.9"
   },
   "repository": {
     "type": "git",
