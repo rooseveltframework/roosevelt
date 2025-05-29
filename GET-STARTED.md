@@ -1,12 +1,12 @@
-## Prerequisites
+🧸 **roosevelt** [![npm](https://img.shields.io/npm/v/roosevelt.svg)](https://www.npmjs.com/package/roosevelt)
 
- 🧸 **roosevelt** [![npm](https://img.shields.io/npm/v/roosevelt-logger.svg)](https://www.npmjs.com/package/roosevelt)
+## Prerequisites
 
 First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you have both the current and LTS versions of Node.js installed on your system. To do that, it is recommended that you install Node.js using a Node.js version manager like [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) rather than the official installer, as a version manager will allow you to switch between multiple versions of Node.js easily.
 
 ## Make a Roosevelt app
 
-🏭🧸 **mkroosevelt** [![npm](https://img.shields.io/npm/v/roosevelt-logger.svg)](https://www.npmjs.com/package/mkroosevelt)
+🏭🧸 **mkroosevelt** [![npm](https://img.shields.io/npm/v/mkroosevelt.svg)](https://www.npmjs.com/package/mkroosevelt)
 
 The simplest way to make a Roosevelt app is to simply run the following command:
 
@@ -18,7 +18,7 @@ Then follow the prompts to decide whether to make a multi-page app, static site 
 
 ### Other ways to make Roosevelt apps
 
- 🏭🧸 **generator-roosevelt** [![npm](https://img.shields.io/npm/v/roosevelt-logger.svg)](https://www.npmjs.com/package/generator-roosevelt)
+ 🏭🧸 **generator-roosevelt** [![npm](https://img.shields.io/npm/v/generator-roosevelt.svg)](https://www.npmjs.com/package/generator-roosevelt)
 
 What the `mkroosevelt` command does under the hood is call the [Roosevelt app generator](https://github.com/rooseveltframework/generator-roosevelt), a command line script based on [Yeoman](http://yeoman.io), to create a sample Roosevelt app for you. You could also install the app generator to your system if you like. To do that, first globally install Yeoman and the Yeoman-based Roosevelt app generator:
 
