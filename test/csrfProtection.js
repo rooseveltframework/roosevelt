@@ -63,9 +63,9 @@ describe('CSRF protection enabled', () => {
 
           router.post('/protected', (req, res) => {
             if (req.csrfToken()) {
-              res.json({ message: 'Success!'})
+              res.json({ message: 'Success!' })
             } else {
-              res.status(403).json({ message: 'Invalid CSRF token'})
+              res.status(403).json({ message: 'Invalid CSRF token' })
             }
           })
         },
@@ -85,7 +85,7 @@ describe('CSRF protection enabled', () => {
     context.app.get('httpServer').close(() => done())
 
     // remove secrets folder
-    fs.rmSync(path.join(__dirname, './secrets'), { recursive: true, force: true})
+    fs.rmSync(path.join(__dirname, './secrets'), { recursive: true, force: true })
   })
 
   it('should reject CSRF attacks', done => {
@@ -105,7 +105,7 @@ describe('CSRF protection enabled', () => {
       .get('/token')
       .end((err, res) => {
         if (err) throw err
-        
+
         // retrieve cookie from response to be added to the next request
         const cookie = res.headers['set-cookie']
         request(context.app)
