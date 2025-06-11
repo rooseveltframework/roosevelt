@@ -10,7 +10,7 @@
     "options": {}
   },
   "mode": "production",
-  "enableCLIFlags": true,
+  "expressVersion": 5,
   "makeBuildArtifacts": false,
   "localhostOnly": false,
   "logging": {
