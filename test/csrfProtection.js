@@ -74,10 +74,7 @@ describe('CSRF protection enabled', () => {
 
   after(done => {
     // stop the server
-    context.app.get('httpServer').close(() => {
-      done()
-    })
-
+    context.app.get('httpServer').close(() => done())
   })
 
   it('should reject CSRF attacks', done => {
