@@ -20,7 +20,7 @@
   "main": "roosevelt.js",
   "readmeFilename": "README.md",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "@colors/colors": "1.6.0",
