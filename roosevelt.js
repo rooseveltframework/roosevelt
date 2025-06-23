@@ -6,7 +6,6 @@ const appModulePath = require('app-module-path')
 const Logger = require('roosevelt-logger')
 const certsGenerator = require('./lib/scripts/certsGenerator.js')
 const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
-const csrfSecretGenerator = require('./lib/scripts/csrfSecretGenerator.js')
 
 const roosevelt = (options = {}, schema) => {
   options.appDir = options.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
@@ -86,9 +85,6 @@ const roosevelt = (options = {}, schema) => {
 
     // generate express session secret
     if (params.expressSession && params.makeBuildArtifacts !== 'staticsOnly' && !fs.pathExistsSync(path.join(params.secretsPath, 'sessionSecret.json'))) sessionSecretGenerator(params.secretsPath)
-
-    // generate csrf secret
-    if (params.csrfProtection && params.makeBuildArtifacts !== 'staticsOnly' && !fs.pathExistsSync(path.join(params.secretsPath, 'csrfSecret.json'))) csrfSecretGenerator(params.secretsPath)
 
     // assign individual keys to connections when opened so they can be destroyed gracefully
     function mapConnections (conn) {

@@ -783,10 +783,6 @@ Roosevelt apps created with the app generator come with the following notable [n
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/certsGenerator.js`
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
 
-- `npm run generate-csrf-secret`: Generates a secret key for the CSRF protection.
-  - Script is short for: `node ./node_modules/roosevelt/lib/scripts/csrfSecretGenerator.js`
-  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
-
 - `npm run generate-session-secret`: Generates a secret key for the `express-session` module.
   - Script is short for: `node ./node_modules/roosevelt/lib/scripts/sessionSecretGenerator.js`
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
