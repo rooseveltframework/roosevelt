@@ -36,6 +36,7 @@ module.exports = (appDir, secretDir) => {
   const fullSecretDir = path.join(appDir, secretDir)
 
   fs.ensureDirSync(fullSecretDir)
+  fs.emptyDirSync(fullSecretDir)
   fs.writeFileSync(path.join(fullSecretDir, 'key.pem'), key)
   fs.writeFileSync(path.join(fullSecretDir, 'cert.pem'), cert)
   fs.writeFileSync(path.join(fullSecretDir, 'cert.p12'), p12Cert)
