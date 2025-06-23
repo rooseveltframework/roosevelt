@@ -1,9 +1,7 @@
 /* eslint-env mocha */
 
-const fs = require('fs')
 const axios = require('axios')
 const request = require('supertest')
-const path = require('path')
 const roosevelt = require('../roosevelt')
 const express = require('express')
 const assert = require('assert')
@@ -77,10 +75,6 @@ describe('CSRF protection enabled', () => {
   after(done => {
     // stop the server
     context.app.get('httpServer').close(() => {
-      // todo this doesn't work yet
-      // remove secrets folder
-      fs.rmSync(path.join(__dirname, './secrets'), { recursive: true, force: true })
-
       done()
     })
 
