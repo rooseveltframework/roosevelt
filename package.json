@@ -95,10 +95,10 @@
     "timeout": "60s"
   },
   "scripts": {
-    "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
+    "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js --exit",
     "lint": "standard",
     "lint-fix": "standard --fix",
-    "test": "mocha test/*.js",
+    "test": "mocha test/*.js --exit",
     "test-debug": "mocha --inspect-brk test/*.js"
   },
   "funding": "https://www.paypal.com/donate/?hosted_button_id=2L2X8GRXZCGJ6"
