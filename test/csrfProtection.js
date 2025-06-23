@@ -6,6 +6,7 @@ const request = require('supertest')
 const path = require('path')
 const roosevelt = require('../roosevelt')
 const express = require('express')
+const assert = require('assert')
 
 describe('CSRF protection enabled', () => {
   // open up testing context
@@ -15,15 +16,9 @@ describe('CSRF protection enabled', () => {
     (async () => {
       const app = express()
 
-      app.post('/attackProtected', async (req, res) => {
+      app.post('/attack', async (req, res) => {
         try {
-          // extracting the token from the cookies also does not allow a CSRF injection
-          const token = await axios.get(`http://localhost:${context.app.get('params').http.port}/token`)
-
-          await axios.post(`http://localhost:${context.app.get('params').http.port}/protected`, {
-            headers: { cookie: token.headers['set-cookie'] }
-          })
-
+          await axios.post(`http://localhost:${context.app.get('params').http.port}/protected`)
           res.send(200)
         } catch (err) {
           res.status(err.status).send(err)
@@ -35,6 +30,10 @@ describe('CSRF protection enabled', () => {
       const rooseveltApp = roosevelt({
         mode: 'development',
         csrfProtection: true,
+        expressSession: true,
+        expressSessionStore: {
+          filename: 'test/secrets/test-sessions.sqlite'
+        },
         makeBuildArtifacts: true,
         http: {
           port: 40001
@@ -55,18 +54,13 @@ describe('CSRF protection enabled', () => {
         },
         onServerInit: app => {
           const router = app.get('router')
-
-          router.get('/token', (req, res) => {
+          router.get('/', (req, res) => {
             const token = req.csrfToken()
             res.json({ token })
           })
 
           router.post('/protected', (req, res) => {
-            if (req.csrfToken()) {
-              res.json({ message: 'Success!' })
-            } else {
-              res.status(403).json({ message: 'Invalid CSRF token' })
-            }
+            res.json({ message: 'protected!' })
           })
         },
         onServerStart: app => {
@@ -82,16 +76,20 @@ describe('CSRF protection enabled', () => {
 
   after(done => {
     // stop the server
-    context.app.get('httpServer').close(() => done())
+    context.app.get('httpServer').close(() => {
+      // todo this doesn't work yet
+      // remove secrets folder
+      fs.rmSync(path.join(__dirname, './secrets'), { recursive: true, force: true })
 
-    // remove secrets folder
-    fs.rmSync(path.join(__dirname, './secrets'), { recursive: true, force: true })
+      done()
+    })
+
   })
 
   it('should reject CSRF attacks', done => {
     request(context.attackingApp)
-      // a route on the attacking app that makes a POST against the CSRF app (also attempts to extract the token from the cookies)
-      .post('/attackProtected')
+      // a route on the attacking app that makes a POST against the CSRF app
+      .post('/attack')
       .expect(403)
       .expect((res) => res.forbidden)
       .end((err, res) => {
@@ -102,18 +100,19 @@ describe('CSRF protection enabled', () => {
 
   it('should allow a POST from a valid request', done => {
     request(context.app)
-      .get('/token')
+      .get('/')
       .end((err, res) => {
         if (err) throw err
+        const token = res.body.token
+        assert(token)
 
-        // retrieve cookie from response to be added to the next request
-        const cookie = res.headers['set-cookie']
         request(context.app)
           .post('/protected')
-          .set('Cookie', cookie)
+          .set('X-CSRF-TOKEN', token)
           .expect(200)
           .end((err, res) => {
             if (err) throw (err)
+            assert(JSON.stringify(res.body) === JSON.stringify({ message: 'protected!' }))
             done()
           })
       })
@@ -128,7 +127,7 @@ describe('CSRF protection disabled', () => {
     (async () => {
       const app = express()
 
-      app.post('/attackUnprotected', async (req, res) => {
+      app.post('/attack', async (req, res) => {
         try {
           await axios.post(`http://localhost:${context.app.get('params').http.port}/unprotected`)
           res.send(200)
@@ -186,7 +185,7 @@ describe('CSRF protection disabled', () => {
 
   it('should allow a CSRF attack', done => {
     request(context.attackingApp)
-      .post('/attackUnprotected')
+      .post('/attack')
       .expect(200)
       .end((err, res) => {
         if (err) throw err
