@@ -27,7 +27,7 @@
     "@nodelib/fs.walk": "3.0.1",
     "app-module-path": "2.2.0",
     "better-sqlite3": "11.9.1",
-    "better-sqlite3-session-store": "0.1.0",
+    "better-sqlite3-session-store": "git@github.com:bttger/better-sqlite3-session-store.git#patch-1",
     "clean-css": "5.3.3",
     "compression": "1.8.0",
     "cookie-parser": "1.4.7",
@@ -95,10 +95,10 @@
     "timeout": "60s"
   },
   "scripts": {
-    "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js --exit",
+    "coverage": "c8 --reporter=text --reporter=lcov mocha test/*.js",
     "lint": "standard",
     "lint-fix": "standard --fix",
-    "test": "mocha test/*.js --exit",
+    "test": "mocha test/*.js",
     "test-debug": "mocha --inspect-brk test/*.js"
   },
   "funding": "https://www.paypal.com/donate/?hosted_button_id=2L2X8GRXZCGJ6"

@@ -195,8 +195,7 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  // todo this causes the process to stall
-  it.skip('should be able to close an active connection when the app is closed', done => {
+  it('should be able to close an active connection when the app is closed', done => {
     (async () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const originalProcessExit = process.exit
@@ -226,8 +225,7 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  // todo this ends the process early when the --exit flag is present
-  it.skip('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
+  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
     (async () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const originalProcessExit = process.exit
@@ -262,8 +260,7 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  // todo this ends the process early when the --exit flag is present
-  it.skip('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
+  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
     (async () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const originalProcessExit = process.exit

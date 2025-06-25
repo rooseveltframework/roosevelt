@@ -5,76 +5,71 @@ const request = require('supertest')
 const roosevelt = require('../roosevelt')
 const express = require('express')
 const assert = require('assert')
+const { rmSync } = require('fs')
+const path = require('path')
 
 describe('CSRF protection enabled', () => {
   // open up testing context
-  const context = {}
+  before(async () => {
+    const app = express()
+    app.post('/attack', async (req, res) => {
+      try {
+        await axios.post(`http://localhost:${context.app.get('params').http.port}/protected`)
+        res.send(200)
+      } catch (err) {
+        res.status(err.status).send(err)
+      }
+    })
+    context.attackingApp = app
 
-  before(done => {
-    (async () => {
-      const app = express()
-
-      app.post('/attack', async (req, res) => {
-        try {
-          await axios.post(`http://localhost:${context.app.get('params').http.port}/protected`)
-          res.send(200)
-        } catch (err) {
-          res.status(err.status).send(err)
+    // spin up the roosevelt app
+    const rooseveltApp = roosevelt({
+      mode: 'development',
+      csrfProtection: true,
+      expressSession: true,
+      expressSessionStore: {
+        filename: 'test/secrets/test-sessions.sqlite'
+      },
+      makeBuildArtifacts: true,
+      http: {
+        port: 40001
+      },
+      logging: {
+        methods: {
+          http: false,
+          info: false,
+          warn: false,
+          error: false
         }
-      })
-      context.attackingApp = app
+      },
+      htmlValidator: {
+        enable: true
+      },
+      frontendReload: {
+        enable: false
+      },
+      onServerInit: app => {
+        const router = app.get('router')
+        router.get('/', (req, res) => {
+          const token = req.csrfToken()
+          res.json({ token })
+        })
+        router.post('/protected', (req, res) => {
+          res.json({ message: 'protected' })
+        })
+      }
+    })
 
-      // spin up the roosevelt app
-      const rooseveltApp = roosevelt({
-        mode: 'development',
-        csrfProtection: true,
-        expressSession: true,
-        expressSessionStore: {
-          filename: 'test/secrets/test-sessions.sqlite'
-        },
-        makeBuildArtifacts: true,
-        http: {
-          port: 40001
-        },
-        logging: {
-          methods: {
-            http: false,
-            info: false,
-            warn: false,
-            error: false
-          }
-        },
-        htmlValidator: {
-          enable: true
-        },
-        frontendReload: {
-          enable: false
-        },
-        onServerInit: app => {
-          const router = app.get('router')
-          router.get('/', (req, res) => {
-            const token = req.csrfToken()
-            res.json({ token })
-          })
+    await rooseveltApp.startServer()
 
-          router.post('/protected', (req, res) => {
-            res.json({ message: 'protected!' })
-          })
-        },
-        onServerStart: app => {
-          // bind app to test context
-          context.app = app
-          done()
-        }
-      })
-
-      await rooseveltApp.startServer()
-    })()
+    context.app = rooseveltApp.expressApp
+    context.instance = rooseveltApp
   })
 
-  after(done => {
+  after(async () => {
     // stop the server
-    context.app.get('httpServer').close(() => done())
+    rmSync(path.join(__dirname, './secrets'), { recursive: true, force: true })
+    await context.instance.stopServer({ persistProcess: true })
   })
 
   it('should reject CSRF attacks', done => {
@@ -92,6 +87,7 @@ describe('CSRF protection enabled', () => {
   it('should allow a POST from a valid request', done => {
     request(context.app)
       .get('/')
+      .expect(200)
       .end((err, res) => {
         if (err) throw err
         const token = res.body.token
@@ -103,7 +99,7 @@ describe('CSRF protection enabled', () => {
           .expect(200)
           .end((err, res) => {
             if (err) throw (err)
-            assert(JSON.stringify(res.body) === JSON.stringify({ message: 'protected!' }))
+            assert(JSON.stringify(res.body) === JSON.stringify({ message: 'protected' }))
             done()
           })
       })
