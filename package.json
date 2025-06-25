@@ -27,7 +27,6 @@
     "@nodelib/fs.walk": "3.0.1",
     "app-module-path": "2.2.0",
     "better-sqlite3": "11.9.1",
-    "better-sqlite3-session-store": "git@github.com:bttger/better-sqlite3-session-store.git#patch-1",
     "clean-css": "5.3.3",
     "compression": "1.8.0",
     "cookie-parser": "1.4.7",
