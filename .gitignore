@@ -26,3 +26,5 @@ test/app
 coverage
 .nyc_output
 .npm-cache
+
+test/secrets
