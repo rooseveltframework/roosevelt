@@ -1,3 +1,12 @@
+## 0.31.0
+
+- Breaking: `npm run generate-csrf-secret` script removed, as it is no longer necessary due to an internal switch of Roosevelt's CSRF dependency from `csrf-csrf` to `csrf-sync`. You should delete any `csrfSecret.json` files in your `secrets` directory after upgrading Roosevelt, as the file is no longer needed. You should also remove the `npm run generate-csrf-secret` from your package.json.
+- Added `expressVersion` param which lets you decide which version of [Express](https://expressjs.com) to use. Choose between either `4` or `5`. This option exists because there are [significant differences](https://expressjs.com/en/guide/migrating-5.html) between Express 4 and Express 5. Default: `5`.
+- Added glob pattern support to CSRF route exemption param.
+- Removed `enableCLIFlags` param which has been obsolete for some time and didn't actually do anything.
+- Changed the deprecation checker to only run in development mode and added a new param `deprecationChecks` that will let you disable it entirely.
+- Updated dependencies.
+
 ## 0.30.7
 
 - Added new `onBeforeControllers` event.

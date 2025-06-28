@@ -132,7 +132,7 @@ describe('public folder', () => {
       })
       await rooseveltApp.startServer()
       finish((capturedLogs) => {
-        if (capturedLogs.includes('roosevelt/test/app/public/0.5.1')) pass = true
+        if (capturedLogs.includes('test/app/public/0.5.1')) pass = true
         if (pass) done()
         else done(new Error('Versioned public folder not created'))
       })
