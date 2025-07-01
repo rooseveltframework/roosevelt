@@ -51,7 +51,7 @@
     }
   },
   "shutdownTimeout": 30000,
-  "expressSession": false,
+  "expressSession": true,
   "expressSessionStore": {
     "filename": "sessions.sqlite",
     "instance": null,
