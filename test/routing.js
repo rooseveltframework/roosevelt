@@ -51,6 +51,7 @@ describe('routing', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }
@@ -74,6 +75,7 @@ describe('routing', () => {
       fs.ensureFileSync(path.join(appDir, 'public/text/hello.txt'), 'hello world')
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }
@@ -97,6 +99,7 @@ describe('routing', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         routePrefix: 'foo',
         onServerStart: app => {
           context.app = app
@@ -121,6 +124,7 @@ describe('routing', () => {
       fs.ensureFileSync(path.join(appDir, 'public/text/hello.txt'), 'hello world')
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         routePrefix: 'foo',
         onServerStart: app => {
           context.app = app
@@ -146,6 +150,7 @@ describe('routing', () => {
       fs.copyFileSync(path.join(__dirname, './util/faviconTest.ico'), path.join(appDir, 'mvc/controllers/faviconTest.ico'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }

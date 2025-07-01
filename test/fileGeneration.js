@@ -30,6 +30,7 @@ describe('file creation', () => {
         }
       },
       csrfProtection: false,
+      expressSession: false,
       viewsPath: 'mvc/views',
       modelsPath: 'mvc/models',
       controllersPath: 'mvc/controllers',

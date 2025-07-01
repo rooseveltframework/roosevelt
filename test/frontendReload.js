@@ -22,6 +22,7 @@ describe('frontend reload', () => {
       }
     },
     csrfProtection: false,
+    expressSession: false,
     mode: 'development',
     makeBuildArtifacts: false,
     htmlValidator: {

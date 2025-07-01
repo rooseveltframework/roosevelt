@@ -26,7 +26,8 @@ describe('views bundler', () => {
       }
     },
     makeBuildArtifacts: true,
-    csrfProtection: false
+    csrfProtection: false,
+    expressSession: false
   }
 
   const sampleTemplate = `

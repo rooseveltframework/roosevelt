@@ -40,6 +40,7 @@ describe('multipart/formidable', () => {
         appDir,
         makeBuildArtifacts: true,
         csrfProtection: false,
+        expressSession: false,
         port: 40003,
         logging: {
           methods: {

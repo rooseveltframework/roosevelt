@@ -51,6 +51,7 @@ describe('public folder', () => {
       fs.copySync(path.join(__dirname, './util/faviconTest.ico'), path.join(appDir, 'statics/images/faviconTest.ico'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         favicon: 'images/faviconTest.ico',
         onServerStart: app => {
           context.app = app
@@ -74,6 +75,7 @@ describe('public folder', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         favicon: null,
         onServerStart: app => {
           context.app = app
@@ -98,6 +100,7 @@ describe('public folder', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         favicon: 'images/nothingHere.ico',
         onServerStart: app => {
           context.app = app
@@ -124,6 +127,7 @@ describe('public folder', () => {
       fs.writeFileSync(path.join(appDir, 'package.json'), '{ "version": "0.5.1", "rooseveltConfig": {} }')
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         versionedPublic: true,
         onServerInit: app => {

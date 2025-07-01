@@ -66,6 +66,7 @@ describe('roosevelt.js', () => {
     (async () => {
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerInit: app => {
           context.app = app
         }
@@ -93,6 +94,7 @@ describe('roosevelt.js', () => {
       let count = 0
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerInit: app => {
           context.app = app
           count++
@@ -112,6 +114,7 @@ describe('roosevelt.js', () => {
       let count = 0
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerInit: app => {
           context.app = app
           count++
@@ -132,6 +135,7 @@ describe('roosevelt.js', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         localhostOnly: true,
         onServerInit: app => {
           context.app = app
@@ -151,6 +155,7 @@ describe('roosevelt.js', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         localhostOnly: true,
         https: {
           enable: true,
@@ -175,6 +180,7 @@ describe('roosevelt.js', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerInit: app => {
           context.app = app
         }
@@ -182,7 +188,8 @@ describe('roosevelt.js', () => {
       await rooseveltApp.startServer()
       try {
         const rooseveltApp2 = roosevelt({
-          appDir
+          appDir,
+          expressSession: false
         })
         await rooseveltApp2.startServer()
       } catch (err) {
@@ -202,6 +209,7 @@ describe('roosevelt.js', () => {
       process.exit = () => {}
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }
@@ -232,6 +240,7 @@ describe('roosevelt.js', () => {
       process.exit = () => {}
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         shutdownTimeout: 500,
         onServerStart: app => {
           context.app = app
@@ -267,6 +276,7 @@ describe('roosevelt.js', () => {
       process.exit = () => {}
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         shutdownTimeout: 500,
         https: {
           enable: true,

@@ -14,7 +14,8 @@ const config = {
       verbose: false
     }
   },
-  csrfProtection: false
+  csrfProtection: false,
+  expressSession: false,
 }
 
 describe('sourceParams', () => {
