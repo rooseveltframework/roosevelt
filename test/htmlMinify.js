@@ -12,6 +12,7 @@ describe('HTML minification', () => {
   const appConfig = {
     appDir,
     csrfProtection: false,
+    expressSession: false,
     http: {
       port: 41002
     },

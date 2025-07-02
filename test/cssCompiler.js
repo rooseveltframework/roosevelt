@@ -20,6 +20,7 @@ describe('css preprocessors', () => {
       }
     },
     csrfProtection: false,
+    expressSession: false,
     htmlValidator: {
       enable: false
     },

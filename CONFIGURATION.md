@@ -173,7 +173,9 @@ Default: *[Object]*
 ```
 
 - `csrfProtection` *[Boolean or Object]*: Whether to enable [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection. Default: `true`.
+  - Requires `expressSession` to be enabled.
   - To disable the feature, set it to false. To exempt certain routes from protection, supply an object as your config with an array of exemptions.
+  - See the [CSRF Protection](#csrf-protection) section for more information.
 
 Example of exemptions list: *[Object]*
 
@@ -471,7 +473,7 @@ This param can only set via Roosevelt's constructor, like this:
           // write code to preprocess CSS here
           return {
             css: 'write code to output css here',
-            sourceMap: 'write code to output source map here (optional)
+            sourceMap: 'write code to output source map here (optional)'
           }
         }
       }
@@ -654,6 +656,47 @@ Resolves to:
   }
 }
 ```
+
+### CSRF protection
+
+CSRF protection requires additional steps when making requests to protected routes. This involves passing the CSRF token from the backend to the frontend, and then returning that token when making a request from the frontend to the backend.
+
+To pass the token from the backend to the frontend, you can (1) create a JSON endpoint that fetches the token or (2) include the token in your view template.
+
+```js
+// route that provides the token
+route.get('/endpoint-to-get-token', (req, res) => res.json({ token: req.csrfToken() }))
+
+// route that includes the token in a model for some template
+route.get('/endpoint-to-form', (req, res) => {
+  const model = {
+    token: req.csrfToken()
+  }
+
+  res.render('some-view', model)
+})
+```
+
+To pass the token from the frontend to the backend, you can (1) set the token as an `x-csrf-token` header or (2) include it as a hidden input with the name of `_csrf`.
+
+```js
+// request that includes the token in headers
+const { token } = await fetch('/endpoint-to-get-token')
+const response = await fetch('/some-protected-endpoint', {
+  method: 'POST',
+  headers: {
+    'X-CSRF-TOKEN': token
+  }
+})
+```
+
+```html
+<!-- form that include the token in a request body -->
+<form action="/some-protected-endpoint" method="POST">
+  <input type="hidden" name="_csrf" value={token}>
+</form>
+```
+
 
 ### Events
 

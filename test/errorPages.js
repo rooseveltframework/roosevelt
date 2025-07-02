@@ -66,6 +66,8 @@ describe('error pages', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        csrfProtection: false,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }
@@ -91,6 +93,8 @@ describe('error pages', () => {
       fs.copySync(path.join(__dirname, './util/404test.js'), path.join(appDir, 'mvc/controllers/404test.js'))
       const rooseveltApp = roosevelt({
         appDir,
+        csrfProtection: false,
+        expressSession: false,
         errorPages: {
           notFound: '404test.js'
         },
@@ -118,6 +122,8 @@ describe('error pages', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        csrfProtection: false,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }
@@ -143,6 +149,8 @@ describe('error pages', () => {
       fs.copySync(path.join(__dirname, './util/500test.js'), path.join(appDir, 'mvc/controllers/500test.js'))
       const rooseveltApp = roosevelt({
         appDir,
+        csrfProtection: false,
+        expressSession: false,
         errorPages: {
           internalServerError: '500test.js'
         },
@@ -173,6 +181,8 @@ describe('error pages', () => {
       process.exit = () => {}
       const rooseveltApp = roosevelt({
         appDir,
+        csrfProtection: false,
+        expressSession: false,
         onServerStart: app => {
           context.app = app
         }

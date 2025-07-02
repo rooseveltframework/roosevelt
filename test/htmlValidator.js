@@ -39,6 +39,7 @@ describe('HTML validator', () => {
       const rooseveltApp = roosevelt({
         mode: 'development',
         csrfProtection: false,
+        expressSession: false,
         makeBuildArtifacts: false,
         http: {
           port: 40001

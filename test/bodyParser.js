@@ -12,6 +12,7 @@ describe('body-parser', () => {
         port: 40000
       },
       csrfProtection: false,
+      expressSession: false,
       logging: {
         methods: {
           http: false,

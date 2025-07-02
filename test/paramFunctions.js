@@ -49,6 +49,7 @@ describe('method params', () => {
       let pass = false
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerInit: app => {
           context.app = app
           pass = true
@@ -69,6 +70,7 @@ describe('method params', () => {
       process.exit = () => {}
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         onServerInit: app => {
           context.app = app
         },
@@ -92,6 +94,7 @@ describe('method params', () => {
       fs.copySync(path.join(__dirname, './util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         onServerInit: app => {
           context.app = app
@@ -112,6 +115,7 @@ describe('method params', () => {
       fs.copySync(path.join(__dirname, './util/404errController.js'), path.join(appDir, 'mvc/controllers/404errController.js'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         onServerInit: app => {
           context.app = app

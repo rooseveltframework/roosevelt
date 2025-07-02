@@ -51,6 +51,7 @@ describe('view engines', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         viewEngine: [
           'html: teddy'
@@ -78,6 +79,7 @@ describe('view engines', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         viewEngine: 'html: teddy',
         onServerStart: app => {
@@ -103,6 +105,7 @@ describe('view engines', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         viewEngine: [
           'html: teddy',
@@ -128,6 +131,7 @@ describe('view engines', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         viewEngine: [
           'jcs: ../test/util/jcsTemplate'
@@ -155,6 +159,7 @@ describe('view engines', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         viewEngine: [
           'html: teddy: blah'
@@ -179,6 +184,7 @@ describe('view engines', () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
         appDir,
+        expressSession: false,
         makeBuildArtifacts: true,
         viewEngine: [
           'html: teddyza'
