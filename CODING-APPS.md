@@ -25,7 +25,9 @@ Controller files are places to write [Express routes](https://expressjs.com/en/a
 
 Controllers bind models and views together.
 
-To make a new controller, make a new file in the controllers directory. For example:
+To make a new controller, make a new file in the controllers directory, then follow one of the examples below.
+
+### Example GET route
 
 ```js
 // someController.js
@@ -43,6 +45,46 @@ module.exports = (router, app) => {
   })
 }
 ```
+
+### Example POST route
+
+In Roosevelt, [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default. That means in order to make requests to any POST route, you will need to pass a CSRF token from the server to the browser, and then return that token when making a request from the browser to the server.
+
+To do that, include the CSRF token in your HTML form as a hidden input `_csrf`:
+
+```js
+// someController.js
+module.exports = (router, app) => {
+  router.route('/form').get((req, res) => {
+    const model = require('models/dataModel')()
+    model.token = req.csrfToken() // add CSRF token to the model
+    res.render('about', model)
+  })
+}
+```
+
+```html
+<!-- form that include the token in a request body -->
+<form action="/some-protected-endpoint" method="post">
+  <input type="hidden" name="_csrf" value="{token}">
+</form>
+```
+
+You can also add the token as a request header when performing fetch requests by setting the `x-csrf-token` header:
+
+```javascript
+// request that includes the token in headers
+const response = await fetch('/some-protected-endpoint', {
+  method: 'POST',
+  headers: {
+    'X-CSRF-TOKEN': token
+  }
+})
+```
+
+You can also exempt certain routes from CSRF protection or disable the feature entirely by configuration. See configuration section for details.
+
+### Reusable controllers
 
 Sometimes it is also useful to separate controller logic from your routing. This can be done by creating a reusable controller module. Reusable controller modules differ from standard controller modules in that they are meant to be called from within other controllers and do not define routes.
 
