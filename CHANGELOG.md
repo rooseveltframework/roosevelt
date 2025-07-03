@@ -1,3 +1,8 @@
+## 0.31.1
+
+- Changed `expressSession` default to `true` so that `csrfProtection`'s default being `true` will actually function.
+- Updated dependencies.
+
 ## 0.31.0
 
 - Breaking: `npm run generate-csrf-secret` script removed, as it is no longer necessary due to an internal switch of Roosevelt's CSRF dependency from `csrf-csrf` to `csrf-sync`. You should delete any `csrfSecret.json` files in your `secrets` directory after upgrading Roosevelt, as the file is no longer needed. You should also remove the `npm run generate-csrf-secret` from your package.json.
