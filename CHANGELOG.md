@@ -1,3 +1,8 @@
+## 0.31.2
+
+- Fixed bug that caused cookie parser to not load under certain circumstances.
+- Updated dependencies.
+
 ## 0.31.1
 
 - Changed `expressSession` default to `true` so that `csrfProtection`'s default being `true` will actually function.
