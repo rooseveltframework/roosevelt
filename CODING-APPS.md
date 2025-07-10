@@ -57,7 +57,7 @@ To do that, include the CSRF token in your HTML form as a hidden input `_csrf`:
 module.exports = (router, app) => {
   router.route('/form').get((req, res) => {
     const model = require('models/dataModel')()
-    model.token = req.csrfToken() // add CSRF token to the model
+    model.csrfToken = req.csrfToken() // add CSRF token to the model
     res.render('about', model)
   })
 }
@@ -66,7 +66,7 @@ module.exports = (router, app) => {
 ```html
 <!-- form that include the token in a request body -->
 <form action="/some-protected-endpoint" method="post">
-  <input type="hidden" name="_csrf" value="{token}">
+  <input type="hidden" name="_csrf" value="{csrfToken}">
 </form>
 ```
 
@@ -77,7 +77,7 @@ You can also add the token as a request header when performing fetch requests by
 const response = await fetch('/some-protected-endpoint', {
   method: 'POST',
   headers: {
-    'X-CSRF-TOKEN': token
+    'X-CSRF-TOKEN': csrfToken // extract it from the DOM or something
   }
 })
 ```

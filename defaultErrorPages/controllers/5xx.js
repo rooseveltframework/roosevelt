@@ -12,7 +12,7 @@ module.exports = (app, err, req, res) => {
     appVersion: req.app.get('appVersion') ? ` ${req.app.get('appVersion')}` : ''
   }
   let errorTemplate = template(errorPage, model)
-  if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${req.app.get('debugMarkup')}</footer>`)
+  if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${req.app.get('debugMarkup') || ''}</footer>`)
   res.status(status)
   res.send(errorTemplate)
 }

@@ -10,7 +10,9 @@ module.exports = (app, req, res) => {
     appVersion: req.app.get('appVersion') ? ` ${req.app.get('appVersion')}` : ''
   }
   let errorTemplate = template(errorPage, model)
-  if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${req.app.get('debugMarkup')}</footer>`)
+  let csrfWarning = ''
+  if (req.app.get('params').csrfProtection && req.method === 'POST') csrfWarning = '<p><strong>The most common cause of this error is forgetting to include the CSRF token in the request. See <a href="https://rooseveltframework.org/docs/latest/coding-apps/#examplepostroute">example POST route</a> for more information about how to make POST requests.</strong></p>'
+  if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${csrfWarning}${req.app.get('debugMarkup') || ''}</footer>`)
   res.setHeader('Connection', 'close')
   res.status(403)
   res.send(errorTemplate)
