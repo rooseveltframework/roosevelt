@@ -52,8 +52,8 @@ describe('CSRF', () => {
         onServerInit: app => {
           const router = app.get('router')
           router.get('/', (req, res) => {
-            const token = req.csrfToken()
-            res.json({ token })
+            const csrfToken = req.csrfToken()
+            res.json({ csrfToken })
           })
           router.post('/protected', (req, res) => {
             res.json({ message: 'protected' })
@@ -91,12 +91,12 @@ describe('CSRF', () => {
         .expect(200)
         .end((err, res) => {
           if (err) throw err
-          const token = res.body.token
-          assert(token)
+          const csrfToken = res.body.csrfToken
+          assert(csrfToken)
 
           request(context.app)
             .post('/protected')
-            .set('X-CSRF-TOKEN', token)
+            .set('X-CSRF-TOKEN', csrfToken)
             .expect(200)
             .end((err, res) => {
               if (err) throw (err)
@@ -227,8 +227,8 @@ describe('CSRF', () => {
         onServerInit: app => {
           const router = app.get('router')
           router.get('/', (req, res) => {
-            const token = req.csrfToken()
-            res.json({ token })
+            const csrfToken = req.csrfToken()
+            res.json({ csrfToken })
           })
 
           router.post('/protected', (req, res) => {
@@ -331,12 +331,12 @@ describe('CSRF', () => {
             .expect(200)
             .end((err, res) => {
               if (err) throw err
-              const token = res.body.token
-              assert(token)
+              const csrfToken = res.body.csrfToken
+              assert(csrfToken)
 
               request(context.app)
                 .post('/protected')
-                .set('X-CSRF-TOKEN', token)
+                .set('X-CSRF-TOKEN', csrfToken)
                 .expect(200)
                 .end((err, res) => {
                   if (err) throw (err)

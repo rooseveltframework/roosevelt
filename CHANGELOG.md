@@ -1,3 +1,9 @@
+## 0.31.3
+
+- Added warning to the debug markup on 403 "forbidden" POST error pages instructing the user to include the CSRF token in their request.
+- Fixed a bug that could cause `undefined` to print on error pages in certain circumstances.
+- Updated dependencies.
+
 ## 0.31.2
 
 - Fixed bug that caused cookie parser to not load under certain circumstances.
