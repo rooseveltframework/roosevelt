@@ -8,6 +8,9 @@ const assert = require('assert')
 const { rmSync } = require('fs')
 const path = require('path')
 
+// used to store cookie sid across requests since supertest drops the session object
+let cookie
+
 describe('CSRF', () => {
   describe('CSRF protection enabled', () => {
     // open up testing context
@@ -52,8 +55,7 @@ describe('CSRF', () => {
         onServerInit: app => {
           const router = app.get('router')
           router.get('/', (req, res) => {
-            const csrfToken = req.csrfToken()
-            res.json({ csrfToken })
+            res.json({ csrfToken: req.csrfToken() })
           })
           router.post('/protected', (req, res) => {
             res.json({ message: 'protected' })
@@ -93,10 +95,12 @@ describe('CSRF', () => {
           if (err) throw err
           const csrfToken = res.body.csrfToken
           assert(csrfToken)
+          cookie = res.headers['set-cookie']
 
           request(context.app)
             .post('/protected')
             .set('X-CSRF-TOKEN', csrfToken)
+            .set('Cookie', cookie)
             .expect(200)
             .end((err, res) => {
               if (err) throw (err)
@@ -106,11 +110,10 @@ describe('CSRF', () => {
         })
     })
 
-    // TODO: fix this failing test
-    it.skip('should allow a POST from a valid request', done => {
+    it('should not allow a POST from an invalid request', done => {
       request(context.app)
         .get('/')
-        .expect(403)
+        .expect(200)
         .end((err, res) => {
           if (err) throw err
           const csrfToken = 'csrfToken' // a token is provided, but it is wrong
@@ -119,10 +122,10 @@ describe('CSRF', () => {
           request(context.app)
             .post('/protected')
             .set('X-CSRF-TOKEN', csrfToken)
-            .expect(200)
+            .expect(403)
             .end((err, res) => {
               if (err) throw (err)
-              assert(JSON.stringify(res.body) === JSON.stringify({ message: 'protected' }))
+              assert(JSON.stringify(res.body) !== JSON.stringify({ message: 'protected' }))
               done()
             })
         })
@@ -355,10 +358,12 @@ describe('CSRF', () => {
               if (err) throw err
               const csrfToken = res.body.csrfToken
               assert(csrfToken)
+              cookie = res.headers['set-cookie']
 
               request(context.app)
                 .post('/protected')
                 .set('X-CSRF-TOKEN', csrfToken)
+                .set('Cookie', cookie)
                 .expect(200)
                 .end((err, res) => {
                   if (err) throw (err)
