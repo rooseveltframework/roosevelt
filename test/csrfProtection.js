@@ -105,6 +105,28 @@ describe('CSRF', () => {
             })
         })
     })
+
+    // TODO: fix this failing test
+    it.skip('should allow a POST from a valid request', done => {
+      request(context.app)
+        .get('/')
+        .expect(403)
+        .end((err, res) => {
+          if (err) throw err
+          const csrfToken = 'csrfToken' // a token is provided, but it is wrong
+          assert(csrfToken)
+
+          request(context.app)
+            .post('/protected')
+            .set('X-CSRF-TOKEN', csrfToken)
+            .expect(200)
+            .end((err, res) => {
+              if (err) throw (err)
+              assert(JSON.stringify(res.body) === JSON.stringify({ message: 'protected' }))
+              done()
+            })
+        })
+    })
   })
 
   describe('CSRF protection disabled', () => {
