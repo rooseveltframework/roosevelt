@@ -1,3 +1,8 @@
+## 0.31.4
+
+- Fixed a bug in the CSRF handler.
+- Updated dependencies.
+
 ## 0.31.3
 
 - Added warning to the debug markup on 403 "forbidden" POST error pages instructing the user to include the CSRF token in their request.
