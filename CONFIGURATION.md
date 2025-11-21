@@ -751,7 +751,9 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
   - Will set HTTP port instead if HTTPS is disabled.
 - `HTTP_PORT`: Default HTTP port to run your app on. Takes precedence over `NODE_PORT`.
 - `HTTPS_PORT`: Default HTTPS port to run your app on.
-- `DISABLE_HTTPS`: When set to `true`, the HTTPS server will be disabled and the app will revert to HTTP regardless of what is set in the `rooseveltConfig`.
+- `DISABLE_HTTP`: When set to `true`, the HTTP server will be disabled regardless of what is set in the `rooseveltConfig`.
+- `DISABLE_HTTPS`: When set to `true`, the HTTPS server will be disabled regardless of what is set in the `rooseveltConfig`.
+- `SWAP_HTTPS_TO_HTTP`: When set to `true`, the server will switch from using HTTPS to HTTP if `rooseveltConfig` is currently configured to use HTTPS.
 - `MAKE_BUILD_ARTIFACTS`: Lets you set Roosevelt's `makeBuildArtifacts` param via environment variable.
 
 Environment variable precedence:
