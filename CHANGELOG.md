@@ -1,3 +1,9 @@
+## 0.31.5
+
+- Added `SWAP_HTTPS_TO_HTTP` env var which switches from https to http.
+- Added `DISABLE_HTTP` env var which disables http.
+- Updated dependencies.
+
 ## 0.31.4
 
 - Fixed a bug in the CSRF handler.
