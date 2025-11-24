@@ -1,3 +1,8 @@
+## 0.31.6
+
+- Fixed hardcoded express 4 dependency mistakenly set to express 5.
+- Updated dependencies.
+
 ## 0.31.5
 
 - Added `SWAP_HTTPS_TO_HTTP` env var which switches from https to http.
