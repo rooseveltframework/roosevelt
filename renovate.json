@@ -6,8 +6,10 @@
     ":respectLatest",
     ":disableDependencyDashboard"
   ],
-  "packageRules": {
-    "matchPackageNames": ["express4"],
-    "allowedVersions": "^4.0.0"
-  }
+  "packageRules": [
+    {
+      "matchPackageNames": ["express4"],
+      "allowedVersions": "^4.0.0"
+    }
+  ]
 }
