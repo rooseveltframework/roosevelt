@@ -1,3 +1,8 @@
+## 0.31.7
+
+- Added more helpful error when user starts app without valid HTTPS certs.
+- Updated dependencies.
+
 ## 0.31.6
 
 - Fixed hardcoded express 4 dependency mistakenly set to express 5.
