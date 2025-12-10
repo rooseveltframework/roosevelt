@@ -156,7 +156,14 @@ const roosevelt = (options = {}, schema) => {
         }
       }
 
-      httpsServer = require('https').createServer(httpsOptions, app)
+      try {
+        httpsServer = require('https').createServer(httpsOptions, app)
+      } catch (error) {
+        if (error.code === 'ERR_OSSL_PEM_NO_START_LINE') {
+          logger.error('Cannot start HTTPS server because the HTTPS cert appears to be empty. This error happens most commonly when you forget to run `npm run generate-secrets` first before starting the server.')
+          process.exit()
+        } else logger.error(error)
+      }
       httpsServer.on('connection', mapConnections)
     }
 
