@@ -52,7 +52,7 @@
     "progressively-enhance-web-components": "1.0.4",
     "express-browser-reload": "4.0.0",
     "roosevelt-logger": "1.0.1",
-    "selfsigned": "4.0.0",
+    "selfsigned": "5.5.0",
     "serve-favicon": "2.5.1",
     "source-configs": "1.0.0"
   },
