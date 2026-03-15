@@ -1,3 +1,8 @@
+## 0.31.8
+
+- Simplified dependency tree.
+- Updated dependencies.
+
 ## 0.31.7
 
 - Added more helpful error when user starts app without valid HTTPS certs.
