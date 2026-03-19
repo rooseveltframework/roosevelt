@@ -80,6 +80,15 @@ Default: *[Object]*
   - `validatorConfig` *[Object]*: [html-validate configuration](https://html-validate.org/usage/#configuration) that determines what errors the validator looks for.
     - The full list of available validator rules can be found [here](https://html-validate.org/rules/).
     - This configuration can also be set by a `.htmlValidate.json` file placed in your app root directory.
+  - You may also want to override the version of [html-validate](https://www.npmjs.com/package/html-validate) this module ships with by default, since that module has had a history of updating faster than this one does at times. To do so, set this in your app's `package.json`:
+
+```json
+"overrides": {
+  "html-validate": "x.y.z"
+}
+```
+
+Where `x.y.z` is your desired version. After doing so, delete your `node_modules` folder and `package-lock.json` then run `npm i` to install the override.
 
 - `mode` *[String]*: Decides whether your app starts in production mode or development mode by default. Default: `production`.
 
@@ -212,7 +221,7 @@ Default if `expressSession` is set to `true`: *[Object]*
   - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
   - `preset` *[String]*: Available presets provided by Roosevelt. Only used if `instance` is not provided.
     - Available options:
-      - `"default"`: Use Roosevelt's default session store, which is [better-sqlite3-session-store](https://www.npmjs.com/package/better-sqlite3-session-store).
+      - `"default"`: Use Roosevelt's default session store, which is [better-sqlite3-session-store](https://github.com/attestate/better-sqlite3-session-store), which we hard forked into Roosevelt to continue its regular maintenance since it is no longer maintained.
       - `"express-session-default"`: Use `express-session`'s default session store (not recommended).
   - `presetOptions`  *[Object]*: Options to pass to the preset session store if one is selected. Only used if `instance` is not provided.
     - `checkPeriod` *[Number]*: How long, in milliseconds, the memory store will check for expired items.
