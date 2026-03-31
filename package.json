@@ -53,7 +53,7 @@
     "source-configs": "1.0.0"
   },
   "devDependencies": {
-    "axios": "1.13.6",
+    "axios": "1.14.0",
     "c8": "11.0.0",
     "less": "4.6.4",
     "mocha": "11.7.5",
