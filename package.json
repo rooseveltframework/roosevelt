@@ -42,7 +42,7 @@
     "html-minifier-terser": "7.2.0",
     "ip": "2.0.1",
     "method-override": "3.0.0",
-    "minimatch": "10.2.4",
+    "minimatch": "10.2.5",
     "minify-html-attributes": "1.0.2",
     "morgan": "1.10.1",
     "progressively-enhance-web-components": "1.0.4",
