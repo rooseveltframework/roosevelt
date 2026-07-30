@@ -44,7 +44,7 @@
     "method-override": "3.0.0",
     "minimatch": "10.2.5",
     "minify-html-attributes": "1.0.2",
-    "morgan": "1.10.1",
+    "morgan": "1.11.0",
     "progressively-enhance-web-components": "1.0.4",
     "express-browser-reload": "4.0.0",
     "roosevelt-logger": "1.0.1",
