@@ -32,7 +32,7 @@
     "cookie-parser": "1.4.7",
     "csrf-sync": "4.2.1",
     "express": "5.2.1",
-    "express4": "npm:express@4.22.1",
+    "express4": "npm:express@4.22.2",
     "express-html-validator": "1.0.1",
     "express-session": "1.19.0",
     "formidable": "3.5.4",
