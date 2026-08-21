@@ -5,10 +5,11 @@
   },
   "mode": "production",
   "deprecationChecks": "development-mode",
-  "expressVersion": 5,
   "makeBuildArtifacts": false,
   "localhostOnly": "value",
+  "trustProxy": "value",
   "logging": {
+    "quieterStartup": true,
     "methods": {
       "http": false,
       "info": false,
@@ -49,8 +50,11 @@
   "expressSessionStore": {
     "filename": "sessions.sqlite",
     "instance": null,
+    "maxInactivity": 1234567,
     "preset": "default",
-    "presetOptions": { "checkPeriod": 86400000, "ttl": null, "max": null }
+    "presetOptions": {
+      "checkPeriod": 86400000
+    }
   },
   "csrfProtection": false,
   "bodyParser": {
@@ -60,7 +64,7 @@
     "json": "value"
   },
   "https": {
-    "enable" : false,
+    "enable": false,
     "autoCert": true,
     "port": "value",
     "options": {}
@@ -109,21 +113,18 @@
   },
   "js": {
     "sourcePath": "value",
-    "webpack": {
+    "bundler": {
       "enable": "value",
-      "bundles": "value",
-      "customBundlerFunction": null
+      "module": "value"
     },
-    "customBundler": {
-      "enable": "value",
-      "bundles": "value",
-      "customBundlerFunction": null
-    },
-    "verbose" : false
+    "bundles": "value",
+    "customBundlerFunction": null,
+    "verbose": false
   },
   "symlinks": "value",
   "copy": "value",
   "buildFolder": "value",
+  "incrementalBuilds": false,
   "publicFolder": "value",
   "favicon": "value",
   "prodSourceMaps": "value",

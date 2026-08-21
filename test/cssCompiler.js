@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, beforeEach, afterEach } = require('node:test')
 
 const assert = require('assert')
 const CleanCSS = require('clean-css')
@@ -62,7 +62,7 @@ describe('css preprocessors', () => {
     })
 
     afterEach(async () => {
-      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+      fs.rmSync(appDir, { recursive: true, force: true })
     })
 
     it('should compile all static css files including subdirectories', async () => {
@@ -352,11 +352,11 @@ describe('css preprocessors', () => {
       fs.writeFileSync(path.join(appDir, 'statics/css/styles.less'), lessString)
 
       // generate sample package.json
-      fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', rooseveltConfig: {} })
+      fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', dependencies: { express: '5.0.0' } })
     })
 
     afterEach(async () => {
-      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+      fs.rmSync(appDir, { recursive: true, force: true })
     })
 
     it('should compile less source file', async () => {
@@ -485,11 +485,11 @@ describe('css preprocessors', () => {
       fs.writeFileSync(path.join(appDir, 'statics/css/styles.scss'), scssString)
 
       // generate sample package.json
-      fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', rooseveltConfig: {} })
+      fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', dependencies: { express: '5.0.0' } })
     })
 
     afterEach(async () => {
-      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+      fs.rmSync(appDir, { recursive: true, force: true })
     })
 
     it('should compile scss source file', async () => {
@@ -612,11 +612,11 @@ describe('css preprocessors', () => {
       fs.writeFileSync(path.join(appDir, 'statics/css/styles.styl'), stylusString)
 
       // generate sample package.json
-      fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', rooseveltConfig: {} })
+      fs.writeJsonSync(path.join(appDir, 'package.json'), { version: '0.3.1', dependencies: { express: '5.0.0' } })
     })
 
     afterEach(async () => {
-      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+      fs.rmSync(appDir, { recursive: true, force: true })
     })
 
     it('should compile styl source file', async () => {

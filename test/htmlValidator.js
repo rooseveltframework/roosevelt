@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, before, after } = require('node:test')
 
 const assert = require('assert')
 const request = require('supertest')
@@ -33,7 +33,7 @@ describe('HTML validator', () => {
   // open up testing context
   const context = {}
 
-  before(done => {
+  before((t, done) => {
     (async () => {
       // spin up the roosevelt app
       const rooseveltApp = roosevelt({
@@ -42,7 +42,7 @@ describe('HTML validator', () => {
         expressSession: false,
         makeBuildArtifacts: false,
         http: {
-          port: 40001
+          port: 30111
         },
         logging: {
           methods: {

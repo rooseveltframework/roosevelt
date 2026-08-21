@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, afterEach } = require('node:test')
 
 const assert = require('assert')
 const fs = require('fs-extra')

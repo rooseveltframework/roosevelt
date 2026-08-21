@@ -1,4 +1,5 @@
-/* eslint-env mocha */
+const { describe, it, afterEach } = require('node:test')
+const rooseveltConfig = require('../config')
 /* eslint no-template-curly-in-string: 0 */
 
 const assert = require('assert')
@@ -11,7 +12,7 @@ describe('file creation', () => {
 
   afterEach(async () => {
     // wipe out test app
-    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should generate several directories at runtime', async () => {
@@ -120,11 +121,11 @@ describe('file creation', () => {
       symlinks: [
         {
           source: 'images',
-          dest: '${staticsRoot}/images'
+          dest: rooseveltConfig.ref(param => path.join(param.staticsRoot, 'images'))
         },
         {
           source: 'images',
-          dest: '${publicFolder}/images'
+          dest: rooseveltConfig.ref(param => path.join(param.publicFolder, 'images'))
         },
         {
           source: 'mvc',

@@ -1,4 +1,5 @@
-/* eslint-env mocha */
+const { describe, it, beforeEach, afterEach } = require('node:test')
+const rooseveltConfig = require('../config')
 /* eslint no-template-curly-in-string: 0 */
 
 const assert = require('assert')
@@ -13,9 +14,9 @@ describe('webpack', () => {
       env: 'production',
       config: {
         mode: 'production',
-        entry: '${js.sourcePath}/a.js',
+        entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'a.js')),
         output: {
-          path: '${publicFolder}/js',
+          path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')),
           filename: 'prod.js'
         }
       }
@@ -23,9 +24,9 @@ describe('webpack', () => {
     {
       env: 'development',
       config: {
-        entry: '${js.sourcePath}/a.js',
+        entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'a.js')),
         output: {
-          path: '${publicFolder}/js',
+          path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')),
           filename: 'dev.js'
         }
       }
@@ -69,7 +70,7 @@ describe('webpack', () => {
 
   afterEach(async () => {
     // wipe out the test app directory
-    fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should build prod bundle using supplied webpack config', async () => {
@@ -89,10 +90,8 @@ describe('webpack', () => {
       makeBuildArtifacts: true,
       js: {
         sourcePath: 'js',
-        webpack: {
-          enable: true,
-          bundles: webpackConfig
-        }
+        bundler: { enable: true, module: 'webpack' },
+        bundles: webpackConfig
       }
     })
 
@@ -100,6 +99,54 @@ describe('webpack', () => {
 
     assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/prod.js')), true, 'webpack prod bundle was not created')
     assert.deepStrictEqual(fs.pathExistsSync(path.join(appDir, 'public/js/dev.js')), false, 'webpack dev bundle was created for some reason')
+  })
+
+  // roosevelt used to force a minifier into the webpack config, which meant shipping a webpack plugin to every app whether it used webpack or not
+  // webpack minifies on its own in production mode, so these check that dropping that did not quietly stop bundles from being minified
+  it('should minify the bundle in production mode', async () => {
+    fs.writeFileSync(path.join(appDir, 'statics/js/e.js'), 'function nameThatOnlySurvivesUnminified (argument) {\n  return argument + 1\n}\nconsole.log(nameThatOnlySurvivesUnminified(1))\n')
+
+    await roosevelt({
+      logging: { methods: { info: false, warn: false, error: false } },
+      csrfProtection: false,
+      expressSession: false,
+      mode: 'production',
+      appDir,
+      makeBuildArtifacts: true,
+      js: {
+        sourcePath: 'js',
+        bundler: { enable: true, module: 'webpack' },
+        bundles: [{ config: { entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'e.js')), output: { path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')), filename: 'minified.js' } } }]
+      }
+    }).initServer()
+
+    const bundle = fs.readFileSync(path.join(appDir, 'public/js/minified.js'), 'utf8')
+
+    assert.strictEqual(bundle.includes('nameThatOnlySurvivesUnminified'), false, 'the bundle still contains the original function name, so it was not minified')
+    assert.strictEqual(fs.readdirSync(path.join(appDir, 'public/js')).join(), 'minified.js', 'only the bundle itself should be written, with no separate license file alongside it')
+  })
+
+  it('should not minify the bundle in development mode', async () => {
+    fs.writeFileSync(path.join(appDir, 'statics/js/e.js'), 'function nameThatOnlySurvivesUnminified (argument) {\n  return argument + 1\n}\nconsole.log(nameThatOnlySurvivesUnminified(1))\n')
+
+    await roosevelt({
+      logging: { methods: { info: false, warn: false, error: false } },
+      csrfProtection: false,
+      expressSession: false,
+      mode: 'development',
+      htmlValidator: { enable: false },
+      appDir,
+      makeBuildArtifacts: true,
+      js: {
+        sourcePath: 'js',
+        bundler: { enable: true, module: 'webpack' },
+        bundles: [{ config: { entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'e.js')), output: { path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')), filename: 'readable.js' } } }]
+      }
+    }).initServer()
+
+    const bundle = fs.readFileSync(path.join(appDir, 'public/js/readable.js'), 'utf8')
+
+    assert.ok(bundle.includes('nameThatOnlySurvivesUnminified'), 'development bundles should stay readable')
   })
 
   it('should build dev bundle using supplied webpack config', async () => {
@@ -121,10 +168,8 @@ describe('webpack', () => {
       makeBuildArtifacts: true,
       js: {
         sourcePath: 'js',
-        webpack: {
-          enable: true,
-          bundles: webpackConfig
-        }
+        bundler: { enable: true, module: 'webpack' },
+        bundles: webpackConfig
       }
     })
 
@@ -150,21 +195,19 @@ describe('webpack', () => {
       makeBuildArtifacts: true,
       js: {
         sourcePath: 'js',
-        webpack: {
-          enable: true,
-          bundles: [
-            {
-              config: {
-                mode: 'production',
-                entry: '${js.sourcePath}/a.js',
-                output: {
-                  path: '${publicFolder}/js',
-                  filename: 'any.js'
-                }
+        bundler: { enable: true, module: 'webpack' },
+        bundles: [
+          {
+            config: {
+              mode: 'production',
+              entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'a.js')),
+              output: {
+                path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')),
+                filename: 'any.js'
               }
             }
-          ]
-        }
+          }
+        ]
       }
     })
 
@@ -192,21 +235,19 @@ describe('webpack', () => {
       },
       js: {
         sourcePath: 'js',
-        webpack: {
-          enable: true,
-          bundles: [
-            {
-              config: {
-                mode: 'production',
-                entry: '${js.sourcePath}/a.js',
-                output: {
-                  path: '${publicFolder}/js',
-                  filename: 'any.js'
-                }
+        bundler: { enable: true, module: 'webpack' },
+        bundles: [
+          {
+            config: {
+              mode: 'production',
+              entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'a.js')),
+              output: {
+                path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')),
+                filename: 'any.js'
               }
             }
-          ]
-        }
+          }
+        ]
       }
     })
 
@@ -234,24 +275,22 @@ describe('webpack', () => {
       },
       js: {
         sourcePath: 'js',
-        webpack: {
-          enable: true,
-          bundles: [
-            {
-              config: 'config.js'
-            },
-            {
-              config: {
-                mode: 'production',
-                entry: '${js.sourcePath}/a.js',
-                output: {
-                  path: '${publicFolder}/js',
-                  filename: 'any.js'
-                }
+        bundler: { enable: true, module: 'webpack' },
+        bundles: [
+          {
+            config: 'config.js'
+          },
+          {
+            config: {
+              mode: 'production',
+              entry: rooseveltConfig.ref(param => path.join(param.js.sourcePath, 'a.js')),
+              output: {
+                path: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js')),
+                filename: 'any.js'
               }
             }
-          ]
-        }
+          }
+        ]
       }
     })
 

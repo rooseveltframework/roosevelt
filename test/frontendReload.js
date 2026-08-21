@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, before, after } = require('node:test')
 
 const path = require('path')
 const assert = require('assert')
@@ -36,6 +36,7 @@ describe('frontend reload', () => {
   // configure and start roosevelt, returning instance of the app
   async function startRoosevelt (config) {
     const app = roosevelt({
+      http: { port: 30109 },
       ...config
     })
     await app.startServer()
@@ -57,8 +58,8 @@ describe('frontend reload', () => {
     })
   }
 
-  before(() => {
-    generateTestCerts(config.appDir, 'secrets')
+  before(async () => {
+    await generateTestCerts(config.appDir, 'secrets')
   })
 
   after(async () => {

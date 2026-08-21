@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, before, after, afterEach } = require('node:test')
 
 const assert = require('assert')
 const fs = require('fs-extra')
@@ -27,7 +27,7 @@ describe('multipart/formidable', () => {
   const tmpDir = path.join(appDir, 'tmp')
   const completeDir = path.join(appDir, 'complete')
 
-  before(done => {
+  before((t, done) => {
     (async () => {
       // generate tmp dir for file uploads
       fs.ensureDirSync(tmpDir)
@@ -41,7 +41,7 @@ describe('multipart/formidable', () => {
         makeBuildArtifacts: true,
         csrfProtection: false,
         expressSession: false,
-        port: 40003,
+        http: { port: 30112 },
         logging: {
           methods: {
             http: false,
@@ -103,7 +103,7 @@ describe('multipart/formidable', () => {
     fs.rmSync(completeDir, { recursive: true, force: true })
   })
 
-  after(done => {
+  after((t, done) => {
     // stop the server
     context.app.get('httpServer').close(() => {
       // wipe out the app directory
@@ -113,7 +113,7 @@ describe('multipart/formidable', () => {
     })
   })
 
-  it('should handle an attached file in a post and cleanup tmp on end', done => {
+  it('should handle an attached file in a post and cleanup tmp on end', (t, done) => {
     // generate a simple text buffer to post
     const testFile = Buffer.from('This is a cool test file')
 
@@ -140,7 +140,7 @@ describe('multipart/formidable', () => {
       })
   })
 
-  it('should handle multiple attached files in a single post', done => {
+  it('should handle multiple attached files in a single post', (t, done) => {
     // generate a simple text buffer to post
     const testFile = Buffer.from('This is a cool test file')
     const anotherTestFile = Buffer.from('This is another cool test file')
@@ -171,7 +171,7 @@ describe('multipart/formidable', () => {
       })
   })
 
-  it('should fail post when fields sent are over configured limit', done => {
+  it('should fail post when fields sent are over configured limit', (t, done) => {
     // send a post with a bunch of fields
     request(context.app)
       .post('/multipart')
