@@ -102,13 +102,26 @@ describe('sqlite session store', () => {
   })
 
   it('should extend the expiry of a session when touched', async () => {
-    await set('abc', { cookie: { maxAge: 1000 }, user: 'someone' })
+    // the session has to have a comfortable amount of life left in it: touch will only update a session it can see is unexpired, and it asks sqlite that question in whole seconds, so a session expiring inside the current second reads as already gone
+    await set('abc', liveSession())
     const before = client.prepare('SELECT expire FROM sessions WHERE sid = ?').get('abc').expire
 
-    await touch('abc', { cookie: { maxAge: 600000 } })
+    // touch reads cookie.expires rather than cookie.maxAge, which is what express-session's own cookie object hands it
+    const extended = new Date(Date.now() + 600000).toISOString()
+    await touch('abc', { cookie: { expires: extended } })
     const after = client.prepare('SELECT expire FROM sessions WHERE sid = ?').get('abc').expire
 
+    assert.strictEqual(after, extended)
     assert.ok(after > before, `touch should push the expiry out, got before=${before} after=${after}`)
+  })
+
+  it('should give a touched session a day to live when it carries no cookie expiry', async () => {
+    await set('abc', liveSession())
+
+    await touch('abc', { cookie: { maxAge: 600000 } }) // maxAge alone, which touch does not read
+    const after = new Date(client.prepare('SELECT expire FROM sessions WHERE sid = ?').get('abc').expire).getTime()
+
+    assert.ok(Math.abs(after - (Date.now() + 86400000)) < 60000, `expected roughly a day out, got ${new Date(after).toISOString()}`)
   })
 
   it('should not retrieve a session that has expired', async () => {

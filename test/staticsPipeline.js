@@ -164,6 +164,75 @@ describe('statics pipeline', () => {
       assert.ok(captured.includes('does not exist'), `expected a missing source error, got: ${JSON.stringify(captured.slice(0, 300))}`)
     })
 
+    it('should skip the copy on a second start when nothing changed', async () => {
+      fs.outputFileSync(path.join(appDir, 'source/nested/a.txt'), 'a')
+      const config = { ...appConfig, copy: [{ source: 'source/nested', dest: 'public/nested' }] }
+
+      const first = await captureInit({ ...config, logging: { methods: { http: false, warn: false, error: false, verbose: false } } })
+      const second = await captureInit({ ...config, logging: { methods: { http: false, warn: false, error: false, verbose: false } } })
+
+      assert.ok(first.includes('copying'), `expected the first start to copy, got: ${JSON.stringify(first.slice(0, 300))}`)
+      assert.ok(!second.includes('copying'), `expected the second start to skip the copy, got: ${JSON.stringify(second.slice(0, 300))}`)
+    })
+
+    it('should copy again on a second start when a source file changed', async () => {
+      fs.outputFileSync(path.join(appDir, 'source/nested/a.txt'), 'a')
+      const config = { ...appConfig, copy: [{ source: 'source/nested', dest: 'public/nested' }] }
+
+      await roosevelt(config).initServer()
+      fs.outputFileSync(path.join(appDir, 'source/nested/a.txt'), 'edited')
+      await roosevelt(config).initServer()
+
+      assert.strictEqual(fs.readFileSync(path.join(appDir, 'public/nested/a.txt'), 'utf8'), 'edited')
+    })
+
+    it('should copy again on a second start when a source file is added', async () => {
+      fs.outputFileSync(path.join(appDir, 'source/nested/a.txt'), 'a')
+      const config = { ...appConfig, copy: [{ source: 'source/nested', dest: 'public/nested' }] }
+
+      await roosevelt(config).initServer()
+      fs.outputFileSync(path.join(appDir, 'source/nested/b.txt'), 'b')
+      await roosevelt(config).initServer()
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'public/nested/b.txt')))
+    })
+
+    it('should copy again on a second start when the destination was deleted', async () => {
+      fs.outputFileSync(path.join(appDir, 'source/nested/a.txt'), 'a')
+      const config = { ...appConfig, copy: [{ source: 'source/nested', dest: 'public/nested' }] }
+
+      await roosevelt(config).initServer()
+      fs.rmSync(path.join(appDir, 'public/nested'), { recursive: true, force: true })
+      await roosevelt(config).initServer()
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'public/nested/a.txt')))
+    })
+
+    it('should copy on every start when incrementalBuilds is off', async () => {
+      fs.outputFileSync(path.join(appDir, 'source/nested/a.txt'), 'a')
+      const config = { ...appConfig, incrementalBuilds: false, copy: [{ source: 'source/nested', dest: 'public/nested' }], logging: { methods: { http: false, warn: false, error: false, verbose: false } } }
+
+      await captureInit(config)
+      const second = await captureInit(config)
+
+      assert.ok(second.includes('copying'), `expected the copy to run again, got: ${JSON.stringify(second.slice(0, 300))}`)
+    })
+
+    it('should report why a copy failed', async () => {
+      // a directory where the destination file should go makes fs-extra throw with a reason worth reporting
+      fs.outputFileSync(path.join(appDir, 'source/thing.txt'), 'copy me')
+      fs.ensureDirSync(path.join(appDir, 'public/thing.txt'))
+
+      const captured = await captureInit({
+        ...appConfig,
+        logging: { methods: { http: false, info: false, warn: false, verbose: false } },
+        copy: [{ source: 'source/thing.txt', dest: 'public/thing.txt' }]
+      })
+
+      assert.ok(captured.includes('Error copying'), `expected a copy error, got: ${JSON.stringify(captured.slice(0, 300))}`)
+      assert.ok(captured.includes('Cannot overwrite directory'), `expected the underlying reason to be included, got: ${JSON.stringify(captured.slice(0, 300))}`)
+    })
+
     it('should not copy anything when makeBuildArtifacts is false', async () => {
       fs.outputFileSync(path.join(appDir, 'source/thing.txt'), 'copy me')
 

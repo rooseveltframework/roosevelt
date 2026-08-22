@@ -5,7 +5,7 @@
   - `compiler` *[Object]*: Which CSS preprocessor (if any) to use.
     - `enable` *[Boolean]*: Whether or not to use a preprocessor.
     - `module` *[String]*: Node module name of the CSS preprocessor you wish to use.
-      - Currently [less](http://lesscss.org/), [sass](https://sass-lang.com/), and [stylus](http://stylus-lang.com/) are supported.
+      - Currently [sass](https://sass-lang.com/), [less](http://lesscss.org/), and [stylus](http://stylus-lang.com/) are supported.
       - Your chosen CSS preprocessor module must also be marked as a dependency in your app's `package.json`.
     - `options` *[Object]*: Parameters to send to the CSS preprocessor if it accepts any.
   - `minifier` *[Object]*: Params pertaining to CSS minifcation.
@@ -28,7 +28,7 @@ Default: *[Object]*
   sourcePath: 'css',
   compiler: {
     enable: false,
-    module: 'less',
+    module: 'sass',
     options: {}
   },
   minifier: {
