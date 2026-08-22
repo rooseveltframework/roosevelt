@@ -359,6 +359,13 @@ describe('css preprocessors', () => {
       fs.rmSync(appDir, { recursive: true, force: true })
     })
 
+    it('should default to sass when a preprocessor is enabled without naming one', () => {
+      // the docs and the app generator both present sass as the preprocessor roosevelt reaches for, and nothing was checking that the param agreed with them
+      const params = roosevelt({ ...appConfig, makeBuildArtifacts: false, css: { compiler: { enable: true } } }).expressApp.get('params')
+
+      assert.strictEqual(params.css.compiler.module, 'sass')
+    })
+
     it('should compile less source file', async () => {
       const app = roosevelt({
         ...appConfig,

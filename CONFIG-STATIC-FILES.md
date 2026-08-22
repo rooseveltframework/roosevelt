@@ -5,6 +5,7 @@
     - Roosevelt will not attempt to copy files or folders that do not exist.
   - `dest` *[String]*: Path to place the copy.
     - If this destination path already exists **it will be overwritten**.
+    - Unless the `incrementalBuilds` param is disabled, the copy is skipped when neither the source nor the destination has changed since the last start.
 
 - `html` *[Object]*: Generate static HTML pages:
   - `sourcePath` *[String]*: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered by your templating system, minified, and written to the `public` folder when the app is started.

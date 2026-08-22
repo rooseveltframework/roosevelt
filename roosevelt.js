@@ -210,6 +210,10 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/generateSymlinks')(app)
 
+    // tracks which files each static file was built from so the steps below can skip the ones that did not change
+    // it has to exist before the copy step, which is the first thing that uses it, so params derived after this point are not part of its fingerprint
+    app.set('buildCache', require('./lib/tools/buildCache')(app))
+
     require('./lib/copyFiles')(app)
 
     require('./lib/htmlMinifier')(app)
@@ -230,9 +234,6 @@ const roosevelt = (options = {}, schema) => {
 
     // fire user-defined onBeforeStatics event
     if (params.onBeforeStatics && typeof params.onBeforeStatics === 'function') await Promise.resolve(params.onBeforeStatics(app))
-
-    // tracks which files each static file was built from so the generators below can skip the ones that did not change
-    app.set('buildCache', require('./lib/tools/buildCache')(app))
 
     await require('./lib/preprocessViewsAndStatics')(app)
 

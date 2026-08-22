@@ -150,7 +150,7 @@ Default: *[Object]*
   - Will be set to `true` in apps generated with the app generator.
   - Can also accept a value of `"staticsOnly"` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
 
-- `incrementalBuilds` *[Boolean]*: When enabled Roosevelt will skip regenerating a static file if none of the source files it was built from have changed since the last build. Default: `true`.
+- `incrementalBuilds` *[Boolean]*: When enabled Roosevelt will skip regenerating a static file if none of the source files it was built from have changed since the last build. This applies to files declared in the `copy` param too, which are left alone when neither the source nor the copy has changed. Default: `true`.
   - Set to `false` to disable the feature and rebuild everything on every start. Deleting your `buildFolder` has the same one-time effect.
 
 - `routePrefix` *[String]*: A prefix prepended to your application's routes. Applies to all routes and static files. Default: `null`.
