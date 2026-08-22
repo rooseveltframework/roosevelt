@@ -1,12 +1,30 @@
 require('@colors/colors')
+
+// express is a peer dependency, so the app supplies it rather than roosevelt bundling it
+// without it nothing below can work, and stopping here says so plainly instead of failing later in a way that does not name the cause
+// this throws rather than exiting so that anything embedding roosevelt can catch it and decide for itself what to do
+try {
+  require.resolve('express')
+} catch {
+  throw new Error('Roosevelt could not find Express. Express is a peer dependency, which means your app needs to install it itself. Run `npm install express` to fix this. Roosevelt supports Express 4 and Express 5.')
+}
+
 const express = require('express')
-const express4 = require('express4')
+const os = require('os')
 const path = require('path')
 const fs = require('fs-extra')
 const appModulePath = require('app-module-path')
 const Logger = require('roosevelt-logger')
 const certsGenerator = require('./lib/scripts/certsGenerator.js')
 const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
+const docsUrl = require('./lib/tools/docsUrl')
+
+// the address other devices on the network can reach this app at, printed next to the localhost url on startup
+// falls back to loopback when the machine has no network connection, so the startup log never prints an empty address
+function networkAddress () {
+  const external = Object.values(os.networkInterfaces()).flat().find(nic => nic?.family === 'IPv4' && !nic.internal)
+  return external ? external.address : '127.0.0.1'
+}
 
 const roosevelt = (options = {}, schema) => {
   options.appDir = options.appDir || path.dirname(module.parent.filename) // appDir is either specified by the user or sourced from the parent require
@@ -19,17 +37,18 @@ const roosevelt = (options = {}, schema) => {
   let logger
   let appName
   let appEnv
+  let startupNotice
 
   // source user-supplied params
   const params = require('./lib/sourceParams')(options, schema)
   const appDir = params.appDir
   const pkg = params.pkg
 
-  const app = params.expressVersion !== 5 ? express4() : express() // express 5 is the default; if it's not set to 5, it is presumed the user wants express 4; only express 5 and 4 are supported
+  const app = express()
   const router = express.Router() // initialize router
 
   app.set('params', params) // expose app configuration
-  if (params.deprecationChecks === 'development-mode') require('./lib/deprecationChecker.js')(options, params)
+  if (params.deprecationChecks === true || (params.deprecationChecks === 'development-mode' && params.mode === 'development')) require('./lib/deprecationChecker.js')(options, params)
 
   // utility functions
 
@@ -81,6 +100,9 @@ const roosevelt = (options = {}, schema) => {
     appName = app.get('appName')
     appEnv = app.get('env')
 
+    // notices that repeat on every start are routed through here so that quieterStartup can show them less often
+    startupNotice = require('./lib/tools/startupNotice')(app)
+
     // app starting message
     if (params.makeBuildArtifacts === 'staticsOnly') logger.info('💭', `Building ${appName} static site in ${appEnv} mode...`.bold)
     else logger.info('💭', `Starting ${appName} in ${appEnv} mode...`.bold)
@@ -112,7 +134,7 @@ const roosevelt = (options = {}, schema) => {
       if (app.get('env') === 'development' && params.https.autoCert && params.makeBuildArtifacts !== 'staticsOnly') {
         if (await certParamIsPath(httpsOptions.cert) && await certParamIsPath(httpsOptions.key)) {
           if (!fs.pathExistsSync(httpsOptions.key) && !fs.pathExistsSync(httpsOptions.cert)) {
-            certsGenerator(params.secretsPath, httpsOptions)
+            await certsGenerator(params.secretsPath, httpsOptions)
           }
         }
       }
@@ -209,6 +231,9 @@ const roosevelt = (options = {}, schema) => {
     // fire user-defined onBeforeStatics event
     if (params.onBeforeStatics && typeof params.onBeforeStatics === 'function') await Promise.resolve(params.onBeforeStatics(app))
 
+    // tracks which files each static file was built from so the generators below can skip the ones that did not change
+    app.set('buildCache', require('./lib/tools/buildCache')(app))
+
     await require('./lib/preprocessViewsAndStatics')(app)
 
     await require('./lib/preprocessStaticPages')(app)
@@ -220,6 +245,9 @@ const roosevelt = (options = {}, schema) => {
     await require('./lib/viewsBundler')(app)
 
     await require('./lib/jsBundler')(app)
+
+    // save what was built so the next run can skip the files that did not change
+    app.get('buildCache').save()
 
     // fire user-defined onServerInit event
     if (params.onServerInit && typeof params.onServerInit === 'function') await Promise.resolve(params.onServerInit(app))
@@ -236,9 +264,9 @@ const roosevelt = (options = {}, schema) => {
     await new Promise((resolve, reject) => {
       function startupCallback (proto, port) {
         return async function () {
-          logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port} (${proto.toLowerCase()}://${require('ip').address()}:${port})`.bold)
-          if (params.localhostOnly) logger.warn(`${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt`)
-          if (!params.hostPublic) logger.warn('Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: https://github.com/rooseveltframework/roosevelt')
+          logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port} (${proto.toLowerCase()}://${networkAddress()}:${port})`.bold)
+          if (params.localhostOnly) startupNotice('localhostOnly', `${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: ${docsUrl}/configuration`)
+          if (!params.hostPublic) startupNotice('hostPublicDisabled', `Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: ${docsUrl}/configuration`)
           listeningServers++
 
           // fire user-defined onServerStart event if all servers are started
@@ -263,6 +291,7 @@ const roosevelt = (options = {}, schema) => {
               logger.error(`Another process is using port ${params.http.port}. Either kill that process or change this app's port number.`.bold)
               reject(err)
             })
+            .on('close', stopListeningForKillSignals)
           if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
         }
         if (params.https.enable) {
@@ -273,11 +302,16 @@ const roosevelt = (options = {}, schema) => {
               logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
               reject(err)
             })
+            .on('close', stopListeningForKillSignals)
           if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
         }
       }
     })
 
+    // listen for kill signals so the app can shut down gracefully
+    // the listeners are removed first in case startServer is called more than once on the same app, which would otherwise register duplicates
+    process.removeListener('SIGTERM', shutdownGracefully)
+    process.removeListener('SIGINT', shutdownGracefully)
     process.on('SIGTERM', shutdownGracefully)
     process.on('SIGINT', shutdownGracefully)
   }
@@ -316,6 +350,15 @@ const roosevelt = (options = {}, schema) => {
         if (Object.keys(connections).length === 0) closeServer(resolve) // pass resolve to closeServer to resolve the promise
       }
     })
+  }
+
+  // once this app has no servers left listening, stop listening for kill signals on its behalf
+  // without this, every app started in a single process would leave its listeners behind and node would eventually warn about a memory leak
+  // this is keyed off the servers closing rather than off shutdownGracefully so that it also happens when the servers are closed directly
+  function stopListeningForKillSignals () {
+    if (httpServer?.listening || httpsServer?.listening) return
+    process.removeListener('SIGTERM', shutdownGracefully)
+    process.removeListener('SIGINT', shutdownGracefully)
   }
 
   function closeServer (resolve) {

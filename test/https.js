@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, before, after, afterEach } = require('node:test')
 
 const fs = require('fs-extra')
 const path = require('path')
@@ -45,8 +45,8 @@ describe('HTTPS', async () => {
     createServer: stubHttpServer
   }
 
-  before(() => {
-    generateTestCerts(appDir, baseConfig.secretsPath)
+  before(async () => {
+    await generateTestCerts(appDir, baseConfig.secretsPath)
   })
 
   // reset stubs after each

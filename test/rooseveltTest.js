@@ -1,4 +1,5 @@
-/* eslint-env mocha */
+const { describe, it, beforeEach, afterEach } = require('node:test')
+const captureLogs = require('./util/captureLogs')
 const assert = require('assert')
 const fs = require('fs-extra')
 const path = require('path')
@@ -8,34 +9,19 @@ const roosevelt = require('../roosevelt')
 describe('roosevelt.js', () => {
   // global vars the tests will need
   const context = {}
-  const appDir = path.join(__dirname, 'app')
-
-  // capture everything a roosevelt app logs to the console
-  let capturedLogs = ''
-  beforeEach(done => {
-    capturedLogs = ''
-    process.stdout.write = (chunk, encoding, callback) => {
-      capturedLogs += chunk.toString()
-      if (callback) callback()
-    }
-    process.stderr.write = (chunk, encoding, callback) => {
-      capturedLogs += chunk.toString()
-      if (callback) callback()
-    }
+  const appDir = path.join(__dirname, 'app/rooseveltTest')
+  beforeEach((t, done) => {
+    captureLogs.start()
     done()
   })
 
-  // undo capturing everything logged to the console so that mocha can print results
-  const originalStdoutWrite = process.stdout.write
-  const originalStderrWrite = process.stderr.write
+  // hands the test what the app has logged so far; collecting keeps running until the test ends, so anything logged afterwards is not printed
   function finish (cb) {
-    process.stdout.write = originalStdoutWrite
-    process.stderr.write = originalStderrWrite
-    cb(capturedLogs)
+    cb(captureLogs.peek())
   }
 
   // quit the roosevelt app if it hasn't killed itself already and delete the test app
-  afterEach(done => {
+  afterEach((t, done) => {
     if (!context?.app?.get) {
       fs.rmSync(appDir, { recursive: true, force: true })
       done()
@@ -62,9 +48,10 @@ describe('roosevelt.js', () => {
     }
   })
 
-  it('should set params correctly after initServer is called', done => {
+  it('should set params correctly after initServer is called', (t, done) => {
     (async () => {
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
         appDir,
         expressSession: false,
         onServerInit: app => {
@@ -76,12 +63,16 @@ describe('roosevelt.js', () => {
         const params = context.app.get('params')
         const sampleJSON = {
           http: {
+            port: 43763
+          },
+          https: {
             port: 43711
           },
           viewEngine: 'none',
           favicon: 'none'
         }
-        assert.strictEqual(params.port, sampleJSON.port, 'Roosevelt should make them the same if a param object is not passed in (port)')
+        assert.strictEqual(params.http.port, sampleJSON.http.port, 'Roosevelt should make them the same if a param object is not passed in (http.port)')
+        assert.strictEqual(params.https.port, sampleJSON.https.port, 'Roosevelt should make them the same if a param object is not passed in (https.port)')
         assert.strictEqual(params.viewEngine, sampleJSON.viewEngine, 'Roosevelt should make them the same if a param object is not passed in (viewEngine)')
         assert.strictEqual(params.favicon, sampleJSON.favicon, 'Roosevelt should make them the same if a param object is not passed in (favicon)')
         done()
@@ -89,10 +80,65 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should only initialize the app once even though the startServer function is called after the initServer function', done => {
+  it('should not leave kill signal listeners behind after its servers close', async () => {
+    // roosevelt listens for SIGTERM and SIGINT so it can shut down gracefully, but a process that starts several apps would accumulate those listeners and eventually trip node's memory leak warning
+    const before = {
+      SIGTERM: process.listenerCount('SIGTERM'),
+      SIGINT: process.listenerCount('SIGINT')
+    }
+
+    const rooseveltApp = roosevelt({
+      appDir,
+      csrfProtection: false,
+      expressSession: false,
+      makeBuildArtifacts: false,
+      htmlValidator: { enable: false },
+      http: { enable: true, port: 30006 },
+      https: { enable: false },
+      logging: { methods: { http: false, info: false, warn: false, error: false } },
+      onServerInit: app => {
+        context.app = app
+      }
+    })
+
+    await rooseveltApp.startServer()
+    assert.strictEqual(process.listenerCount('SIGTERM'), before.SIGTERM + 1, 'a running app should be listening for SIGTERM')
+
+    await rooseveltApp.stopServer({ persistProcess: true })
+    assert.strictEqual(process.listenerCount('SIGTERM'), before.SIGTERM, 'SIGTERM listeners should be gone once the app has shut down')
+    assert.strictEqual(process.listenerCount('SIGINT'), before.SIGINT, 'SIGINT listeners should be gone once the app has shut down')
+  })
+
+  it('should not leave kill signal listeners behind when its server is closed directly', async () => {
+    // the listeners are keyed off the servers closing rather than off stopServer, so closing the server by hand cleans up too
+    const before = process.listenerCount('SIGTERM')
+
+    const rooseveltApp = roosevelt({
+      appDir,
+      csrfProtection: false,
+      expressSession: false,
+      makeBuildArtifacts: false,
+      htmlValidator: { enable: false },
+      http: { enable: true, port: 30007 },
+      https: { enable: false },
+      logging: { methods: { http: false, info: false, warn: false, error: false } },
+      onServerInit: app => {
+        context.app = app
+      }
+    })
+
+    await rooseveltApp.startServer()
+    await new Promise(resolve => rooseveltApp.expressApp.get('httpServer').close(resolve))
+
+    assert.strictEqual(process.listenerCount('SIGTERM'), before, 'SIGTERM listeners should be gone once the server has closed')
+  })
+
+  it('should only initialize the app once even though the startServer function is called after the initServer function', (t, done) => {
     (async () => {
       let count = 0
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30121 },
         appDir,
         expressSession: false,
         onServerInit: app => {
@@ -109,10 +155,12 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should only initialize the app once even though initServer is called twice', done => {
+  it('should only initialize the app once even though initServer is called twice', (t, done) => {
     (async () => {
       let count = 0
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30122 },
         appDir,
         expressSession: false,
         onServerInit: app => {
@@ -130,10 +178,12 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should be able to run the app with the localhostOnly param set to true and in production mode', done => {
+  it('should be able to run the app with the localhostOnly param set to true and in production mode', (t, done) => {
     (async () => {
       let pass = false
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30123 },
         appDir,
         expressSession: false,
         localhostOnly: true,
@@ -150,16 +200,18 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', done => {
+  it('should be able to run the app with localhostOnly set to true, in production mode, and run an HTTPS server', (t, done) => {
     (async () => {
       let pass = false
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30124 },
         appDir,
         expressSession: false,
         localhostOnly: true,
         https: {
           enable: true,
-          port: 43203,
+          port: 30005,
           autoCert: false
         },
         onServerInit: app => {
@@ -175,10 +227,12 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', done => {
+  it('should warn and quit the initialization of the roosevelt app if another process is using the same port that the app was assigned to', (t, done) => {
     (async () => {
       let pass = false
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30125 },
         appDir,
         expressSession: false,
         onServerInit: app => {
@@ -188,6 +242,8 @@ describe('roosevelt.js', () => {
       await rooseveltApp.startServer()
       try {
         const rooseveltApp2 = roosevelt({
+          logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+          http: { port: 30125 }, // deliberately the same port as the app above, since a collision is the whole point of this test
           appDir,
           expressSession: false
         })
@@ -202,12 +258,14 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should be able to close an active connection when the app is closed', done => {
+  it('should be able to close an active connection when the app is closed', (t, done) => {
     (async () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const originalProcessExit = process.exit
       process.exit = () => {}
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30127 },
         appDir,
         expressSession: false,
         onServerStart: app => {
@@ -220,7 +278,7 @@ describe('roosevelt.js', () => {
       } catch (err) {}
       setTimeout(async () => {
         const interval = setInterval(() => {
-          if (capturedLogs.includes('Roosevelt Express successfully closed all connections and shut down gracefully')) {
+          if (captureLogs.peek().includes('Roosevelt Express successfully closed all connections and shut down gracefully')) {
             clearInterval(interval)
             finish(capturedLogs => {
               done()
@@ -233,12 +291,14 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
+  it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', (t, done) => {
     (async () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const originalProcessExit = process.exit
       process.exit = () => {}
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30128 },
         appDir,
         expressSession: false,
         shutdownTimeout: 500,
@@ -256,7 +316,7 @@ describe('roosevelt.js', () => {
       } catch (err) {}
       setTimeout(async () => {
         const interval = setInterval(() => {
-          if (capturedLogs.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
+          if (captureLogs.peek().includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
             clearInterval(interval)
             finish(capturedLogs => {
               done()
@@ -269,18 +329,20 @@ describe('roosevelt.js', () => {
     })()
   })
 
-  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', done => {
+  it('should force close all active connections and close the HTTP & HTTPS server if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', (t, done) => {
     (async () => {
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const originalProcessExit = process.exit
       process.exit = () => {}
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30129 },
         appDir,
         expressSession: false,
         shutdownTimeout: 500,
         https: {
           enable: true,
-          port: 43203,
+          port: 30005,
           autoCert: false
         },
         onServerStart: app => {
@@ -297,7 +359,7 @@ describe('roosevelt.js', () => {
       } catch (err) {}
       setTimeout(async () => {
         const interval = setInterval(() => {
-          if (capturedLogs.includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
+          if (captureLogs.peek().includes('Roosevelt Express could not close all connections in time; forcefully shutting down')) {
             clearInterval(interval)
             finish(capturedLogs => {
               done()

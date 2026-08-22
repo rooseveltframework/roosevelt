@@ -4,15 +4,32 @@ jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false # show all CI failures rather than stopping CI on first failure
       matrix:
-        node-version: [20.x, 22.x, 24.x]
+        node-version: [22.x, 24.x, 26.x]
         os: [ubuntu-latest, macos-latest, windows-latest]
+        express-version: [4, 5] # express is a peer dependency, so the suite runs against every major roosevelt claims to support
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Upgrade npm so its node-gyp knows Visual Studio 2026 # npm uses the node-gyp it carries internally, which cannot be swapped out, and npm 12 is the first to carry one that builds better-sqlite3 on windows
+        if: runner.os == 'Windows'
+        run: npm install -g npm@12
       - run: npm ci
+      - name: Install Express ${{ matrix.express-version }}
+        run: npm install express@${{ matrix.express-version }} --no-save
       - run: npm run lint
       - run: npm run coverage
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+      - run: npm ci
+      - run: npm run test-package # checks the package as npm would publish it, which the test suite cannot do since it runs against this repo

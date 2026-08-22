@@ -1,4 +1,4 @@
-/* eslint-env mocha */
+const { describe, it, beforeEach, afterEach } = require('node:test')
 
 const assert = require('assert')
 const path = require('path')
@@ -14,7 +14,7 @@ describe('HTML minification', () => {
     csrfProtection: false,
     expressSession: false,
     http: {
-      port: 41002
+      port: 30110
     },
     logging: {
       methods: {
@@ -59,7 +59,7 @@ describe('HTML minification', () => {
     fs.rmSync(appDir, { recursive: true, force: true })
   })
 
-  it('should minify HTML when enabled', done => {
+  it('should minify HTML when enabled', (t, done) => {
     (async () => {
       // initialize test app
       app = roosevelt({
@@ -86,7 +86,7 @@ describe('HTML minification', () => {
     })()
   })
 
-  it('should minify HTML on routes with callbacks', done => {
+  it('should minify HTML on routes with callbacks', (t, done) => {
     (async () => {
       // initialize test app
       app = roosevelt({
@@ -113,7 +113,7 @@ describe('HTML minification', () => {
     })()
   })
 
-  it('should not minify HTML when "html.minifier.enable" param is set to false', done => {
+  it('should not minify HTML when "html.minifier.enable" param is set to false', (t, done) => {
     (async () => {
       // copy root config and disable HTML minifier
       const config = JSON.parse(JSON.stringify(appConfig))
@@ -144,7 +144,7 @@ describe('HTML minification', () => {
     })()
   })
 
-  it('should not minify HTML when "minify" param is set to false', done => {
+  it('should not minify HTML when "minify" param is set to false', (t, done) => {
     (async () => {
       // copy root config and disable HTML minifier
       const config = JSON.parse(JSON.stringify(appConfig))
@@ -175,7 +175,7 @@ describe('HTML minification', () => {
     })()
   })
 
-  it('should not minify HTML when requesting exceptionRoutes (string format)', done => {
+  it('should not minify HTML when requesting exceptionRoutes (string format)', (t, done) => {
     (async () => {
       // copy root config and set exceptionRoutes as string
       const config = JSON.parse(JSON.stringify(appConfig))
@@ -222,7 +222,7 @@ describe('HTML minification', () => {
     })()
   })
 
-  it('should not minify HTML when requesting exceptionRoutes (array format)', done => {
+  it('should not minify HTML when requesting exceptionRoutes (array format)', (t, done) => {
     (async () => {
       // copy root config and set exceptionRoutes as array
       const config = JSON.parse(JSON.stringify(appConfig))

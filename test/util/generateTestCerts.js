@@ -3,8 +3,8 @@ const fs = require('fs-extra')
 const selfsigned = require('selfsigned')
 const forge = require('node-forge')
 
-module.exports = (appDir, secretDir) => {
-  const pem = selfsigned.generate(null, {
+module.exports = async (appDir, secretDir) => {
+  const pem = await selfsigned.generate(null, {
     keySize: 2048,
     days: 365000,
     algorithm: 'sha256',

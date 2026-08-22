@@ -1,4 +1,5 @@
-/* eslint-env mocha */
+const { describe, it, beforeEach, afterEach } = require('node:test')
+const captureLogs = require('./util/captureLogs')
 const fs = require('fs-extra')
 const path = require('path')
 const axios = require('axios')
@@ -7,34 +8,19 @@ const roosevelt = require('../roosevelt')
 describe('view engines', () => {
   // global vars the tests will need
   const context = {}
-  const appDir = path.join(__dirname, 'app')
-
-  // capture everything a roosevelt app logs to the console
-  let capturedLogs = ''
-  beforeEach(done => {
-    capturedLogs = ''
-    process.stdout.write = (chunk, encoding, callback) => {
-      capturedLogs += chunk.toString()
-      if (callback) callback()
-    }
-    process.stderr.write = (chunk, encoding, callback) => {
-      capturedLogs += chunk.toString()
-      if (callback) callback()
-    }
+  const appDir = path.join(__dirname, 'app/viewEngine')
+  beforeEach((t, done) => {
+    captureLogs.start()
     done()
   })
 
-  // undo capturing everything logged to the console so that mocha can print results
-  const originalStdoutWrite = process.stdout.write
-  const originalStderrWrite = process.stderr.write
+  // hands the test what the app has logged so far; collecting keeps running until the test ends, so anything logged afterwards is not printed
   function finish (cb) {
-    process.stdout.write = originalStdoutWrite
-    process.stderr.write = originalStderrWrite
-    cb(capturedLogs)
+    cb(captureLogs.peek())
   }
 
   // quit the roosevelt app if it hasn't killed itself already and delete the test app
-  afterEach(done => {
+  afterEach((t, done) => {
     if (!context?.app?.get) {
       fs.rmSync(appDir, { recursive: true, force: true })
       done()
@@ -45,11 +31,13 @@ describe('view engines', () => {
     })
   })
 
-  it('should render the teddy test page', done => {
+  it('should render the teddy test page', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30134 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
@@ -73,11 +61,13 @@ describe('view engines', () => {
     })()
   })
 
-  it('should be able to set the viewEngine if it was just a string', done => {
+  it('should be able to set the viewEngine if it was just a string', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30135 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
@@ -99,11 +89,13 @@ describe('view engines', () => {
     })()
   })
 
-  it('should render the teddy test page', done => {
+  it('should render the teddy test page', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30136 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
@@ -125,11 +117,13 @@ describe('view engines', () => {
     })()
   })
 
-  it('should render the teddy test page', done => {
+  it('should render the teddy test page', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30137 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
@@ -153,11 +147,13 @@ describe('view engines', () => {
     })()
   })
 
-  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', done => {
+  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30138 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
@@ -178,11 +174,13 @@ describe('view engines', () => {
     })()
   })
 
-  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', done => {
+  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30139 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,

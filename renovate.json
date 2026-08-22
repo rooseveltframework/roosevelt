@@ -1,15 +1,13 @@
 {
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    "config:recommended",
     ":preserveSemverRanges",
     ":ignoreUnstable",
     ":respectLatest",
     ":disableDependencyDashboard"
   ],
-  "packageRules": [
-    {
-      "matchPackageNames": ["express4"],
-      "allowedVersions": "^4.0.0"
-    }
-  ]
+  "configMigration": true,
+  "description": "new releases are left alone for a few days so that a compromised package has time to be caught and pulled before it ever reaches a pull request here; security updates skip the wait and are raised as soon as they are found",
+  "minimumReleaseAge": "5 days"
 }

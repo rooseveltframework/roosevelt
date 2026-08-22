@@ -1,4 +1,5 @@
-/* eslint-env mocha */
+const { describe, it, before, afterEach } = require('node:test')
+const rooseveltConfig = require('../config')
 /* eslint no-template-curly-in-string: 0 */
 
 const assert = require('assert')
@@ -41,57 +42,65 @@ describe('sourceParams', () => {
 
     afterEach(async () => {
       // wipe out the test app directory
-      fs.rmSync(path.join(__dirname, 'app'), { recursive: true, force: true })
+      // only this file's own directory is removed, because every test file keeps its app under test/app and removing the whole folder would delete the apps the other files are using
+      fs.rmSync(path.join(__dirname, 'app/sourceParams'), { recursive: true, force: true })
     })
 
-    it('should set params from package.json', () => {
-      // set app directory
-      const appDir = path.join(__dirname, 'app/sourceParams')
-
-      // build roosevelt config from sample
-      const pkg = {
-        rooseveltConfig: {
-          ...sampleConfig
-        }
+    describe('supplying part of an object param', () => {
+      function params (options) {
+        return require('../roosevelt')({ appDir: path.join(__dirname, 'app/sourceParams'), ...config, ...options }).expressApp.get('params')
       }
 
-      // create app directory
-      fs.ensureDirSync(path.join(appDir))
+      it('should keep the rest of that param defaults', () => {
+        // roosevelt reads logging.methods.http directly to decide whether to log requests, so losing it here switched http logging off for an app that only asked to quiet info
+        const methods = params({ logging: { methods: { info: false } } }).logging.methods
 
-      // generate package.json with sample config
-      fs.writeJSONSync(path.join(appDir, 'package.json'), pkg)
-
-      // initialize roosevelt
-      const app = require('../roosevelt')({
-        appDir
+        assert.strictEqual(methods.info, false, 'what the app asked for should stand')
+        assert.strictEqual(methods.http, true, 'and everything it did not mention should keep its default')
+        assert.strictEqual(methods.error, true)
       })
 
-      const appConfig = app.expressApp.get('params')
+      it('should keep defaults a level below the one supplied', () => {
+        const p = params({ logging: { methods: { info: false } } })
 
-      // do some param post-processing that matches what we expect from roosevelt
-      pkg.rooseveltConfig.staticsRoot = path.join(appDir, pkg.rooseveltConfig.staticsRoot)
-      pkg.rooseveltConfig.modelsPath = path.join(appDir, pkg.rooseveltConfig.modelsPath)
-      pkg.rooseveltConfig.viewsPath = path.join(appDir, pkg.rooseveltConfig.viewsPath)
-      pkg.rooseveltConfig.controllersPath = path.join(appDir, pkg.rooseveltConfig.controllersPath)
-      pkg.rooseveltConfig.secretsPath = path.join(appDir, pkg.rooseveltConfig.secretsPath)
-      pkg.rooseveltConfig.buildFolder = (path.join(appDir, pkg.rooseveltConfig.buildFolder))
-      pkg.rooseveltConfig.publicFolder = (path.join(appDir, pkg.rooseveltConfig.publicFolder))
-      pkg.rooseveltConfig.html.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.html.sourcePath)
-      pkg.rooseveltConfig.html.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.html.output)
-      pkg.rooseveltConfig.css.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.css.sourcePath)
-      pkg.rooseveltConfig.css.output = path.join(pkg.rooseveltConfig.publicFolder, pkg.rooseveltConfig.css.output)
-      pkg.rooseveltConfig.js.sourcePath = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.js.sourcePath)
-      pkg.rooseveltConfig.clientViews.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.clientViews.output)
-      pkg.rooseveltConfig.clientControllers.output = path.join(pkg.rooseveltConfig.staticsRoot, pkg.rooseveltConfig.clientControllers.output)
+        assert.strictEqual(p.logging.quieterStartup, false, 'a sibling of the object that was supplied should survive too')
+      })
 
-      // for each param, test that its value is set in roosevelt
-      for (const key in appConfig) {
-        const param = appConfig[key]
+      it('should fill in defaults nested inside another param', () => {
+        const bodyParser = params({ bodyParser: { urlEncoded: { limit: '1mb' } } }).bodyParser
 
-        if (!blocklist.includes(key)) {
-          assert.deepStrictEqual(param, pkg.rooseveltConfig[key], `${key} was not correctly set`)
-        }
-      }
+        assert.strictEqual(bodyParser.urlEncoded.limit, '1mb')
+        assert.strictEqual(bodyParser.urlEncoded.extended, true, 'the default alongside it should remain')
+        assert.deepStrictEqual(bodyParser.json, {}, 'and so should the sibling param')
+      })
+
+      it('should still let an app turn a default off', () => {
+        assert.strictEqual(params({ logging: { methods: { http: false } } }).logging.methods.http, false)
+      })
+
+      it('should pass through options roosevelt knows nothing about', () => {
+        // helmet and formidable take arbitrary options bound for those modules, so filling in defaults must not amount to a allowlist
+        assert.strictEqual(params({ formidable: { maxFileSize: 99 } }).formidable.maxFileSize, 99)
+        assert.strictEqual(params({ formidable: { maxFileSize: 99 } }).formidable.multiples, true, 'while still restoring the default')
+      })
+
+      it('should have the defaults in place before a ref reads them', () => {
+        // refs resolve partway through sourcing, so a ref reading a sub-param the app left out has to see the default rather than nothing
+        const p = params({
+          logging: { methods: { info: false } },
+          localhostOnly: rooseveltConfig.ref(param => param.logging.methods.http === true)
+        })
+
+        assert.strictEqual(p.localhostOnly, true, 'the ref should have seen the restored default, not undefined')
+      })
+
+      it('should fill defaults into what a ref returns, the same as a literal', () => {
+        // a ref is skipped on the way in, since it is an object roosevelt replaces wholesale, so the defaults have to be filled again once it has produced a real value
+        const methods = params({ logging: rooseveltConfig.ref(() => ({ methods: { info: false } })) }).logging.methods
+
+        assert.strictEqual(methods.info, false, 'what the ref returned should stand')
+        assert.strictEqual(methods.http, true, 'and the defaults it left out should be filled in')
+      })
     })
 
     it('should set params from constructor', () => {
@@ -132,7 +141,7 @@ describe('sourceParams', () => {
       }
     })
 
-    it('should set params from rooseveltConfig.json', () => {
+    it('should set params from rooseveltConfig.js', () => {
       // set app directory
       const appDir = path.join(__dirname, 'app/sourceParams')
 
@@ -144,8 +153,8 @@ describe('sourceParams', () => {
       // create app directory
       fs.ensureDirSync(path.join(appDir))
 
-      // generate rooseveltConfig.json with sample config
-      fs.writeJSONSync(path.join(appDir, 'rooseveltConfig.json'), configJson)
+      // generate rooseveltConfig.js with sample config
+      fs.outputFileSync(path.join(appDir, 'rooseveltConfig.js'), 'module.exports = ' + JSON.stringify(configJson))
 
       // initialize roosevelt
       const app = require('../roosevelt')({
@@ -180,7 +189,7 @@ describe('sourceParams', () => {
       }
     })
 
-    it('should resolve variables in params', () => {
+    it('should resolve refs against the finished params', () => {
       // build roosevelt config with lots of variables
       const config = {
         logging: {
@@ -196,35 +205,34 @@ describe('sourceParams', () => {
           port: 4000
         },
         https: {
-          port: '${(http.port + 1)}'
+          // a ref returns a real number, where the old template syntax produced a string that had to be coerced back
+          port: rooseveltConfig.ref(param => param.http.port + 1)
         },
         formidable: {
-          multiples: '${versionedPublic}'
+          multiples: rooseveltConfig.ref(param => param.versionedPublic)
         },
         css: {
           sourcePath: 'coolCss',
           allowlist: [
-            '${css.sourcePath}/hello.js'
+            rooseveltConfig.ref(param => path.join(param.css.sourcePath, 'hello.js'))
           ]
         },
         js: {
           sourcePath: 'coolJavaScript',
-          webpack: {
-            bundles: [
-              {
-                output: '${css.allowlist[0]}'
-              }
-            ]
-          }
+          bundles: [
+            {
+              output: rooseveltConfig.ref(param => param.css.allowlist[0])
+            }
+          ]
         },
         symlinks: [
           {
-            source: '${js.sourcePath}',
-            dest: '${publicFolder}/js'
+            source: rooseveltConfig.ref(param => param.js.sourcePath),
+            dest: rooseveltConfig.ref(param => path.join(param.publicFolder, 'js'))
           }
         ],
         versionedPublic: true,
-        hostPublic: '${makeBuildArtifacts}'
+        hostPublic: rooseveltConfig.ref(param => param.makeBuildArtifacts)
       }
 
       // initialize roosevelt
@@ -233,13 +241,13 @@ describe('sourceParams', () => {
       const appConfig = app.expressApp.get('params')
 
       // check against various scenarios
-      assert.deepStrictEqual(appConfig.https.port, 4001, 'number param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.css.allowlist[0], path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'partial param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.symlinks[0].source, path.join(appConfig.staticsRoot, 'coolJavaScript'), 'param variable within array not parsed correctly')
-      assert.deepStrictEqual(appConfig.symlinks[0].dest, path.join(appConfig.publicFolder, 'js'), 'param variable within array not parsed correctly')
-      assert.deepStrictEqual(appConfig.js.webpack.bundles[0].output, path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'deeply nested param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.formidable.multiples, true, 'true param variable not parsed correctly')
-      assert.deepStrictEqual(appConfig.hostPublic, false, 'false param variable not parsed correctly')
+      assert.deepStrictEqual(appConfig.https.port, 4001, 'a ref returning a number should stay a number')
+      assert.deepStrictEqual(appConfig.css.allowlist[0], path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'a ref should see params roosevelt derived, such as the resolved css source path')
+      assert.deepStrictEqual(appConfig.symlinks[0].source, path.join(appConfig.staticsRoot, 'coolJavaScript'), 'a ref inside an array should resolve')
+      assert.deepStrictEqual(appConfig.symlinks[0].dest, path.join(appConfig.publicFolder, 'js'), 'a ref inside an array should resolve')
+      assert.deepStrictEqual(appConfig.js.bundles[0].output, path.join(appConfig.staticsRoot, 'coolCss/hello.js'), 'a ref that reads a value produced by another ref should resolve')
+      assert.deepStrictEqual(appConfig.formidable.multiples, true, 'a ref returning a boolean should stay a boolean')
+      assert.deepStrictEqual(appConfig.hostPublic, false, 'a ref returning false should stay false')
     })
   })
 
@@ -649,12 +657,47 @@ describe('sourceParams', () => {
     }
     let app
 
-    it('should change the https.port param to 45678', function (done) {
+    it('should change the https.port param to 45678', function (t, done) {
       process.env.HTTPS_PORT = 45678
 
       app = require('../roosevelt')(appConfig)
       assert.strictEqual(app.expressApp.get('params').https.port, 45678)
       delete process.env.HTTPS_PORT
+      done()
+    })
+
+    it('should ignore an env var that is present but empty and use the supplied param instead', function (t, done) {
+      process.env.HTTPS_PORT = ''
+
+      app = require('../roosevelt')(appConfig)
+      assert.strictEqual(app.expressApp.get('params').https.port, 12345)
+      delete process.env.HTTPS_PORT
+      done()
+    })
+
+    it('should restore an env var that is present but empty after sourcing params', function (t, done) {
+      process.env.HTTPS_PORT = ''
+
+      app = require('../roosevelt')(appConfig)
+      assert.strictEqual(process.env.HTTPS_PORT, '')
+      delete process.env.HTTPS_PORT
+      done()
+    })
+
+    it('should ignore an empty NODE_ENV and use the supplied mode param instead', function (t, done) {
+      process.env.NODE_ENV = ''
+
+      app = require('../roosevelt')({ ...appConfig, mode: 'development' })
+      assert.strictEqual(app.expressApp.get('params').mode, 'development')
+      done()
+    })
+
+    it('should ignore an empty NODE_PORT and leave the supplied http.port param intact', function (t, done) {
+      process.env.NODE_PORT = ''
+
+      app = require('../roosevelt')({ ...appConfig, https: { enable: false }, http: { enable: true, port: 3000 } })
+      assert.strictEqual(app.expressApp.get('params').http.port, 3000)
+      delete process.env.NODE_PORT
       done()
     })
   })
@@ -709,35 +752,27 @@ describe('sourceParams', () => {
     })
   })
 
-  // TODO: the CLI flag override tests are skipped because we need to alter the skipped tests to test a different command line flag being overridden (e.g. --development-mode) because the `cores` feature has since been deprecated since we set the tests to skip
-  /*
-  below is the now-cut README content for the feature back when it previously existed:
-
-  - [Overriding recognized command line flags and environment variables](https://github.com/rooseveltframework/roosevelt#overriding-recognized-command-line-flags-and-environment-variables)
-
-  ### Overriding recognized command line flags and environment variables
-
-  You can override the default command line flags and environment variables by providing a schema from [source-configs](https://github.com/rooseveltframework/source-configs) with a `"rooseveltConfig"` section. For instance, to set the number of cores from the command line with `"--num-cores"` or `"-n"` instead of the default `"--cores"` or `"-c"`, you could write:
-  ```javascript
-  const schemaOverride = {
-    rooseveltConfig: { // we are overriding the Roosevelt config
-      cores: { // we are overriding the cores param in the Roosevelt config
-        commandLineArg: ['--num-cores', '-n'], // the new command line arg
-        envVar: ['NUM_CORES'] // a new environment variable to listen for
-      }
-    }
-  }
-  const params = {} // set any Roosevelt parameters here
-  require('roosevelt')(params, schemaOverride).startServer()
-  ```
-  */
   describe('overriding command line args', () => {
     let processArgv
 
+    // most of roosevelt's flags are switches, meaning supplying the flag implies a value rather than carrying one, so they are overridden a value at a time
     const schema = {
       rooseveltConfig: {
-        cores: { // the name of the roosevelt param we're overriding
-          commandLineArg: ['--num-cores'] // what we're changing the cli flag to
+        mode: { // the name of the roosevelt param we're overriding
+          commandLineArg: { // what we're changing the cli flags to
+            development: ['--dev-mode-new']
+          }
+        }
+      }
+    }
+
+    // a flag that carries its own value is overridden with a plain list instead
+    const valueFlagSchema = {
+      rooseveltConfig: {
+        js: {
+          verbose: {
+            commandLineArg: ['--js-verbose']
+          }
         }
       }
     }
@@ -752,29 +787,71 @@ describe('sourceParams', () => {
       process.argv = processArgv.slice()
     })
 
-    it.skip('should not set params based on default flags', (done) => {
-      process.argv.push('--cores') // the original cli flag
-      process.argv.push(2) // the value being passed to it
+    it('should not set params based on default flags', (t, done) => {
+      process.argv.push('--dev') // the original cli flag
 
       const app = require('../roosevelt')({
         ...config
       }, schema)
 
-      const appConfig = app.expressApp.get('params')
-      assert.deepStrictEqual(appConfig.cores, 1)
+      assert.deepStrictEqual(app.expressApp.get('params').mode, 'production')
       done()
     })
 
-    it.skip('should set params based on specified flags', (done) => {
-      process.argv.push('--num-cores') // the new cli flag
-      process.argv.push(2) // the value being passed to it
+    it('should set params based on specified flags', (t, done) => {
+      process.argv.push('--dev-mode-new') // the new cli flag
 
       const app = require('../roosevelt')({
         ...config
       }, schema)
 
-      const appConfig = app.expressApp.get('params')
-      assert.deepStrictEqual(appConfig.cores, 2)
+      assert.deepStrictEqual(app.expressApp.get('params').mode, 'development')
+      done()
+    })
+
+    it('should leave the flags of values that were not overridden alone', (t, done) => {
+      process.argv.push('--production-proxy-mode') // a flag of the same param that the schema did not touch
+
+      const app = require('../roosevelt')({
+        ...config
+      }, schema)
+
+      assert.deepStrictEqual(app.expressApp.get('params').mode, 'production-proxy')
+      done()
+    })
+
+    it('should not set params based on the default flag of a flag that carries a value', (t, done) => {
+      process.argv.push('--jsbundler') // the original cli flag
+      process.argv.push('verbose')
+
+      const app = require('../roosevelt')({
+        ...config
+      }, valueFlagSchema)
+
+      assert.deepStrictEqual(app.expressApp.get('params').js.verbose, false)
+      done()
+    })
+
+    it('should set params based on a specified flag that carries a value', (t, done) => {
+      process.argv.push('--js-verbose') // the new cli flag
+      process.argv.push('verbose')
+
+      const app = require('../roosevelt')({
+        ...config
+      }, valueFlagSchema)
+
+      assert.deepStrictEqual(app.expressApp.get('params').js.verbose, true)
+      done()
+    })
+
+    it('should still honor the default flags when no schema is supplied', (t, done) => {
+      process.argv.push('--dev')
+
+      const app = require('../roosevelt')({
+        ...config
+      })
+
+      assert.deepStrictEqual(app.expressApp.get('params').mode, 'development')
       done()
     })
   })
@@ -806,7 +883,7 @@ describe('sourceParams', () => {
       }
     }
 
-    it('should not set param value from default env var', done => {
+    it('should not set param value from default env var', (t, done) => {
       process.env.HTTP_PORT = 45678
 
       const app = require('../roosevelt')(appConfig, schema)
@@ -815,7 +892,7 @@ describe('sourceParams', () => {
       done()
     })
 
-    it('should get param value from specified env var', done => {
+    it('should get param value from specified env var', (t, done) => {
       process.env.HTTP_PORT_NEW = 45678
 
       const app = require('../roosevelt')(appConfig, schema)

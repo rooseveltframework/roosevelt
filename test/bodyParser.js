@@ -1,15 +1,18 @@
-/* eslint-env mocha */
+const { describe, it, before, after } = require('node:test')
 
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
 describe('body-parser', () => {
+  // global vars the tests will need
+  const context = {}
+
   before(async () => {
     // spin up the roosevelt app
     const rooseveltApp = roosevelt({
       makeBuildArtifacts: false,
       http: {
-        port: 40000
+        port: 30100
       },
       csrfProtection: false,
       expressSession: false,
@@ -47,14 +50,14 @@ describe('body-parser', () => {
     context.app = rooseveltApp.expressApp
   })
 
-  after(done => {
+  after((t, done) => {
     // stop the server
     context.app.get('httpServer').close(() => {
       done()
     })
   })
 
-  it('should respond with 413 error when too many urlencoded fields are sent', done => {
+  it('should respond with 413 error when too many urlencoded fields are sent', (t, done) => {
     // send a post with too many urlencoded fields
     request(context.app)
       .post('/paramLimit')
@@ -70,7 +73,7 @@ describe('body-parser', () => {
       })
   })
 
-  it('should respond with 413 error when too many json fields are sent', done => {
+  it('should respond with 413 error when too many json fields are sent', (t, done) => {
     // send a post with too json fields
     request(context.app)
       .post('/paramLimit')

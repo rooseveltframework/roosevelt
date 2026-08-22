@@ -4,6 +4,16 @@
 
 First you will need to install [Node.js](http://nodejs.org). Both the current and LTS version of Node.js are supported. It is recommended that you have both the current and LTS versions of Node.js installed on your system. To do that, it is recommended that you install Node.js using a Node.js version manager like [nvm](https://github.com/creationix/nvm) or [nvm-windows](https://github.com/coreybutler/nvm-windows) rather than the official installer, as a version manager will allow you to switch between multiple versions of Node.js easily.
 
+### Build tools
+
+You will also need to install [Python](https://www.python.org/) and a C++ compiler on your system as well for some native Node.js dependencies to work.
+
+To do that on each OS:
+
+- **Linux**: your distribution's compiler bundle, which is `build-essential` on Debian and Ubuntu, or `gcc-c++ make` on Fedora. Python 3 is usually already there.
+- **macOS**: the Xcode command line tools, via `xcode-select --install`. Those supply the compiler and `make`, and Python along with them on current versions of macOS.
+- **Windows**: the C++ build tools from [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/), ticking "Desktop development with C++" while installing. If you already have Visual Studio itself with that workload, you are set. [Python is a separate install](https://www.python.org/).
+
 ## Make a Roosevelt app
 
 🏭🧸 **mkroosevelt** [![npm](https://img.shields.io/npm/v/mkroosevelt.svg)](https://www.npmjs.com/package/mkroosevelt)
@@ -41,7 +51,7 @@ It is also possible to create a Roosevelt app without using the app generator. T
 To do that:
 
 - First create a new folder and `cd` into it.
-- Then `npm i roosevelt`. This will create a `node_modules` folder with Roosevelt and its bare minimum dependencies.
+- Then `npm i roosevelt express`. This will create a `node_modules` folder with Roosevelt, Express, and its bare minimum dependencies.
 - Create a file named `app.js`.
 - Put this code in `app.js`:
 ```javascript
@@ -81,6 +91,7 @@ Below is the default directory structure for an app created using the Roosevelt 
   - `preprocessed_statics`: Static files that have been preprocessed by the [minify-html-attributes](https://rooseveltframework.org/docs/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
   - `preprocessed_views`: View files that have had their uses of web components progressively enhanced using the [progressively-enhance-web-components](https://rooseveltframework.org/docs/progressively-enhance-web-components) module and/or preprocessed by the [minify-html-attributes](https://rooseveltframework.org/docs/minify-html-attributes) module, if you have `minifyHtmlAttributes` enabled.
   - The output JS files from the `clientControllers` or `clientViews` features.
+  - `buildCache.json`: A record of which source files each static file was built from, so that unchanged files can be skipped on the next start. Only appears once there is something to skip. Delete it to force everything to be rebuilt.
 - `public`: All contents within this folder will be exposed as static files. For the most part, the contents of this folder will be populated from the statics folder. This folder is added to `.gitignore` by default because it is considered a build artifact.
 
 ### Application infrastructure
@@ -89,5 +100,5 @@ Below is the default directory structure for an app created using the Roosevelt 
 - `node_modules`: A standard folder created by Node.js where all modules your app depends on (such as Roosevelt) are installed to. This folder is created when installing dependencies using the `npm i` command. It is added to `.gitignore` by default because it is considered a build artifact.
 - `package.json`: A file common to most Node.js apps for configuring your app.
 - `package-lock.json`: An auto-generated file common to most Node.js apps containing a map of your dependency tree. This is created after you run `npm i` for the first time. Once the file exists within your project, you can run `npm ci` instead of `npm i` when installing dependencies, which will be more performant and will result in reproducible builds that always have the same versions of every dependency, including downstream dependencies.
-- `rooseveltConfig.json`: Where your Roosevelt config is stored and what your params are set to. These values can be overridden when calling Roosevelt's constructor.
+- `rooseveltConfig.js`: Where your Roosevelt config is stored and what your params are set to. It is a JavaScript file, so it can hold comments and code as well as plain values. These values can be overridden when calling Roosevelt's constructor.
 - `secrets`: A folder for "secret" files, e.g. session keys, HTTPS certs, passwords, etc. It is added to `.gitignore` by default because it contains sensitive information, so it should not be committed to git.

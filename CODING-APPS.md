@@ -27,7 +27,7 @@ Controllers bind models and views together.
 
 To make a new controller, make a new file in the controllers directory, then follow one of the examples below.
 
-### Example GET route
+### Example route
 
 ```js
 // someController.js
@@ -46,9 +46,15 @@ module.exports = (router, app) => {
 }
 ```
 
-### Example POST route
+When writing POST routes, Roosevelt secures them by leveraging the [`Sec-Fetch-Site`](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Sec-Fetch-Site) header. Browsers tell Roosevelt where each request came from using `Sec-Fetch-Site`, and Roosevelt refuses any request that changes data unless the browser says it came from your own site.
 
-In Roosevelt, [Cross-Site Request Forgery](https://en.wikipedia.org/wiki/Cross-site_request_forgery) protection is enabled by default. That means in order to make requests to any POST route, you will need to pass a CSRF token from the server to the browser, and then return that token when making a request from the browser to the server.
+Anything that is not a browser does not send that header, such as a mobile app, another server, or a command line HTTP client like curl. Requests from those clients are refused for the same reason. To allow them, add their routes to `csrfProtection.exemptions`. See the The `rooseveltConfig` API configuration section for details.
+
+### Example POST route with CSRF tokens
+
+If you have set `csrfProtection.requireTokens` to `true`, requests that change data must also carry a CSRF token. You would want that if anything untrusted is hosted on a subdomain you share, such as user uploaded content or a separate app someone else runs, since requiring a token is the only way to stop an untrusted request coming from another subdomain of your own site.
+
+When tokens are required, you need to pass one from the server to the browser, and then return that token when making a request from the browser to the server.
 
 To do that, include the CSRF token in your HTML form as a hidden input `_csrf`:
 
@@ -81,6 +87,8 @@ const response = await fetch('/some-protected-endpoint', {
   }
 })
 ```
+
+Note that `req.csrfToken()` is only available when `csrfProtection.requireTokens` is set to `true`, since there are no tokens to generate otherwise.
 
 You can also exempt certain routes from CSRF protection or disable the feature entirely by configuration. See configuration section for details.
 

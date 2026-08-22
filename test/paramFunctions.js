@@ -1,4 +1,5 @@
-/* eslint-env mocha */
+const { describe, it, beforeEach, afterEach } = require('node:test')
+const captureLogs = require('./util/captureLogs')
 const fs = require('fs-extra')
 const path = require('path')
 const roosevelt = require('../roosevelt')
@@ -6,34 +7,19 @@ const roosevelt = require('../roosevelt')
 describe('method params', () => {
   // global vars the tests will need
   const context = {}
-  const appDir = path.join(__dirname, 'app')
-
-  // capture everything a roosevelt app logs to the console
-  let capturedLogs = ''
-  beforeEach(done => {
-    capturedLogs = ''
-    process.stdout.write = (chunk, encoding, callback) => {
-      capturedLogs += chunk.toString()
-      if (callback) callback()
-    }
-    process.stderr.write = (chunk, encoding, callback) => {
-      capturedLogs += chunk.toString()
-      if (callback) callback()
-    }
+  const appDir = path.join(__dirname, 'app/paramFunctions')
+  beforeEach((t, done) => {
+    captureLogs.start()
     done()
   })
 
-  // undo capturing everything logged to the console so that mocha can print results
-  const originalStdoutWrite = process.stdout.write
-  const originalStderrWrite = process.stderr.write
+  // hands the test what the app has logged so far; collecting keeps running until the test ends, so anything logged afterwards is not printed
   function finish (cb) {
-    process.stdout.write = originalStdoutWrite
-    process.stderr.write = originalStderrWrite
-    cb(capturedLogs)
+    cb(captureLogs.peek())
   }
 
   // quit the roosevelt app if it hasn't killed itself already and delete the test app
-  afterEach(done => {
+  afterEach((t, done) => {
     if (!context?.app?.get) {
       fs.rmSync(appDir, { recursive: true, force: true })
       done()
@@ -44,10 +30,11 @@ describe('method params', () => {
     })
   })
 
-  it('should execute what is in onServerInit', done => {
+  it('should execute what is in onServerInit', (t, done) => {
     (async () => {
       let pass = false
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
         appDir,
         expressSession: false,
         onServerInit: app => {
@@ -63,12 +50,14 @@ describe('method params', () => {
     })()
   })
 
-  it('should execute what is in onAppExit', done => {
+  it('should execute what is in onAppExit', (t, done) => {
     (async () => {
       let pass = false
       const originalProcessExit = process.exit
       process.exit = () => {}
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30113 },
         appDir,
         expressSession: false,
         onServerInit: app => {
@@ -88,11 +77,13 @@ describe('method params', () => {
     })()
   })
 
-  it('should throw an error if there is a controller that is not coded properly', done => {
+  it('should throw an error if there is a controller that is not coded properly', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/errController.js'), path.join(appDir, 'mvc/controllers/errController.js'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30114 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
@@ -109,11 +100,13 @@ describe('method params', () => {
     })()
   })
 
-  it('should throw an error if there is a syntax error with the 404 custom error page that is passed in', done => {
+  it('should throw an error if there is a syntax error with the 404 custom error page that is passed in', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/404errController.js'), path.join(appDir, 'mvc/controllers/404errController.js'))
       const rooseveltApp = roosevelt({
+        logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+        http: { port: 30115 },
         appDir,
         expressSession: false,
         makeBuildArtifacts: true,
