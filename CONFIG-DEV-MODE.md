@@ -2,6 +2,28 @@
 
 These features are only available in development mode.
 
+- `watchStatics` *[Object]*: Settings for rebuilding your static files as you edit the files they are built from, then reloading the browser once that is done.
+  - Options:
+    - `enable` *[Boolean]*: Whether or not to enable this feature.
+    - `additionalPaths` *[Array of Strings]*: Directories to watch on top of the ones Roosevelt already knows your static files are built from. Relative paths are resolved against your app directory. Use this when something outside your statics feeds into a page, such as a folder of content files.
+    - `debounce` *[Number]*: How long in milliseconds to wait for a burst of file changes to finish arriving before rebuilding. Saving one file usually reports more than one change, so this stops a single save from starting several rebuilds.
+
+  What gets watched is `staticsRoot` along with the source paths for your HTML, CSS, JS, and views. Your public folder and build folder are skipped, since Roosevelt writes to them itself and watching them would make a build trigger another build.
+
+  Controllers and models are not watched. Changing those means restarting the process, which is what a process watcher such as [nodemon](https://nodemon.io) is for, and Roosevelt cannot reload code it has already loaded. If you use one alongside this feature, it is worth narrowing it to your server-side files so that editing a stylesheet no longer restarts your whole app.
+
+  Only the static files whose sources actually changed are rebuilt, unless `incrementalBuilds` is disabled.
+
+Default: *[Object]*
+
+```javascript
+{
+  enable: true,
+  additionalPaths: [],
+  debounce: 100
+}
+```
+
 - `frontendReload` *[Object]*: Settings to use for the browser reload feature which automatically reloads your browser when your frontend code changes.
   - Options:
     - `enable` *[Boolean]*: Whether or not to enable this feature.

@@ -47,12 +47,20 @@ describe('config file', () => {
       assert.strictEqual(params(dir).http.port, 40002)
     })
 
-    it('should prefer rooseveltConfig.js when both are present', () => {
+    it('should prefer roosevelt.config.js when both are present', () => {
+      // roosevelt.config.js is the name roosevelt writes and documents; rooseveltConfig.js is still read so that apps predating the rename keep working
       const dir = freshDir()
       fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 40003 } }')
       fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { http: { port: 40004 } }')
 
-      assert.strictEqual(params(dir).http.port, 40003)
+      assert.strictEqual(params(dir).http.port, 40004)
+    })
+
+    it('should no longer read roosevelt.config.json', () => {
+      const dir = freshDir()
+      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { http: { port: 40006 } })
+
+      assert.notStrictEqual(params(dir).http.port, 40006)
     })
 
     it('should no longer read rooseveltConfig.json', () => {
@@ -166,11 +174,35 @@ describe('config file', () => {
 
       execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
 
-      const written = fs.readFileSync(path.join(dir, 'rooseveltConfig.js'), 'utf8')
+      const written = fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8')
 
       assert.ok(written.includes("require('roosevelt/config')"), 'the generated file should import the config helper')
       assert.ok(written.includes('rooseveltConfig.ref(param =>'), 'template values should become refs')
       assert.ok(written.includes('port: 40009'), 'plain values should carry over')
+    })
+
+    it('should convert a roosevelt.config.json as well as a rooseveltConfig.json', () => {
+      const dir = freshDir()
+      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { http: { port: 40011 } })
+
+      execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
+
+      assert.ok(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8').includes('port: 40011'))
+    })
+
+    it('should merge both json config names when an app somehow has both', () => {
+      // roosevelt only ever read one of them, with rooseveltConfig.json winning, so that is the precedence the migration keeps
+      const dir = freshDir()
+      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { versionedPublic: true, http: { port: 333 } })
+      fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 444 } })
+
+      const output = execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
+      const written = fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8')
+
+      assert.ok(written.includes('versionedPublic: true'), 'a param set in only one of them should survive')
+      assert.ok(written.includes('port: 444'), 'rooseveltConfig.json should win where both set the same param')
+      assert.strictEqual(written.includes('port: 333'), false, 'the value that was being overridden should not come through')
+      assert.ok(output.includes('roosevelt.config.json') && output.includes('rooseveltConfig.json'), 'both files should be named as sources')
     })
 
     it('should convert a rooseveltConfig key in package.json', () => {
@@ -179,7 +211,7 @@ describe('config file', () => {
 
       execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
 
-      assert.ok(fs.readFileSync(path.join(dir, 'rooseveltConfig.js'), 'utf8').includes('port: 40010'))
+      assert.ok(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8').includes('port: 40010'))
     })
 
     it('should merge every place a config lived rather than picking one', () => {
@@ -189,7 +221,7 @@ describe('config file', () => {
       fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 222 } })
 
       execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
-      const written = fs.readFileSync(path.join(dir, 'rooseveltConfig.js'), 'utf8')
+      const written = fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8')
 
       assert.ok(written.includes('versionedPublic: true'), 'a param set only in package.json should survive')
       assert.ok(written.includes('port: 222'), 'the config file should win where both set the same param')
@@ -210,7 +242,7 @@ describe('config file', () => {
     it('should refuse to overwrite a js config that already exists', () => {
       const dir = freshDir()
       fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 1 } })
-      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = {}')
+      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = {}')
 
       assert.throws(() => execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { stdio: 'pipe' }))
     })

@@ -119,6 +119,57 @@ describe('statics pipeline', () => {
     })
   })
 
+  describe('the onBeforeStatics event', () => {
+    it('should fire before anything has been written', async () => {
+      fs.outputFileSync(path.join(appDir, 'statics/images/teddy.txt'), 'an image stands in')
+      let publicFolderExisted = null
+      let copyExisted = null
+
+      await roosevelt({
+        ...appConfig,
+        copy: [{ source: 'statics/images/teddy.txt', dest: 'public/teddy.txt' }],
+        onBeforeStatics: () => {
+          publicFolderExisted = fs.pathExistsSync(path.join(appDir, 'public/css'))
+          copyExisted = fs.pathExistsSync(path.join(appDir, 'public/teddy.txt'))
+        }
+      }).initServer()
+
+      assert.strictEqual(copyExisted, false, 'the copy step must not have run yet when the event fires')
+      assert.strictEqual(publicFolderExisted, false, 'nothing must have been written into the public folder yet when the event fires')
+
+      // and the build still happened afterwards
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'public/teddy.txt')))
+    })
+
+    it('should be able to add a copy that then gets made', async () => {
+      fs.outputFileSync(path.join(appDir, 'statics/images/late.txt'), 'added by the event')
+
+      await roosevelt({
+        ...appConfig,
+        onBeforeStatics: (app) => {
+          // firing before anything is written is what makes this possible
+          app.get('params').copy.push({ source: 'statics/images/late.txt', dest: 'public/late.txt' })
+        }
+      }).initServer()
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'public/late.txt')), 'expected the copy the event added to have been made')
+      assert.strictEqual(fs.readFileSync(path.join(appDir, 'public/late.txt'), 'utf8'), 'added by the event')
+    })
+
+    it('should be able to add a symlink that then gets made', async () => {
+      fs.outputFileSync(path.join(appDir, 'statics/images/teddy.txt'), 'an image stands in')
+
+      await roosevelt({
+        ...appConfig,
+        onBeforeStatics: (app) => {
+          app.get('params').symlinks.push({ source: path.join(appDir, 'statics/images'), dest: path.join(appDir, 'public/images') })
+        }
+      }).initServer()
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'public/images/teddy.txt')), 'expected the symlink the event added to have been made')
+    })
+  })
+
   describe('copy files', () => {
     it('should copy a file to the destination', async () => {
       fs.outputFileSync(path.join(appDir, 'source/thing.txt'), 'copy me')

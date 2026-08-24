@@ -33,6 +33,7 @@ describe('sourceParams', () => {
       'onBeforeMiddleware',
       'onBeforeControllers',
       'onBeforeStatics',
+      'onStaticsRebuilt',
       'onServerStart',
       'onAppExit',
       'routePrefix',

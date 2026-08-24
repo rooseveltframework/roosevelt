@@ -67,6 +67,49 @@ describe('deprecation checker', () => {
     })
   })
 
+  describe('nodemon watching statics', () => {
+    // writes a package.json carrying the nodemon config under test
+    function withNodemonConfig (nodemonConfig) {
+      fs.outputJsonSync(path.join(appDir, 'package.json'), { name: 'test', dependencies: { express: '5.0.0' }, nodemonConfig })
+    }
+
+    it('should tell an app whose nodemon still watches its statics folder', async () => {
+      withNodemonConfig({ ignore: ['.build/', 'public/'], ext: 'scss html js json' })
+
+      assert.ok((await captureChecks()).includes('still watches your statics folder'))
+    })
+
+    it('should say nothing once the statics folder is ignored', async () => {
+      withNodemonConfig({ ignore: ['.build/', 'public/', 'statics/'], ext: 'js json' })
+
+      assert.ok(!(await captureChecks()).includes('still watches your statics folder'))
+    })
+
+    it('should say nothing when nodemon only watches places the statics are not in', async () => {
+      withNodemonConfig({ watch: ['mvc/'], ext: 'js json' })
+
+      assert.ok(!(await captureChecks()).includes('still watches your statics folder'))
+    })
+
+    it('should say nothing when there is no nodemon config to change', async () => {
+      fs.outputJsonSync(path.join(appDir, 'package.json'), { name: 'test', dependencies: { express: '5.0.0' } })
+
+      assert.ok(!(await captureChecks()).includes('still watches your statics folder'))
+    })
+
+    it('should say nothing when the app has turned the watcher off', async () => {
+      withNodemonConfig({ ignore: ['.build/', 'public/'], ext: 'scss html js json' })
+
+      assert.ok(!(await captureChecks({ watchStatics: { enable: false } })).includes('still watches your statics folder'))
+    })
+
+    it('should read a nodemon config that lives in its own file', async () => {
+      fs.outputJsonSync(path.join(appDir, 'nodemon.json'), { ignore: ['.build/', 'public/'], ext: 'scss html js json' })
+
+      assert.ok((await captureChecks()).includes('still watches your statics folder'))
+    })
+  })
+
   describe('config checks', () => {
     it('should catch a renamed param', async () => {
       assert.ok((await captureChecks({ generateFolderStructure: true })).includes('`makeBuildArtifacts`'))

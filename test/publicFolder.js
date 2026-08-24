@@ -1,5 +1,6 @@
 const { describe, it, beforeEach, afterEach } = require('node:test')
 const captureLogs = require('./util/captureLogs')
+const assert = require('assert')
 const fs = require('fs-extra')
 const path = require('path')
 const axios = require('axios')
@@ -29,6 +30,38 @@ describe('public folder', () => {
       fs.rmSync(appDir, { recursive: true, force: true })
       done()
     })
+  })
+
+  it('should serve a static site, which has no controllers to serve instead', (t, done) => {
+    (async () => {
+      fs.outputFileSync(path.join(appDir, 'statics/pages/index.html'), '<p>a static site</p>')
+      const rooseveltApp = roosevelt({
+        logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } },
+        appDir,
+        makeBuildArtifacts: 'staticsOnly',
+        viewEngine: 'html: teddy',
+        htmlValidator: { enable: false },
+        csrfProtection: false,
+        expressSession: false,
+        http: { port: 30140 },
+        onServerStart: (app) => {
+          context.app = app
+          ;(async () => {
+            const res = await axios.get('http://localhost:30140/')
+            finish(() => {
+              try {
+                assert.strictEqual(res.status, 200)
+                assert.ok(res.data.includes('a static site'), `expected the built page to be served, got: ${res.data.slice(0, 120)}`)
+                done()
+              } catch (err) {
+                done(err)
+              }
+            })
+          })()
+        }
+      })
+      await rooseveltApp.startServer()
+    })()
   })
 
   it('should allow for a custom favicon and GET that favicon on request', (t, done) => {
