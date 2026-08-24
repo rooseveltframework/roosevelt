@@ -130,6 +130,11 @@
   "prodSourceMaps": "value",
   "versionedPublic": "value",
   "hostPublic": "value",
+  "watchStatics": {
+    "enable": false,
+    "additionalPaths": "value",
+    "debounce": "value"
+  },
   "frontendReload": {
     "enable": false,
     "exceptionRoutes": "value",

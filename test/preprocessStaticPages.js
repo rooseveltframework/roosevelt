@@ -52,6 +52,95 @@ describe('static page generator', () => {
     fs.rmSync(appDir, { recursive: true, force: true })
   })
 
+  // view engines disagree about how they hand the markup back: teddy returns it, pug calls the callback, and ejs returns
+  // a promise when it is given no callback
+  // these check that the static page generator works with all three, so it is not tied to whichever engine roosevelt's
+  // own sample apps happen to use
+  describe('with view engines other than teddy', () => {
+    it('should render a static page with ejs, which returns a promise', async () => {
+      writePage('ejsPage.ejs', '<html><body><h1><%= greeting %></h1></body></html>')
+      fs.writeFileSync(path.join(pagesDir, 'ejsPage.js'), 'module.exports = () => ({ greeting: \'hello from ejs\' })')
+
+      await roosevelt({ ...appConfig, viewEngine: 'ejs: ejs' }).initServer()
+
+      assert.ok(readPage('ejsPage.html').includes('<h1>hello from ejs</h1>'), `got: ${readPage('ejsPage.html')}`)
+    })
+
+    it('should render a static page with pug, which calls a callback', async () => {
+      writePage('pugPage.pug', 'html\n  body\n    h1= greeting')
+      fs.writeFileSync(path.join(pagesDir, 'pugPage.js'), 'module.exports = () => ({ greeting: \'hello from pug\' })')
+
+      await roosevelt({ ...appConfig, viewEngine: 'pug: pug' }).initServer()
+
+      assert.ok(readPage('pugPage.html').includes('<h1>hello from pug</h1>'), `got: ${readPage('pugPage.html')}`)
+    })
+
+    it('should render pages with more than one engine registered at once', async () => {
+      writePage('fromTeddy.html', '<p>{greeting}</p>')
+      fs.writeFileSync(path.join(pagesDir, 'fromTeddy.js'), 'module.exports = () => ({ greeting: \'teddy page\' })')
+      writePage('fromEjs.ejs', '<p><%= greeting %></p>')
+      fs.writeFileSync(path.join(pagesDir, 'fromEjs.js'), 'module.exports = () => ({ greeting: \'ejs page\' })')
+
+      await roosevelt({ ...appConfig, viewEngine: ['html: teddy', 'ejs: ejs'] }).initServer()
+
+      assert.ok(readPage('fromTeddy.html').includes('teddy page'), `teddy page got: ${readPage('fromTeddy.html')}`)
+      assert.ok(readPage('fromEjs.html').includes('ejs page'), `ejs page got: ${readPage('fromEjs.html')}`)
+    })
+
+    it('should report an engine that fails to render rather than writing the error into the page', async () => {
+      let captured = ''
+      writePage('index.ejs', '<p><%= nope( %></p>') // not valid ejs, so the engine hands back an error
+      captureLogs.start()
+      try {
+        await roosevelt({
+          ...appConfig,
+          logging: { methods: { http: false, info: false, warn: false, verbose: false } },
+          viewEngine: 'ejs: ejs'
+        }).initServer()
+      } finally {
+        captured = captureLogs.stop()
+      }
+
+      assert.ok(captured.includes('failed to parse'), `expected the failure to be reported, got: ${JSON.stringify(captured.slice(0, 300))}`)
+      assert.strictEqual(readPage('index.html'), null)
+    })
+
+    it('should pick up an edited ejs page on a later build rather than caching it', async () => {
+      writePage('index.ejs', '<p>before</p>')
+      await roosevelt({ ...appConfig, viewEngine: 'ejs: ejs' }).initServer()
+      assert.ok(readPage('index.html').includes('before'))
+
+      writePage('index.ejs', '<p>after</p>')
+      await roosevelt({ ...appConfig, viewEngine: 'ejs: ejs' }).initServer()
+
+      assert.ok(readPage('index.html').includes('after'), `got: ${readPage('index.html')}`)
+    })
+
+    it('should pick up an edited model on a later build rather than caching it', async () => {
+      writePage('modelPage.html', '<p>{greeting}</p>')
+      fs.writeFileSync(path.join(pagesDir, 'modelPage.js'), 'module.exports = () => ({ greeting: \'before\' })')
+      await roosevelt({ ...appConfig }).initServer()
+      assert.ok(readPage('modelPage.html').includes('before'))
+
+      // node keeps what it requires, so this is what stops a rebuild handing back the values the model had on the first build
+      fs.writeFileSync(path.join(pagesDir, 'modelPage.js'), 'module.exports = () => ({ greeting: \'after\' })')
+      await roosevelt({ ...appConfig }).initServer()
+
+      assert.ok(readPage('modelPage.html').includes('after'), `got: ${readPage('modelPage.html')}`)
+    })
+
+    it('should pick up an edited teddy page on a later build rather than caching it', async () => {
+      writePage('index.html', '<p>before</p>')
+      await roosevelt({ ...appConfig }).initServer()
+      assert.ok(readPage('index.html').includes('before'))
+
+      writePage('index.html', '<p>after</p>')
+      await roosevelt({ ...appConfig }).initServer()
+
+      assert.ok(readPage('index.html').includes('after'), `got: ${readPage('index.html')}`)
+    })
+  })
+
   it('should render a static page', async () => {
     writePage('index.html', '<html><body><h1>hello</h1></body></html>')
 

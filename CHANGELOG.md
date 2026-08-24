@@ -1,3 +1,19 @@
+## 0.33.0
+
+- Breaking: Added `watchStatics` param, defaulted to true. In development mode Roosevelt now rebuilds your static files as you edit the files they are built from, then tells the browser to reload. To migrate:
+  - If you use a process watcher, narrow it to your server-side files: add your statics folder to its ignore list and set its extensions to `js json`. Otherwise it restarts your whole app the moment a static file changes and wins the race, so the rebuild never gets to happen and you keep paying for a full restart.
+  - If you use Teddy for templating, you need to upgrade to 1.2.0 for this feature to work.
+  - Set `watchStatics.enable` to false to prefer the old behavior.
+  - Added `onStaticsRebuilt` event, fired after a rebuild and before the browser reloads, for build work of your own that Roosevelt knows nothing about.
+  - A rebuild renders only the static pages the files you edited affect. Editing a page renders that page, editing a page's model renders the page beside it, editing a template that is not a page of its own renders every page, and editing something no page is built from renders none. Mark the templates your pages include with a `roosevelt-blocklist` comment on their first line, which is also what keeps them from being served as pages.
+  `onBeforeStatics` now also fires before each rebuild performed by the `watchStatics` feature.
+- Altered `startServer` when `makeBuildArtifacts` is set to `staticsOnly` so that it will serve a static site the same as any other app.
+- Fixed `onBeforeStatics` firing after the `copy` and `symlinks`.
+- Fixed the static page generator only working with view engines that return their markup directly. It now renders through the Express engine contract, `engine(path, options, callback)`, so any engine Express itself would accept can build a page.
+- Fixed a page's model being loaded once and then reused for the rest of the process, so an edited model had no effect on a later build.
+- Fixed a JS bundler config supplied as a file path being loaded once and then reused, so an edited config had no effect on a later build.
+- Updated dependencies.
+
 ## 0.32.0
 
 - Breaking: Raised the minimum supported Node.js version to 22.20. A specific patch release is named because several of the Node.js APIs Roosevelt uses in place of third party packages were not marked stable until partway through the Node.js 22 line, so claiming support for anything earlier would mean claiming support for versions where those APIs are experimental or absent.

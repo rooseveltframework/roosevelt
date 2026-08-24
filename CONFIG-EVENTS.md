@@ -22,8 +22,12 @@ These are sorted in order of when they are executed during the lifecycle of a Ro
 - `onBeforeControllers(app)`: Fired during initialization, prior to any routes being loaded.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 
-- `onBeforeStatics(app)`: Fired during initialization, prior to any statics being written.
+- `onBeforeStatics(app)`: Fired during initialization, prior to any statics being written. Also fired again before each rebuild when the `watchStatics` feature rebuilds your static files.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+
+- `onStaticsRebuilt(app, files)`: Fired after the `watchStatics` feature rebuilds your static files, and before the browser is told to reload. Use it for build work of your own that Roosevelt knows nothing about, such as writing a search index.
+  - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
+  - `files`: An array of the absolute paths of the files whose edits triggered the rebuild.
 
 - `onClientViewsProcess(template)`: Fired to preprocess templates before being exposed to the client.
   - `template`: A string containing a template written in any JS-based templating engine (e.g. Teddy, Pug, ejs, etc).

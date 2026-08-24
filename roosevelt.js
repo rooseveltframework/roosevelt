@@ -208,13 +208,9 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/setExpressConfigs')(app)
 
-    require('./lib/generateSymlinks')(app)
-
-    // tracks which files each static file was built from so the steps below can skip the ones that did not change
-    // it has to exist before the copy step, which is the first thing that uses it, so params derived after this point are not part of its fingerprint
+    // tracks which files each static file was built from so the build steps can skip the ones that did not change
+    // it is made here rather than alongside the build steps below so that params derived after this point, such as the absolute error page paths that mapRoutes works out, are not part of its fingerprint
     app.set('buildCache', require('./lib/tools/buildCache')(app))
-
-    require('./lib/copyFiles')(app)
 
     require('./lib/htmlMinifier')(app)
 
@@ -232,23 +228,7 @@ const roosevelt = (options = {}, schema) => {
 
     await require('./lib/mapRoutes')(app)
 
-    // fire user-defined onBeforeStatics event
-    if (params.onBeforeStatics && typeof params.onBeforeStatics === 'function') await Promise.resolve(params.onBeforeStatics(app))
-
-    await require('./lib/preprocessViewsAndStatics')(app)
-
-    await require('./lib/preprocessStaticPages')(app)
-
-    await require('./lib/preprocessCss')(app)
-
-    await require('./lib/controllersBundler')(app)
-
-    await require('./lib/viewsBundler')(app)
-
-    await require('./lib/jsBundler')(app)
-
-    // save what was built so the next run can skip the files that did not change
-    app.get('buildCache').save()
+    await require('./lib/buildStatics')(app)
 
     // fire user-defined onServerInit event
     if (params.onServerInit && typeof params.onServerInit === 'function') await Promise.resolve(params.onServerInit(app))
@@ -278,36 +258,43 @@ const roosevelt = (options = {}, schema) => {
         }
       }
 
-      if (params.makeBuildArtifacts !== 'staticsOnly') {
-        if (!numberOfServers) {
-          logger.warn('You called startServer but both http and https are disabled, so no servers are starting.')
-          resolve() // no servers to start, resolve immediately
-        }
+      if (!numberOfServers) {
+        logger.warn('You called startServer but both http and https are disabled, so no servers are starting.')
+        resolve() // no servers to start, resolve immediately
+      }
 
-        if (params.http.enable) {
-          const server = httpServer
-            .listen(params.http.port, params.localhostOnly ? 'localhost' : null, startupCallback('HTTP', params.http.port))
-            .on('error', err => {
-              logger.error(err)
-              logger.error(`Another process is using port ${params.http.port}. Either kill that process or change this app's port number.`.bold)
-              reject(err)
-            })
-            .on('close', stopListeningForKillSignals)
-          if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+      if (params.http.enable) {
+        const server = httpServer
+          .listen(params.http.port, params.localhostOnly ? 'localhost' : null, startupCallback('HTTP', params.http.port))
+          .on('error', err => {
+            logger.error(err)
+            logger.error(`Another process is using port ${params.http.port}. Either kill that process or change this app's port number.`.bold)
+            reject(err)
+          })
+          .on('close', stopListeningForKillSignals)
+        if (appEnv === 'development' && params.frontendReload.enable) {
+          require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+          trackReloadSockets(server) // registered after the line above so that its own upgrade handler stays in place
         }
-        if (params.https.enable) {
-          const server = httpsServer
-            .listen(params.https.port, params.localhostOnly ? 'localhost' : null, startupCallback('HTTPS', params.https.port))
-            .on('error', err => {
-              logger.error(err)
-              logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
-              reject(err)
-            })
-            .on('close', stopListeningForKillSignals)
-          if (appEnv === 'development' && params.frontendReload.enable) require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+      }
+      if (params.https.enable) {
+        const server = httpsServer
+          .listen(params.https.port, params.localhostOnly ? 'localhost' : null, startupCallback('HTTPS', params.https.port))
+          .on('error', err => {
+            logger.error(err)
+            logger.error(`Another process is using port ${params.https.port}. Either kill that process or change this app's port number.`.bold)
+            reject(err)
+          })
+          .on('close', stopListeningForKillSignals)
+        if (appEnv === 'development' && params.frontendReload.enable) {
+          require('express-browser-reload')(app.get('router'), server, params?.frontendReload?.expressBrowserReloadParams)
+          trackReloadSockets(server) // registered after the line above so that its own upgrade handler stays in place
         }
       }
     })
+
+    // rebuild the static files as their sources are edited, and reload the browser once that is done
+    require('./lib/watchStatics')(app)
 
     // listen for kill signals so the app can shut down gracefully
     // the listeners are removed first in case startServer is called more than once on the same app, which would otherwise register duplicates
@@ -353,6 +340,20 @@ const roosevelt = (options = {}, schema) => {
     })
   }
 
+  // remembers the sockets the browser reload script opens
+  // this allows for auto-reloading the page without bringing down the process
+  function trackReloadSockets (server) {
+    let sockets = app.get('reloadSockets')
+    if (!sockets) {
+      sockets = new Set()
+      app.set('reloadSockets', sockets)
+    }
+    server.on('upgrade', (req, socket) => {
+      sockets.add(socket)
+      socket.on('close', () => sockets.delete(socket))
+    })
+  }
+
   // once this app has no servers left listening, stop listening for kill signals on its behalf
   // without this, every app started in a single process would leave its listeners behind and node would eventually warn about a memory leak
   // this is keyed off the servers closing rather than off shutdownGracefully so that it also happens when the servers are closed directly
@@ -364,6 +365,11 @@ const roosevelt = (options = {}, schema) => {
 
   function closeServer (resolve) {
     clearTimeout(checkConnectionsTimeout)
+
+    // stop watching for edits, or a rebuild could fire against an app that is no longer listening
+    for (const watcher of app.get('staticsWatchers') || []) watcher.close()
+    app.set('staticsWatchers', null)
+
     logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
 
     let serversToClose = 0

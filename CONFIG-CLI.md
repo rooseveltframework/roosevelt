@@ -58,7 +58,7 @@ Roosevelt also ships a few commands of its own. They are available in any app th
 - `npx roosevelt-generate-secrets`: Runs both of the above.
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
 
-- `npx roosevelt-migrate-config`: Converts an old JSON config into a `rooseveltConfig.js` file.
+- `npx roosevelt-migrate-config`: Converts an old JSON config into a `roosevelt.config.js` file.
   - Takes the app directory as an argument, and uses the current directory if you do not supply one.
 
 ### Available command line arguments
