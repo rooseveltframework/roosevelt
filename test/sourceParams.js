@@ -265,6 +265,34 @@ describe('sourceParams', () => {
       process.argv = processArgv.slice()
     })
 
+    it('should build and not serve via --build', () => {
+      // --build has always meant "build the app and stop there"
+      // it sets two separate things: what gets built, and whether the app serves it afterwards
+      process.argv.push('--build')
+
+      const appConfig = require('../roosevelt')({ ...config }).expressApp.get('params')
+
+      assert.strictEqual(appConfig.makeBuildArtifacts, 'staticsOnly')
+      assert.strictEqual(appConfig.buildOnly, true)
+    })
+
+    it('should build and not serve via -b', () => {
+      process.argv.push('-b')
+
+      const appConfig = require('../roosevelt')({ ...config }).expressApp.get('params')
+
+      assert.strictEqual(appConfig.makeBuildArtifacts, 'staticsOnly')
+      assert.strictEqual(appConfig.buildOnly, true)
+    })
+
+    it('should not turn a static site into a build only run just because it is a static site', () => {
+      // a static site says staticsOnly in its config for good, and still wants to be served when run without --build
+      const appConfig = require('../roosevelt')({ ...config, makeBuildArtifacts: 'staticsOnly' }).expressApp.get('params')
+
+      assert.strictEqual(appConfig.makeBuildArtifacts, 'staticsOnly')
+      assert.strictEqual(appConfig.buildOnly, false)
+    })
+
     it('should set production proxy mode via --production-proxy-mode', () => {
       // add the cli flag
       process.argv.push('--production-proxy-mode')

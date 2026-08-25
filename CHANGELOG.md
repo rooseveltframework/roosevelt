@@ -1,3 +1,9 @@
+## 0.33.1
+
+- Fixed the `--build` and `-b` command line flags starting a server instead of only running the build. Serving a static site was added in 0.33.0 by keying off `makeBuildArtifacts` being `staticsOnly`, which is also what `--build` sets, so the two behaviors could not be told apart and `--build` began serving the app it had just built.
+- Added `buildOnly` param, which is what `--build` and `-b` set now. What gets built and whether the app then serves it are separate questions, so they are separate params. Calling `initServer` (`init`) rather than `startServer` does the same thing and is the better fit for a build script that drives Roosevelt directly.
+- Updated dependencies.
+
 ## 0.33.0
 
 - Breaking: Added `watchStatics` param, defaulted to true. In development mode Roosevelt now rebuilds your static files as you edit the files they are built from, then tells the browser to reload. To migrate:

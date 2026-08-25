@@ -237,6 +237,9 @@ const roosevelt = (options = {}, schema) => {
   async function startServer (args) {
     if (args) throw new Error('Roosevelt\'s startServer method does not take arguments. You may have meant to pass parameters to Roosevelt\'s constructor instead.')
     await initServer()
+
+    if (params.buildOnly) return
+
     let listeningServers = 0
     let numberOfServers = 0
     if (params.http.enable) numberOfServers++
