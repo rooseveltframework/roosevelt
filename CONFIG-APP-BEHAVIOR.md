@@ -144,20 +144,19 @@ Default: *[Object]*
   - Only those repeating notices are held back. Anything reporting an actual problem, such as a missing favicon or a file that failed to compile, always prints.
   - Roosevelt remembers which notices it has shown in your system's temp directory, so restarting the app does not bring them all back. Rebooting, or waiting a day, does.
   - Can also be set with the `--quieter-startup` or `-q` command line flags, or the `QUIETER_STARTUP` environment variable.
-
 - `makeBuildArtifacts` *[Boolean or String]*: When enabled Roosevelt will generate user-specified directories, CSS/JS bundles, etc.
   - Defaults to `false` for apps created manually.
   - Will be set to `true` in apps generated with the app generator.
   - Can also accept a value of `"staticsOnly"` which will allow Roosevelt to create static files but skip the creation of the MVC directories.
-
+- `buildOnly` *[Boolean]*: When enabled `startServer` builds the app and stops there rather than listening for requests. Use it for a build step in CI or a deploy, which has to finish and exit rather than sit on a port. Default: `false`.
+  - Set by the `--build` and `-b` command line flags, which also set `makeBuildArtifacts` to `"staticsOnly"`.
+  - Calling `initServer` (`init`) instead of `startServer` has the same effect, and is the better fit when your build script drives Roosevelt directly rather than being handed command line flags.
 - `incrementalBuilds` *[Boolean]*: When enabled Roosevelt will skip regenerating a static file if none of the source files it was built from have changed since the last build. This applies to files declared in the `copy` param too, which are left alone when neither the source nor the copy has changed. Default: `true`.
   - Set to `false` to disable the feature and rebuild everything on every start. Deleting your `buildFolder` has the same one-time effect.
-
 - `routePrefix` *[String]*: A prefix prepended to your application's routes. Applies to all routes and static files. Default: `null`.
   - Example: When set to `"foo"` a route bound to `/` will be instead be bound to `/foo/`.
   - This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
     - Example: An image located at `/images/teddy.jpg` can be resolved in a prefix-agnostic way via `${app.get('routePrefix')}/images/teddy.jpg`.
-
 - `viewEngine` *[String]*: What templating engine to use, formatted as `"fileExtension: nodeModule"`.
   - Defaults to `"none"` for apps created manually.
   - Will be set to `"html: teddy"` in apps generated with the app generator.

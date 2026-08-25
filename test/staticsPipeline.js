@@ -412,4 +412,83 @@ describe('statics pipeline', () => {
       assert.ok(captured.includes('will not generate build artifacts'), `expected a warning, got: ${JSON.stringify(captured.slice(0, 300))}`)
     })
   })
+
+  describe('building without serving', () => {
+    // startServer serves a staticsOnly app as of 0.33.0, where it used to build and then stop short of listening
+    // init is what builds without listening, and a build step in ci or a deploy has to finish and exit rather than sit on a port
+    it('should build a static site without starting a server', async () => {
+      fs.outputFileSync(path.join(appDir, 'statics/pages/index.html'), '<p>a static site</p>')
+
+      const app = roosevelt({
+        ...appConfig,
+        makeBuildArtifacts: 'staticsOnly',
+        viewEngine: 'html: teddy',
+        http: { enable: true, port: 30141 }
+      })
+      await app.init()
+
+      assert.ok(fs.readFileSync(path.join(appDir, 'public/index.html'), 'utf8').includes('a static site'), 'the site should have been built')
+      await assert.rejects(fetch('http://localhost:30141/'), 'nothing should be listening on the port it would have used')
+
+      // init builds the server object but never binds it, which is the difference between it and startServer
+      assert.strictEqual(app.expressApp.get('httpServer').listening, false)
+    })
+
+    it('should build and stop there when buildOnly is set, which is what the --build flag sets', async () => {
+      // --build has always meant build the app and do not serve it
+      // this is deliberately separate from makeBuildArtifacts, which says what gets built rather than whether it is served
+      fs.outputFileSync(path.join(appDir, 'statics/pages/index.html'), '<p>a static site</p>')
+
+      const app = roosevelt({
+        ...appConfig,
+        makeBuildArtifacts: 'staticsOnly',
+        buildOnly: true,
+        viewEngine: 'html: teddy',
+        http: { enable: true, port: 30143 }
+      })
+      await app.startServer()
+
+      assert.ok(fs.readFileSync(path.join(appDir, 'public/index.html'), 'utf8').includes('a static site'), 'the site should have been built')
+      await assert.rejects(fetch('http://localhost:30143/'), 'startServer should not have listened')
+      assert.strictEqual(app.expressApp.get('httpServer').listening, false)
+    })
+
+    it('should serve a static site that has not asked for a build only run', async () => {
+      // being a static site is not the same as being a build, so this one does listen
+      fs.outputFileSync(path.join(appDir, 'statics/pages/index.html'), '<p>a static site</p>')
+
+      // development mode so that shutting down destroys the connection this test opens rather than waiting on it
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'development',
+        makeBuildArtifacts: 'staticsOnly',
+        frontendReload: { enable: false },
+        viewEngine: 'html: teddy',
+        http: { enable: true, port: 30144 }
+      })
+      await app.startServer()
+
+      const res = await fetch('http://localhost:30144/')
+      assert.strictEqual(res.status, 200)
+      assert.ok((await res.text()).includes('a static site'))
+
+      await app.stopServer({ persistProcess: true })
+    })
+
+    it('should build an app that is not a static site without starting a server either', async () => {
+      fs.outputFileSync(path.join(appDir, 'statics/css/main.css'), 'p { color: red; }')
+
+      const app = roosevelt({
+        ...appConfig,
+        viewEngine: 'html: teddy',
+        http: { enable: true, port: 30142 }
+      })
+      await app.init()
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'public')), 'the build should have run')
+      await assert.rejects(fetch('http://localhost:30142/'), 'nothing should be listening on the port it would have used')
+
+      assert.strictEqual(app.expressApp.get('httpServer').listening, false)
+    })
+  })
 })

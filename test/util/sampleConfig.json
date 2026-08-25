@@ -6,6 +6,7 @@
   "mode": "production",
   "deprecationChecks": "development-mode",
   "makeBuildArtifacts": false,
+  "buildOnly": false,
   "localhostOnly": "value",
   "trustProxy": "value",
   "logging": {

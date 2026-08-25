@@ -172,12 +172,12 @@ describe('watching statics', () => {
     const app = await start({
       mode: 'development',
       frontendReload: { enable: true },
-      http: { enable: true, port: 43766 }
+      http: { enable: true, port: 30150 }
     })
     await app.startServer()
 
     // the reload script in the browser reloads the page when its socket closes and reopens, so closing it is the signal
-    const socket = new globalThis.WebSocket('ws://localhost:43766')
+    const socket = new globalThis.WebSocket('ws://localhost:30150')
     let closed = false
     socket.addEventListener('close', () => { closed = true })
     const opened = await eventually(() => socket.readyState === globalThis.WebSocket.OPEN)
@@ -193,7 +193,7 @@ describe('watching statics', () => {
 
   it('should close its watchers when the app shuts down', async () => {
     writePage('<p>before</p>')
-    const app = await start({ mode: 'development', http: { enable: true, port: 43765 } })
+    const app = await start({ mode: 'development', http: { enable: true, port: 30151 } })
     await app.startServer()
     assert.ok(app.expressApp.get('staticsWatchers').length > 0)
 

@@ -147,13 +147,14 @@ describe('routing', () => {
         logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
         appDir,
         expressSession: false,
+        http: { port: 30152 }, // an explicit port rather than the default, which sits inside the range the os hands out for outbound connections and so can be taken by another process on the machine
         onServerStart: app => {
           context.app = app
         }
       })
       await rooseveltApp.startServer()
       finish(capturedLogs => {
-        if (capturedLogs.includes('Roosevelt Express HTTP server listening on port 43763 (production mode)')) pass = true
+        if (capturedLogs.includes('Roosevelt Express HTTP server listening on port 30152 (production mode)')) pass = true
         else pass = false
         if (pass) done()
         else done(new Error('server did not properly respond to the request'))
