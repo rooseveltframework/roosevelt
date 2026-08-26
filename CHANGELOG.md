@@ -1,3 +1,8 @@
+## 0.33.2
+
+- Fixed the statics watcher rebuilding for files your app would not commit.
+- Updated dependencies.
+
 ## 0.33.1
 
 - Fixed the `--build` and `-b` command line flags starting a server instead of only running the build. Serving a static site was added in 0.33.0 by keying off `makeBuildArtifacts` being `staticsOnly`, which is also what `--build` sets, so the two behaviors could not be told apart and `--build` began serving the app it had just built.

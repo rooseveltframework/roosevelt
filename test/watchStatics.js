@@ -200,4 +200,36 @@ describe('watching statics', () => {
     await app.stopServer({ persistProcess: true })
     assert.strictEqual(app.expressApp.get('staticsWatchers'), null)
   })
+
+  // these drop the ignored file alongside a real edit rather than on its own, so the rebuild that follows proves the
+  // watcher was live: a test that only waited to see nothing happen would also pass if no event ever arrived
+  it('should not rebuild for a file the app would not commit, such as the .DS_Store macos leaves behind', async () => {
+    writePage('<p>before</p>')
+    const rebuilds = []
+    const app = await start({ mode: 'development', onStaticsRebuilt: (app, files) => rebuilds.push(files) })
+    require('../lib/watchStatics')(app.expressApp)
+
+    fs.outputFileSync(path.join(appDir, 'statics/.DS_Store'), 'junk')
+    const fired = await editPageUntilNoticed('<p>after</p>', () => rebuilds.length > 0)
+
+    assert.ok(fired, 'expected the page edit to be picked up')
+    const seen = rebuilds.flat()
+    assert.ok(seen.some(file => file.endsWith('index.html')), `expected the edited page to be reported, got ${JSON.stringify(seen)}`)
+    assert.strictEqual(seen.some(file => file.endsWith('.DS_Store')), false, `the .DS_Store should not have been reported, got ${JSON.stringify(seen)}`)
+  })
+
+  it('should not rebuild for anything inside a folder the app gitignores', async () => {
+    fs.outputFileSync(path.join(appDir, '.gitignore'), 'scratch\n')
+    writePage('<p>before</p>')
+    const rebuilds = []
+    const app = await start({ mode: 'development', onStaticsRebuilt: (app, files) => rebuilds.push(files) })
+    require('../lib/watchStatics')(app.expressApp)
+
+    fs.outputFileSync(path.join(appDir, 'statics/scratch/notes.html'), '<p>scratch</p>')
+    const fired = await editPageUntilNoticed('<p>after</p>', () => rebuilds.length > 0)
+
+    assert.ok(fired, 'expected the page edit to be picked up')
+    const seen = rebuilds.flat()
+    assert.strictEqual(seen.some(file => file.includes('scratch')), false, `the gitignored folder should not have been reported, got ${JSON.stringify(seen)}`)
+  })
 })

@@ -10,6 +10,8 @@ These features are only available in development mode.
 
   What gets watched is `staticsRoot` along with the source paths for your HTML, CSS, JS, and views. Your public folder and build folder are skipped, since Roosevelt writes to them itself and watching them would make a build trigger another build.
 
+  Files your app would not commit are skipped too: Roosevelt's own list of things like `node_modules`, `.DS_Store`, and `Thumbs.db`, plus whatever your `.gitignore` names. Naming a folder there skips everything inside it, which is worth doing for anything your own build steps generate inside your statics, since editing it would otherwise start another rebuild.
+
   Controllers and models are not watched. Changing those means restarting the process, which is what a process watcher such as [nodemon](https://nodemon.io) is for, and Roosevelt cannot reload code it has already loaded. If you use one alongside this feature, it is worth narrowing it to your server-side files so that editing a stylesheet no longer restarts your whole app.
 
   Only the static files whose sources actually changed are rebuilt, unless `incrementalBuilds` is disabled.
