@@ -75,7 +75,7 @@
     "standard": "17.1.2",
     "stylus": "0.64.0",
     "supertest": "7.2.2",
-    "teddy": "1.2.0",
+    "teddy": "1.2.1",
     "watcher": "2.3.1",
     "webpack": "5.109.2"
   },
