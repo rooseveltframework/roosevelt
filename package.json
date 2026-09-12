@@ -39,7 +39,7 @@
     "cookie-parser": "1.4.7",
     "csrf-sync": "4.2.1",
     "express-browser-reload": "4.0.0",
-    "express-html-validator": "1.0.1",
+    "express-html-validator": "1.1.1",
     "express-session": "1.19.0",
     "formidable": "3.5.4",
     "fs-extra": "11.4.0",
