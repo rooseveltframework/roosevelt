@@ -30,7 +30,7 @@
     "node": ">=22.20.0"
   },
   "dependencies": {
-    "@colors/colors": "1.6.0",
+    "@colors/colors": "1.6.1",
     "@nodelib/fs.walk": "3.0.1",
     "app-module-path": "2.2.0",
     "better-sqlite3": "13.0.3",
