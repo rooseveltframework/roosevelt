@@ -206,6 +206,7 @@ describe('error pages', () => {
   })
 
   // roosevelt builds a debug panel in development mode by flattening the error, request, and response objects into something a browser console can inspect
+  //
   // none of that runs in production, which is the mode the tests above use, so it went unexercised
   describe('development mode debug markup', () => {
     async function startDevApp (port) {

@@ -173,6 +173,7 @@ describe('sqlite session store', () => {
   })
 
   // every method wraps its database work in a try/catch and hands the error to its callback
+  //
   // nothing tested those branches, so a store that could not reach its database would have failed silently
   describe('when the database cannot be reached', () => {
     let broken

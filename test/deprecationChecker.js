@@ -127,6 +127,7 @@ describe('deprecation checker', () => {
 
     it('should keep running the remaining checks when one of them throws', () => {
       // the checker is called directly here so that the throwing value reaches a check rather than tripping param sourcing first
+      //
       // htmlMinifier is checked before cores, so cores proves the run continued past the failure
       const options = { cores: 4 }
       Object.defineProperty(options, 'htmlMinifier', { get () { throw new Error('boom') }, enumerable: true })

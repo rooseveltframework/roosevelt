@@ -35,46 +35,46 @@ describe('config file', () => {
   describe('which files are read', () => {
     it('should read rooseveltConfig.js', () => {
       const dir = freshDir()
-      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 40001 } }')
+      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 20001 } }')
 
-      assert.strictEqual(params(dir).http.port, 40001)
+      assert.strictEqual(params(dir).http.port, 20001)
     })
 
     it('should read roosevelt.config.js', () => {
       const dir = freshDir()
-      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { http: { port: 40002 } }')
+      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { http: { port: 20002 } }')
 
-      assert.strictEqual(params(dir).http.port, 40002)
+      assert.strictEqual(params(dir).http.port, 20002)
     })
 
     it('should prefer roosevelt.config.js when both are present', () => {
       // roosevelt.config.js is the name roosevelt writes and documents; rooseveltConfig.js is still read so that apps predating the rename keep working
       const dir = freshDir()
-      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 40003 } }')
-      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { http: { port: 40004 } }')
+      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 20003 } }')
+      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { http: { port: 20004 } }')
 
-      assert.strictEqual(params(dir).http.port, 40004)
+      assert.strictEqual(params(dir).http.port, 20004)
     })
 
     it('should no longer read roosevelt.config.json', () => {
       const dir = freshDir()
-      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { http: { port: 40006 } })
+      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { http: { port: 20006 } })
 
-      assert.notStrictEqual(params(dir).http.port, 40006)
+      assert.notStrictEqual(params(dir).http.port, 20006)
     })
 
     it('should no longer read rooseveltConfig.json', () => {
       const dir = freshDir()
-      fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 40005 } })
+      fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 20005 } })
 
-      assert.notStrictEqual(params(dir).http.port, 40005)
+      assert.notStrictEqual(params(dir).http.port, 20005)
     })
 
     it('should let the constructor win over the config file', () => {
       const dir = freshDir()
-      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 40007 } }')
+      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { http: { port: 20007 } }')
 
-      assert.strictEqual(params(dir, { http: { port: 40008 } }).http.port, 40008)
+      assert.strictEqual(params(dir, { http: { port: 20008 } }).http.port, 20008)
     })
 
     it('should carry on when there is no config file at all', () => {
@@ -168,7 +168,7 @@ describe('config file', () => {
     it('should convert a JSON config into a js config, turning template values into refs', () => {
       const dir = freshDir()
       fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), {
-        http: { port: 40009 },
+        http: { port: 20009 },
         symlinks: [{ source: '${staticsRoot}/js', dest: '${publicFolder}/js' }] // eslint-disable-line no-template-curly-in-string
       })
 
@@ -178,16 +178,16 @@ describe('config file', () => {
 
       assert.ok(written.includes("require('roosevelt/config')"), 'the generated file should import the config helper')
       assert.ok(written.includes('rooseveltConfig.ref(param =>'), 'template values should become refs')
-      assert.ok(written.includes('port: 40009'), 'plain values should carry over')
+      assert.ok(written.includes('port: 20009'), 'plain values should carry over')
     })
 
     it('should convert a roosevelt.config.json as well as a rooseveltConfig.json', () => {
       const dir = freshDir()
-      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { http: { port: 40011 } })
+      fs.outputJsonSync(path.join(dir, 'roosevelt.config.json'), { http: { port: 20011 } })
 
       execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
 
-      assert.ok(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8').includes('port: 40011'))
+      assert.ok(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8').includes('port: 20011'))
     })
 
     it('should merge both json config names when an app somehow has both', () => {
@@ -207,11 +207,11 @@ describe('config file', () => {
 
     it('should convert a rooseveltConfig key in package.json', () => {
       const dir = freshDir()
-      fs.outputJsonSync(path.join(dir, 'package.json'), { name: 'x', rooseveltConfig: { http: { port: 40010 } } })
+      fs.outputJsonSync(path.join(dir, 'package.json'), { name: 'x', rooseveltConfig: { http: { port: 20010 } } })
 
       execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
 
-      assert.ok(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8').includes('port: 40010'))
+      assert.ok(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8').includes('port: 20010'))
     })
 
     it('should merge every place a config lived rather than picking one', () => {

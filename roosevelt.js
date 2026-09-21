@@ -1,7 +1,9 @@
 require('@colors/colors')
 
 // express is a peer dependency, so the app supplies it rather than roosevelt bundling it
+//
 // without it nothing below can work, and stopping here says so plainly instead of failing later in a way that does not name the cause
+//
 // this throws rather than exiting so that anything embedding roosevelt can catch it and decide for itself what to do
 try {
   require.resolve('express')
@@ -13,13 +15,15 @@ const express = require('express')
 const os = require('os')
 const path = require('path')
 const fs = require('fs-extra')
-const appModulePath = require('app-module-path')
+const appModulePath = require('./lib/tools/appModulePath')
 const Logger = require('roosevelt-logger')
 const certsGenerator = require('./lib/scripts/certsGenerator.js')
 const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
 const docsUrl = require('./lib/tools/docsUrl')
+const { isTrustedByOS, mkcertInstallCommand } = require('./lib/tools/certTrust')
 
 // the address other devices on the network can reach this app at, printed next to the localhost url on startup
+//
 // falls back to loopback when the machine has no network connection, so the startup log never prints an empty address
 function networkAddress () {
   const external = Object.values(os.networkInterfaces()).flat().find(nic => nic?.family === 'IPv4' && !nic.internal)
@@ -130,11 +134,26 @@ const roosevelt = (options = {}, schema) => {
     if (params.https.enable) {
       const httpsOptions = params.https.options
 
-      // auto generate certs if in dev mode, autoCert is enabled, the cert configuration points at file paths, and those cert files don't exist already
+      // auto generate certs if in dev mode, autoCert is enabled, and the cert configuration points at file paths
+      //
+      // the generator decides whether anything needs writing: it makes certs that are missing, replaces the ones it signed once they are near expiring, and leaves a certificate the app supplied itself alone
       if (app.get('env') === 'development' && params.https.autoCert && params.makeBuildArtifacts !== 'staticsOnly') {
         if (await certParamIsPath(httpsOptions.cert) && await certParamIsPath(httpsOptions.key)) {
-          if (!fs.pathExistsSync(httpsOptions.key) && !fs.pathExistsSync(httpsOptions.cert)) {
-            await certsGenerator(params.secretsPath, httpsOptions)
+          const certs = await certsGenerator(params.secretsPath, httpsOptions)
+
+          // which authority signed it is said once, on the start that wrote it
+          if (certs) {
+            if (certs.certWasWritten) logger.info('🔐', `${appName} generated an HTTPS certificate signed by ${certs.signer === 'mkcert' ? 'mkcert' : `its own development authority at ${certs.caCertPath}`}.`.cyan)
+
+            // nothing is said about a certificate the user supplied themselves, since whatever authority stands behind it is not roosevelt's business
+            //
+            // the certificate is checked alongside the authority that signed it, because trusting the certificate itself is what people do when they trust one by hand, and nagging someone about a certificate their machine already accepts is worse than saying nothing at all
+            //
+            // only an outright false counts: an authority that could not be read says nothing either way, and sending someone to fix what may not be broken is the wrong direction to guess in
+            if (params.https.autoCertWarning && certs.certIsOurs !== false && isTrustedByOS(certs.caCertPath) === false && isTrustedByOS(certs.certPath) === false) {
+              if (certs.signer === 'mkcert') startupNotice('mkcertNotTrusted', '🔓', `mkcert is installed, but this machine does not trust its authority yet, so your browser will warn about this app's HTTPS certificate. Run \`mkcert -install\`, then restart your browser and restart this app. More info: ${docsUrl}/config-http`)
+              else startupNotice('mkcertMissing', '🔓', `Your browser will warn about this app's HTTPS certificate because it is untrusted. Install mkcert so Roosevelt can generate one your browser accepts:\n\n    ${mkcertInstallCommand()}\n    mkcert -install\n\nThen restart your browser and restart this app. More info: ${docsUrl}/config-http`)
+            }
           }
         }
       }
@@ -146,6 +165,7 @@ const roosevelt = (options = {}, schema) => {
       if (httpsOptions.pfx) httpsOptions.pfx = await preprocessCertParams(httpsOptions.pfx)
 
       // if a given cert param is a file path replace it with the contents of the cert file
+      //
       // cert params natively support passing strings, buffers, and arrays of strings and/or buffers
       async function preprocessCertParams (certParam) {
         if (Array.isArray(certParam)) {
@@ -182,7 +202,7 @@ const roosevelt = (options = {}, schema) => {
         httpsServer = require('https').createServer(httpsOptions, app)
       } catch (error) {
         if (error.code === 'ERR_OSSL_PEM_NO_START_LINE') {
-          logger.error('Cannot start HTTPS server because the HTTPS cert appears to be empty. This error happens most commonly when you forget to run `npm run generate-secrets` first before starting the server.')
+          logger.error('Cannot start HTTPS server because the HTTPS cert appears to be empty. This error happens most commonly when you forget to generate them first. Run `npx roosevelt-generate-certs` in your app directory, then start the server again.')
           process.exit()
         } else logger.error(error)
       }
@@ -209,6 +229,7 @@ const roosevelt = (options = {}, schema) => {
     require('./lib/setExpressConfigs')(app)
 
     // tracks which files each static file was built from so the build steps can skip the ones that did not change
+    //
     // it is made here rather than alongside the build steps below so that params derived after this point, such as the absolute error page paths that mapRoutes works out, are not part of its fingerprint
     app.set('buildCache', require('./lib/tools/buildCache')(app))
 
@@ -249,8 +270,8 @@ const roosevelt = (options = {}, schema) => {
       function startupCallback (proto, port) {
         return async function () {
           logger.info('🎧', `${appName} ${proto} server listening on port ${port} (${appEnv} mode) ➡️  ${proto.toLowerCase()}://localhost:${port} (${proto.toLowerCase()}://${networkAddress()}:${port})`.bold)
-          if (params.localhostOnly) startupNotice('localhostOnly', `${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: ${docsUrl}/configuration`)
-          if (!params.hostPublic) startupNotice('hostPublicDisabled', `Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: ${docsUrl}/configuration`)
+          if (params.localhostOnly) startupNotice('localhostOnly', `${appName} will only respond to requests coming from localhost. If you wish to override this behavior and have it respond to requests coming from outside of localhost, then set "localhostOnly" to false. See the Roosevelt documentation for more information: ${docsUrl}/config-deployment`)
+          if (!params.hostPublic) startupNotice('hostPublicDisabled', `Hosting of public folder is disabled. Your CSS, JS, images, and other files served via your public folder will not load unless you serve them via another web server. If you wish to override this behavior and have Roosevelt host your public folder even in production mode, then set "hostPublic" to true. See the Roosevelt documentation for more information: ${docsUrl}/config-deployment`)
           listeningServers++
 
           // fire user-defined onServerStart event if all servers are started
@@ -300,6 +321,7 @@ const roosevelt = (options = {}, schema) => {
     require('./lib/watchStatics')(app)
 
     // listen for kill signals so the app can shut down gracefully
+    //
     // the listeners are removed first in case startServer is called more than once on the same app, which would otherwise register duplicates
     process.removeListener('SIGTERM', shutdownGracefully)
     process.removeListener('SIGINT', shutdownGracefully)
@@ -344,6 +366,7 @@ const roosevelt = (options = {}, schema) => {
   }
 
   // remembers the sockets the browser reload script opens
+  //
   // this allows for auto-reloading the page without bringing down the process
   function trackReloadSockets (server) {
     let sockets = app.get('reloadSockets')
@@ -358,7 +381,9 @@ const roosevelt = (options = {}, schema) => {
   }
 
   // once this app has no servers left listening, stop listening for kill signals on its behalf
+  //
   // without this, every app started in a single process would leave its listeners behind and node would eventually warn about a memory leak
+  //
   // this is keyed off the servers closing rather than off shutdownGracefully so that it also happens when the servers are closed directly
   function stopListeningForKillSignals () {
     if (httpServer?.listening || httpsServer?.listening) return

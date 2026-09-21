@@ -1,5 +1,7 @@
 // hooks that apply to every test
+//
 // preloaded for every test file by the test scripts in package.json, so no test file needs to ask for it
+//
 // the flag has to be --import: a module that registers test hooks during a --require preload makes node start a second empty test run, which ends the real run early and still reports success, and every version roosevelt supports behaves that way
 //
 // each test file runs in its own process, and those processes run at the same time, so nothing one file does can reach another
@@ -11,6 +13,7 @@ const { beforeEach, afterEach, after } = require('node:test')
 const captureLogs = require('./captureLogs')
 
 // roosevelt sets NODE_ENV itself, and the tests in a file all share one process, so it is cleared around every test to stop one test from changing the params another test reads
+//
 // it has to be deleted rather than blanked, because source-configs reads any environment variable that is merely present
 beforeEach(() => {
   delete process.env.NODE_ENV
@@ -22,6 +25,7 @@ afterEach(() => {
 })
 
 // messages the suite means to produce, checked against each line written to stderr
+//
 // add a pattern to this array only when the output is both expected and worth keeping; capturing it in the test itself is usually better, since that asserts on the message instead of merely tolerating it
 const expected = []
 
@@ -63,6 +67,7 @@ after(() => {
   const report = violations.map(({ test, lines }) => `  ${test}\n${lines.map(line => `    ${line}`).join('\n')}`).join('\n\n')
 
   // fail the run if anything writes to stderr without meaning to
+  //
   // roosevelt logs warnings and errors to stderr, so anything landing there during a passing test is either a real problem or a message nobody intended to print
   realWrite(`\nunexpected stderr output from ${violations.length} test(s):\n\n${report}\n\nif a test means to produce this, capture stderr inside the test and assert on it, or add a pattern to the expected list in test/util/testSetup.js\n`)
   process.exitCode = 1

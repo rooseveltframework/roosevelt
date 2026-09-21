@@ -52,10 +52,9 @@ describe('static page generator', () => {
     fs.rmSync(appDir, { recursive: true, force: true })
   })
 
-  // view engines disagree about how they hand the markup back: teddy returns it, pug calls the callback, and ejs returns
-  // a promise when it is given no callback
-  // these check that the static page generator works with all three, so it is not tied to whichever engine roosevelt's
-  // own sample apps happen to use
+  // view engines disagree about how they hand the markup back: teddy returns it, pug calls the callback, and ejs returns a promise when it is given no callback
+  //
+  // these check that the static page generator works with all three, so it is not tied to whichever engine roosevelt's own sample apps happen to use
   describe('with view engines other than teddy', () => {
     it('should render a static page with ejs, which returns a promise', async () => {
       writePage('ejsPage.ejs', '<html><body><h1><%= greeting %></h1></body></html>')

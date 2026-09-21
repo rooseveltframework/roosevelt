@@ -11,6 +11,7 @@ let destDir = process.env.ROOSEVELT_DEST_DIR || process.argv[2]
 const srcDir = __dirname
 
 // files to be synced
+//
 // the search runs from srcDir so that the exclude below is matched against paths inside roosevelt rather than the whole filesystem path
 const globalList = fs.globSync('**/*.js', { cwd: srcDir, exclude: ['node_modules/**'] })
   .map(file => path.join(srcDir, file))
@@ -115,7 +116,9 @@ async function fsWatch (destDir) {
 
 function sync (destDir) {
   // files/directories we don't want to include in sync
+  //
   // node_modules is dropped from the ignore lists because we want the dependencies to come along
+  //
   // it has to be filtered out of both lists rather than just the directory one, since reading a .gitignore appends every line it contains to whichever list was asked for, so node_modules ends up in each
   const keepNodeModules = entry => entry !== 'node_modules'
   const ignoredDirectories = gitignoreScanner('./.gitignore', 'dir').filter(keepNodeModules)
@@ -130,7 +133,9 @@ function sync (destDir) {
     linkBins(destDir)
   } catch (stdout) {
     // node thinks that any status other than 0 is an error - robocopy returns a 0 if no files changes and 1 if files were changed and copied
+    //
     // any value greater than/equal to 8 indicates at least one failure during the copy operation
+    //
     // see https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy#exit-return-codes
     if (stdout.status >= 8) {
       logger.error(stdout.output.toString())
@@ -142,9 +147,11 @@ function sync (destDir) {
 }
 
 // builds the copy command without running it, so what gets excluded and how the paths are quoted can be checked directly
+//
 // both have been wrong before in ways nothing complained about: a copy that quietly excludes nothing looks exactly like one that worked
 function syncCommand ({ srcDir, destDir, isWindows, ignoredDirectories, ignoredFiles }) {
   // express is the one dependency that is not brought along, because it is a peer dependency that the app being tested supplies for itself
+  //
   // copying roosevelt's own copy over would shadow the app's, so the app would silently run roosevelt's express rather than the one it installed, hiding anything that only breaks on the version the app actually uses
   const expressPath = path.join(srcDir, 'node_modules', 'express')
 
@@ -177,6 +184,7 @@ function syncCommand ({ srcDir, destDir, isWindows, ignoredDirectories, ignoredF
     --exclude: exclude files/dirs
     */
     // one --exclude per pattern rather than the --exclude={a,b} shorthand, because that shorthand is brace expansion, which only bash does
+    //
     // node runs these through /bin/sh, which is dash on debian and ubuntu, and dash passes the braces through literally so nothing gets excluded at all
     const excludes = [...ignoredDirectories, ...ignoredFiles, '/node_modules/express'].map(file => `--exclude='${file}'`).join(' ')
 
@@ -188,7 +196,9 @@ function syncCommand ({ srcDir, destDir, isWindows, ignoredDirectories, ignoredF
 }
 
 // npm creates node_modules/.bin entries when it installs a package, and dev sync copies files without ever running an install
+//
 // so an app that installed a roosevelt from before these commands existed has none of them linked, and `npx roosevelt-migrate-config` goes looking on the npm registry instead of in the app
+//
 // that makes the commands roosevelt ships the one feature dev sync cannot test, which is exactly the sort of thing dev sync is for, so the links are written here to match what npm would have made
 function linkBins (destDir) {
   const binDir = path.join(destDir, 'node_modules', '.bin')

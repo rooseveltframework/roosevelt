@@ -102,6 +102,7 @@ describe('webpack', () => {
   })
 
   // roosevelt used to force a minifier into the webpack config, which meant shipping a webpack plugin to every app whether it used webpack or not
+  //
   // webpack minifies on its own in production mode, so these check that dropping that did not quietly stop bundles from being minified
   it('should minify the bundle in production mode', async () => {
     fs.writeFileSync(path.join(appDir, 'statics/js/e.js'), 'function nameThatOnlySurvivesUnminified (argument) {\n  return argument + 1\n}\nconsole.log(nameThatOnlySurvivesUnminified(1))\n')

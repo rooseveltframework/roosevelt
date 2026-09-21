@@ -24,6 +24,29 @@ jobs:
       - run: npm run lint
       - run: npm run coverage
 
+  trust-store:
+    # the rest of the suite can only ever observe an untrusted certificate, which is also what a platform whose trust store roosevelt cannot read would report, so this installs a real authority and checks roosevelt sees it
+    #
+    # it runs on its own rather than inside the matrix above because it writes to the machine's trust store, which is not something to do over and over on the same runner
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10 # this job writes to a real trust store, and a platform that decides to prompt instead of failing would otherwise sit there until the six hour default runs out
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.x
+      - name: Upgrade npm so its node-gyp knows Visual Studio 2026
+        if: runner.os == 'Windows'
+        run: npm install -g npm@12
+      - run: npm ci
+      - run: npm run test-trust-store
+        env:
+          ROOSEVELT_TEST_OS_TRUST_STORE: '1' # without this the test skips itself, so that running the suite on a laptop never touches its trust store
+
   package:
     runs-on: ubuntu-latest
     steps:
