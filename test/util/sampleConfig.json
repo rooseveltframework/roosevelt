@@ -67,6 +67,7 @@
   "https": {
     "enable": false,
     "autoCert": true,
+    "autoCertWarning": true,
     "port": "value",
     "options": {}
   },
@@ -155,6 +156,14 @@
     "output": "value",
     "minify": "value",
     "minifyOptions": "value"
+  },
+  "clientModels": {
+    "enable": false,
+    "allowlist": [],
+    "blocklist": [],
+    "output": "js/models",
+    "exposeAll": false,
+    "apiRoute": "/api"
   },
   "clientControllers": {
     "enable": "value",

@@ -41,6 +41,7 @@ describe('controllers bundler', () => {
   }
 
   // reads a generated bundle, or returns null when it was not generated
+  //
   // clientControllers.output is resolved relative to the build folder, so bundles land in .build/js by default
   function readBundle (bundleName) {
     const file = path.join(appDir, '.build/js', bundleName)
@@ -66,6 +67,7 @@ describe('controllers bundler', () => {
 
   it('should name the bundle after controllers rather than views when nothing says otherwise', () => {
     // every other test in this file passes defaultBundle explicitly, so nothing was reading the default itself
+    //
     // it shares an output folder with the views bundler, whose default is views.js, so the two would land on the same file
     const params = roosevelt({ ...appConfig, makeBuildArtifacts: false }).expressApp.get('params')
 

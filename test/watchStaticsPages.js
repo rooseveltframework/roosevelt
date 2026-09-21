@@ -8,31 +8,31 @@ const { pagesAffectedBy } = require('../lib/watchStatics')
 
 // which pages a rebuild renders again
 //
-// roosevelt cannot ask a view engine which templates a page included, so it works out what to render from what the edited
-// file is: a page renders itself, a template that is not a page renders all of them, and a file no page is built from
-// renders none
+// roosevelt cannot ask a view engine which templates a page included, so it works out what to render from what the edited file is: a page renders itself, a template that is not a page renders all of them, and a file no page is built from renders none
 describe('narrowing a statics rebuild to the pages that changed', () => {
   const appDir = path.join(__dirname, 'app/watchStaticsPages')
   const startedApps = []
 
   // every page prints a value from the global model, and the model is set from this on each build
-  // it lives in memory, so changing it is invisible to the watcher: a page showing the new value was rendered again, and
-  // one still showing the old value was left alone
+  //
+  // it lives in memory, so changing it is invisible to the watcher: a page showing the new value was rendered again, and one still showing the old value was left alone
   let stamp
 
   // counts the rebuilds the watcher performed, so a test can tell "no page was rendered" apart from "no rebuild happened"
   let rebuilds
 
   // the files each rebuild was told about, which is what roosevelt decides from
-  // a failure quotes this, because "the watcher never reported the edit" and "the edit was reported but attributed to the
-  // wrong page" both look like a page that did not get rendered
+  //
+  // a failure quotes this, because "the watcher never reported the edit" and "the edit was reported but attributed to the wrong page" both look like a page that did not get rendered
   let reported
 
   // every build that started, counted before anything in it can fail
+  //
   // this separates a rebuild that never began from one that began and then threw, which reported cannot tell apart
   let builds
 
   // a watcher of the test's own, on the same directory through the same api roosevelt uses
+  //
   // this says whether the platform reported an edit at all, which is not something roosevelt's own behavior can show
   let probed
   let probe
@@ -49,11 +49,10 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
   }
 
   // macos delivers fs.watch events through fsevents, and a stream does not start reporting the moment fs.watch returns
-  // a write that lands in that gap is dropped rather than delivered late, so an edit made right after the watcher starts
-  // can go unseen forever; linux does not have this window, which is why this only ever bites on macos
   //
-  // so the edit is repeated until the watcher acts on it, which is the same "wait for the condition" approach the rest of
-  // this file takes rather than a sleep long enough to hope the stream is live by then
+  // a write that lands in that gap is dropped rather than delivered late, so an edit made right after the watcher starts can go unseen forever; linux does not have this window, which is why this only ever bites on macos
+  //
+  // so the edit is repeated until the watcher acts on it, which is the same "wait for the condition" approach the rest of this file takes rather than a sleep long enough to hope the stream is live by then
   async function editUntilNoticed (file, contents, noticed, timeout = 20000) {
     const deadline = Date.now() + timeout
     while (Date.now() < deadline) {
@@ -200,8 +199,8 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
   })
 
   // the decision on its own, without the watcher in the way
-  // these separate "roosevelt attributed the edit to the wrong page" from "the platform never reported the edit at all",
-  // which look identical from the outside: either way the page does not get rendered
+  //
+  // these separate "roosevelt attributed the edit to the wrong page" from "the platform never reported the edit at all", which look identical from the outside: either way the page does not get rendered
   async function appForDecisions () {
     writeSite()
     fs.outputFileSync(path.join(appDir, 'statics/pages/a.js'), "module.exports = () => ({ label: 'one' })\n")

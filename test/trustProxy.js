@@ -36,6 +36,7 @@ describe('trusting a proxy', () => {
   }
 
   // stands in for a web server that terminates https and forwards on, the way apache and nginx are usually set up
+  //
   // it appends to any forwarded address the visitor already sent rather than replacing it, which is what the common nginx directive does
   async function startAppBehindProxy (options, forwardedProto = 'https') {
     const appPort = 30330

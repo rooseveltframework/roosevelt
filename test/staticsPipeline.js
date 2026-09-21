@@ -348,6 +348,49 @@ describe('statics pipeline', () => {
       const preprocessed = fs.readFileSync(path.join(appDir, '.build/preprocessed_views/index.html'), 'utf8')
       assert.strictEqual(preprocessed.includes('a-very-long-class-name'), false, `expected the long class name to be minified away, got: ${preprocessed}`)
     })
+
+    // minify-html-attributes reports what it could not safely rename through an onWarning callback and nowhere else, so without one those go nowhere
+    //
+    // that matters because a name it left alone looks exactly like one it renamed until a selector quietly stops matching
+    it('should log what minify-html-attributes could not rename', async () => {
+      fs.outputFileSync(path.join(appDir, 'mvc/views/index.html'), '<html><body><p class="a-very-long-class-name">hi</p></body></html>')
+      fs.outputFileSync(path.join(appDir, 'statics/css/styles.css'), '.a-very-long-class-name { color: red; }')
+      fs.outputFileSync(path.join(appDir, 'statics/js/broken.js'), 'const a = (((\n')
+
+      captureLogs.start()
+      let captured = ''
+      try {
+        await roosevelt({
+          ...appConfig,
+          mode: 'development',
+          viewEngine: 'html: teddy',
+          logging: { methods: { http: false, info: false, warn: true, error: false, verbose: false } },
+          minifyHtmlAttributes: { enable: 'development' }
+        }).initServer()
+      } finally {
+        captured = captureLogs.stop()
+      }
+
+      assert.match(captured, /minify-html-attributes:/, `expected the warning to name where it came from, got: ${captured}`)
+      assert.match(captured, /broken\.js/, 'expected it to name the file it gave up on')
+    })
+
+    it('should let an app handle those warnings itself', async () => {
+      fs.outputFileSync(path.join(appDir, 'mvc/views/index.html'), '<html><body><p class="a-very-long-class-name">hi</p></body></html>')
+      fs.outputFileSync(path.join(appDir, 'statics/css/styles.css'), '.a-very-long-class-name { color: red; }')
+      fs.outputFileSync(path.join(appDir, 'statics/js/broken.js'), 'const a = (((\n')
+
+      const heard = []
+
+      await roosevelt({
+        ...appConfig,
+        mode: 'development',
+        viewEngine: 'html: teddy',
+        minifyHtmlAttributes: { enable: 'development', minifyHtmlAttributesParams: { onWarning: message => heard.push(message) } }
+      }).initServer()
+
+      assert.ok(heard.some(message => message.includes('broken.js')), `expected the app's own callback to receive it, got: ${JSON.stringify(heard)}`)
+    })
   })
 
   describe('generate symlinks', () => {
@@ -415,6 +458,7 @@ describe('statics pipeline', () => {
 
   describe('building without serving', () => {
     // startServer serves a staticsOnly app as of 0.33.0, where it used to build and then stop short of listening
+    //
     // init is what builds without listening, and a build step in ci or a deploy has to finish and exit rather than sit on a port
     it('should build a static site without starting a server', async () => {
       fs.outputFileSync(path.join(appDir, 'statics/pages/index.html'), '<p>a static site</p>')
@@ -436,6 +480,7 @@ describe('statics pipeline', () => {
 
     it('should build and stop there when buildOnly is set, which is what the --build flag sets', async () => {
       // --build has always meant build the app and do not serve it
+      //
       // this is deliberately separate from makeBuildArtifacts, which says what gets built rather than whether it is served
       fs.outputFileSync(path.join(appDir, 'statics/pages/index.html'), '<p>a static site</p>')
 

@@ -63,10 +63,10 @@ describe('roosevelt.js', () => {
         const params = context.app.get('params')
         const sampleJSON = {
           http: {
-            port: 43763
+            port: 11637
           },
           https: {
-            port: 43711
+            port: 11437
           },
           viewEngine: 'none',
           favicon: 'none'

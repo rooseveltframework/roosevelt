@@ -210,6 +210,7 @@ describe('js bundler', () => {
 
     it('should log an error when the named bundler is supported but not installed', async () => {
       // roosevelt does not ship bundlers, so this is what an app that names one without installing it should see
+      //
       // rollup has to be hidden rather than simply left out, because it really is installed here as a dev dependency these tests use
       const Module = require('module')
       const realLoad = Module._load

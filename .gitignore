@@ -1,22 +1,12 @@
-*.seed
 *.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
-
-pids
-logs
-results
 
 Thumbs.db
 .DS_Store
 
-npm-debug.log
 node_modules
 .npm-cache
 
 test/app
 coverage
 *.sqlite
+jsBundlerError.txt

@@ -4,7 +4,7 @@ const rooseveltConfig = require('../config')
 
 const assert = require('assert')
 const fs = require('fs-extra')
-const { walk } = require('@nodelib/fs.walk/promises')
+const walk = require('../lib/tools/walkFiles')
 const path = require('path')
 
 describe('file creation', () => {

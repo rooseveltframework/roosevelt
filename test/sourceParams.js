@@ -43,6 +43,7 @@ describe('sourceParams', () => {
 
     afterEach(async () => {
       // wipe out the test app directory
+      //
       // only this file's own directory is removed, because every test file keeps its app under test/app and removing the whole folder would delete the apps the other files are using
       fs.rmSync(path.join(__dirname, 'app/sourceParams'), { recursive: true, force: true })
     })
@@ -131,6 +132,7 @@ describe('sourceParams', () => {
       config.js.sourcePath = path.join(config.staticsRoot, config.js.sourcePath)
       config.clientViews.output = path.join(config.staticsRoot, config.clientViews.output)
       config.clientControllers.output = path.join(config.staticsRoot, config.clientControllers.output)
+      config.clientModels.output = path.join(config.buildFolder, config.clientModels.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -179,6 +181,7 @@ describe('sourceParams', () => {
       configJson.js.sourcePath = path.join(configJson.staticsRoot, configJson.js.sourcePath)
       configJson.clientViews.output = path.join(configJson.staticsRoot, configJson.clientViews.output)
       configJson.clientControllers.output = path.join(configJson.staticsRoot, configJson.clientControllers.output)
+      configJson.clientModels.output = path.join(configJson.buildFolder, configJson.clientModels.output)
 
       // for each param, test that its value is set in roosevelt
       for (const key in appConfig) {
@@ -267,6 +270,7 @@ describe('sourceParams', () => {
 
     it('should build and not serve via --build', () => {
       // --build has always meant "build the app and stop there"
+      //
       // it sets two separate things: what gets built, and whether the app serves it afterwards
       process.argv.push('--build')
 
@@ -686,11 +690,44 @@ describe('sourceParams', () => {
     }
     let app
 
-    it('should change the https.port param to 45678', function (t, done) {
-      process.env.HTTPS_PORT = 45678
+    it('should take the http port from PORT, which is what hosts and local proxies set', function (t, done) {
+      process.env.PORT = 20679
+      const app = require('../roosevelt')({ ...config, https: { enable: false } })
+
+      assert.strictEqual(Number(app.expressApp.get('params').http.port), 20679)
+      delete process.env.PORT
+      done()
+    })
+
+    it('should let NODE_PORT outrank PORT, since PORT is a name that may belong to something else', function (t, done) {
+      process.env.NODE_PORT = 20680
+      process.env.PORT = 20679
+      const app = require('../roosevelt')({ ...config, https: { enable: false } })
+
+      assert.strictEqual(Number(app.expressApp.get('params').http.port), 20680)
+      delete process.env.NODE_PORT
+      delete process.env.PORT
+      done()
+    })
+
+    it('should let HTTP_PORT outrank both of them', function (t, done) {
+      process.env.HTTP_PORT = 20681
+      process.env.NODE_PORT = 20680
+      process.env.PORT = 20679
+      const app = require('../roosevelt')({ ...config, https: { enable: false } })
+
+      assert.strictEqual(Number(app.expressApp.get('params').http.port), 20681)
+      delete process.env.HTTP_PORT
+      delete process.env.NODE_PORT
+      delete process.env.PORT
+      done()
+    })
+
+    it('should change the https.port param to 20678', function (t, done) {
+      process.env.HTTPS_PORT = 20678
 
       app = require('../roosevelt')(appConfig)
-      assert.strictEqual(app.expressApp.get('params').https.port, 45678)
+      assert.strictEqual(app.expressApp.get('params').https.port, 20678)
       delete process.env.HTTPS_PORT
       done()
     })
@@ -913,7 +950,7 @@ describe('sourceParams', () => {
     }
 
     it('should not set param value from default env var', (t, done) => {
-      process.env.HTTP_PORT = 45678
+      process.env.HTTP_PORT = 20678
 
       const app = require('../roosevelt')(appConfig, schema)
       assert.strictEqual(app.expressApp.get('params').http.port, 12345)
@@ -922,10 +959,10 @@ describe('sourceParams', () => {
     })
 
     it('should get param value from specified env var', (t, done) => {
-      process.env.HTTP_PORT_NEW = 45678
+      process.env.HTTP_PORT_NEW = 20678
 
       const app = require('../roosevelt')(appConfig, schema)
-      assert.strictEqual(app.expressApp.get('params').http.port, 45678)
+      assert.strictEqual(app.expressApp.get('params').http.port, 20678)
       delete process.env.HTTP_PORT_NEW
       done()
     })

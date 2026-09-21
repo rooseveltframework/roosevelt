@@ -48,11 +48,10 @@ describe('watching statics', () => {
   }
 
   // macos delivers fs.watch events through fsevents, and a stream does not start reporting the moment fs.watch returns
-  // a write that lands in that gap is dropped rather than delivered late, so an edit made right after the watcher starts
-  // can go unseen forever; linux does not have this window, which is why this only ever bites on macos
   //
-  // so the edit is repeated until the watcher acts on it, which is the same "wait for the condition" approach the rest of
-  // this file takes rather than a sleep long enough to hope the stream is live by then
+  // a write that lands in that gap is dropped rather than delivered late, so an edit made right after the watcher starts can go unseen forever; linux does not have this window, which is why this only ever bites on macos
+  //
+  // so the edit is repeated until the watcher acts on it, which is the same "wait for the condition" approach the rest of this file takes rather than a sleep long enough to hope the stream is live by then
   async function editPageUntilNoticed (contents, noticed, timeout = 20000) {
     const deadline = Date.now() + timeout
     while (Date.now() < deadline) {
@@ -156,6 +155,7 @@ describe('watching statics', () => {
     const buildsBefore = builds
 
     // a template the view engine cannot parse, so the rebuild throws rather than writing anything
+    //
     // this counts builds rather than the rebuilt page, since a rebuild that failed wrote nothing to look at
     const failed = await editPageUntilNoticed('<if>', () => builds > buildsBefore)
     assert.ok(failed, 'expected the bad save to be picked up and attempted')
@@ -201,8 +201,7 @@ describe('watching statics', () => {
     assert.strictEqual(app.expressApp.get('staticsWatchers'), null)
   })
 
-  // these drop the ignored file alongside a real edit rather than on its own, so the rebuild that follows proves the
-  // watcher was live: a test that only waited to see nothing happen would also pass if no event ever arrived
+  // these drop the ignored file alongside a real edit rather than on its own, so the rebuild that follows proves the watcher was live: a test that only waited to see nothing happen would also pass if no event ever arrived
   it('should not rebuild for a file the app would not commit, such as the .DS_Store macos leaves behind', async () => {
     writePage('<p>before</p>')
     const rebuilds = []

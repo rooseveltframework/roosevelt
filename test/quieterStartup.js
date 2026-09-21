@@ -10,6 +10,7 @@ const roosevelt = require('../roosevelt')
 describe('quieter startup', () => {
   const appDir = path.join(__dirname, 'app/quieterStartup')
   // roosevelt names the record after a hash of the app directory, and working that out a second time here is a way for this test to quietly stop looking at the file the app actually wrote
+  //
   // so the record is found rather than recomputed: this is the only test that turns quieterStartup on, so at most one of them exists at a time
   const recordPattern = /^roosevelt-notices-.*\.json$/
 
@@ -49,6 +50,7 @@ describe('quieter startup', () => {
       captured = captureLogs.stop()
     }
     // only warnings are switched on above and each repeated notice is one line, so counting lines counts notices
+    //
     // counting the emoji prefix instead reports zero on windows, where roosevelt-logger leaves prefixes off by default
     return captured.split('\n').filter(line => line.trim()).length
   }
