@@ -1,7 +1,7 @@
 const expressVersion = require('../../lib/tools/expressVersion')
 
-module.exports = app => {
-  app.route(expressVersion >= 5 ? '*all' : '*').all(function (req, res) {
+module.exports = (router, app) => {
+  router.route(expressVersion(app.get('appDir')) >= 5 ? '*all' : '*').all(function (req, res) {
     const url = req.url
     const mainDomain = req.headers['x-forwarded-host'] || req.headers.host
     const appVersion = req.app.get('appVersion') ? ` ${req.app.get('appVersion')}` : ''

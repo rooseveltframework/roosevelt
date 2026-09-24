@@ -392,6 +392,63 @@ describe('css preprocessors', () => {
       assert.deepStrictEqual(lessOutput.css, buildOutput)
     })
 
+    // an app can hand less its import paths as an array or as a single path
+    for (const [form, supplied] of [['an array', dir => [dir]], ['a single path', dir => dir]]) {
+      it(`should keep paths supplied in css.compiler.options as ${form} alongside the css folder`, async () => {
+        fs.ensureDirSync(path.join(appDir, 'sharedStyles'))
+        fs.writeFileSync(path.join(appDir, 'sharedStyles/shared.less'), '@sharedColor: #123456;')
+        fs.writeFileSync(path.join(appDir, 'statics/css/partial.less'), '@partialColor: #abcdef;')
+        fs.writeFileSync(path.join(appDir, 'statics/css/styles.less'), '@import \'shared\'; @import \'partial\'; a { color: @sharedColor; background: @partialColor; }')
+
+        const app = roosevelt({
+          ...appConfig,
+          mode: 'production',
+          css: {
+            compiler: {
+              enable: true,
+              module: 'less',
+              options: { paths: supplied(path.join(appDir, 'sharedStyles')) }
+            },
+            minifier: {
+              enable: false
+            },
+            allowlist: ['styles.less'],
+            output: 'css'
+          }
+        })
+
+        await app.initServer()
+
+        const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+        assert(buildOutput.includes('#123456'), 'a file on the supplied path was not found')
+        assert(buildOutput.includes('#abcdef'), 'a file in the css folder was not found')
+      })
+    }
+
+    it('should compile when css.compiler.options is null', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'less',
+            options: null
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+
+      const lessOutput = await less.render(lessString, {})
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      assert.deepStrictEqual(lessOutput.css, buildOutput)
+    })
+
     it('should enable source maps in dev mode', async () => {
       const app = roosevelt({
         ...appConfig,
@@ -523,6 +580,61 @@ describe('css preprocessors', () => {
 
       // compare manual render with roosevelt output file
       assert.deepStrictEqual(scssOutput.css.toString(), buildOutput)
+    })
+
+    it('should pass css.compiler.options to sass', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'sass',
+            options: { style: 'compressed' }
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+
+      // the minifier is off, so compressed output can only have come from the option reaching sass
+      const scssOutput = sass.compileString(scssString, { style: 'compressed' })
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      assert.deepStrictEqual(buildOutput, scssOutput.css.toString())
+    })
+
+    it('should keep loadPaths supplied in css.compiler.options alongside the css folder', async () => {
+      fs.ensureDirSync(path.join(appDir, 'sharedStyles'))
+      fs.writeFileSync(path.join(appDir, 'sharedStyles/_shared.scss'), '$sharedColor: #123456;')
+      fs.writeFileSync(path.join(appDir, 'statics/css/partial.scss'), '$partialColor: #abcdef;')
+      fs.writeFileSync(path.join(appDir, 'statics/css/styles.scss'), '@use \'shared\' as *; @use \'partial\' as *; a { color: $sharedColor; background: $partialColor; }')
+
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'sass',
+            options: { loadPaths: [path.join(appDir, 'sharedStyles')] }
+          },
+          minifier: {
+            enable: false
+          },
+          allowlist: ['styles.scss'],
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      assert(buildOutput.includes('#123456'), 'a file on the supplied load path was not found')
+      assert(buildOutput.includes('#abcdef'), 'a file in the css folder was not found')
     })
 
     it('should enable source maps in dev mode', async () => {
@@ -662,6 +774,36 @@ describe('css preprocessors', () => {
           })
         })
       }
+    })
+
+    it('should keep paths supplied in css.compiler.options alongside the css folder', async () => {
+      fs.ensureDirSync(path.join(appDir, 'sharedStyles'))
+      fs.writeFileSync(path.join(appDir, 'sharedStyles/shared.styl'), 'sharedColor = #123456')
+      fs.writeFileSync(path.join(appDir, 'statics/css/partial.styl'), 'partialColor = #abcdef')
+      fs.writeFileSync(path.join(appDir, 'statics/css/styles.styl'), '@import \'shared\'\n@import \'partial\'\na\n  color sharedColor\n  background partialColor\n')
+
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'stylus',
+            options: { paths: [path.join(appDir, 'sharedStyles')] }
+          },
+          minifier: {
+            enable: false
+          },
+          allowlist: ['styles.styl'],
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+
+      const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      assert(buildOutput.includes('#123456'), 'a file on the supplied path was not found')
+      assert(buildOutput.includes('#abcdef'), 'a file in the css folder was not found')
     })
 
     it('should enable source maps in dev mode', async () => {

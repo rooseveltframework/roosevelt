@@ -113,6 +113,53 @@ describe('HTML minification', () => {
     })()
   })
 
+  it('should hand a failed render to the error page rather than sending the error to the visitor', (t, done) => {
+    (async () => {
+      app = roosevelt({
+        ...appConfig,
+        logging: { methods: { ...appConfig.logging.methods, error: false } }, // the failed render is logged, and that is expected here
+        onServerStart
+      })
+
+      await app.startServer()
+
+      function onServerStart (app) {
+        request(app)
+          .get('/missingView')
+          .expect(500, (err, res) => {
+            if (err) assert.fail(err.message)
+            else assert.ok(res.text.includes('Internal Server Error'), `the visitor was sent something other than the error page: ${res.text.slice(0, 200)}`)
+            done()
+          })
+      }
+    })()
+  })
+
+  it('should minify HTML on routes that pass a callback without options', (t, done) => {
+    (async () => {
+      app = roosevelt({
+        ...appConfig,
+        onServerStart
+      })
+
+      await app.startServer()
+
+      function onServerStart (app) {
+        request(app)
+          .get('/callbackWithoutOptions')
+          .expect(200, async (err, res) => {
+            if (err) {
+              assert.fail(err.message)
+            } else {
+              const testMinify = await minify(res.text, appConfig.html.minifier.options)
+              assert.strictEqual(testMinify, res.text)
+            }
+            done()
+          })
+      }
+    })()
+  })
+
   it('should not minify HTML when "html.minifier.enable" param is set to false', (t, done) => {
     (async () => {
       // copy root config and disable HTML minifier
