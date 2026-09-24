@@ -33,7 +33,7 @@ describe('express version support', () => {
   })
 
   it('should detect the major version of the express the app installed', () => {
-    assert.strictEqual(expressVersion, installedMajor)
+    assert.strictEqual(expressVersion(appDir), installedMajor)
   })
 
   it('should be running an express major that roosevelt supports', () => {

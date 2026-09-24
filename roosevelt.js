@@ -1,21 +1,10 @@
 require('@colors/colors')
 
-// express is a peer dependency, so the app supplies it rather than roosevelt bundling it
-//
-// without it nothing below can work, and stopping here says so plainly instead of failing later in a way that does not name the cause
-//
-// this throws rather than exiting so that anything embedding roosevelt can catch it and decide for itself what to do
-try {
-  require.resolve('express')
-} catch {
-  throw new Error('Roosevelt could not find Express. Express is a peer dependency, which means your app needs to install it itself. Run `npm install express` to fix this. Roosevelt supports Express 4 and Express 5.')
-}
-
-const express = require('express')
 const os = require('os')
 const path = require('path')
 const fs = require('fs-extra')
 const appModulePath = require('./lib/tools/appModulePath')
+const requireFromApp = require('./lib/tools/requireFromApp')
 const Logger = require('roosevelt-logger')
 const certsGenerator = require('./lib/scripts/certsGenerator.js')
 const sessionSecretGenerator = require('./lib/scripts/sessionSecretGenerator.js')
@@ -47,6 +36,19 @@ const roosevelt = (options = {}, schema) => {
   const params = require('./lib/sourceParams')(options, schema)
   const appDir = params.appDir
   const pkg = params.pkg
+
+  // express is a peer dependency, so the app supplies it rather than roosevelt bundling it, and it is loaded from the app so that the version it installed is the one that runs
+  //
+  // without it nothing below can work, and stopping here says so plainly instead of failing later in a way that does not name the cause
+  //
+  // this throws rather than exiting so that anything embedding roosevelt can catch it and decide for itself what to do
+  let express
+  try {
+    express = requireFromApp(appDir, 'express', require)
+  } catch (err) {
+    if (err.code !== 'MODULE_NOT_FOUND' || !err.message.includes('\'express\'')) throw err // express being present but broken is reported as it is
+    throw new Error('Roosevelt could not find Express. Express is a peer dependency, which means your app needs to install it itself. Run `npm install express` to fix this. Roosevelt supports Express 4 and Express 5.')
+  }
 
   const app = express()
   const router = express.Router() // initialize router

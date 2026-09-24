@@ -1,41 +1,6 @@
 # How to contribute
 
-## Coding
-
-Here's how to set up a development environment to hack on Roosevelt's code:
-
-- Fork/clone this repo.
-
-- Create or find a Roosevelt app you want to test against.
-  - To make a Roosevelt app, run `npx mkroosevelt`.
-
-- Use the `devSync.js` tool to test your fork/clone of Roosevelt against your test app.
-
-  - To do that:
-
-    - Run the following command:
-      - Linux/Mac: `node devSync.js /path/to/roosevelt/app`.
-      - Windows: `node devSync.js path:\\to\\roosevelt\\app`.
-
-      - You can also set the path in a `ROOSEVELT_DEST_DIR` environment variable. When set, you only need to run `node devSync.js`.
-        - Linux/Mac: `export ROOSEVELT_DEST_DIR=/path/to/roosevelt/app`.
-        - Windows: `$env:ROOSEVELT_DEST_DIR="path:\\to\\roosevelt\\app"`.
-        - Or in one command (Linux/Mac): `export ROOSEVELT_DEST_DIR=/path/to/your/roosevelt/app && node devSync.js`.
-
-    - If you do not provide a path, running the `devSync.js` script will prompt you for one.
-    - Each sync also links the commands Roosevelt ships into your test app's `node_modules/.bin`, so `npx roosevelt-migrate-config` and the rest work there. npm only makes those links when it installs a package, and dev sync copies files without running an install, so without this they would be missing and `npx` would go looking on the npm registry instead.
-  - To stop the script:
-
-      - Press: `control^ + C`.
-      - Type: `stop` or `s`.
-
-### Running the tests
-
-`npm t`
-
-To step through a test in a debugger, use `npm run test-debug`, which runs the files one at a time and waits for you to attach.
-
-#### Troubleshooting the automated tests
+## Troubleshooting the automated tests
 
 If some of the automated tests fail for you when they shouldn't be, remove the `test/app` folder and run the suite again. Each test file builds its app in a folder of its own under there, and a run that was interrupted partway can leave one behind in a state the next run does not expect.
 
