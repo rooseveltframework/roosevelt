@@ -26,6 +26,8 @@ const roosevelt = (options = {}, schema) => {
   let httpsServer
   let initialized = false
   let checkConnectionsTimeout
+  let resolveShutdown // settles the promise stopServer returned, from wherever the shutdown finishes
+  let shutdownFinished = false // a shutdown finishes once, however many connections close after it has
   let persistProcess
   let logger
   let appName
@@ -230,6 +232,9 @@ const roosevelt = (options = {}, schema) => {
 
     require('./lib/setExpressConfigs')(app)
 
+    // the sitemap, which is made here so that controllers and events can add urls to it
+    app.set('sitemap', require('./lib/sitemap')(app))
+
     // tracks which files each static file was built from so the build steps can skip the ones that did not change
     //
     // it is made here rather than alongside the build steps below so that params derived after this point, such as the absolute error page paths that mapRoutes works out, are not part of its fingerprint
@@ -255,6 +260,10 @@ const roosevelt = (options = {}, schema) => {
 
     // fire user-defined onServerInit event
     if (params.onServerInit && typeof params.onServerInit === 'function') await Promise.resolve(params.onServerInit(app))
+
+    // done last, so that every route has been added and the urls it lists can come from anything onServerInit set up, such as a database connection
+    await app.get('sitemap').review()
+    await app.get('sitemap').write()
   }
 
   async function startServer (args) {
@@ -337,12 +346,19 @@ const roosevelt = (options = {}, schema) => {
 
     // return a promise to make shutdownGracefully awaitable
     return new Promise((resolve, reject) => {
+      // a shutdown that has to wait for connections to close finishes when the last one does, in the connection's close handler, so that is where this has to be settled from too. that handler used to finish the shutdown without it, which left the promise pending forever
+      resolveShutdown = resolve
+      shutdownFinished = false
+
       // fire user-defined onAppExit event
       if (params.onAppExit && typeof params.onAppExit === 'function') params.onAppExit(app)
 
       // force destroy connections if the server takes too long to shut down
       checkConnectionsTimeout = setTimeout(() => {
         logger.error(`${appName} could not close all connections in time; forcefully shutting down`)
+
+        // this finishes the shutdown itself, so the connections it destroys must not start it again as they close, which closed the servers a second time and, without persistProcess, called process.exit a second time
+        shutdownFinished = true
         for (const key in connections) connections[key].destroy()
         if (persistProcess) {
           if (httpServer) httpServer.close()
@@ -393,7 +409,10 @@ const roosevelt = (options = {}, schema) => {
     process.removeListener('SIGINT', shutdownGracefully)
   }
 
-  function closeServer (resolve) {
+  function closeServer (resolve = resolveShutdown) {
+    // the last connection closing and a development mode shutdown can both get here for the same shutdown
+    if (shutdownFinished) return
+    shutdownFinished = true
     clearTimeout(checkConnectionsTimeout)
 
     // stop watching for edits, or a rebuild could fire against an app that is no longer listening

@@ -74,6 +74,13 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 - `router`: Instance of router module used by Roosevelt.
 - `routePrefix`: Prefix appended to routes via the `routePrefix` param. Will be `''` if not set.
 - `routes`: List of all routes in the app.
+- `sitemap`: Add to / read from the sitemap.
+  - `sitemap.add(source)`: Adds a function that returns more URLs to list, in the same form as the `sitemap.urls` param, for a controller or event that knows about pages the config file does not. It is called with the Express app and the request.
+  - `sitemap.refresh()`: Makes the sitemap again on the next request, rather than when `sitemap.cacheSeconds` runs out, for after the pages it lists have changed.
+  - `sitemap.entries(req)`: A promise of every URL the sitemap lists, as objects with a full `loc`, for building something else from them, such as an HTML sitemap page.
+  - `sitemap.files(req)`: A promise of the XML files the sitemap is made of, by path.
+  - `sitemap.robotsLine(req)`: The `Sitemap:` line for an app that writes its own `robots.txt`, e.g. `Sitemap: https://example.com/sitemap.xml`.
+  - `sitemap.robotsTxt(req)`: A promise of the whole `robots.txt` Roosevelt serves when the app has none.
 - `staticsRoot`: Full path on the file system to where your app's statics folder is located.
 - `view engine`: Default view engine file extension, e.g. `.html`.
 - *viewEngine* e.g. `teddy` by default: Any view engine(s) you define will be exposed as an Express variable. For instance, the default view engine is teddy. So by default `app.get('teddy')` will return the `teddy` module.

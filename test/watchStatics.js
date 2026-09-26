@@ -113,6 +113,26 @@ describe('watching statics', () => {
     assert.ok(rebuilds[0].some(file => file.endsWith('index.html')), `expected the edited file to be reported, got ${JSON.stringify(rebuilds[0])}`)
   })
 
+  it('should not rebuild once it stops watching, even for an edit it had already noticed', async () => {
+    writePage('<p>before</p>')
+    const rebuilds = []
+    const app = await start({
+      mode: 'development',
+      watchStatics: { debounce: 1500 }, // long enough to stop watching while the rebuild for the edit below is still waiting
+      onStaticsRebuilt: () => rebuilds.push(true)
+    })
+    require('../lib/watchStatics')(app.expressApp)
+
+    writePage('<p>after</p>')
+    await settle(300) // for the watcher to have noticed the edit, which starts the debounce
+    for (const watcher of app.expressApp.get('staticsWatchers')) watcher.close() // what the app does as it stops
+    await settle(2500)
+
+    // a rebuild that ran after its app had stopped could race whatever the process did next, such as another app starting, since building pages changes the working directory
+    assert.strictEqual(rebuilds.length, 0, 'expected no rebuild after the watchers were closed')
+    assert.ok(fs.readFileSync(path.join(appDir, 'public/index.html'), 'utf8').includes('before'))
+  })
+
   it('should not watch in production mode', async () => {
     writePage('<p>before</p>')
     const app = await start({ mode: 'production' })

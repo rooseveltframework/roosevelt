@@ -1,3 +1,11 @@
+## 0.34.2
+
+- Added `sitemap` param, off by default.
+- Fixed `stopServer` never resolving when a connection was still open as the app began shutting down, which was most noticeable on Windows.
+- Fixed a shutdown that timed out starting over as the connections it forcibly closed finished closing, which closed the servers again and could call `process.exit` again.
+- Fixed a statics rebuild the watcher had already scheduled still running after the app stopped. It could race whatever the process did next, such as another app starting, and leave the process in the wrong working directory.
+- Updated dependencies.
+
 ## 0.34.1
 
 - Fixed a bug that caused every option supplied in `css.compiler.options` to be silently ignored when using Sass. Roosevelt was reading `css.compiler.params`, which is not a param, so options such as `style` never reached the compiler. The other preprocessors were unaffected.

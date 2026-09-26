@@ -24,7 +24,7 @@ describe('roosevelt.js', () => {
   afterEach((t, done) => {
     if (!context?.app?.get) {
       fs.rmSync(appDir, { recursive: true, force: true })
-      done()
+      return done()
     }
     if (context.app.get('httpsServer')?.close) {
       let done1 = false
@@ -289,6 +289,29 @@ describe('roosevelt.js', () => {
         process.exit = originalProcessExit
       }, 100)
     })()
+  })
+
+  it('should settle the promise stopServer returns when it has to wait for a connection to close first', async () => {
+    const rooseveltApp = roosevelt({
+      logging: { methods: { http: false } }, // morgan writes straight to the console rather than through roosevelt's logger, so it cannot be collected and would print during the run
+      http: { port: 30153 },
+      appDir,
+      expressSession: false,
+      onServerStart: app => {
+        context.app = app
+      }
+    })
+    await rooseveltApp.startServer()
+
+    // a connection still open when the shutdown starts, which it waits for, and which closes a moment later. windows reports a closed connection later than other platforms, so an ordinary request can still be open when a test stops the app there
+    const socket = require('net').connect(30153, 'localhost')
+    await new Promise(resolve => socket.on('connect', resolve))
+    await new Promise(resolve => setTimeout(resolve, 50)) // for the server to have seen it
+
+    const stopping = rooseveltApp.stopServer({ persistProcess: true })
+    setTimeout(() => socket.destroy(), 100)
+    const outcome = await Promise.race([stopping.then(() => 'stopped'), new Promise(resolve => setTimeout(() => resolve('still pending after 5 seconds'), 5000))])
+    assert.strictEqual(outcome, 'stopped')
   })
 
   it('should force close all active connections and exit the process if the time allotted in the shutdownTimeout has past after shutdown was called and a connection was still active', (t, done) => {

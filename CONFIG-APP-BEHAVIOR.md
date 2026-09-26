@@ -157,6 +157,28 @@ Default: *[Object]*
   - Example: When set to `"foo"` a route bound to `/` will be instead be bound to `/foo/`.
   - This prefix is exposed via the `routePrefix` Express variable which should be used for resolving the absolute paths to statics programmatically.
     - Example: An image located at `/images/teddy.jpg` can be resolved in a prefix-agnostic way via `${app.get('routePrefix')}/images/teddy.jpg`.
+- `sitemap` *[Object]*: Serve a [sitemap](https://www.sitemaps.org) that lists your site's pages for search engines, and a `robots.txt` that points them to it.
+  - `enable` *[Boolean]*: Whether to serve the sitemap. Default: `false`.
+  - `baseUrl` *[String]*: The address your site is served at, which the paths in the sitemap are added to, since a sitemap has to list full URLs. When it is not set, the address the sitemap was requested at is used. Default: `null`.
+  - `path` *[String]*: Where the sitemap is served. Default: `"/sitemap.xml"`.
+  - `staticPages` *[Boolean]*: List the pages built by the static page generator automatically, at the URLs it writes them to. Default: `true`.
+  - `routesFile` *[String]*: The file that says which of your app's routes the sitemap will list. Generated automatically in development mode. Set any route you want exposed to true. Review the contents to ensure nothing sensitive is exposed and commit this file to your repo. Default: `"sitemap-routes.json"`.
+    - Example:
+      ```json
+      {
+        "/": true,
+        "/about": true,
+        "/account": false,
+        "/admin/*": false
+      }
+      ```
+  - `urls` *[Function]*: A function that returns more URLs to list, for pages your app makes itself that `routesFile` cannot cover, such as the pages behind a route with parameters, built from a database. Default: `null`.
+    - Example: `urls: async app => (await getArticles()).map(article => ({ loc: article.route, lastmod: article.updated }))`
+    - Code that is not in your config file, such as a controller, can add URLs the same way with the `sitemap` Express variable.
+  - `exclude` *[Array of Strings]*: Paths to leave out of the sitemap wherever they come from, which may use wildcards, such as `["/drafts/*"]`. The routes file already decides for your routes, so this is for static pages and for URLs from `urls` and `add()`. Default: `[]`.
+  - `cacheSeconds` *[Number]*: How long to keep the sitemap before making it again. Call `app.get('sitemap').refresh()` to make it again sooner, such as after adding a page. Default: `null`, which is an hour in production mode and every request in development mode.
+  - `robotsTxt` *[Boolean or String]*: Serve a `robots.txt` that points to the sitemap. When `true`, it allows everything. When a path to a file, relative to your app's folder, such as `"mvc/views/robots.txt"`, it is that file, with the line pointing to the sitemap added unless the file has it already. It is read on every request, so edits to it show up straight away. An app with a `robots.txt` route or public file of its own keeps it, and can add the line pointing to the sitemap with `app.get('sitemap').robotsLine()`. Default: `true`.
+  - `file` *[Boolean]*: Also write the sitemap, and the `robots.txt` above, into the public folder when the app builds, for a static site whose web server serves its files without Roosevelt. Default: `false`.
 - `viewEngine` *[String]*: What templating engine to use, formatted as `"fileExtension: nodeModule"`.
   - Defaults to `"none"` for apps created manually.
   - Will be set to `"html: teddy"` in apps generated with the app generator.
