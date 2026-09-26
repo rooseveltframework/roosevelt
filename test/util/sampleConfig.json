@@ -85,6 +85,18 @@
     "serviceUnavailable": "value"
   },
   "staticsRoot": "value",
+  "sitemap": {
+    "enable": false,
+    "baseUrl": null,
+    "path": "/sitemap.xml",
+    "staticPages": true,
+    "routesFile": "sitemap-routes.json",
+    "urls": null,
+    "exclude": [],
+    "cacheSeconds": null,
+    "robotsTxt": true,
+    "file": false
+  },
   "html": {
     "sourcePath": "pages",
     "allowlist": null,
