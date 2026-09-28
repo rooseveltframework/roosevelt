@@ -169,9 +169,10 @@ Default: *[Object]*
         "/": true,
         "/about": true,
         "/account": false,
-        "/admin/*": false
+        "/admin/**": false
       }
       ```
+    - Keys can be patterns: `*` matches one part of a path and `**` matches any number of them, so `"/admin/**"` covers everything under `/admin`, while `"/admin/*"` would miss `/admin/users/new`.
   - `urls` *[Function]*: A function that returns more URLs to list, for pages your app makes itself that `routesFile` cannot cover, such as the pages behind a route with parameters, built from a database. Default: `null`.
     - Example: `urls: async app => (await getArticles()).map(article => ({ loc: article.route, lastmod: article.updated }))`
     - Code that is not in your config file, such as a controller, can add URLs the same way with the `sitemap` Express variable.
