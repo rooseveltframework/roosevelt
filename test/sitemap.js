@@ -49,7 +49,7 @@ describe('sitemap', () => {
       http.get({ host: 'localhost', port, path: route, agent: false }, response => {
         let body = ''
         response.on('data', chunk => { body += chunk })
-        response.on('end', () => resolve({ status: response.statusCode, type: response.headers['content-type'], body }))
+        response.on('end', () => resolve({ status: response.statusCode, type: response.headers['content-type'], headers: response.headers, body }))
       }).on('error', reject)
     })
   }
@@ -296,6 +296,112 @@ describe('sitemap', () => {
     await start({ mode: 'development', frontendReload: { enable: false }, sitemap: { urls: () => [`/call/${++calls}`] } })
     await get('/sitemap.xml')
     assert.ok((await get('/sitemap.xml')).body.includes('/call/2'))
+  })
+
+  it('makes a page\'s canonical url the same way as the urls it lists, from baseUrl or the address it was asked at, without the query string', async () => {
+    const routes = () => ({
+      onBeforeControllers: app => {
+        app.get('router').route('/page').get((req, res) => res.send(app.get('sitemap').canonical(req)))
+        app.get('router').route('/part').get((req, res) => res.send(app.get('sitemap').canonical(req, '/whole'))) // one to be listed at another page
+      }
+    })
+    await start({ sitemap: { baseUrl: 'https://example.com/' }, ...routes() })
+    assert.strictEqual((await get('/page?sort=new')).body, 'https://example.com/page')
+    assert.strictEqual((await get('/part')).body, 'https://example.com/whole')
+    await context.app.stopServer({ persistProcess: true })
+
+    await start(routes())
+    assert.strictEqual((await get('/page')).body, `http://localhost:${port}/page`)
+  })
+
+  it('tells search engines not to list the routes the routes file marks false, unless noindexExcluded is turned off', async () => {
+    writeRoutesFile({ '/': true, '/account': false, '/admin/**': false })
+    const routes = {
+      onBeforeControllers: app => {
+        for (const route of ['/', '/account', '/admin/users/new']) app.get('router').route(route).get((req, res) => res.send(route))
+        app.get('/on-the-app', (req, res) => res.send('a route on the app rather than the router'))
+      }
+    }
+    await start(routes)
+    assert.strictEqual((await get('/')).headers['x-robots-tag'], undefined)
+    assert.strictEqual((await get('/account')).headers['x-robots-tag'], 'noindex')
+    assert.strictEqual((await get('/admin/users/new')).headers['x-robots-tag'], 'noindex') // by the pattern
+    assert.strictEqual((await get('/on-the-app')).headers['x-robots-tag'], undefined) // not in the file, so waiting for review rather than left out
+    await context.app.stopServer({ persistProcess: true })
+
+    await start({ sitemap: { noindexExcluded: false }, ...routes })
+    assert.strictEqual((await get('/account')).headers['x-robots-tag'], undefined)
+    await context.app.stopServer({ persistProcess: true })
+
+    // a controller can still send a header of its own in its place
+    await start({
+      onBeforeControllers: app => {
+        app.get('router').route('/account').get((req, res) => res.set('X-Robots-Tag', 'noarchive').send('an account'))
+      }
+    })
+    assert.strictEqual((await get('/account')).headers['x-robots-tag'], 'noarchive')
+  })
+
+  it('verifies that every url it lists loads and agrees it is the page to list', async () => {
+    await start({
+      sitemap: {
+        baseUrl: 'https://example.com',
+        urls: () => ['/good', '/moved', '/missing', '/hidden', '/header-hidden', '/elsewhere', '/elsewhere-reversed']
+      },
+      onBeforeControllers: app => {
+        const router = app.get('router')
+        const page = head => `<!DOCTYPE html><html><head><title>a page</title>${head}</head><body></body></html>`
+        router.route('/good').get((req, res) => res.send(page(`<link rel="canonical" href="${app.get('sitemap').canonical(req)}">`)))
+        router.route('/moved').get((req, res) => res.redirect(301, '/good'))
+        router.route('/hidden').get((req, res) => res.send(page('<meta name=robots content="noindex, follow">'))) // written without quotes, as minified html is
+        router.route('/header-hidden').get((req, res) => res.set('X-Robots-Tag', 'noindex').send(page('')))
+        router.route('/elsewhere').get((req, res) => res.send(page('<link rel=canonical href=https://example.com/good>')))
+        router.route('/elsewhere-reversed').get((req, res) => res.send(page('<link href="https://example.com/good" rel="canonical">')))
+      }
+    })
+    const { checked, problems } = await context.app.expressApp.get('sitemap').verify({ origin: `http://localhost:${port}` })
+    assert.strictEqual(checked, 7)
+    assert.deepStrictEqual(problems, [
+      { loc: 'https://example.com/moved', problem: 'redirects to /good' },
+      { loc: 'https://example.com/missing', problem: 'returned 404' },
+      { loc: 'https://example.com/hidden', problem: 'says not to list it' },
+      { loc: 'https://example.com/header-hidden', problem: 'says not to list it' },
+      { loc: 'https://example.com/elsewhere', problem: 'names https://example.com/good as canonical' },
+      { loc: 'https://example.com/elsewhere-reversed', problem: 'names https://example.com/good as canonical' }
+    ])
+  })
+
+  it('will not verify without a baseUrl or an origin to request from, since it could not make full urls', async () => {
+    await start({ sitemap: { urls: () => ['/a'] } })
+    await assert.rejects(context.app.expressApp.get('sitemap').verify(), /sitemap\.baseUrl/)
+  })
+
+  it('verifies with the app\'s own way of making requests, when it gives one', async () => {
+    await start({ sitemap: { urls: () => ['/a', '/b'] } })
+    const asked = []
+    const { problems } = await context.app.expressApp.get('sitemap').verify({
+      origin: 'https://staging.example.com',
+      request: async url => {
+        asked.push(url)
+        return { status: 200, headers: {}, body: '' }
+      }
+    })
+    assert.deepStrictEqual(asked.sort(), ['https://staging.example.com/a', 'https://staging.example.com/b'])
+    assert.deepStrictEqual(problems, [])
+  })
+
+  it('reports problems in the order the sitemap lists their urls, whatever order their requests finish in', async () => {
+    await start({ sitemap: { urls: () => ['/a', '/b', '/c'] } })
+    const { problems } = await context.app.expressApp.get('sitemap').verify({
+      origin: 'https://staging.example.com',
+      // each answered later than the one after it, so they finish in the opposite order to the one they are listed in
+      request: async url => {
+        const delay = { a: 30, b: 15, c: 0 }[url.split('/').pop()]
+        await new Promise(resolve => setTimeout(resolve, delay))
+        return { status: 404, headers: {}, body: '' }
+      }
+    })
+    assert.deepStrictEqual(problems.map(problem => new URL(problem.loc).pathname), ['/a', '/b', '/c'])
   })
 
   describe('as files, for a site whose web server serves them', () => {

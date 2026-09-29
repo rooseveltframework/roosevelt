@@ -1,3 +1,10 @@
+## 0.34.3
+
+- Added `app.get('sitemap').canonical(req, loc)`, which makes a page's canonical URL for the `<link rel="canonical">` tag.
+- Added `app.get('sitemap').verify(options)`, which can be used to verify the sitemap is well-formed in automated tests.
+- Added `sitemap.noindexExcluded` param, on by default, which ensures a `X-Robots-Tag: noindex` header is sent to routes marked `false` in the sitemap, so that they are kept out of search results as well as out of the public sitemap. Routes waiting for review, which are `null`, are unaffected.
+- Updated dependencies.
+
 ## 0.34.2
 
 - Added `sitemap` param, off by default.
