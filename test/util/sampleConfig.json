@@ -95,7 +95,8 @@
     "exclude": [],
     "cacheSeconds": null,
     "robotsTxt": true,
-    "file": false
+    "file": false,
+    "noindexExcluded": true
   },
   "html": {
     "sourcePath": "pages",
