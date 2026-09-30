@@ -1,17 +1,21 @@
 const { describe, it, after, beforeEach, afterEach } = require('node:test')
 
 const assert = require('assert')
+const http = require('http')
 const path = require('path')
+const { promisify } = require('util')
 const closeSessionStores = require('./util/closeSessionStores')
+const fakeDatabase = require('./util/fakeDatabase')
 const fs = require('fs-extra')
 const Sqlite = require('better-sqlite3')
-const { Store } = require('express-session')
+const session = require('express-session')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
-const SqliteStore = require('../lib/sqliteSessionStore')({ Store })
+const sessionStore = require('../lib/sessionStore')
+const SqliteStore = sessionStore(session, 'sqlite')
 
 describe('sqlite session store', () => {
-  const appDir = path.join(__dirname, 'app/sqliteSessionStore')
+  const appDir = path.join(__dirname, 'app/sessionStore')
 
   // windows will not release the folder while an app still holds one of these sqlite files open
   const startedApps = []
@@ -322,6 +326,28 @@ describe('sqlite session store', () => {
       legacy.close()
     })
 
+    it('should keep the sessions in a session file made by the previous version of the store', async () => {
+      // the table as the store made it before it shared its code with the database stores, holding sessions written the way it wrote them
+      const previous = new Sqlite(':memory:')
+      previous.exec('CREATE TABLE IF NOT EXISTS sessions (sid TEXT NOT NULL PRIMARY KEY, sess JSON NOT NULL, expire TEXT NOT NULL, lastAccessed INTEGER)')
+      const insert = previous.prepare('INSERT OR REPLACE INTO sessions VALUES (@sid, @sess, @expire, @lastAccessed)')
+      insert.run({ sid: 'kept', sess: JSON.stringify(longLivedSession()), expire: new Date(Date.now() + 60000).toISOString(), lastAccessed: Date.now() })
+      insert.run({ sid: 'gone', sess: JSON.stringify(longLivedSession()), expire: new Date(Date.now() - 60000).toISOString(), lastAccessed: Date.now() })
+
+      store = new SqliteStore({ client: previous, expired: { clear: false } })
+      assert.strictEqual((await get('kept')).user, 'someone')
+      assert.strictEqual(await get('gone'), null, 'a session that had expired should still count as expired')
+
+      const expires = new Date(Date.now() + 120000)
+      await touch('kept', { ...longLivedSession(), cookie: { expires } })
+      assert.strictEqual(previous.prepare('SELECT expire FROM sessions WHERE sid = ?').get('kept').expire, expires.toISOString(), 'the expiry should still be written as a date')
+
+      store.clearExpiredSessions()
+      assert.deepStrictEqual(previous.prepare('SELECT sid FROM sessions').all().map(row => row.sid), ['kept'])
+      assert.deepStrictEqual(previous.prepare('PRAGMA table_info(sessions)').all().map(column => column.name), ['sid', 'sess', 'expire', 'lastAccessed'], 'the table should be unchanged')
+      previous.close()
+    })
+
     it('should be configurable through the expressSessionStore.maxInactivity param', async () => {
       fs.ensureDirSync(appDir)
 
@@ -405,5 +431,138 @@ describe('sqlite session store', () => {
 
       assert.strictEqual(/connect\.sid=;/.test(String(response.headers['set-cookie'] || '')), false)
     })
+  })
+})
+
+// each database, with each driver it is queried with, which hand their results back differently
+for (const [dialect, driver] of [['postgres', 'pg'], ['mysql', 'mysql2'], ['mysql', 'mariadb']]) {
+  describe(`${dialect} session store, with ${driver}`, () => {
+    const Store = sessionStore(session, dialect)
+    const store = client => {
+      const made = new Store({ client, expired: { clear: false } })
+      for (const method of ['set', 'get', 'destroy', 'touch', 'length', 'clear', 'all']) made[method] = promisify(made[method].bind(made))
+      return made
+    }
+
+    it('keeps, finds, touches, counts, lists, and deletes sessions', async () => {
+      const db = fakeDatabase(driver)
+      const sessions = store(db)
+      await sessions.set('a', { cookie: { maxAge: 60000 }, email: 'a@example.com' })
+      await sessions.set('b', { cookie: { maxAge: 60000 }, email: 'b@example.com' })
+      await sessions.set('b', { cookie: { maxAge: 60000 }, email: 'b2@example.com' }) // replacing the one already there
+      assert.deepStrictEqual(await sessions.get('a'), { cookie: { maxAge: 60000 }, email: 'a@example.com' })
+      assert.deepStrictEqual(await sessions.get('b'), { cookie: { maxAge: 60000 }, email: 'b2@example.com' })
+      assert.strictEqual(await sessions.get('nope'), null)
+      assert.strictEqual(await sessions.length(), 2)
+      assert.deepStrictEqual((await sessions.all()).map(one => one.id).sort(), ['a', 'b'])
+
+      const before = db.sessions.get('a').expire
+      await sessions.touch('a', { cookie: { expires: new Date(Date.now() + 3600000) } })
+      assert.ok(db.sessions.get('a').expire > before)
+
+      await sessions.destroy('a')
+      assert.strictEqual(await sessions.get('a'), null)
+      await sessions.clear()
+      assert.strictEqual(await sessions.length(), 0)
+    })
+
+    it('does not find a session that has expired, and clears out expired and long unused ones', async () => {
+      const db = fakeDatabase(driver)
+      const made = new Store({ client: db, maxInactivity: 1000, expired: { clear: false } })
+      const sessions = store(db)
+      await sessions.set('old', { cookie: { maxAge: 60000 } })
+      db.sessions.get('old').expire = Date.now() - 1
+      assert.strictEqual(await sessions.get('old'), null)
+      await sessions.set('unused', { cookie: { maxAge: 60000 } })
+      db.sessions.get('unused').last_accessed = Date.now() - 5000
+      await sessions.set('used', { cookie: { maxAge: 60000 } })
+      await made.clearExpiredSessions()
+      assert.deepStrictEqual([...db.sessions.keys()], ['used'])
+    })
+
+    it('reports a query that failed, including from a client that resolves to { error } rather than rejecting', async () => {
+      const error = new Error('the database is down')
+      const sessions = store({ query: async sql => /^\s*CREATE/.test(sql) ? { rows: [] } : { error } })
+      await assert.rejects(sessions.get('a'), /the database is down/)
+    })
+
+    it('needs a client, and a table name that is only a name', () => {
+      assert.throws(() => new Store({}), /client with a query method/)
+      assert.throws(() => new Store({ client: fakeDatabase(driver), table: 'sessions; drop table x' }), /plain name/)
+    })
+  })
+}
+
+describe('database session store presets', () => {
+  const appDir = path.join(__dirname, 'app/sessionStorePresets')
+  const port = 30350
+  const context = {}
+
+  function config (options = {}) {
+    return {
+      appDir,
+      makeBuildArtifacts: true,
+      csrfProtection: false,
+      htmlValidator: { enable: false },
+      viewEngine: 'html: teddy',
+      https: { enable: false },
+      http: { port },
+      logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } },
+      expressSession: true,
+      onBeforeControllers: app => {
+        app.get('router').route('/count').get((req, res) => {
+          req.session.visits = (req.session.visits || 0) + 1
+          res.send(String(req.session.visits))
+        })
+      },
+      ...options
+    }
+  }
+
+  // two visits to a page that counts them in the session, the second with the cookie the first was given
+  async function visitTwice () {
+    const get = cookie => new Promise((resolve, reject) => http.get({ host: 'localhost', port, path: '/count', agent: false, headers: cookie ? { cookie } : {} }, response => {
+      let body = ''
+      response.on('data', chunk => { body += chunk })
+      response.on('end', () => resolve({ body, cookie: response.headers['set-cookie']?.[0]?.split(';')[0] }))
+    }).on('error', reject))
+    const first = await get()
+    const second = await get(first.cookie)
+    return [first.body, second.body]
+  }
+
+  afterEach(async () => {
+    if (context.app) await context.app.stopServer({ persistProcess: true })
+    context.app = null
+    fs.rmSync(appDir, { recursive: true, force: true })
+  })
+
+  for (const [preset, driver, name] of [['postgres', 'pg', 'PostgresStore'], ['mysql', 'mysql2', 'MysqlStore'], ['mariadb', 'mariadb', 'MysqlStore']]) {
+    it(`keeps sessions in the app's own database with the ${preset} preset, which it sets as app.get('db') in its onBeforeMiddleware event`, async () => {
+      fs.ensureDirSync(appDir)
+      const db = fakeDatabase(driver)
+      context.app = roosevelt(config({
+        expressSessionStore: { preset },
+        onBeforeMiddleware: app => app.set('db', db)
+      }))
+      await context.app.startServer()
+      assert.strictEqual(context.app.expressApp.get('expressSessionStore').constructor.name, name)
+      assert.deepStrictEqual(await visitTwice(), ['1', '2']) // the session was kept, in the database
+      assert.strictEqual(db.sessions.size, 1)
+    })
+  }
+
+  it('keeps sessions in the database given to it as presetOptions.client, such as a connection pool', async () => {
+    fs.ensureDirSync(appDir)
+    const db = fakeDatabase('pg')
+    context.app = roosevelt(config({ expressSessionStore: { preset: 'postgres', presetOptions: { client: db } } }))
+    await context.app.startServer()
+    assert.deepStrictEqual(await visitTwice(), ['1', '2'])
+    assert.strictEqual(db.sessions.size, 1)
+  })
+
+  it('refuses without a database to keep sessions in', async () => {
+    fs.ensureDirSync(appDir)
+    await assert.rejects(roosevelt(config({ expressSessionStore: { preset: 'postgres' } })).initServer(), /needs a database/)
   })
 })

@@ -14,7 +14,7 @@ describe('deprecation checker', () => {
   async function captureChecks (options = {}) {
     let captured = ''
     captureLogs.start()
-    delete process.env.NODE_ENV // roosevelt writes this, and it outranks the mode param on the next app built in this process
+    delete process.env.NODE_ENV // roosevelt writes this, which a test that gives no mode param would otherwise take its mode from
     try {
       roosevelt({
         appDir,

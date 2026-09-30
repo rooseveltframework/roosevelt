@@ -1,3 +1,12 @@
+## 0.34.4
+
+- Added `postgres`, `mysql`, and `mariadb` presets to the `expressSessionStore` param, which keep sessions in that database, in one passed as `presetOptions.client`, such as a connection pool, or the app's own, set as `app.get('db')` in its `onBeforeMiddleware` event, so that an app can run on more than one server.
+- Added a `Cache-Control: public, max-age=31536000, immutable` header to the files in the versioned public folder when Roosevelt serves the public folder itself outside development mode, since they change address with each version.
+- Added an index on the expiry column of the default session store's table, which speeds up clearing out expired sessions. Session files made by earlier versions keep their sessions.
+- Changed the warning that sessions are kept on one server to only show for the default session store.
+- Fixed a `mode` param passed to Roosevelt's constructor being overridden by the `NODE_ENV` environment variable, including when Roosevelt had set `NODE_ENV` itself while starting another app earlier in the same process. The constructor's `mode` now takes precedence over `NODE_ENV`, which still takes precedence over a `mode` in the config file. The mode command line flags still take precedence over both.
+- Updated dependencies.
+
 ## 0.34.3
 
 - Added `app.get('sitemap').canonical(req, loc)`, which makes a page's canonical URL for the `<link rel="canonical">` tag.

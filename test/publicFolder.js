@@ -170,4 +170,50 @@ describe('public folder', () => {
       })
     })()
   })
+
+  it('should tell browsers to keep the files in the versioned public folder, which change address with each version, but not in development mode', (t, done) => {
+    (async () => {
+      fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
+      fs.writeFileSync(path.join(appDir, 'package.json'), '{ "version": "0.5.2", "rooseveltConfig": {} }')
+      const settings = (mode, port) => ({
+        logging: { methods: { http: false } },
+        http: { port },
+        appDir,
+        mode,
+        expressSession: false,
+        csrfProtection: false,
+        makeBuildArtifacts: true,
+        versionedPublic: true,
+        hostPublic: true,
+        onServerInit: app => {
+          context.app = app
+          // a file in the versioned public folder, once the app has made it. its version is the app's, which may be another test's in this file, since node caches the package.json it is read from
+          fs.outputFileSync(path.join(app.get('params').publicFolder, 'images/example.txt'), 'a file')
+          context.versionedPath = '/' + path.basename(app.get('params').publicFolder) + '/images/example.txt'
+        }
+      })
+      try {
+        const production = roosevelt(settings('production', 30126))
+        await production.startServer()
+        const kept = await axios.get('http://localhost:30126' + context.versionedPath)
+        await production.stopServer({ persistProcess: true })
+
+        const development = roosevelt(settings('development', 30145)) // a port of its own, since the request above may have left a connection open to the app before. its mode is its own, even though the app before set NODE_ENV to production
+        await development.startServer()
+        const checked = await axios.get('http://localhost:30145' + context.versionedPath)
+        await development.stopServer({ persistProcess: true })
+        finish(() => {
+          try {
+            assert.strictEqual(kept.headers['cache-control'], 'public, max-age=31536000, immutable')
+            assert.notStrictEqual(checked.headers['cache-control'], 'public, max-age=31536000, immutable') // rebuilt in place as it is edited, so the browser has to check
+            done()
+          } catch (err) {
+            done(err)
+          }
+        })
+      } catch (err) {
+        done(err)
+      }
+    })()
+  })
 })

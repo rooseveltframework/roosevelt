@@ -72,15 +72,46 @@ If that matters for your app, set `cookie.sameSite` to `"lax"` instead. The brow
 
 Whichever you choose, `csrfProtection.blockCrossSiteRequests` still refuses requests that change data unless the browser says they came from your own site, so relaxing this setting does not give up your CSRF protection.
 
+**Give users a new session when they log in.** This applies to any app with logins, whichever session store it uses. A visitor usually has a session before they log in, from browsing your site. If your app logs them in by adding who they are to that same session, anyone who already knew its ID now has a logged-in session as that user. Someone could have learned or set the ID beforehand, for example on a shared computer, or by planting a cookie from another subdomain of your site. This is called session fixation. To prevent it, call `req.session.regenerate()` when a user logs in, which replaces their session with a new one under a new ID, and put who they are in the new one:
+
+```javascript
+req.session.regenerate(err => {
+  if (err) return next(err)
+  req.session.userId = user.id
+  req.session.save(err => err ? next(err) : res.redirect('/'))
+})
+```
+
 - `expressSessionStore` *[Object]*: Define a custom session store to use with `express-session` instead of the default one provided by Roosevelt. Roosevelt's default store keeps sessions in a file on the server running the app, so you need this if you run your app on more than one server. See [scaling across several servers](./DEPLOYMENT.md#scale-across-several-servers).
   - `filename` *[String]*: Name of the session file.
   - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
   - `preset` *[String]*: Available presets provided by Roosevelt. Only used if `instance` is not provided.
     - Available options:
-      - `"default"`: Use Roosevelt's default session store, which is [better-sqlite3-session-store](https://github.com/attestate/better-sqlite3-session-store), which we hard forked into Roosevelt to continue its regular maintenance since it is no longer maintained.
+      - `"default"`: Use Roosevelt's default session store, which keeps sessions in a SQLite file on the server the app runs on, named by `filename`. It began as a hard fork of [better-sqlite3-session-store](https://github.com/attestate/better-sqlite3-session-store), which is no longer maintained, and now shares its code with the `postgres`, `mysql`, and `mariadb` presets below, so each of them expires sessions the same way.
+      - `"postgres"`: Keep sessions in PostgreSQL. They are kept in the database given as `presetOptions.client`, or in `app.get('db')` if you set one in the `onBeforeMiddleware` event. They are kept in a `sessions` table Roosevelt makes the first time it is used. The database can be anything with a `query(sql, params)` method, such as a [pg](https://node-postgres.com) `Pool`.
+        
+        - Example, with a pool of its own:
+          ```javascript
+          expressSessionStore: {
+            preset: 'postgres',
+            presetOptions: {
+              client: new (require('pg').Pool)({ connectionString: process.env.DATABASE_URL }) // a pool does not connect until it is first used
+            }
+          }
+          ```
+        - Example, with your app's own database, set in `onBeforeMiddleware`, and closed in `onAppExit`:
+          ```javascript
+          expressSessionStore: { preset: 'postgres' },
+          onBeforeMiddleware: async app => app.set('db', await connectToMyDatabase()),
+          onAppExit: app => app.get('db').end()
+          ```
+      - `"mysql"`: Keep sessions in MySQL, the same way as the `postgres` preset. The database can be anything with a `query(sql, params)` method, such as a [mysql2](https://sidorares.github.io/node-mysql2/) pool or a [mariadb](https://github.com/mariadb-corporation/mariadb-connector-nodejs) pool, whichever way it hands back its results.
+      - `"mariadb"`: The same as `"mysql"`, for MariaDB. It clears out expired sessions and ones past `maxInactivity` the same way as the default store.
       - `"express-session-default"`: Use `express-session`'s own default store, which keeps sessions in memory. Not recommended: every session is lost when the process restarts, so a deploy signs everyone out, and memory use grows without bound. `express-session` itself advises against it outside development.
   - `presetOptions`  *[Object]*: Options to pass to the preset session store if one is selected. Only used if `instance` is not provided.
     - `checkPeriod` *[Number]*: How often, in milliseconds, Roosevelt clears sessions that have gone past `maxInactivity` out of the session store.
+    - `client` *[Object]*: For the `postgres`, `mysql`, and `mariadb` presets, the database to keep sessions in: anything with a `query(sql, params)` method, such as a connection pool from [pg](https://node-postgres.com), [mysql2](https://sidorares.github.io/node-mysql2/), or [mariadb](https://github.com/mariadb-corporation/mariadb-connector-nodejs). Without it, the preset uses `app.get('db')`, if your app sets it in its `onBeforeMiddleware` event.
+    - `table` *[String]*: For the `postgres`, `mysql`, and `mariadb` presets, the table to keep sessions in. Default: `"sessions"`.
   - Either `instance` or `preset` must be set for this param to work properly.
   - `maxInactivity` *[Number]*: How long, in milliseconds, a session may go unused before Roosevelt deletes it from the session store. Default: `7889238000` (about 3 months). Only applies to Roosevelt's default session store.
     - This is separate from `expressSession.cookie.maxAge`, which decides how long a user stays logged in. Roosevelt sets that very far in the future by default so that active users are never logged out, which would otherwise mean abandoned sessions sat in the session store for just as long. `maxInactivity` lets you keep long-lived logins while still clearing out sessions nobody has come back to.
