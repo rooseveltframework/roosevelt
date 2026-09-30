@@ -99,4 +99,5 @@ Will be set to the following in apps generated with the app generator:
 ```
 
 - `versionedPublic` *[Boolean]*: If set to true, Roosevelt will prepend your app's version number from `package.json` to your public folder. Versioning your public folder is useful for resetting your users' browser cache when you release a new version. Default: `false`.
+  - Since every file in it changes address with each new version, Roosevelt tells browsers they can keep them for as long as they like, with a `Cache-Control: public, max-age=31536000, immutable` header, when it serves the public folder itself, outside development mode. A browser then never has to ask whether a file has changed. When a web server serves the public folder in Roosevelt's place, as in `production-proxy` mode, have it send the same header for the files under the version folder.
 

@@ -419,6 +419,9 @@ const roosevelt = (options = {}, schema) => {
     for (const watcher of app.get('staticsWatchers') || []) watcher.close()
     app.set('staticsWatchers', null)
 
+    // and stop the postgres session store's clearing out of expired sessions, which would otherwise keep a process that stays running, as a test does, from exiting
+    app.get('expressSessionStore')?.close?.()
+
     logger.info('✅', `${appName} successfully closed all connections and shut down gracefully.`.green)
 
     let serversToClose = 0

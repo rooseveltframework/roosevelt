@@ -5,8 +5,8 @@
 The following is a list of [environment variables](https://en.wikipedia.org/wiki/Environment_variable) that Roosevelt listens for.
 
 - `NODE_ENV`:
-  - Set to `production` to force the app into production mode.
-  - Set to `development` to force the app into development mode.
+  - Set to `production` to put the app into production mode.
+  - Set to `development` to put the app into development mode.
 - `NODE_PORT`: Default HTTPS port to run your app on.
   - Will set HTTP port instead if HTTPS is disabled.
 - `HTTP_PORT`: Default HTTP port to run your app on. Takes precedence over `NODE_PORT`.
@@ -19,7 +19,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 
 Environment variable precedence:
 
-- Environment variables supersede your app's `rooseveltConfig`.
+- Environment variables supersede your app's `rooseveltConfig`, except that a `mode` param passed to Roosevelt's constructor supersedes `NODE_ENV`. See above.
 - Environment variables can be overridden with command line arguments.
 
 ## Command line usage

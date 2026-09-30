@@ -750,6 +750,45 @@ describe('sourceParams', () => {
       done()
     })
 
+    it('should prefer the mode the app gave the constructor over NODE_ENV, which is inherited from wherever the app runs', function (t, done) {
+      process.env.NODE_ENV = 'production'
+      app = require('../roosevelt')({ ...appConfig, mode: 'development' })
+      assert.strictEqual(app.expressApp.get('params').mode, 'development')
+      delete process.env.NODE_ENV
+      done()
+    })
+
+    it('should take the mode from NODE_ENV when the app gives the constructor none', function (t, done) {
+      process.env.NODE_ENV = 'development'
+      app = require('../roosevelt')({ ...appConfig })
+      assert.strictEqual(app.expressApp.get('params').mode, 'development')
+      delete process.env.NODE_ENV
+      done()
+    })
+
+    it('should prefer NODE_ENV over a mode in the config file', function (t, done) {
+      const appDir = path.join(__dirname, 'app/nodeEnvOverConfigFile')
+      fs.outputFileSync(path.join(appDir, 'roosevelt.config.js'), 'module.exports = { mode: \'production\' }')
+      process.env.NODE_ENV = 'development'
+      try {
+        app = require('../roosevelt')({ ...appConfig, appDir })
+        assert.strictEqual(app.expressApp.get('params').mode, 'development')
+      } finally {
+        delete process.env.NODE_ENV
+        fs.rmSync(appDir, { recursive: true, force: true })
+      }
+      done()
+    })
+
+    it('should give each app the mode it was given, rather than one another app set NODE_ENV to earlier in the same process', function (t, done) {
+      require('../roosevelt')({ ...appConfig, mode: 'production' }) // which sets NODE_ENV to production
+      assert.strictEqual(process.env.NODE_ENV, 'production')
+      app = require('../roosevelt')({ ...appConfig, mode: 'development' })
+      assert.strictEqual(app.expressApp.get('params').mode, 'development')
+      delete process.env.NODE_ENV
+      done()
+    })
+
     it('should ignore an empty NODE_ENV and use the supplied mode param instead', function (t, done) {
       process.env.NODE_ENV = ''
 

@@ -44,7 +44,24 @@ Roosevelt keeps sessions in a SQLite file next to your app by default. That is a
 
 Do not try to replicate the SQLite file. SQLite is built around one machine writing to one file, and the tools that replicate it are built for keeping a backup copy or serving reads, not for several servers writing at once. Some tools do make it work by sending every write to one designated machine, but that turns SQLite into a database reached over the network, which is what the better options already are, without the extra moving parts. Putting the file on a network drive shared between servers is worse than it sounds and can corrupt the database outright.
 
-Use a session store your servers all connect to instead. [Redis](https://en.wikipedia.org/wiki/Redis) is the usual choice, and [PostgreSQL](https://en.wikipedia.org/wiki/PostgreSQL) works well if you would rather not run something extra. Set `expressSessionStore.instance` and Roosevelt will use it instead of the SQLite file:
+Use a session store your servers all connect to instead. The simplest is a database your app already uses: set `expressSessionStore.preset` to `postgres`, `mysql`, or `mariadb`, and Roosevelt keeps sessions in a `sessions` table there, which it makes the first time it is used. These presets work the same way as the default store, including clearing out sessions nobody has used for `maxInactivity`. Give the preset a connection pool as `presetOptions.client`:
+
+```javascript
+const { Pool } = require('pg')
+
+module.exports = {
+  expressSessionStore: {
+    preset: 'postgres',
+    presetOptions: {
+      client: new Pool({ connectionString: process.env.DATABASE_URL }) // a pool does not connect until it is first used
+    }
+  }
+}
+```
+
+A [mysql2](https://sidorares.github.io/node-mysql2/) or [mariadb](https://github.com/mariadb-corporation/mariadb-connector-nodejs) pool works the same way with the `mysql` or `mariadb` preset. If your app already connects to its database in its `onBeforeMiddleware` event and sets it as `app.get('db')`, leave out `presetOptions.client` and the preset uses that instead.
+
+[Redis](https://en.wikipedia.org/wiki/Redis) is the other usual choice, if you run it already or want sessions kept apart from your data. Give Roosevelt any [express-session compatible store](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) as `expressSessionStore.instance`, and it uses that instead of the SQLite file:
 
 ```javascript
 const { createClient } = require('redis')
@@ -60,29 +77,23 @@ module.exports = {
 }
 ```
 
-Swap in `connect-pg-simple` the same way if you are using PostgreSQL.
-
-## Scale across several servers
-
-Running your app on more than one server means putting a load balancer in front of them and making sure nothing your app depends on lives on only one of them. There are four things to get right, and skipping any of them produces a site that works when you test it and misbehaves for a fraction of your visitors.
-
-**Share the session secret.** Covered above. Generate it once during deployment and copy the same one to every server, or each will hand out cookies the others reject.
-
-**Move sessions off the local disk.** Covered above.
-
-**Count your web servers again.** `production-proxy` mode assumes one web server in front of your app, so `trustProxy` is `1`. Adding a load balancer makes it visitor → load balancer → nginx → your app, which is two, so set `trustProxy: 2`. Leave it at `1` and every visitor's address reads as your load balancer, which quietly breaks anything that depends on knowing who is calling: rate limiting, abuse blocking, and your logs.
-
-**Get your public folder onto every server.** `production-proxy` mode does not serve your public folder, so each web server needs its own copy, or you serve it from a CDN. Build it once during deployment and copy the result out, rather than building separately on each server. If you also use `versionedPublic`, separate builds can disagree about what is in the folder for a given version, which shows up as files that load on some visits and not others.
-
-Beyond that, anything your app writes to its own disk is worth a second look, since a file saved on one server is not there when the next request lands elsewhere. Uploads are the usual example, and they generally belong in a dedicated file storage server rather than on the web server.
-
-### What about the database your app uses for its own data
-
-Roosevelt does not manage that database or connect to it for you, so this is about your app rather than the framework. The short version is that you usually do not need to do anything: a single well provisioned database serves a large amount of traffic, and the normal shape of a growing app is many app servers talking to one database.
-
-The thing that does bite when you add app servers is the number of connections. PostgreSQL runs a separate process per connection, so ten servers each running four copies of your app with a pool of ten connections is four hundred processes, and it will struggle long before your hardware does. A connection pooler such as PgBouncer sits between your app and the database and is usually the whole fix.
+A store you supply this way clears out sessions by its own rules rather than by `maxInactivity`. Many only delete a session once its cookie expires, which with Roosevelt's default of about 11 years means sessions nobody comes back to are kept for that long. Check what yours does.
 
 If you get far enough that one database is genuinely the limit, the next step is read replicas: one database takes all the writes, and copies of it answer reads. Your app has to decide which queries go where, and a replica can be a moment behind, so a visitor who saves something and immediately looks at it may not see their own change. Sending reads back to the main database right after a write is the usual way around that. Managed database services handle most of this for you and are worth considering before building it yourself.
+
+## Give users a new session when they log in
+
+This applies to any app with logins, whichever session store it uses. A visitor usually has a session before they log in, from browsing your site. If your app logs them in by adding who they are to that same session, anyone who already knew its ID now has a logged-in session as that user. Someone could have learned or set the ID beforehand, for example on a shared computer, or by planting a cookie from another subdomain of your site. This is called session fixation. To prevent it, call `req.session.regenerate()` when a user logs in, which replaces their session with a new one under a new ID, and put who they are in the new one:
+
+```javascript
+req.session.regenerate(err => {
+  if (err) return next(err)
+  req.session.userId = user.id
+  req.session.save(err => err ? next(err) : res.redirect('/'))
+})
+```
+
+See also `expressSession` in the configuration docs.
 
 ## Use CSRF tokens on untrusted subdomains
 
