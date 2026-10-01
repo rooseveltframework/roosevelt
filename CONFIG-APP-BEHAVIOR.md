@@ -82,7 +82,7 @@ req.session.regenerate(err => {
 })
 ```
 
-- `expressSessionStore` *[Object]*: Define a custom session store to use with `express-session` instead of the default one provided by Roosevelt. Roosevelt's default store keeps sessions in a file on the server running the app, so you need this if you run your app on more than one server. See [scaling across several servers](./DEPLOYMENT.md#scale-across-several-servers).
+- `expressSessionStore` *[Object]*: Define a custom session store to use with `express-session` instead of the default one provided by Roosevelt. Roosevelt's default store keeps sessions in a file on the server running the app, so you need this if you run your app on more than one server. See [storing sessions somewhere every server can reach](./DEPLOYMENT.md#store-sessions-somewhere-every-server-can-reach).
   - `filename` *[String]*: Name of the session file.
   - `instance`: *[Object]* A store instance. See [this list](https://expressjs.com/en/resources/middleware/session.html#compatible-session-stores) for compatible stores.
   - `preset` *[String]*: Available presets provided by Roosevelt. Only used if `instance` is not provided.
