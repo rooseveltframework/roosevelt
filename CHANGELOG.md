@@ -1,3 +1,8 @@
+## 0.34.5
+
+- Fixed static pages not being rebuilt when a view they include changed, such as a layout template.
+- Updated dependencies.
+
 ## 0.34.4
 
 - Added `postgres`, `mysql`, and `mariadb` presets to the `expressSessionStore` param, which keep sessions in that database, in one passed as `presetOptions.client`, such as a connection pool, or the app's own, set as `app.get('db')` in its `onBeforeMiddleware` event, so that an app can run on more than one server.
