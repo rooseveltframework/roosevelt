@@ -128,6 +128,21 @@ describe('static page generator', () => {
       assert.ok(readPage('modelPage.html').includes('after'), `got: ${readPage('modelPage.html')}`)
     })
 
+    it('should pick up an edited view that a page includes on a later build rather than caching it', async () => {
+      const viewsDir = path.join(appDir, 'mvc/views')
+      fs.ensureDirSync(viewsDir)
+      fs.writeFileSync(path.join(viewsDir, 'layout.html'), '<p>layout before</p>')
+      writePage('index.html', '<include src="../../mvc/views/layout"></include>')
+      await roosevelt({ ...appConfig }).initServer()
+      assert.ok(readPage('index.html').includes('layout before'), `got: ${readPage('index.html')}`)
+
+      // the page itself is the same, so only the view having changed can make it build again
+      fs.writeFileSync(path.join(viewsDir, 'layout.html'), '<p>layout after</p>')
+      await roosevelt({ ...appConfig }).initServer()
+
+      assert.ok(readPage('index.html').includes('layout after'), `got: ${readPage('index.html')}`)
+    })
+
     it('should pick up an edited teddy page on a later build rather than caching it', async () => {
       writePage('index.html', '<p>before</p>')
       await roosevelt({ ...appConfig }).initServer()
