@@ -73,7 +73,7 @@
     "stylus": "0.64.0",
     "supertest": "7.3.1",
     "teddy": "2.0.6",
-    "webpack": "5.111.1"
+    "webpack": "5.112.0"
   },
   "repository": {
     "type": "git",
