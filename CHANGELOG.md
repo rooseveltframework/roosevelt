@@ -1,3 +1,8 @@
+## 0.34.6
+
+- Fixed errors and crashes that could be caused by using Roosevelt from within Electron.
+- Updated dependencies.
+
 ## 0.34.5
 
 - Fixed static pages not being rebuilt when a view they include changed, such as a layout template.

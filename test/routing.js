@@ -32,6 +32,38 @@ describe('routing', () => {
     })
   })
 
+  it('should load controllers from a folder fs.access cannot see, as one inside an Electron app\'s asar archive is', (t, done) => {
+    (async () => {
+      let pass = false
+      fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
+      // an asar archive's folders answer every check of whether they exist except fs.access, which fs.pathExists asks, and which says they are not there
+      const pathExists = fs.pathExists
+      fs.pathExists = async () => false
+      try {
+        const rooseveltApp = roosevelt({
+          logging: { methods: { http: false } },
+          http: { port: 30149 },
+          appDir,
+          expressSession: false,
+          onServerStart: app => {
+            context.app = app
+          }
+        })
+        await rooseveltApp.startServer()
+      } finally {
+        fs.pathExists = pathExists
+      }
+      try {
+        const res = await axios.get(`http://localhost:${context.app.get('params').http.port}/HTMLTest`)
+        if (res.status === 200 && res.data.includes('TitleX')) pass = true
+      } catch (err) {}
+      finish(capturedLogs => {
+        if (pass) done()
+        else done(new Error('the controllers were not loaded'))
+      })
+    })()
+  })
+
   it('should respond to a route handled in a controller file', (t, done) => {
     (async () => {
       let pass = false
