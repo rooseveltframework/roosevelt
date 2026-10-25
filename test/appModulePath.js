@@ -32,6 +32,21 @@ describe('app module path', () => {
     assert.strictEqual(require(path.join(appDir, 'node_modules/somedep/index.js')), 'could not reach the app', 'a dependency resolving the app\'s own model names would be able to shadow or steal them')
   })
 
+  it('should add a path when the entry point has no search list of its own, as in Electron\'s main process', () => {
+    const main = require.main
+    const paths = main?.paths
+    if (main) delete main.paths
+    try {
+      const otherDir = path.join(appDir, 'other')
+      fs.outputFileSync(path.join(otherDir, 'helpers/probeHelper.js'), "module.exports = 'the app helper'\n")
+      fs.outputFileSync(path.join(appDir, 'otherConsumer.js'), "module.exports = require('helpers/probeHelper')\n")
+      assert.doesNotThrow(() => appModulePath.addPath(otherDir))
+      assert.strictEqual(require(path.join(appDir, 'otherConsumer.js')), 'the app helper', 'modules loaded afterwards should still find the path')
+    } finally {
+      if (main) main.paths = paths
+    }
+  })
+
   it('should ignore a path it already has', () => {
     const before = require.main?.paths.length
     appModulePath.addPath(path.join(appDir, 'mvc'))
