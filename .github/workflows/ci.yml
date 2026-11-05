@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.x
+          node-version: 26.x
       - name: Upgrade npm so its node-gyp knows Visual Studio 2026
         if: runner.os == 'Windows'
         run: npm install -g npm@12
@@ -53,6 +53,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 24.x
+          node-version: 26.x
       - run: npm ci
       - run: npm run test-package # checks the package as npm would publish it, which the test suite cannot do since it runs against this repo
