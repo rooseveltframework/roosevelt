@@ -349,6 +349,24 @@ describe('statics pipeline', () => {
       assert.strictEqual(preprocessed.includes('a-very-long-class-name'), false, `expected the long class name to be minified away, got: ${preprocessed}`)
     })
 
+    // both steps work on the preprocessed views, web components first, so the minifier has to start from what the web component step left there rather than from the original views
+    it('should keep the markup written for web components when it minifies html attributes', async () => {
+      fs.outputFileSync(path.join(appDir, 'mvc/views/index.html'), '<html><body><time-ago label="yesterday" class="a-very-long-class-name"></time-ago><template id="time-ago"><time>${label}</time></template></body></html>') // eslint-disable-line no-template-curly-in-string
+      fs.outputFileSync(path.join(appDir, 'statics/css/styles.css'), '.a-very-long-class-name { color: red; }')
+      fs.outputFileSync(path.join(appDir, 'statics/js/main.js'), 'const a = 1')
+
+      await roosevelt({
+        ...appConfig,
+        mode: 'development',
+        viewEngine: 'html: teddy',
+        minifyHtmlAttributes: { enable: 'development' }
+      }).initServer()
+
+      const preprocessed = fs.readFileSync(path.join(appDir, '.build/preprocessed_views/index.html'), 'utf8')
+      assert.match(preprocessed, /<time-ago[^>]*data-enhanced[^>]*>\s*<template shadowrootmode="open">\s*<time>yesterday<\/time>/, `expected the web component to be enhanced, got: ${preprocessed}`)
+      assert.strictEqual(preprocessed.includes('a-very-long-class-name'), false, `expected the long class name to be minified away too, got: ${preprocessed}`)
+    })
+
     // minify-html-attributes reports what it could not safely rename through an onWarning callback and nowhere else, so without one those go nowhere
     //
     // that matters because a name it left alone looks exactly like one it renamed until a selector quietly stops matching

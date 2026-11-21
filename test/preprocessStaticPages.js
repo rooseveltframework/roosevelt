@@ -155,6 +155,21 @@ describe('static page generator', () => {
     })
   })
 
+  it('should let a page include a layout from the app\'s views by the name a controller would use, before any request', async () => {
+    const viewsDir = path.join(appDir, 'mvc/views')
+    fs.ensureDirSync(path.join(viewsDir, 'layouts'))
+    fs.writeFileSync(path.join(viewsDir, 'layouts/main.html'), '<main>{pageContent|s}</main>')
+    writePage('about.html', '<include src="layouts/main"><arg pageContent><h1>{title}</h1></arg></include>')
+    fs.writeFileSync(path.join(pagesDir, 'about.js'), 'module.exports = () => ({ title: \'about us\' })')
+
+    // teddy keeps the folder it resolves includes against in module state, set from express's settings whenever it renders, so point it somewhere unrelated to make sure the page is not leaning on a render from before
+    require('teddy').setTemplateRoot(path.join(appDir, 'nowhere'))
+
+    await roosevelt({ ...appConfig, viewsPath: 'mvc/views' }).initServer()
+
+    assert.ok(readPage('about.html')?.includes('<main><h1>about us</h1></main>'), `got: ${readPage('about.html')}`)
+  })
+
   it('should render a static page', async () => {
     writePage('index.html', '<html><body><h1>hello</h1></body></html>')
 

@@ -1,3 +1,9 @@
+## 0.34.7
+
+- Fixed `minifyHtmlAttributes` throwing away the markup `progressively-enhance-web-components` writes for web components.
+- Fixed static pages failing to include a template from the app's views, such as `<include src="layouts/main">` in Teddy, when they were built before any request had been served.
+- Updated dependencies.
+
 ## 0.34.6
 
 - Fixed errors and crashes that could be caused by using Roosevelt from within Electron.
