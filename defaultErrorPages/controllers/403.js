@@ -1,9 +1,10 @@
+const escapeHtml = require('../../lib/tools/escapeHtml')
 const docsUrl = require('../../lib/tools/docsUrl')
 
 module.exports = (app, req, res) => {
-  const url = req.url
-  const mainDomain = req.headers['x-forwarded-host'] || req.headers.host
-  const appVersion = req.app.get('appVersion') ? ` ${req.app.get('appVersion')}` : ''
+  const url = escapeHtml(req.url)
+  const mainDomain = escapeHtml(req.headers['x-forwarded-host'] || req.headers.host)
+  const appVersion = req.app.get('appVersion') ? ` ${escapeHtml(req.app.get('appVersion'))}` : ''
   let errorTemplate = `<!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -33,7 +34,7 @@ module.exports = (app, req, res) => {
     else csrfWarning = `<p><strong>The most common cause of this error is that the browser did not say the request came from this site, which is what happens with a request from another site, or from anything that is not a browser. See <a href="${docsUrl}/coding-apps/#examplepostroute">example POST route</a> for more information about how to make POST requests.</strong></p>`
   }
 
-  if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${csrfWarning}${req.app.get('debugMarkup') || ''}</footer>`)
+  if (req.app.get('env') === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', () => `${csrfWarning}${res.locals.debugMarkup || ''}</footer>`)
   res.setHeader('Connection', 'close')
   res.status(403)
   res.send(errorTemplate)

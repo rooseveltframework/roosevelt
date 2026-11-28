@@ -1,4 +1,5 @@
 const { describe, it, beforeEach, afterEach } = require('node:test')
+const captureLogs = require('./util/captureLogs')
 
 const assert = require('assert')
 const CleanCSS = require('clean-css')
@@ -51,6 +52,12 @@ describe('css preprocessors', () => {
       font-size: 10px;
     }
   `
+
+  // what less compiles a source to with nothing else done to it
+  const unminified = async source => (await less.render(source)).css
+
+  // development mode adds a comment pointing at the source map, which is not part of what the css compiled to
+  const withoutSourceMap = css => css.replace(/\/\*# sourceMappingURL=[^*]*\*\/$/, '')
 
   describe('general', () => {
     beforeEach(() => {
@@ -141,6 +148,49 @@ describe('css preprocessors', () => {
       assert(fs.pathExistsSync(path.join(appDir, 'public/css/styles.css')))
     })
 
+    it('should report an allowlisted file that does not exist and still compile the rest', async () => {
+      let captured = ''
+      captureLogs.start()
+      try {
+        await roosevelt({
+          ...appConfig,
+          logging: { methods: { info: false, warn: false } },
+          mode: 'production',
+          css: {
+            allowlist: ['file1.less', 'missing.less'],
+            compiler: { enable: true, module: 'less' },
+            minifier: { enable: false },
+            output: 'css'
+          }
+        }).initServer()
+      } finally {
+        captured = captureLogs.stop()
+      }
+
+      assert(captured.includes('missing.less') && captured.includes('does not exist'), `expected the missing file to be named, got: ${JSON.stringify(captured.slice(0, 400))}`)
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/file1.css')), 'the file that does exist was not compiled')
+    })
+
+    it('should empty the compiled css of a stylesheet that now compiles to nothing', async () => {
+      const config = {
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: { enable: true, module: 'less' },
+          minifier: { enable: false },
+          output: 'css'
+        }
+      }
+      await roosevelt(config).initServer()
+      assert.notStrictEqual(fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8'), '')
+
+      // the build cache sees the edit, so this compiles again, and what it compiles to has to replace what was there
+      fs.writeFileSync(path.join(appDir, 'statics/css/file1.less'), '')
+      await roosevelt(config).initServer()
+
+      assert.strictEqual(fs.readFileSync(path.join(appDir, 'public/css/file1.css'), 'utf8'), '')
+    })
+
     it('should minify css in prod mode when enabled', async () => {
       const app = roosevelt({
         ...appConfig,
@@ -198,15 +248,10 @@ describe('css preprocessors', () => {
       const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
       const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-      // manually minify each file
-      const clean1 = new CleanCSS().minify(file1).styles
-      const clean2 = new CleanCSS().minify(file2).styles
-      const clean3 = new CleanCSS().minify(file3).styles
-
-      // compare them
-      assert.notDeepStrictEqual(output1, clean1)
-      assert.notDeepStrictEqual(output2, clean2)
-      assert.notDeepStrictEqual(output3, clean3)
+      // what less compiles each file to on its own, unminified; checking only that the output was not minified would also pass for output that was mangled some other way
+      assert.deepStrictEqual(withoutSourceMap(output1), await unminified(file1))
+      assert.deepStrictEqual(withoutSourceMap(output2), await unminified(file2))
+      assert.deepStrictEqual(withoutSourceMap(output3), await unminified(file3))
     })
 
     it('should disable minification when minify: false', async () => {
@@ -233,15 +278,10 @@ describe('css preprocessors', () => {
       const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
       const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-      // manually minify each file
-      const clean1 = new CleanCSS().minify(file1).styles
-      const clean2 = new CleanCSS().minify(file2).styles
-      const clean3 = new CleanCSS().minify(file3).styles
-
-      // compare them
-      assert.notDeepStrictEqual(output1, clean1)
-      assert.notDeepStrictEqual(output2, clean2)
-      assert.notDeepStrictEqual(output3, clean3)
+      // what less compiles each file to on its own, unminified; checking only that the output was not minified would also pass for output that was mangled some other way
+      assert.deepStrictEqual(withoutSourceMap(output1), await unminified(file1))
+      assert.deepStrictEqual(withoutSourceMap(output2), await unminified(file2))
+      assert.deepStrictEqual(withoutSourceMap(output3), await unminified(file3))
     })
 
     it('should disable minification when css.minifier.enable: false', async () => {
@@ -267,15 +307,10 @@ describe('css preprocessors', () => {
       const output2 = fs.readFileSync(path.join(appDir, 'public/css/file2.css'), 'utf8')
       const output3 = fs.readFileSync(path.join(appDir, 'public/css/import/file3.css'), 'utf8')
 
-      // manually minify each file
-      const clean1 = new CleanCSS().minify(file1).styles
-      const clean2 = new CleanCSS().minify(file2).styles
-      const clean3 = new CleanCSS().minify(file3).styles
-
-      // compare them
-      assert.notDeepStrictEqual(output1, clean1)
-      assert.notDeepStrictEqual(output2, clean2)
-      assert.notDeepStrictEqual(output3, clean3)
+      // what less compiles each file to on its own, unminified; checking only that the output was not minified would also pass for output that was mangled some other way
+      assert.deepStrictEqual(withoutSourceMap(output1), await unminified(file1))
+      assert.deepStrictEqual(withoutSourceMap(output2), await unminified(file2))
+      assert.deepStrictEqual(withoutSourceMap(output3), await unminified(file3))
     })
 
     it('should use custom css compiler method', async () => {
@@ -468,12 +503,15 @@ describe('css preprocessors', () => {
       await app.initServer()
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
       assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+      // less writes the comment pointing at the map, and it has to be the one url the map is served at, once
+      const css = fs.readFileSync(path.join(appDir, 'public/css/styles.css'), 'utf8')
+      assert.deepStrictEqual(css.match(/sourceMappingURL=\S+/g), ['sourceMappingURL=/css/styles.map'])
     })
 
     it('should enable source maps in prod mode with prodSourceMaps param', async () => {
       const app = roosevelt({
         ...appConfig,
-        mode: 'development',
+        mode: 'production',
         prodSourceMaps: true,
         css: {
           compiler: {
@@ -490,6 +528,27 @@ describe('css preprocessors', () => {
       await app.initServer()
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
       assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+    })
+
+    it('should not write a source map in prod mode without the prodSourceMaps param', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'less'
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/styles.css')), 'the stylesheet was not compiled')
+      assert(!fs.pathExistsSync(path.join(appDir, 'public/css/styles.map')), 'a source map was written without prodSourceMaps')
     })
 
     it('should write a version file when enabled', async () => {
@@ -658,10 +717,42 @@ describe('css preprocessors', () => {
       assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
     })
 
+    it('should point the source map at the urls the files are served from, even from a folder with a space in its name', async () => {
+      // sass reports its sources as file urls, which percent-encode a space, so this is the case that taking the scheme off by hand got wrong
+      const spacedDir = path.join(__dirname, 'app/css with space')
+      fs.rmSync(spacedDir, { recursive: true, force: true })
+      fs.outputFileSync(path.join(spacedDir, 'statics/css/_partial.scss'), '$color: #123456; b { color: $color; }')
+      fs.outputFileSync(path.join(spacedDir, 'statics/css/styles.scss'), '@use \'partial\' as *; a { color: $color; }')
+      fs.outputFileSync(path.join(spacedDir, 'statics/css/other.sass'), 'a\n  color: red\n')
+      fs.writeJsonSync(path.join(spacedDir, 'package.json'), { version: '0.3.1', dependencies: { express: '5.0.0' } })
+
+      try {
+        await roosevelt({
+          ...appConfig,
+          appDir: spacedDir,
+          mode: 'development',
+          css: {
+            compiler: { enable: true, module: 'sass' },
+            minifier: { enable: false },
+            output: 'css'
+          }
+        }).initServer()
+
+        const map = JSON.parse(fs.readFileSync(path.join(spacedDir, 'public/css/styles.map'), 'utf8'))
+        assert.deepStrictEqual([...map.sources].sort(), ['/css/_partial.scss', '/css/styles.scss'])
+        assert(fs.readFileSync(path.join(spacedDir, 'public/css/styles.css'), 'utf8').endsWith('/*# sourceMappingURL=/css/styles.map */'), 'the stylesheet does not point at its source map')
+
+        // the indented syntax has its own extension, which has to be replaced the same way
+        assert(fs.readFileSync(path.join(spacedDir, 'public/css/other.css'), 'utf8').endsWith('/*# sourceMappingURL=/css/other.map */'), 'a .sass stylesheet does not point at its source map')
+      } finally {
+        fs.rmSync(spacedDir, { recursive: true, force: true })
+      }
+    })
+
     it('should enable source maps in prod mode with prodSourceMaps param', async () => {
       const app = roosevelt({
         ...appConfig,
-        mode: 'development',
+        mode: 'production',
         prodSourceMaps: true,
         css: {
           compiler: {
@@ -678,6 +769,27 @@ describe('css preprocessors', () => {
       await app.initServer()
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
       assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+    })
+
+    it('should not write a source map in prod mode without the prodSourceMaps param', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'sass'
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/styles.css')), 'the stylesheet was not compiled')
+      assert(!fs.pathExistsSync(path.join(appDir, 'public/css/styles.map')), 'a source map was written without prodSourceMaps')
     })
 
     it('should write a version file when enabled', async () => {
@@ -830,7 +942,7 @@ describe('css preprocessors', () => {
     it('should enable source maps in prod mode with prodSourceMaps param', async () => {
       const app = roosevelt({
         ...appConfig,
-        mode: 'development',
+        mode: 'production',
         prodSourceMaps: true,
         css: {
           compiler: {
@@ -847,6 +959,27 @@ describe('css preprocessors', () => {
       await app.initServer()
       const buildOutput = fs.readFileSync(path.join(appDir, 'public/css/styles.map'), 'utf8')
       assert(buildOutput.includes('"mappings"'), 'build file is missing source map')
+    })
+
+    it('should not write a source map in prod mode without the prodSourceMaps param', async () => {
+      const app = roosevelt({
+        ...appConfig,
+        mode: 'production',
+        css: {
+          compiler: {
+            enable: true,
+            module: 'stylus'
+          },
+          minifier: {
+            enable: false
+          },
+          output: 'css'
+        }
+      })
+
+      await app.initServer()
+      assert(fs.pathExistsSync(path.join(appDir, 'public/css/styles.css')), 'the stylesheet was not compiled')
+      assert(!fs.pathExistsSync(path.join(appDir, 'public/css/styles.map')), 'a source map was written without prodSourceMaps')
     })
 
     it('should write a version file when enabled', async () => {

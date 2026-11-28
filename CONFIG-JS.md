@@ -13,7 +13,7 @@
         - `"development"`: Development mode.
         - `"production"`: Production mode.
         - If no value is set, it will bundle in both modes.
-    - `config`: *[Object or String]* The config to send to your bundler, in whatever format that bundler expects. Can also be a path to a config file relative to the app directory.
+    - `config`: *[Object or String]* The config to send to your bundler, in whatever format that bundler expects. Can also be a path to a config file, either absolute or relative to the app directory. Editing the config file, or any file of your app's it requires such as a shared `webpack.common.js`, rebuilds the bundle. A webpack or rspack config can also be an array of configs.
   - `customBundlerFunction`: *[Function]* An async function to run instead of one of the bundlers above. Supply this if you want to use a bundler Roosevelt does not support natively.
     - Arguments provided:
       - `bundle`: The bundle object supplied by Roosevelt.
@@ -23,7 +23,7 @@
   - `verbose` *[String]*: Enable verbose error handling.
     - Accepted values:
       - `true`: Will print verbose logs to the console.
-      - `"file"`: Will print verbose logs to the console and write them to a file for debugging.
+      - `"file"`: Will print verbose logs to the console and write the error, with its stack trace and any errors the bundler reported, to `jsBundlerError.txt` in the app directory for debugging.
 
 Default when an app is created manually: *[Object]*
 

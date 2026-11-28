@@ -20,15 +20,16 @@ describe('view engines', () => {
   }
 
   // quit the roosevelt app if it hasn't killed itself already and delete the test app
-  afterEach((t, done) => {
-    if (!context?.app?.get) {
-      fs.rmSync(appDir, { recursive: true, force: true })
-      done()
+  afterEach(async () => {
+    const server = context.app?.get('httpServer')
+    if (server?.listening) {
+      await new Promise(resolve => {
+        server.close(resolve)
+        server.closeAllConnections?.()
+      })
     }
-    context.app.get('httpServer').close(() => {
-      fs.rmSync(appDir, { recursive: true, force: true })
-      done()
-    })
+    context.app = undefined
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should render the teddy test page', (t, done) => {
@@ -89,7 +90,7 @@ describe('view engines', () => {
     })()
   })
 
-  it('should render the teddy test page', (t, done) => {
+  it('should make the first of several view engines the default one', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
@@ -117,7 +118,7 @@ describe('view engines', () => {
     })()
   })
 
-  it('should render the teddy test page', (t, done) => {
+  it('should render the jcs test page with a view engine from a file path', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
@@ -147,7 +148,7 @@ describe('view engines', () => {
     })()
   })
 
-  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', (t, done) => {
+  it('should log an error if the viewEngine parameter is formatted incorrectly', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))
@@ -174,7 +175,7 @@ describe('view engines', () => {
     })()
   })
 
-  it('should throw an Error if the ViewEngine parameter is formatted incorrectly', (t, done) => {
+  it('should log an error if the viewEngine parameter names a module that cannot be loaded', (t, done) => {
     (async () => {
       let pass = false
       fs.copySync(path.join(__dirname, './util/mvc'), path.join(appDir, 'mvc'))

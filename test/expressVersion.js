@@ -1,4 +1,4 @@
-const { describe, it, after } = require('node:test')
+const { describe, it, before, after } = require('node:test')
 
 const assert = require('assert')
 const fs = require('fs-extra')
@@ -34,6 +34,50 @@ describe('express version support', () => {
 
   it('should detect the major version of the express the app installed', () => {
     assert.strictEqual(expressVersion(appDir), installedMajor)
+  })
+
+  // the app above has no node_modules of its own, so it falls back to the express roosevelt can see, which is the same copy the test reads, and a version read from roosevelt's own express would pass just as well
+  //
+  // so this app installs an express of its own, with a major version nothing else has, which is only ever seen if the app's copy is the one being read
+  describe('when the app has an express of its own', () => {
+    const ownExpressApp = path.join(appDir, 'ownExpress')
+
+    before(() => {
+      const realExpress = require.resolve('express')
+      const fixture = path.join(ownExpressApp, 'node_modules/express')
+      fs.outputJsonSync(path.join(fixture, 'package.json'), { name: 'express', version: '99.0.0', main: 'index.js' })
+
+      // a stand in that marks the apps it makes, so a test can tell which copy built one, and borrows everything else from the real thing so roosevelt can still use it
+      fs.outputFileSync(path.join(fixture, 'index.js'), [
+        `const real = require(${JSON.stringify(realExpress)})`,
+        'function express () {',
+        '  const app = real()',
+        '  app.builtByTheAppsOwnExpress = true',
+        '  return app',
+        '}',
+        'module.exports = Object.assign(express, real)',
+        ''
+      ].join('\n'))
+    })
+
+    it('should read the version from the app\'s express rather than from roosevelt\'s', () => {
+      assert.strictEqual(expressVersion(ownExpressApp), 99)
+    })
+
+    it('should build the app out of the app\'s express rather than roosevelt\'s', () => {
+      const app = roosevelt({
+        appDir: ownExpressApp,
+        makeBuildArtifacts: false,
+        csrfProtection: false,
+        expressSession: false,
+        htmlValidator: { enable: false },
+        http: { enable: false },
+        https: { enable: false },
+        logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } }
+      })
+
+      assert.strictEqual(app.expressApp.builtByTheAppsOwnExpress, true)
+    })
   })
 
   it('should be running an express major that roosevelt supports', () => {

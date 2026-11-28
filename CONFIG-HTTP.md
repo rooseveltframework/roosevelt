@@ -28,6 +28,7 @@ Default when an app is created with the app generator: *[Object]*
   - `autoCert` *[Boolean]*: Will create self-signed HTTPS certificates in development mode as long as they don't already exist.
   - `autoCertWarning` *[Boolean]*: Warn on startup when the certificate `autoCert` generated is signed by an authority this machine does not trust, which is the state that makes your browser complain about it. The warning names the commands to install mkcert for your platform. Set this to `false` to silence it outright; leaving it on and setting `logging.quieterStartup` to `true` instead shows it at most once a day.
   - `options` *[Object]*: Configuration that gets passed directly to the HTTPS server instance. Accepts [all native settings](https://nodejs.org/api/tls.html#tlscreatesecurecontextoptions). For convenience, the `ca`, `cert`, `key`, and `pfx` params can take file path strings or arrays of file path strings relative to your `secretsPath` in addition to the native strings and buffers.
+  - `caPath` *[String]*: Directory holding the development authority that signs the certificates `autoCert` generates when mkcert is not installed. A relative path is resolved against your app directory. Point several apps at the same directory to trust one authority for all of them rather than one per app. Leave it as `null` to keep the authority in your `secretsPath` beside the certificate. The `npx roosevelt-generate-certs` command reads it too.
 
 Default when an app is created manually: *[Object]*
 
@@ -37,7 +38,8 @@ Default when an app is created manually: *[Object]*
   port: 11437,
   autoCert: true,
   autoCertWarning: true,
-  options: {}
+  options: {},
+  caPath: null
 }
 ```
 
@@ -52,7 +54,8 @@ Default when an app is created with the app generator: *[Object]*
   options: {
     cert: 'cert.pem',
     key: 'key.pem'
-  }
+  },
+  caPath: null
 }
 ```
 
@@ -61,7 +64,7 @@ Default when an app is created with the app generator: *[Object]*
 When `https.autoCert` is enabled, Roosevelt makes the certificate your app serves in development. What it makes depends on whether you have `mkcert` installed:
 
 - **With mkcert on your PATH and fully set up**, Roosevelt signs with mkcert. The certificate is trusted by your operating system and by Chrome, Firefox, and Safari, and you will not see HTTPS cert warnings.
-- **Without it**, Roosevelt signs with a development authority of its own, written into your app's `secretsPath` beside the certificate. The certificate works, but nothing trusts that authority until you say so, so your browser warns about it. Roosevelt writes nothing outside your app, so trusting it covers that one app; installing mkcert is what covers every app at once.
+- **Without it**, Roosevelt signs with a development authority of its own, written into your app's `secretsPath` beside the certificate, or into your `https.caPath` if you set one. The certificate works, but nothing trusts that authority until you say so, so your browser warns about it. Roosevelt writes nothing outside your app, so trusting it covers that one app; installing mkcert is what covers every app at once.
 
 ### Installing mkcert
 

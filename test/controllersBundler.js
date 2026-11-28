@@ -83,6 +83,34 @@ describe('controllers bundler', () => {
     assert.strictEqual(readBundle('controllers.js'), null)
   })
 
+  it('should not add the allowlist comments to the allowlist param, so building again does not add them twice', async () => {
+    writeController('a.js')
+    writeController('b.js', '// roosevelt-allowlist chosen.js')
+
+    const app = roosevelt({ ...appConfig, incrementalBuilds: false, clientControllers: { enable: true, allowlist: { 'chosen.js': ['a.js'] } } })
+    await app.initServer()
+
+    // what a rebuild does, after the comment has been taken off the controller
+    writeController('b.js')
+    await require('../lib/controllersBundler')(app.expressApp)
+    await require('../lib/controllersBundler')(app.expressApp)
+
+    assert.deepStrictEqual(app.expressApp.get('params').clientControllers.allowlist, { 'chosen.js': ['a.js'] }, 'expected the allowlist param to be left as the app set it')
+    const bundle = readBundle('chosen.js')
+    assert.ok(bundle.includes("require('a.js')"), `got: ${bundle}`)
+    assert.ok(!bundle.includes("require('b.js')"), `expected a controller whose comment was removed to drop out of the bundle, got: ${bundle}`)
+  })
+
+  it('should add an allowlist comment to a bundle the allowlist param gives as a single glob', async () => {
+    writeController('a.js')
+    writeController('b.js', '// roosevelt-allowlist chosen.js')
+
+    await roosevelt({ ...appConfig, clientControllers: { enable: true, allowlist: { 'chosen.js': 'a.js' } } }).initServer()
+
+    const bundle = readBundle('chosen.js')
+    assert.ok(bundle && bundle.includes("require('a.js')") && bundle.includes("require('b.js')"), `got: ${bundle}`)
+  })
+
   it('should bundle every controller when exposeAll is enabled', async () => {
     writeController('a.js')
     writeController('b.js')

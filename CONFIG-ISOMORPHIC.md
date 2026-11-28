@@ -7,6 +7,7 @@
     - Can also be set declaratively by putting a `// roosevelt-blocklist` comment at the top of any controller file.
   - `allowlist` *[Object of Arrays]*: List of JS files to create mapped to which controller files to expose.
     - Example: `{ "mainPages.js": ["index.js", "about.js"] }`
+    - Each list can also be a single glob string, such as `"pages/*"`.
     - Can also be set declaratively by putting a `// roosevelt-allowlist file_path` comment at the top of any controller file.
   - `defaultBundle` *[String]*: File name for the default JS controller bundle.
   - `output` *[String]*: Subdirectory within `buildFolder` to write JS controller bundles to.
@@ -123,6 +124,7 @@ module.exports = async (req, res) => {
     - Can also be set declaratively by putting a `<!-- roosevelt-blocklist -->` tag at the top of any template.
   - `allowlist` *[Object of Arrays]*: List of JS files to create mapped to which view files to expose.
     - Example: `{ "mainPages.js": ["baseLayout.html", "footer.html"] }`
+    - Each list can also be a single glob string, such as `"pages/*"`.
     - Can also be set declaratively by putting a `<!-- roosevelt-allowlist file_path -->` tag at the top of any template.
   - `defaultBundle` *[String]*: File name for the default JS view bundle.
   - `output` *[String]*: Subdirectory within `buildFolder` to write JS view bundles to.

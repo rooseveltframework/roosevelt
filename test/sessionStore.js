@@ -146,13 +146,23 @@ describe('sqlite session store', () => {
   })
 
   it('should start an interval to clear expired sessions when configured to', () => {
+    const intervalClient = new Sqlite(':memory:')
     const intervalStore = new SqliteStore({
-      client: new Sqlite(':memory:'),
+      client: intervalClient,
       expired: { clear: true, intervalMs: 60000, unrefInterval: true }
     })
 
-    assert.strictEqual(intervalStore.expired.intervalMs, 60000)
-    assert.strictEqual(intervalStore.expired.unrefInterval, true)
+    try {
+      assert.ok(intervalStore.interval, 'an interval should have been started')
+      assert.strictEqual(intervalStore.interval.hasRef(), false, 'the interval should not keep the process alive')
+    } finally {
+      clearInterval(intervalStore.interval)
+      intervalClient.close()
+    }
+  })
+
+  it('should not start an interval when clearing is switched off', () => {
+    assert.strictEqual(store.interval, undefined)
   })
 
   it('should be usable as the session store of a roosevelt app', async () => {
@@ -174,6 +184,66 @@ describe('sqlite session store', () => {
     startedApps.push(app.expressApp)
 
     assert.ok(app.expressApp.get('expressSessionStore'), 'roosevelt should have attached a session store')
+  })
+
+  it('should keep a session file given a relative filename in the app directory rather than the directory the process was started from', async () => {
+    fs.ensureDirSync(appDir)
+
+    const app = roosevelt({
+      appDir,
+      makeBuildArtifacts: false,
+      csrfProtection: false,
+      htmlValidator: { enable: false },
+      http: { enable: false },
+      https: { enable: false },
+      logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } },
+      expressSession: true,
+      expressSessionStore: { filename: 'relative.sqlite' }
+    })
+
+    await app.initServer()
+    startedApps.push(app.expressApp)
+
+    assert.strictEqual(app.expressApp.get('expressSessionStore').client.name, path.join(appDir, 'relative.sqlite'))
+    assert.ok(fs.existsSync(path.join(appDir, 'relative.sqlite')), 'the session file should be in the app directory')
+    assert.strictEqual(fs.existsSync(path.join(process.cwd(), 'relative.sqlite')), false, 'the session file should not be in the directory the process was started from')
+  })
+
+  it('should close the sqlite database it opened when the app stops, and open it again when the app starts again', async () => {
+    fs.ensureDirSync(appDir)
+
+    const app = roosevelt({
+      appDir,
+      mode: 'production',
+      makeBuildArtifacts: false,
+      csrfProtection: false,
+      htmlValidator: { enable: false },
+      http: { port: 30490 },
+      https: { enable: false },
+      logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } },
+      expressSession: true,
+      expressSessionStore: { filename: 'reopened.sqlite' }
+    })
+    startedApps.push(app.expressApp)
+
+    await app.startServer()
+    const store = app.expressApp.get('expressSessionStore')
+    assert.strictEqual(store.client.open, true)
+    await promisify(store.set.bind(store))('kept', liveSession())
+
+    await app.stopServer({ persistProcess: true })
+    assert.strictEqual(store.client.open, false, 'the database should be closed once the app has stopped, or windows keeps the file locked')
+    assert.strictEqual(store.interval, null, 'and expired sessions should no longer be cleared out')
+
+    await app.startServer()
+    try {
+      assert.strictEqual(store.client.open, true, 'the database should be open again once the app is started again')
+      assert.ok(store.interval, 'and clearing out expired sessions should have started again')
+      const sess = await promisify(store.get.bind(store))('kept')
+      assert.strictEqual(sess?.user, 'someone', 'the sessions kept before the app stopped should still be there')
+    } finally {
+      await app.stopServer({ persistProcess: true })
+    }
   })
 
   // every method wraps its database work in a try/catch and hands the error to its callback
@@ -431,6 +501,65 @@ describe('sqlite session store', () => {
 
       assert.strictEqual(/connect\.sid=;/.test(String(response.headers['set-cookie'] || '')), false)
     })
+
+    it('should not mark the clearing cookie https only over plain http when the session cookie is secure: \'auto\'', async () => {
+      // a browser ignores a cookie marked https only that arrives over plain http, so the stale cookie would never be cleared
+      const expressApp = await startApp()
+      const login = await request(expressApp).get('/login')
+      const cookie = login.headers['set-cookie']
+      const sessionStore = expressApp.get('expressSessionStore')
+      sessionStore.client.prepare('UPDATE sessions SET lastAccessed = ?').run(Date.now() - 999999)
+      sessionStore.clearExpiredSessions()
+
+      const after = await request(expressApp).get('/me').set('Cookie', cookie)
+      const cleared = String(after.headers['set-cookie'] || '')
+
+      assert.ok(/connect\.sid=;/.test(cleared), `expected the stale cookie to be cleared, got: ${cleared}`)
+      assert.strictEqual(/;\s*Secure/i.test(cleared), false, `the clearing cookie should not be marked https only over plain http, got: ${cleared}`)
+    })
+  })
+
+  describe('an expressSession config of the app\'s own', () => {
+    function startApp (expressSession) {
+      fs.ensureDirSync(appDir)
+      const app = roosevelt({
+        appDir,
+        makeBuildArtifacts: false,
+        csrfProtection: false,
+        htmlValidator: { enable: false },
+        http: { enable: false },
+        https: { enable: false },
+        logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } },
+        expressSession: { resave: false, saveUninitialized: false, cookie: { sameSite: 'strict' }, ...expressSession },
+        expressSessionStore: { filename: path.join(appDir, 'ownConfig.sqlite') },
+        onServerInit: expressApp => {
+          expressApp.get('router').get('/login', (req, res) => { req.session.user = 'someone'; res.send('ok') })
+        }
+      })
+      return app.initServer().then(() => {
+        startedApps.push(app.expressApp)
+        return app.expressApp
+      })
+    }
+
+    it('should sign the session cookie with the app\'s own secret rather than the generated one', async () => {
+      const expressApp = await startApp({ secret: 'the app\'s own secret' })
+      const login = await request(expressApp).get('/login')
+      const value = decodeURIComponent(String(login.headers['set-cookie']).match(/connect\.sid=([^;]+)/)[1])
+
+      assert.ok(value.startsWith('s:'), 'the cookie should be signed')
+      assert.notStrictEqual(require('cookie-signature').unsign(value.slice(2), 'the app\'s own secret'), false, 'the cookie should be signed with the app\'s own secret')
+    })
+
+    it('should use a store the app put in its own expressSession config rather than make one in its place', async () => {
+      const ownStore = new session.MemoryStore()
+      const expressApp = await startApp({ store: ownStore })
+      const login = await request(expressApp).get('/login')
+
+      assert.strictEqual(expressApp.get('expressSessionStore'), ownStore)
+      assert.strictEqual(Object.keys(ownStore.sessions).length, 1, 'the session should be kept in the app\'s own store')
+      assert.ok(login.headers['set-cookie'])
+    })
   })
 })
 
@@ -484,6 +613,24 @@ for (const [dialect, driver] of [['postgres', 'pg'], ['mysql', 'mysql2'], ['mysq
       const error = new Error('the database is down')
       const sessions = store({ query: async sql => /^\s*CREATE/.test(sql) ? { rows: [] } : { error } })
       await assert.rejects(sessions.get('a'), /the database is down/)
+    })
+
+    it('tries to make its table again after the database could not be reached when the app started', async () => {
+      const db = fakeDatabase(driver)
+      let down = true
+      const query = db.query.bind(db)
+      db.query = async (sql, params) => {
+        if (down) throw new Error('the database is not up yet')
+        return query(sql, params)
+      }
+      const sessions = store(db)
+      await assert.rejects(sessions.get('a'), /the database is not up yet/)
+
+      down = false // the database comes up
+
+      await sessions.set('a', { cookie: { maxAge: 60000 }, email: 'a@example.com' })
+      assert.deepStrictEqual(await sessions.get('a'), { cookie: { maxAge: 60000 }, email: 'a@example.com' })
+      assert.ok(db.statements.some(sql => /^\s*CREATE TABLE/.test(sql)), 'the table should have been made once the database was up')
     })
 
     it('needs a client, and a table name that is only a name', () => {

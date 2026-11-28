@@ -26,11 +26,12 @@ Default: *[Object]*
     - `requireTokens` *[Boolean or String]*: Whether requests that change data must carry a CSRF token. Default: `false`.
       - `false`: no token is needed, which is fine for most apps. Note that `req.csrfToken()` is not available when set to `false`, since there are no tokens to generate.
       - `true`: always require a token. Set to `true` if anything untrusted is hosted on a subdomain you share, such as user uploaded content or a separate app someone else runs. That is the only way to stop an untrusted request coming from another subdomain of your own site, because browsers report those the same way they report your own pages. See the [coding apps](https://rooseveltframework.org/docs/latest/coding-apps/#examplepostroutewithcsrftokens) section for examples.
-      - `"whenHeaderMissing"`: require a token only from browsers too old to report where a request came from, since they are otherwise refused. This does not stop an untrusted request coming from another subdomain of your own site either, because browsers that do report where a request came from are trusted without a token.
+      - `"whenHeaderMissing"`: require a token only from browsers too old to report where a request came from, since they are otherwise refused. This does not stop an untrusted request coming from another subdomain of your own site either, because browsers that do report where a request came from are trusted without a token. A request the browser reports as coming from another site still needs a token, so cross-site requests stay protected even if `blockCrossSiteRequests` is set to `false`. `req.csrfToken()` is available on every request in this mode, so pages can hand out tokens to every browser.
     - `trustedOrigins` *[Array of Strings]*: Other sites you expect requests from, such as a payment provider posting back to your app. Default: `[]`.
       - Example: `["https://accounts.someplace.somedomain"]`. Matched against the request's `Origin` header.
       - This only helps callers that send an `Origin` header, which means browsers. Use `exemptions` for anything else.
     - `exemptions` *[Array of Strings]*: Routes to skip all of these checks on. Supports wildcard matching. Use this for routes called by anything that is not a browser, such as a mobile app or another server.
+      - Matched against the request's path without its query string, so `'/webhook'` also exempts `/webhook?signature=abc`.
 
 Example of exemptions list: *[Object]*
 
@@ -61,6 +62,8 @@ Default if `expressSession` is set to `true`: *[Object]*
   store // the expressSessionStore.instance Roosevelt param
 }
 ```
+
+If you supply your own config, Roosevelt uses it as given, adding only what it leaves out: the auto-generated `secret` if you do not set one, and the session store described by `expressSessionStore` if you do not set `store`. A `secret` or `store` you set yourself is used instead of Roosevelt's.
 
 If you supply your own config, note what `cookie.sameSite` does before leaving it out: Setting it to `"strict"` tells the browser not to send the session cookie along with any request that came from another site. A forged request from another site therefore arrives with nobody logged in, which is one of the protections that stops another site from making requests as your logged in users. Roosevelt warns at startup if your config leaves it unset, since a hand written config can drop it without meaning to.
 
@@ -182,7 +185,7 @@ Default: *[Object]*
 - `buildOnly` *[Boolean]*: When enabled `startServer` builds the app and stops there rather than listening for requests. Use it for a build step in CI or a deploy, which has to finish and exit rather than sit on a port. Default: `false`.
   - Set by the `--build` and `-b` command line flags, which also set `makeBuildArtifacts` to `"staticsOnly"`.
   - Calling `initServer` (`init`) instead of `startServer` has the same effect, and is the better fit when your build script drives Roosevelt directly rather than being handed command line flags.
-- `incrementalBuilds` *[Boolean]*: When enabled Roosevelt will skip regenerating a static file if none of the source files it was built from have changed since the last build. This applies to files declared in the `copy` param too, which are left alone when neither the source nor the copy has changed. Default: `true`.
+- `incrementalBuilds` *[Boolean]*: When enabled Roosevelt will skip regenerating a static file if none of the source files it was built from have changed since the last build. This applies to files declared in the `copy` param too, which are left alone when neither the source nor the copy has changed. It also lets Roosevelt remove files it built or copied whose source has since been deleted, such as the page of a deleted page template; files Roosevelt did not write, or that were changed since, are never removed. Default: `true`.
   - Set to `false` to disable the feature and rebuild everything on every start. Deleting your `buildFolder` has the same one-time effect.
 - `routePrefix` *[String]*: A prefix prepended to your application's routes. Applies to all routes and static files. Default: `null`.
   - Example: When set to `"foo"` a route bound to `/` will be instead be bound to `/foo/`.

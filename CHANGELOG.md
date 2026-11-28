@@ -1,3 +1,76 @@
+## 0.34.8
+
+- Breaking: Moved the debug markup shown on error pages in development mode from `app.get('debugMarkup')` to `res.locals.debugMarkup`.
+- Breaking: Changed `html.minifier.exceptionRoutes` and `frontendReload.exceptionRoutes` entries to be wildcard patterns matched against the requested path, including `routePrefix` and without the query string, like other route lists. Before, `html.minifier.exceptionRoutes` honored only the last entry and treated each one as an unanchored regular expression.
+- Breaking: Changed a relative `expressSessionStore.filename` to be resolved against the app's `appDir` instead of the directory the process was started from. An app that was started from somewhere other than its `appDir` will start a new session file, signing its users out once.
+- Added `https.caPath` param to choose where the development authority that signs `autoCert` certificates lives, so one can be shared between apps. `npx roosevelt-generate-certs` reads it too.
+- Fixed `htmlValidator.exceptions.requestHeader` by renaming it to `htmlValidator.exceptions.header`, which is the name the validator actually reads; the old name never took effect. The old name is still passed along for now, and the deprecation checker warns about it.
+- Fixed the debug panel on development mode error pages showing everything the request and response objects reach, including the session store's database credentials, the HTTPS server's private key, the app's settings, and the request's cookies and authorization headers; it now shows only an allowlist of request, response, and error details.
+- Fixed `res.locals.debugMarkup` being built for ordinary pages served by routes added after the controllers, such as frontend reload's and any added in `onServerInit`; it is now only built when an error page is shown.
+- Fixed the debug panel and the default error pages going by `NODE_ENV` instead of the app's own mode, which another app started in the same process could change.
+- Fixed `req.csrfToken()` throwing in routes when `csrfProtection.requireTokens` is `'whenHeaderMissing'` and the browser sends a `Sec-Fetch-Site` header.
+- Fixed multipart forms always failing the CSRF token check because they were parsed after it, and because formidable hands back fields as arrays. They are now parsed after the cross-site check and before the token check, so a `_csrf` field works and refused cross-site uploads are never written to disk.
+- Fixed multipart forms being ignored when their `Content-Type` header was not lowercase.
+- Fixed cross-site POSTs getting through with no CSRF check when `requireTokens` is `'whenHeaderMissing'` and `blockCrossSiteRequests` is `false`.
+- Fixed CSRF `exemptions` not matching requests whose URL has a query string, such as `POST /webhook?sig=1`.
+- Fixed the postgres, mysql, and mariadb session stores failing every request until a restart when the database could not be reached at startup; they now try to create their table again on the next request.
+- Fixed `startServer` never settling and leaving an unhandled rejection when `onServerStart` throws.
+- Fixed an HTTPS cert that could not be read exiting the process with a success code, and other unusable HTTPS options logging an error and then crashing with an unrelated one; `initServer` and `startServer` now reject with a clear error.
+- Fixed a shutdown that ran out its `shutdownTimeout` skipping the cleanup a graceful one does: closing the file watchers and the session store, and resetting `roosevelt:state`.
+- Fixed calling `stopServer` again, or receiving another kill signal, during a shutdown starting a second shutdown instead of waiting on the one already under way.
+- Fixed a graceful shutdown continuing to accept new connections until the last open one closed; it now stops listening right away and lets requests already in flight finish.
+- Fixed frontend reload's injected script ignoring `routePrefix`, so it could not load on apps that set one.
+- Fixed `watchStatics` skipping the page re-render when a file in the views folder or in `watchStatics.additionalPaths` was edited.
+- Fixed `watchStatics` crashing the dev server when a file watcher reported an error, such as EPERM on Windows when a watched folder is deleted.
+- Fixed the static page generator rejecting model files that export an object, json model files, and async model functions.
+- Fixed the static page generator failing the build and leaving the process in the pages folder when a file vanished mid-build, such as an editor's temp file.
+- Fixed an emptied stylesheet or static page keeping its old compiled output.
+- Fixed a missing file in `css.allowlist` crashing the CSS build instead of reporting it by name.
+- Fixed sass source map paths when the app path contains spaces or is on Windows, for `.sass` files, and a duplicate, wrong sourceMappingURL comment from less.
+- Fixed the sitemap cache growing without limit when requests arrived with many different Host headers and no `sitemap.baseUrl` was set.
+- Fixed `clientViews` and `clientControllers` allowlist comments being added into the allowlist param, which duplicated them across rebuilds, kept removed ones, and crashed when a bundle was given as a single glob string.
+- Fixed pug templates being HTML-minified in client view bundles.
+- Fixed client view names keeping their extension on Windows, and names that merely end in the view engine's letters (such as `.xhtml`) being truncated.
+- Fixed `html.allowlist` and `html.blocklist` never matching nested pages on Windows.
+- Fixed config file errors being silently ignored when the config required a package that is not installed.
+- Fixed a relative `appDir` silently skipping the app's `package.json` and config file.
+- Fixed the `PORT` env var being given to both servers when HTTPS and HTTP are both enabled, which made the app fail to start with `EADDRINUSE`.
+- Fixed `PORT` and `NODE_PORT` not moving to the HTTP server when `DISABLE_HTTPS` or `SWAP_HTTPS_TO_HTTP` switched HTTPS off.
+- Fixed the `QUIETER_STARTUP` env var overriding the `--quieter-startup` / `-q` flags, and added it to the documented env vars.
+- Fixed the deprecation checker never warning about the old `--webpack`, `--wp` and `--w` flags.
+- Fixed the generated TLS key, development authority key and session secret being readable by other users. They are now always written owner-only (0600).
+- Fixed `npx roosevelt-generate-certs --secretsPath` only creating the development authority and never the certificate. The secret commands now also print what they did, and resolve a relative `--secretsPath` against the app directory.
+- Fixed a certificate generated with `npx roosevelt-generate-certs --caPath` being replaced the next time the app started in development mode.
+- Fixed loading Roosevelt running the `roosevelt.config.js` of whatever directory the process was started from.
+- Fixed Roosevelt leaving copied files, static pages, compiled CSS, generated client models, and preprocessed views in place after their source was deleted; it now removes only files it wrote itself that are unchanged since it wrote them.
+- Fixed the sitemap file writer leaving `sitemap-N.xml` parts behind when a later build needed fewer parts.
+- Fixed `js.verbose: 'file'` writing `{}` (or crashing) instead of the error, and writing `jsBundlerError.txt` to the working directory instead of the app directory.
+- Fixed the webpack/rspack bundler crashing on array configs and on configs without `output.path`, and an error thrown while reading the bundler's results escaping as an uncaught exception.
+- Fixed bundles not rebuilding when a file required by the bundle's config file (such as `webpack.common.js`) was edited, and absolute config file paths being mangled.
+- Fixed the incremental build cache key for JS bundles depending on the directory the process was started from.
+- Fixed the error page always being titled "Internal Server Error" and calling the URL "temporarily unavailable" for errors with a 4xx status, such as a request body that was too large. It is now titled with the actual status, such as "413 Payload Too Large", and client errors are logged as a single warning line rather than a stack trace.
+- Fixed the error handler trying to render an error page over a response whose headers were already sent, and using a status that was not a valid error status, such as `'abc'`.
+- Fixed `localhostOnly` refusing connections from a web server proxying to 127.0.0.1 when `localhost` resolved to `::1`. The app now listens on 127.0.0.1.
+- Fixed asynchronous work in `onAppExit` being cut off by the process exiting before it finished. The shutdown now waits for it, up to `shutdownTimeout`, and logs an `onAppExit` that fails instead of crashing.
+- Fixed every server error after startup being logged as "Another process is using port …".
+- Fixed the cookie that clears a stale session being marked Secure, so browsers ignored it, when `expressSession.cookie.secure` was `'auto'` and the request came over plain HTTP.
+- Fixed a `secret` or `store` set in a custom `expressSession` config being silently replaced by the generated secret or the `expressSessionStore` preset.
+- Fixed `Content-Length` being reported as 0 on HEAD requests in development mode.
+- Fixed the SQLite database the default session store opens being left open after the app stopped, which kept the file locked on Windows; it is now closed when the app stops and opened again if the app is started again.
+- Fixed the deprecation checker ignoring a whole block of the config file when the constructor set a different key in that block, such as `js: { verbose: true }`.
+- Fixed the deprecation checker naming the wrong replacement command for an npm script that runs another `.js` file before Roosevelt's own script.
+- Fixed the deprecation checker missing old `${...}` template syntax when a param held a live object that refers to itself, such as a session store instance, and flagging `${` inside `html.models`.
+- Fixed the deprecation checker telling apps to add an `enable` param to `clientViews` when it was set with `rooseveltConfig.ref`.
+- Fixed the deprecation checker looking for the old `csrfSecret.json` in `secrets/` instead of the app's `secretsPath`.
+- Fixed the deprecation checker treating a folder such as `staticsOld` as the statics folder in nodemon config, and missing a nodemon config that watches the whole app directory.
+- Fixed `roosevelt-migrate-config` writing a `roosevelt.config.js` that would not load when a string value contained a newline or other control character, or an invalid or wrong ref when a templated value contained a backtick, backslash or stray `${`.
+- Fixed `roosevelt-migrate-config` writing a `roosevelt.config.js` beside an existing `rooseveltConfig.js`, which silently stopped the existing config from being read. It now refuses instead.
+- Fixed the `html.minifier.options` docs listing a `removeComments: true` default that Roosevelt does not set.
+- Fixed the debug markup writing the error message, the stack trace, and the route list into the page without escaping them, and writing the request's details into its inline script in a way that a `</script>` anywhere in them, such as in the URL, could end early.
+- Fixed the default error pages writing the URL and the host they were requested at into the page without escaping them.
+- Fixed the default error pages mangling debug markup that contained `$'`, `` $` ``, or `$&`, which a string replacement treats as special.
+- Updated dependencies.
+
 ## 0.34.7
 
 - Fixed `minifyHtmlAttributes` throwing away the markup `progressively-enhance-web-components` writes for web components.

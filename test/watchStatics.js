@@ -123,8 +123,26 @@ describe('watching statics', () => {
     })
     require('../lib/watchStatics')(app.expressApp)
 
-    writePage('<p>after</p>')
-    await settle(300) // for the watcher to have noticed the edit, which starts the debounce
+    // a watcher of the test's own, started after roosevelt's on the same directory through the same api, so once it has seen the edit roosevelt's has too and the debounce is running
+    //
+    // waiting a fixed time instead would let this pass without the edit ever being noticed, since then there would be nothing to cancel
+    let probed = false
+    const probe = fs.watch(path.join(appDir, 'statics'), { recursive: true }, (event, file) => {
+      if (file && file.endsWith('index.html')) probed = true
+    })
+    let noticed = false
+    try {
+      // repeated until seen, for the same reason editPageUntilNoticed repeats it: macos can drop an edit made right after a watcher starts
+      const deadline = Date.now() + 20000
+      while (!noticed && Date.now() < deadline) {
+        writePage('<p>after</p>')
+        noticed = await eventually(() => probed, 1000)
+      }
+    } finally {
+      probe.close()
+    }
+    assert.ok(noticed, 'expected the edit to be noticed before the watchers were closed')
+    assert.strictEqual(rebuilds.length, 0, 'expected the debounce to still be waiting when the watchers were closed')
     for (const watcher of app.expressApp.get('staticsWatchers')) watcher.close() // what the app does as it stops
     await settle(2500)
 
@@ -159,12 +177,37 @@ describe('watching statics', () => {
 
   it('should watch a path the app names on top of its own', async () => {
     writePage('<p>before</p>')
-    fs.outputFileSync(path.join(appDir, 'contentSource/data.json'), '{}')
-    const app = await start({ mode: 'development', watchStatics: { additionalPaths: ['contentSource'] } })
+    const dataFile = path.join(appDir, 'contentSource/data.json')
+    fs.outputFileSync(dataFile, '{}')
+    const rebuilds = []
+    const app = await start({
+      mode: 'development',
+      watchStatics: { additionalPaths: ['contentSource'] },
+      onStaticsRebuilt: (app, files) => rebuilds.push(files)
+    })
     require('../lib/watchStatics')(app.expressApp)
 
-    const watched = app.expressApp.get('staticsWatchers')
-    assert.ok(watched && watched.length > 1, `expected the extra path to be watched too, got ${watched?.length} watchers`)
+    // an edit to the extra path has to start a rebuild that reports it, which only a watcher on that path can do; counting watchers could not tell, since the list also holds the handle that stops them
+    const deadline = Date.now() + 20000
+    let fired = false
+    while (!fired && Date.now() < deadline) {
+      fs.outputFileSync(dataFile, `{ "edited": ${Date.now()} }`)
+      fired = await eventually(() => rebuilds.flat().includes(dataFile), 2000)
+    }
+    assert.ok(fired, `expected an edit to the extra path to rebuild, got ${JSON.stringify(rebuilds)}`)
+  })
+
+  it('should keep running when a watcher reports an error', async () => {
+    writePage('<p>before</p>')
+    const app = await start({ mode: 'development' })
+    const warnings = []
+    app.expressApp.get('logger').warn = (...args) => warnings.push(args.join(' '))
+    require('../lib/watchStatics')(app.expressApp)
+
+    // what windows does when a watched folder is deleted; an error event with no listener would be thrown, which would take the dev server down
+    const watcher = app.expressApp.get('staticsWatchers')[0]
+    assert.doesNotThrow(() => watcher.emit('error', Object.assign(new Error('EPERM: operation not permitted, watch'), { code: 'EPERM' })))
+    assert.ok(warnings.some(warning => warning.includes('stopped watching') && warning.includes('EPERM')), `expected a warning about the watcher, got ${JSON.stringify(warnings)}`)
   })
 
   it('should keep serving after a rebuild fails', async () => {
@@ -196,28 +239,35 @@ describe('watching statics', () => {
     })
     await app.startServer()
 
-    // the reload script in the browser reloads the page when its socket closes and reopens, so closing it is the signal
-    const socket = new globalThis.WebSocket('ws://localhost:30150')
-    let closed = false
-    socket.addEventListener('close', () => { closed = true })
-    const opened = await eventually(() => socket.readyState === globalThis.WebSocket.OPEN)
-    assert.ok(opened, 'expected the reload connection to be established')
-    assert.strictEqual(app.expressApp.get('reloadSockets').size, 1)
+    // the server is stopped however this ends, or a failed assertion would leave the port taken for the rest of the run
+    try {
+      // the reload script in the browser reloads the page when its socket closes and reopens, so closing it is the signal
+      const socket = new globalThis.WebSocket('ws://localhost:30150')
+      let closed = false
+      socket.addEventListener('close', () => { closed = true })
+      const opened = await eventually(() => socket.readyState === globalThis.WebSocket.OPEN)
+      assert.ok(opened, 'expected the reload connection to be established')
+      assert.strictEqual(app.expressApp.get('reloadSockets').size, 1)
 
-    const reloaded = await editPageUntilNoticed('<p>after</p>', () => closed)
-    assert.ok(reloaded, 'expected the reload connection to be closed once the rebuild finished')
-    assert.strictEqual(app.expressApp.get('reloadSockets').size, 0)
-
-    await app.stopServer({ persistProcess: true })
+      const reloaded = await editPageUntilNoticed('<p>after</p>', () => closed)
+      assert.ok(reloaded, 'expected the reload connection to be closed once the rebuild finished')
+      assert.strictEqual(app.expressApp.get('reloadSockets').size, 0)
+    } finally {
+      await app.stopServer({ persistProcess: true })
+    }
   })
 
   it('should close its watchers when the app shuts down', async () => {
     writePage('<p>before</p>')
     const app = await start({ mode: 'development', http: { enable: true, port: 30151 } })
     await app.startServer()
-    assert.ok(app.expressApp.get('staticsWatchers').length > 0)
-
-    await app.stopServer({ persistProcess: true })
+    let watchersWhileRunning
+    try {
+      watchersWhileRunning = app.expressApp.get('staticsWatchers')
+    } finally {
+      await app.stopServer({ persistProcess: true }) // stopped even if reading the watchers threw, so the port is not left taken
+    }
+    assert.ok(watchersWhileRunning.length > 0)
     assert.strictEqual(app.expressApp.get('staticsWatchers'), null)
   })
 

@@ -4,7 +4,6 @@ const rooseveltConfig = require('../config')
 
 const assert = require('assert')
 const fs = require('fs-extra')
-const walk = require('../lib/tools/walkFiles')
 const path = require('path')
 
 describe('file creation', () => {
@@ -86,7 +85,9 @@ describe('file creation', () => {
     await app.initServer()
 
     // check that the app directory is empty
-    assert.deepStrictEqual((await walk(appDir)).length, 0, 'Files were improperly generated')
+    //
+    // directories are listed as well as files, since an empty folder roosevelt made is still something it was told not to make, and a walk that only reports files would never see one
+    assert.deepStrictEqual(fs.readdirSync(appDir, { recursive: true }), [], 'Files or folders were improperly generated')
   })
 
   it('should generate a variety of symlinks', async () => {

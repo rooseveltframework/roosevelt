@@ -6,16 +6,17 @@
   - `dest` *[String]*: Path to place the copy.
     - If this destination path already exists **it will be overwritten**.
     - Unless the `incrementalBuilds` param is disabled, the copy is skipped when neither the source nor the destination has changed since the last start.
+    - Unless the `incrementalBuilds` param is disabled, a file Roosevelt copied whose source has since been deleted is removed from the destination, as long as it has not been changed since it was copied. Files in the destination that Roosevelt did not copy there are never removed.
 
 - `html` *[Object]*: Generate static HTML pages:
   - `sourcePath` *[String]*: Subdirectory within `staticsRoot` where your static HTML files are located. By default this folder will not be made public, but is instead meant to store unminified / unprocessed HTML template source files which will be rendered by your templating system, minified, and written to the `public` folder when the app is started.
-  - `allowlist`: *[Array of Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`.
-  - `blocklist`: *[Array of Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`.
+  - `allowlist`: *[Array of Strings]* List of templates to render, minify, and write to the `public` folder when the app is started. If the list is empty, all templates in your `sourcePath` will be sourced. Supports wildcard matching, e.g. `dir/*`. Paths are relative to `sourcePath` and use forward slashes on every platform, including Windows.
+  - `blocklist`: *[Array of Strings]* List of templates in your `sourcePath` to skip. Supports wildcard matching, e.g. `dir/*`. Paths use forward slashes on every platform, the same as `allowlist`.
     - You can also block a file from being exposed by adding a comment on the first line of the file with the string `roosevelt-blocklist` anywhere on the line.
   - `models` *[Object]*: Data to pass to templates by file path / file name.
     - Example: `{ "index.html": { "some": "data" } }`
     - You can also pass a global model using a `*` catch-all character: `{ "*": { "some": "data" } }`
-    - If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object.
+    - If this data is not supplied by configuration, Roosevelt will try to automatically load a model from a JS file with the same name alongside the template if it exists instead. For example if an index.js file exists next to index.html and the model is not defined by configuration like in the example above, then the index.js file will be used to set the model so long as it exports either an object or a function that returns an object. The function is passed the Roosevelt app and can be async. An index.json file next to index.html works the same way when there is no index.js.
   - `output` *[String]*: Subdirectory within `publicFolder` where parsed and minified HTML files will be written to.
   - `folderPerPage` *[Boolean or String]*: Make a folder for each page and place the page within it.
     - Example values:
@@ -26,7 +27,7 @@
     - `enable` *[Boolean]*: Whether or not to minify HTML.
       - Can also be disabled by the `minify` param.
       - Minification is automatically disabled in development mode.
-    - `exceptionRoutes` *[Array of Strings]*: List of controller routes that will skip minification entirely. Set to `false` to minify all URLs.
+    - `exceptionRoutes` *[Array of Strings or String]*: List of controller routes that will skip minification entirely. Each one is matched against the path the page was requested at, including the `routePrefix` if there is one and without the query string, and can use wildcards, e.g. `/admin/*`. Set to `false` to minify all URLs.
     - `options` *[Object]*: Parameters to supply to [html-minifier](https://github.com/kangax/html-minifier#options-quick-reference)'s API.
 
 Default: *[Object]*
@@ -43,7 +44,6 @@ Default: *[Object]*
     enable: true,
     exceptionRoutes: false,
     options: {
-      removeComments: true,
       collapseWhitespace: true,
       collapseBooleanAttributes: true,
       removeAttributeQuotes: true,

@@ -1,6 +1,8 @@
 const { describe, it, before, after } = require('node:test')
 
 const assert = require('assert')
+const fs = require('fs-extra')
+const path = require('path')
 const request = require('supertest')
 const roosevelt = require('../roosevelt')
 
@@ -33,58 +35,60 @@ describe('HTML validator', () => {
   // open up testing context
   const context = {}
 
-  before((t, done) => {
-    (async () => {
-      // spin up the roosevelt app
-      const rooseveltApp = roosevelt({
-        mode: 'development',
-        csrfProtection: false,
-        expressSession: false,
-        makeBuildArtifacts: false,
-        http: {
-          port: 30111
-        },
-        logging: {
-          methods: {
-            http: false,
-            info: false,
-            warn: false,
-            error: false
-          }
-        },
-        htmlValidator: {
-          enable: true
-        },
-        frontendReload: {
-          enable: false
-        },
-        onServerInit: app => {
-          const router = app.get('router')
+  // an app folder of its own, rather than the test folder roosevelt would otherwise take from the file that required it
+  const appDir = path.join(__dirname, 'app/htmlValidator')
 
-          // add route to invalid html
-          router.get('/invalid', (req, res) => {
-            res.send(invalidHTML)
-          })
-
-          // add a route to valid html
-          router.get('/valid', (req, res) => {
-            res.send(validHTML)
-          })
-        },
-        onServerStart: app => {
-          // bind app to test context
-          context.app = app
-          done()
+  before(async () => {
+    // spin up the roosevelt app
+    context.rooseveltApp = roosevelt({
+      appDir,
+      mode: 'development',
+      csrfProtection: false,
+      expressSession: false,
+      makeBuildArtifacts: false,
+      http: {
+        port: 30111
+      },
+      logging: {
+        methods: {
+          http: false,
+          info: false,
+          warn: false,
+          error: false
         }
-      })
+      },
+      htmlValidator: {
+        enable: true
+      },
+      frontendReload: {
+        enable: false
+      },
+      onServerInit: app => {
+        const router = app.get('router')
 
-      await rooseveltApp.startServer()
-    })()
+        // add route to invalid html
+        router.get('/invalid', (req, res) => {
+          res.send(invalidHTML)
+        })
+
+        // add a route to valid html
+        router.get('/valid', (req, res) => {
+          res.send(validHTML)
+        })
+      },
+      onServerStart: app => {
+        // bind app to test context
+        context.app = app
+      }
+    })
+
+    await context.rooseveltApp.startServer()
   })
 
-  after(() => {
-    // stop the server
-    context.app.get('httpServer').close()
+  after(async () => {
+    // stop the server and delete the test app
+    await context.rooseveltApp?.stopServer({ persistProcess: true })
+    fs.rmSync(appDir, { recursive: true, force: true })
   })
 
   it('should respond with error page on invalid html', async () => {

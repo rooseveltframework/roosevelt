@@ -1,4 +1,4 @@
-const { describe, it, after, beforeEach } = require('node:test')
+const { describe, it, after, afterEach, beforeEach } = require('node:test')
 const captureLogs = require('./util/captureLogs')
 
 const assert = require('assert')
@@ -6,6 +6,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const roosevelt = require('../roosevelt')
 const deprecationChecker = require('../lib/deprecationChecker')
+const rooseveltConfig = require('../config')
 
 describe('deprecation checker', () => {
   const appDir = path.join(__dirname, 'app/deprecationChecker')
@@ -44,6 +45,18 @@ describe('deprecation checker', () => {
   after(() => {
     fs.rmSync(appDir, { recursive: true, force: true })
   })
+
+  // calls the checker directly and returns everything it logged, for checks whose input roosevelt itself would reject or rewrite before the checker saw it
+  function captureDirect (options, params = {}) {
+    let captured = ''
+    captureLogs.start()
+    try {
+      deprecationChecker(options, { appDir, ...params })
+    } finally {
+      captured = captureLogs.stop()
+    }
+    return captured
+  }
 
   describe('when it runs', () => {
     it('should run in development mode', async () => {
@@ -101,6 +114,18 @@ describe('deprecation checker', () => {
       withNodemonConfig({ ignore: ['.build/', 'public/'], ext: 'scss html js json' })
 
       assert.ok(!(await captureChecks({ watchStatics: { enable: false } })).includes('still watches your statics folder'))
+    })
+
+    it('should not mistake a sibling folder whose name starts the same for the statics folder', async () => {
+      withNodemonConfig({ watch: ['staticsOld/', 'mvc/'], ext: 'js json' })
+
+      assert.ok(!(await captureChecks()).includes('still watches your statics folder'))
+    })
+
+    it('should tell an app whose nodemon watches the whole app directory, statics included', async () => {
+      withNodemonConfig({ watch: ['.'], ext: 'scss html js json' })
+
+      assert.ok((await captureChecks()).includes('still watches your statics folder'))
     })
 
     it('should read a nodemon config that lives in its own file', async () => {
@@ -174,6 +199,41 @@ describe('deprecation checker', () => {
       assert.ok((await captureChecks({ expressSessionStore: { presetOptions: { max: 50 } } })).includes('never had any effect'))
     })
 
+    it('should still see a config file block when the constructor sets a different key in the same block', () => {
+      // each config file needs a folder of its own, because it is loaded with require and would otherwise come from the module cache
+      const dir = path.join(appDir, 'deepMerge')
+      fs.outputJsonSync(path.join(dir, 'package.json'), { name: 'test', dependencies: { express: '5.0.0', webpack: '5.0.0' } })
+      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = { js: { webpack: { enable: true } } }\n')
+
+      const captured = captureDirect({ js: { verbose: true } }, { appDir: dir })
+
+      assert.ok(captured.includes('replaced by `js.bundler`'), `the config file's js.webpack should still be checked, got: ${captured.slice(0, 300)}`)
+    })
+
+    it('should accept a ref as the clientViews enable param', () => {
+      const captured = captureDirect({ clientViews: { enable: rooseveltConfig.ref(() => true) } })
+
+      assert.strictEqual(captured.includes('add an `enable` param'), false)
+    })
+
+    it('should still ask for an enable param when clientViews has none', () => {
+      assert.ok(captureDirect({ clientViews: { exposeAll: true } }).includes('add an `enable` param'))
+    })
+
+    it('should look for the old csrf secret in the folder the app keeps its secrets in', () => {
+      fs.outputJsonSync(path.join(appDir, 'mySecrets/csrfSecret.json'), {})
+
+      const captured = captureDirect({}, { secretsPath: 'mySecrets' })
+
+      assert.ok(captured.includes('`mySecrets/csrfSecret.json` file is no longer needed'), `got: ${captured.slice(0, 300)}`)
+    })
+
+    it('should not look for the old csrf secret in the default folder when the app keeps its secrets elsewhere', () => {
+      fs.outputJsonSync(path.join(appDir, 'secrets/csrfSecret.json'), {})
+
+      assert.strictEqual(captureDirect({}, { secretsPath: path.join(appDir, 'mySecrets') }).includes('csrfSecret.json'), false)
+    })
+
     it('should say so when the config file cannot be read into the checks', () => {
       // a param roosevelt does not recognize never reaches source-configs, so a getter on one is only ever read by the merge inside the checker
       const dir = path.join(appDir, 'throwingConfigGetter')
@@ -192,6 +252,67 @@ describe('deprecation checker', () => {
       // silence here would read as a clean bill of health from a run that never saw the config file
       assert.ok(captured.includes('this check is incomplete'), 'it should say the checks could not see the config file')
       assert.ok(captured.includes('`cores` feature was removed'), 'the checks should still run on the constructor options')
+    })
+  })
+
+  describe('renamed command line flags', () => {
+    let processArgv
+
+    beforeEach(() => {
+      processArgv = process.argv.slice()
+    })
+
+    afterEach(() => {
+      process.argv = processArgv
+    })
+
+    // the checker is called directly, since starting an app would also hand these flags to param sourcing, which is not what is being tested
+    function checkWithArgs (...args) {
+      process.argv = [...processArgv, ...args]
+      let captured = ''
+      captureLogs.start()
+      try {
+        deprecationChecker({}, { appDir })
+      } finally {
+        captured = captureLogs.stop()
+      }
+      return captured
+    }
+
+    for (const [flag, replacement] of [['--webpack', '--jsbundler'], ['--wp', '--jsb'], ['--w', '--j']]) {
+      it(`should catch ${flag} given with a value attached`, () => {
+        assert.ok(checkWithArgs(`${flag}=verbose`).includes(`${flag} flag is now ${replacement}`))
+      })
+
+      it(`should catch ${flag} given on its own`, () => {
+        assert.ok(checkWithArgs(flag, 'verbose').includes(`${flag} flag is now ${replacement}`))
+      })
+    }
+
+    it('should not mistake a flag that only starts the same way for one of them', () => {
+      // --wp begins with --w, and neither should be reported for the other
+      const captured = checkWithArgs('--wp=verbose')
+
+      assert.ok(captured.includes('--wp flag is now --jsb'))
+      assert.strictEqual(captured.includes('--w flag is now --j'), false)
+    })
+
+    it('should say nothing when none of them are given', () => {
+      assert.strictEqual(checkWithArgs('--jsbundler=verbose').includes('flag is now'), false)
+    })
+  })
+
+  describe('html validator checks', () => {
+    it('should catch the old requestHeader name for the header exception', async () => {
+      const captured = await captureChecks({ htmlValidator: { enable: false, exceptions: { requestHeader: 'X-Old-Name' } } })
+
+      assert.ok(captured.includes('`htmlValidator.exceptions.header`'), `expected the rename to be explained, got: ${captured}`)
+    })
+
+    it('should stay quiet about the header exception under its current name', async () => {
+      const captured = await captureChecks({ htmlValidator: { enable: false, exceptions: { header: 'X-New-Name' } } })
+
+      assert.strictEqual(captured.includes('requestHeader'), false)
     })
   })
 
@@ -255,6 +376,23 @@ describe('deprecation checker', () => {
 
       assert.ok(captured.includes('old template syntax'), `expected a template syntax warning, got: ${JSON.stringify(captured.slice(0, 300))}`)
     })
+
+    it('should still find the old template syntax when a live object that refers to itself comes first', () => {
+      // a session store instance is a live object that can point back at itself, and walking into one used to overflow the stack, which ended the check without a warning
+      class Store {
+        constructor () { this.self = this }
+      }
+
+      // eslint-disable-next-line no-template-curly-in-string
+      const captured = captureDirect({ expressSessionStore: { instance: new Store() }, symlinks: [{ source: '${staticsRoot}/js', dest: 'public/js' }] })
+
+      assert.ok(captured.includes('old template syntax'), `expected a template syntax warning, got: ${JSON.stringify(captured.slice(0, 300))}`)
+    })
+
+    it('should leave the app\'s own template data alone', () => {
+      // eslint-disable-next-line no-template-curly-in-string
+      assert.strictEqual(captureDirect({ html: { models: { snippet: 'const x = `${y}`' } } }).includes('old template syntax'), false)
+    })
   })
 
   describe('outdated npm script checks', () => {
@@ -286,6 +424,12 @@ describe('deprecation checker', () => {
 
       assert.ok(captured.includes('no longer exists'), 'the csrf script has no replacement, since the feature was removed')
       assert.strictEqual(captured.includes('npx roosevelt-generate-csrf'), false, 'there is no command to point at')
+    })
+
+    it('should name the roosevelt script even when the command runs another file first', async () => {
+      withScripts({ certs: 'node app.js && node node_modules/roosevelt/lib/scripts/certsGenerator.js' })
+
+      assert.ok((await captureChecks()).includes('npx roosevelt-generate-certs'))
     })
 
     it('should catch these whatever the app named them', async () => {

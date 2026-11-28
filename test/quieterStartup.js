@@ -1,4 +1,4 @@
-const { describe, it, after, beforeEach } = require('node:test')
+const { describe, it, after, before, beforeEach } = require('node:test')
 const captureLogs = require('./util/captureLogs')
 
 const assert = require('assert')
@@ -8,14 +8,16 @@ const path = require('path')
 const roosevelt = require('../roosevelt')
 
 describe('quieter startup', () => {
-  const appDir = path.join(__dirname, 'app/quieterStartup')
+  // the app directory is new on every run, so no record left behind by an earlier run that stopped part way can belong to it
+  const appDir = path.join(__dirname, `app/quieterStartup-${process.pid}-${Date.now()}`)
   // roosevelt names the record after a hash of the app directory, and working that out a second time here is a way for this test to quietly stop looking at the file the app actually wrote
   //
-  // so the record is found rather than recomputed: this is the only test that turns quieterStartup on, so at most one of them exists at a time
+  // so the record is found rather than recomputed: it is whichever record was not in the temp directory before these tests began. the records that were are other apps', such as the ones you develop on this machine, and are never read or deleted here
   const recordPattern = /^roosevelt-notices-.*\.json$/
+  let existingRecords
 
   function records () {
-    return fs.readdirSync(os.tmpdir()).filter(name => recordPattern.test(name)).map(name => path.join(os.tmpdir(), name))
+    return fs.readdirSync(os.tmpdir()).filter(name => recordPattern.test(name) && !existingRecords.has(name)).map(name => path.join(os.tmpdir(), name))
   }
 
   function removeRecords () {
@@ -54,6 +56,10 @@ describe('quieter startup', () => {
     // counting the emoji prefix instead reports zero on windows, where roosevelt-logger leaves prefixes off by default
     return captured.split('\n').filter(line => line.trim()).length
   }
+
+  before(() => {
+    existingRecords = new Set(fs.readdirSync(os.tmpdir()).filter(name => recordPattern.test(name)))
+  })
 
   beforeEach(() => {
     removeRecords()

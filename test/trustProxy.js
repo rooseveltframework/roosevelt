@@ -6,6 +6,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const roosevelt = require('../roosevelt')
 const captureLogs = require('./util/captureLogs')
+const closeSessionStores = require('./util/closeSessionStores')
 
 describe('trusting a proxy', () => {
   const appDir = path.join(__dirname, 'app/trustProxy')
@@ -17,9 +18,16 @@ describe('trusting a proxy', () => {
     fs.ensureDirSync(appDir)
   })
 
+  // each server is stopped however far the test got in starting it, and any connection left open is dropped so the close does not wait out its keep alive timeout
   afterEach(async () => {
-    if (context.proxy) await new Promise(resolve => context.proxy.close(resolve))
-    if (context.app) await new Promise(resolve => context.app.get('httpServer').close(resolve))
+    for (const server of [context.proxy, context.app?.get('httpServer')]) {
+      if (!server?.listening) continue
+      await new Promise(resolve => {
+        server.close(resolve)
+        server.closeAllConnections?.()
+      })
+    }
+    closeSessionStores(context.app) // the sqlite session file lives in the app's folder, which windows will not remove while it is still open
     context.proxy = null
     context.app = null
     fs.rmSync(appDir, { recursive: true, force: true })
@@ -59,12 +67,13 @@ describe('trusting a proxy', () => {
         app.get('router').route('/signin').get((req, res) => { req.session.signedIn = true; res.send('ok') })
       }
     })
+    context.app = rooseveltApp.expressApp // set before starting, so a start that fails partway is still cleaned up
     await rooseveltApp.startServer()
-    context.app = rooseveltApp.expressApp
 
     context.proxy = http.createServer((clientReq, clientRes) => {
       const forwarded = clientReq.headers['x-forwarded-for']
       http.request({
+        agent: false, // a fresh connection every time: node's shared agent keeps them alive between requests, and one kept from a server an earlier test closed can be handed out again before its close is noticed, failing the request with a socket hang up
         host: 'localhost',
         port: appPort,
         path: clientReq.url,
@@ -73,21 +82,34 @@ describe('trusting a proxy', () => {
           'x-forwarded-for': forwarded ? `${forwarded}, 198.51.100.7` : '198.51.100.7',
           'x-forwarded-proto': forwardedProto
         }
-      }, r => { clientRes.writeHead(r.statusCode, r.headers); r.pipe(clientRes) }).end()
+      }, r => { clientRes.writeHead(r.statusCode, r.headers); r.pipe(clientRes) })
+        .on('error', err => { // the app being unreachable is reported to the test as a bad gateway, as a real proxy would, rather than crashing it
+          if (!clientRes.headersSent) clientRes.writeHead(502)
+          clientRes.end(err.message)
+        })
+        .end()
     })
     await new Promise(resolve => context.proxy.listen(proxyPort, resolve))
 
-    return headers => new Promise(resolve => http.get({ host: 'localhost', port: proxyPort, path: '/whoami', headers }, r => {
+    return headers => new Promise((resolve, reject) => http.get({ agent: false, host: 'localhost', port: proxyPort, path: '/whoami', headers, timeout: 5000 }, r => {
       let body = ''
       r.on('data', chunk => { body += chunk })
-      r.on('end', () => resolve(JSON.parse(body)))
-    }))
+      r.on('end', () => {
+        try {
+          resolve(JSON.parse(body))
+        } catch (err) {
+          reject(new Error(`the proxy answered with something other than json (${r.statusCode}): ${body}`))
+        }
+      })
+    }).on('timeout', function () { this.destroy(new Error('the request through the proxy timed out')) }).on('error', reject))
   }
 
   async function startAppBehindProxyWithSessions (options = {}, forwardedProto = 'https') {
     await startAppBehindProxy({ expressSession: true, ...options }, forwardedProto)
     return async () => {
-      const res = await new Promise(resolve => http.get({ host: 'localhost', port: 30331, path: '/signin' }, resolve))
+      const res = await new Promise((resolve, reject) => http.get({ agent: false, host: 'localhost', port: 30331, path: '/signin', timeout: 5000 }, resolve)
+        .on('timeout', function () { this.destroy(new Error('the request through the proxy timed out')) })
+        .on('error', reject))
       res.resume()
       return (res.headers['set-cookie'] || [])[0]
     }

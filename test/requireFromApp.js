@@ -31,7 +31,12 @@ describe('loading the packages an app supplies', () => {
 
   it('should fall back to roosevelt\'s own copy of a package the app does not have', () => {
     fs.outputJsonSync(path.join(appDir, 'package.json'), { name: 'test-app' })
-    assert.strictEqual(requireFromApp(appDir, 'supertest', require), request)
+
+    // a package that is installed nowhere, so the app cannot resolve it through any node_modules above it, which a real package such as one roosevelt depends on would be, from inside roosevelt's own folder; only the fallback can answer for this one
+    const fallback = {}
+    const asked = []
+    assert.strictEqual(requireFromApp(appDir, 'a-package-installed-nowhere', name => { asked.push(name); return fallback }), fallback)
+    assert.deepStrictEqual(asked, ['a-package-installed-nowhere'])
   })
 
   it('should report a package the app has that fails to load rather than falling back', () => {
