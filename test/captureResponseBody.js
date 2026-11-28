@@ -111,4 +111,15 @@ describe('capturing a response body', () => {
     assert.strictEqual(res.statusCode, 404)
     assert.match(res.text, /goneINJECTED/)
   })
+
+  it('should keep the Content-Length of a response to a HEAD request rather than replacing it with 0', async () => {
+    // a HEAD response has no body to measure, so the length it was going to claim is the only one there is
+    const page = '<html><body>hi</body></html>'
+    const app = appThatRewrites({ routes: app => app.get('/', (req, res) => res.type('html').send(page)) })
+
+    const res = await request(app).head('/')
+
+    assert.strictEqual(res.statusCode, 200)
+    assert.strictEqual(Number(res.headers['content-length']), Buffer.byteLength(page))
+  })
 })

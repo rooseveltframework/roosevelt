@@ -5,6 +5,7 @@ const fs = require('fs-extra')
 const path = require('path')
 const certsGenerator = require('../lib/scripts/certsGenerator')
 const secretsGenerator = require('../lib/scripts/secretsGenerator')
+const sessionSecretGenerator = require('../lib/scripts/sessionSecretGenerator')
 const roosevelt = require('../roosevelt')
 
 describe('certs generator', () => {
@@ -58,7 +59,53 @@ describe('certs generator', () => {
     // what this is really about is where the authority is not: one written outside the app outlives the app, is missed by deleting it, and leaves a key that can sign for any host somewhere nobody thought to look
     //
     // every other test here passes a path of its own, so nothing exercised the default until this one
-    assert.ok(result.caCertPath.startsWith(appDir), `the authority should be inside the app, got: ${result.caCertPath}`)
+    //
+    // the exact path is asserted, because the generator used to remember the paths an earlier call was given, so an authority landing wherever a previous test had put one would still have been inside the app
+    assert.strictEqual(result.caCertPath, path.join(secretsPath, 'rooseveltDevCA.pem'))
+  })
+
+  it('should not carry the paths one call was given over to the next', async () => {
+    // roosevelt and the commands both call this, and an authority path left behind by one app must not decide where the next app's authority goes
+    await certsGenerator(path.join(appDir, 'first'), { key: 'key.pem', cert: 'cert.pem' }, path.join(appDir, 'sharedCA'))
+    const second = await certsGenerator(path.join(appDir, 'second'), { key: 'key.pem', cert: 'cert.pem' })
+
+    assert.strictEqual(second.caCertPath, path.join(appDir, 'second', 'rooseveltDevCA.pem'))
+  })
+
+  it('should keep the certificate\'s key readable only by the developer it belongs to', { skip: noFileModes }, async () => {
+    // whoever can read this key can impersonate the app to anyone who trusts its certificate
+    await certsGenerator(secretsPath, { key: 'key.pem', cert: 'cert.pem' })
+
+    const mode = fs.statSync(path.join(secretsPath, 'key.pem')).mode & 0o777
+    assert.strictEqual(mode, 0o600, `expected 600, got ${mode.toString(8)}`)
+  })
+
+  it('should narrow the key\'s permissions when it replaces one that was readable by everyone', { skip: noFileModes }, async () => {
+    // the mode a file is written with only applies when it is created, and replacing a key roosevelt made is the usual case rather than the exception
+    await certsGenerator(secretsPath, { key: 'key.pem', cert: 'cert.pem' })
+    fs.rmSync(path.join(secretsPath, 'cert.pem')) // so it is replaced
+    fs.chmodSync(path.join(secretsPath, 'key.pem'), 0o644)
+    fs.chmodSync(path.join(secretsPath, 'rooseveltDevCA-key.pem'), 0o644)
+    fs.rmSync(path.join(secretsPath, 'rooseveltDevCA.pem')) // so the authority is made again over the old key
+
+    await certsGenerator(secretsPath, { key: 'key.pem', cert: 'cert.pem' })
+
+    for (const key of ['key.pem', 'rooseveltDevCA-key.pem']) {
+      const mode = fs.statSync(path.join(secretsPath, key)).mode & 0o777
+      assert.strictEqual(mode, 0o600, `expected ${key} to be 600, got ${mode.toString(8)}`)
+    }
+  })
+
+  it('should keep the session secret readable only by the developer it belongs to', { skip: noFileModes }, async () => {
+    // anyone who can read it can forge a session cookie, and one being replaced has to be narrowed too, since the mode only applies when a file is created
+    fs.outputFileSync(path.join(secretsPath, 'sessionSecret.json'), '{}')
+    fs.chmodSync(path.join(secretsPath, 'sessionSecret.json'), 0o644)
+
+    sessionSecretGenerator(secretsPath)
+
+    const mode = fs.statSync(path.join(secretsPath, 'sessionSecret.json')).mode & 0o777
+    assert.strictEqual(mode, 0o600, `expected 600, got ${mode.toString(8)}`)
+    assert.ok(fs.readJsonSync(path.join(secretsPath, 'sessionSecret.json')).secret, 'and it should hold a new secret')
   })
 
   it('should write certs that look like valid pem', async () => {
@@ -118,6 +165,121 @@ describe('certs generator', () => {
 
     assert.ok(fs.pathExistsSync(path.join(secretsPath, 'key.pem')), 'autoCert should have generated a key')
     assert.ok(fs.pathExistsSync(path.join(secretsPath, 'cert.pem')), 'autoCert should have generated a cert')
+  })
+
+  // the commands an app runs with npx, which work out the app and its params for themselves
+  describe('from the command line', () => {
+    const { execFileSync } = require('child_process')
+    const bin = name => path.join(__dirname, '../lib/scripts', name)
+
+    // the commands are run as their own processes, the way npx runs them, from the directory given
+    function run (script, args, cwd = appDir) {
+      return execFileSync(process.execPath, [bin(script), ...args], { cwd, encoding: 'utf8', stdio: 'pipe', env: { ...process.env, NODE_ENV: '' } })
+    }
+
+    function writeConfig (dir, config) {
+      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), `module.exports = ${JSON.stringify(config)}\n`)
+    }
+
+    it('should write the certificate https.options names when --secretsPath is given', () => {
+      // a flag that moved the secrets used to stop the command reading the app's params, so it never learned which files to write and made only an authority
+      writeConfig(appDir, { https: { options: { cert: 'cert.pem', key: 'key.pem' } } })
+
+      const output = run('certsGenerator.js', ['--secretsPath', 'elsewhere'])
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'elsewhere/cert.pem')), 'the cert should have been written where the flag said')
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'elsewhere/key.pem')), 'and the key beside it')
+      assert.match(output, /Wrote an HTTPS certificate to .*elsewhere/, `it should say what it did, got: ${output}`)
+    })
+
+    it('should resolve a relative --secretsPath against --appDir rather than where it was run', () => {
+      writeConfig(appDir, { https: { options: { cert: 'cert.pem', key: 'key.pem' } } })
+      const elsewhere = path.join(appDir, 'runFromHere')
+      fs.ensureDirSync(elsewhere)
+
+      run('certsGenerator.js', ['--appDir', '..', '--secretsPath', 'relativeSecrets'], elsewhere)
+
+      assert.ok(fs.pathExistsSync(path.join(appDir, 'relativeSecrets/cert.pem')))
+      assert.strictEqual(fs.pathExistsSync(path.join(elsewhere, 'relativeSecrets')), false, 'nothing should have been written where the command happened to be run')
+    })
+
+    it('should say so when https.options names no certificate to write', () => {
+      const output = run('certsGenerator.js', [])
+
+      assert.match(output, /No certificate was written/)
+      assert.strictEqual(fs.pathExistsSync(path.join(secretsPath, 'cert.pem')), false)
+    })
+
+    it('should write the session secret where --secretsPath says', () => {
+      const output = run('sessionSecretGenerator.js', ['--secretsPath', 'elsewhere'])
+
+      assert.ok(fs.readJsonSync(path.join(appDir, 'elsewhere/sessionSecret.json')).secret)
+      assert.match(output, /Wrote a new session secret/)
+    })
+
+    it('should write both with the secrets command', () => {
+      writeConfig(appDir, { https: { options: { cert: 'cert.pem', key: 'key.pem' } } })
+
+      run('secretsGenerator.js', ['--secretsPath', 'both'])
+
+      for (const file of ['cert.pem', 'key.pem', 'sessionSecret.json']) assert.ok(fs.pathExistsSync(path.join(appDir, 'both', file)), `expected ${file}`)
+    })
+
+    it('should not run the config of the directory roosevelt is loaded from when it is only being required', () => {
+      // roosevelt requires these scripts as it loads, and they used to read the config in the current directory as they were required, so starting an app from inside another project ran that project's config
+      const otherProject = path.join(appDir, 'otherProject')
+      writeConfig(otherProject, {})
+      fs.appendFileSync(path.join(otherProject, 'roosevelt.config.js'), `require('fs').writeFileSync(${JSON.stringify(path.join(otherProject, 'ran'))}, '')\n`)
+
+      for (const script of ['certsGenerator.js', 'sessionSecretGenerator.js', 'secretsGenerator.js']) {
+        execFileSync(process.execPath, ['-e', `require(${JSON.stringify(bin(script))})`], { cwd: otherProject, stdio: 'pipe' })
+      }
+
+      assert.strictEqual(fs.pathExistsSync(path.join(otherProject, 'ran')), false, 'requiring the scripts should not have run that config')
+    })
+
+    describe('with a shared authority', () => {
+      const appParams = {
+        appDir,
+        mode: 'development',
+        makeBuildArtifacts: false,
+        csrfProtection: false,
+        expressSession: false,
+        htmlValidator: { enable: false },
+        frontendReload: { enable: false },
+        logging: { methods: { http: false, info: false, warn: false, error: false, verbose: false } },
+        http: { enable: false }
+      }
+
+      const certOnDisk = () => fs.readFileSync(path.join(secretsPath, 'cert.pem'), 'utf8')
+
+      it('should keep a certificate signed with https.caPath when the app next starts', async () => {
+        // the app has to look for the authority in the same place the command put it, or it decides the certificate cannot be verified and replaces it
+        const https = { enable: true, port: 30020, caPath: 'sharedCA', options: { cert: 'cert.pem', key: 'key.pem' } }
+        writeConfig(appDir, { https })
+
+        run('certsGenerator.js', [])
+        const written = certOnDisk()
+        assert.ok(fs.pathExistsSync(path.join(appDir, 'sharedCA/rooseveltDevCA.pem')), 'the command should have used https.caPath')
+
+        await roosevelt({ ...appParams, https }).initServer()
+
+        assert.strictEqual(certOnDisk(), written, 'starting the app should not have replaced it')
+      })
+
+      it('should keep a certificate signed with --caPath when the app names the same authority', async () => {
+        const https = { enable: true, port: 30020, caPath: 'flagCA', options: { cert: 'cert.pem', key: 'key.pem' } }
+        writeConfig(appDir, { https: { options: https.options } })
+
+        run('certsGenerator.js', ['--caPath', 'flagCA'])
+        const written = certOnDisk()
+        assert.ok(fs.pathExistsSync(path.join(appDir, 'flagCA/rooseveltDevCA.pem')), 'the command should have used --caPath')
+
+        await roosevelt({ ...appParams, https }).initServer()
+
+        assert.strictEqual(certOnDisk(), written, 'starting the app should not have replaced it')
+      })
+    })
   })
 
   // what the certificate has to say to be usable, as opposed to merely existing
@@ -213,7 +375,14 @@ describe('certs generator', () => {
       const rogueKey = fs.readFileSync(path.join(appDir, 'rogue/key.pem'))
 
       assert.strictEqual(await serve(key, cert, 21446, otherCa), 200, 'the real one should still work')
-      await assert.rejects(serve(rogueKey, rogueCert, 21447, otherCa), 'one from another authority should not')
+
+      // the refusal has to be one that says the signature does not check out, since any failure at all, such as the port being taken, would otherwise pass for it
+      //
+      // both authorities carry the same name, so openssl finds the trusted one as the issuer and rejects the signature; the other two codes are what it reports should it not match them up by name
+      await assert.rejects(serve(rogueKey, rogueCert, 21447, otherCa), err => {
+        assert.ok(['CERT_SIGNATURE_FAILURE', 'UNABLE_TO_VERIFY_LEAF_SIGNATURE', 'UNABLE_TO_GET_ISSUER_CERT_LOCALLY'].includes(err.code), `expected the certificate to be refused for who signed it, got: ${err.code} ${err.message}`)
+        return true
+      }, 'one from another authority should not')
     })
 
     it('should keep the authority\'s key readable only by the developer it belongs to', { skip: noFileModes }, async () => {

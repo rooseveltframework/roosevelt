@@ -3,6 +3,7 @@ const { describe, it, after, before } = require('node:test')
 const assert = require('assert')
 const fs = require('fs-extra')
 const path = require('path')
+const { Module } = require('module')
 const appModulePath = require('../lib/tools/appModulePath')
 
 // makes the app's own folders requirable by name, which is what lets a controller say require('models/dataModel')
@@ -48,8 +49,10 @@ describe('app module path', () => {
   })
 
   it('should ignore a path it already has', () => {
-    const before = require.main?.paths.length
     appModulePath.addPath(path.join(appDir, 'mvc'))
-    assert.strictEqual(require.main?.paths.length, before, 'adding the same path twice should not grow the search list')
+
+    // the search list node builds for a module loaded from here on, which is where a path added twice would show up twice; the entry point's own list cannot show it, since that has a check of its own against adding a path it already has
+    const searched = Module._nodeModulePaths(appDir)
+    assert.strictEqual(searched.filter(dir => dir === path.join(appDir, 'mvc')).length, 1, 'adding the same path twice should not list it twice')
   })
 })

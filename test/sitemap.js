@@ -44,13 +44,17 @@ describe('sitemap', () => {
   }
 
   // a request on a connection of its own that closes when it is answered. fetch keeps its connections open for the next request, and roosevelt waits for open connections to close before it stops, so every test would wait out the shutdown timeout
-  function get (route) {
+  //
+  // a request that gets no answer fails the test after a while, rather than leaving it to hang until the runner gives up on the whole file
+  function get (route, headers = {}) {
     return new Promise((resolve, reject) => {
-      http.get({ host: 'localhost', port, path: route, agent: false }, response => {
+      const request = http.get({ host: 'localhost', port, path: route, agent: false, headers, timeout: 10000 }, response => {
         let body = ''
         response.on('data', chunk => { body += chunk })
         response.on('end', () => resolve({ status: response.statusCode, type: response.headers['content-type'], headers: response.headers, body }))
-      }).on('error', reject)
+      })
+      request.on('timeout', () => request.destroy(new Error(`no answer to ${route} within 10 seconds`)))
+      request.on('error', reject)
     })
   }
 
@@ -291,6 +295,23 @@ describe('sitemap', () => {
     assert.ok((await get('/sitemap.xml')).body.includes('/call/2'))
   })
 
+  it('keeps what it made for only a few addresses at once, since without baseUrl the address comes from the request', async () => {
+    const { maxCachedBaseUrls } = require('../lib/sitemap')
+    const made = []
+    await start({ sitemap: { cacheSeconds: 3600, urls: (app, req) => { made.push(req.get('host')); return ['/page'] } } })
+
+    // the host header is whatever the client sends, so a cache with no limit would keep one sitemap for every made up host it was sent
+    for (let i = 0; i <= maxCachedBaseUrls; i++) await get('/sitemap.xml', { host: `host${i}.example` })
+    assert.strictEqual(made.length, maxCachedBaseUrls + 1)
+
+    // the newest is still kept, and the oldest was dropped to make room for it, so it is made again
+    await get('/sitemap.xml', { host: `host${maxCachedBaseUrls}.example` })
+    assert.strictEqual(made.length, maxCachedBaseUrls + 1, 'expected the newest address to still be cached')
+    await get('/sitemap.xml', { host: 'host0.example' })
+    assert.strictEqual(made.length, maxCachedBaseUrls + 2, 'expected the oldest address to have been dropped from the cache')
+    assert.strictEqual(made.at(-1), 'host0.example')
+  })
+
   it('makes it again on every request in development mode, unless told otherwise', async () => {
     let calls = 0
     await start({ mode: 'development', frontendReload: { enable: false }, sitemap: { urls: () => [`/call/${++calls}`] } })
@@ -429,6 +450,23 @@ describe('sitemap', () => {
       const output = captureLogs.stop()
       assert.strictEqual(fs.existsSync(path.join(publicDir, 'sitemap.xml')), false)
       assert.ok(output.includes('sitemap.baseUrl'), output)
+    })
+
+    it('removes the parts a previous build wrote that this one no longer has, and nothing else', async () => {
+      const build = count => roosevelt(config({ sitemap: { file: true, baseUrl: 'https://example.com', urls: () => Array.from({ length: count }, (_, i) => `/page/${i}`) } })).initServer()
+      await build(50001)
+      assert.ok(fs.existsSync(path.join(publicDir, 'sitemap-1.xml')) && fs.existsSync(path.join(publicDir, 'sitemap-2.xml')), 'the first build should have written two parts')
+
+      // files that only look a bit like parts are not the sitemap's
+      fs.outputFileSync(path.join(publicDir, 'sitemap-extra.xml'), 'mine')
+      fs.outputFileSync(path.join(publicDir, 'other-3.xml'), 'mine')
+
+      await build(1)
+      assert.strictEqual(fs.existsSync(path.join(publicDir, 'sitemap-1.xml')), false, 'a sitemap that fits in one file has no parts')
+      assert.strictEqual(fs.existsSync(path.join(publicDir, 'sitemap-2.xml')), false, 'a sitemap that fits in one file has no parts')
+      assert.deepStrictEqual(locs(fs.readFileSync(path.join(publicDir, 'sitemap.xml'), 'utf8')), ['https://example.com/page/0'])
+      assert.strictEqual(fs.readFileSync(path.join(publicDir, 'sitemap-extra.xml'), 'utf8'), 'mine')
+      assert.strictEqual(fs.readFileSync(path.join(publicDir, 'other-3.xml'), 'utf8'), 'mine')
     })
 
     it('includes urls from the app, which can come from anything onServerInit set up', async () => {

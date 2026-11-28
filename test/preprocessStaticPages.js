@@ -224,11 +224,81 @@ describe('static page generator', () => {
     fs.writeFileSync(path.join(pagesDir, 'notapage.json'), '{}')
     writePage('index.html', '<html><body><p>real page</p></body></html>')
 
-    await roosevelt({ ...appConfig }).initServer()
+    let captured = ''
+    captureLogs.start()
+    try {
+      await roosevelt({ ...appConfig, logging: { methods: { http: false, info: false, warn: false, verbose: false } } }).initServer()
+    } finally {
+      captured = captureLogs.stop()
+    }
 
     assert.ok(readPage('index.html'))
-    assert.strictEqual(readPage('notapage.js'), null)
-    assert.strictEqual(readPage('notapage.json'), null)
+    // a page is written as .html whatever it was rendered from, so that is where one built from a model file would be
+    assert.strictEqual(readPage('notapage.html'), null)
+    // and one that was tried as a page, rather than skipped, would be reported as having no view engine
+    assert.ok(!captured.includes('no view engine'), `expected the model files to be skipped rather than tried as pages, got: ${JSON.stringify(captured.slice(0, 400))}`)
+  })
+
+  it('should populate a page from a model file that exports an object', async () => {
+    writePage('objectModel.html', '<p>{greeting}</p>')
+    fs.writeFileSync(path.join(pagesDir, 'objectModel.js'), 'module.exports = { greeting: \'from an object\' }')
+
+    await roosevelt({ ...appConfig }).initServer()
+
+    assert.ok(readPage('objectModel.html').includes('from an object'), `got: ${readPage('objectModel.html')}`)
+  })
+
+  it('should populate a page from a json model file', async () => {
+    writePage('jsonModel.html', '<p>{greeting}</p>')
+    fs.writeFileSync(path.join(pagesDir, 'jsonModel.json'), '{ "greeting": "from json" }')
+
+    await roosevelt({ ...appConfig }).initServer()
+
+    assert.ok(readPage('jsonModel.html').includes('from json'), `got: ${readPage('jsonModel.html')}`)
+  })
+
+  it('should populate a page from a model file that exports an async function', async () => {
+    writePage('asyncModel.html', '<p>{greeting}</p>')
+    fs.writeFileSync(path.join(pagesDir, 'asyncModel.js'), 'module.exports = async () => { await new Promise(resolve => setTimeout(resolve, 10)); return { greeting: \'from an async model\' } }')
+
+    await roosevelt({ ...appConfig }).initServer()
+
+    assert.ok(readPage('asyncModel.html').includes('from an async model'), `got: ${readPage('asyncModel.html')}`)
+  })
+
+  it('should empty a page whose source now renders to nothing rather than keep the old page', async () => {
+    writePage('emptied.ejs', '<p>before</p>')
+    await roosevelt({ ...appConfig, viewEngine: 'ejs: ejs' }).initServer()
+    assert.ok(readPage('emptied.html').includes('before'))
+
+    writePage('emptied.ejs', '')
+    await roosevelt({ ...appConfig, viewEngine: 'ejs: ejs' }).initServer()
+
+    assert.strictEqual(readPage('emptied.html'), '')
+  })
+
+  it('should skip a file that disappears while the pages are being built, and put the working directory back', async () => {
+    // pages are built in name order, so the model of the first deletes the last after the folder has been listed, the way an editor's temporary file comes and goes mid-build
+    writePage('a.html', '<p>{greeting}</p>')
+    fs.writeFileSync(path.join(pagesDir, 'a.js'), `module.exports = () => { require('fs').rmSync(${JSON.stringify(path.join(pagesDir, 'z.html'))}, { force: true }); return { greeting: 'first' } }`)
+    writePage('z.html', '<p>last</p>')
+    const cwd = process.cwd()
+
+    await roosevelt({ ...appConfig }).initServer()
+
+    assert.strictEqual(process.cwd(), cwd, 'expected the working directory to be put back')
+    assert.ok(readPage('a.html').includes('first'), `got: ${readPage('a.html')}`)
+    assert.strictEqual(readPage('z.html'), null)
+  })
+
+  it('should match nested pages against the allowlist with forward slashes', async () => {
+    writePage('nested/wanted.html', '<p>wanted</p>')
+    writePage('other.html', '<p>other</p>')
+
+    await roosevelt({ ...appConfig, html: { sourcePath: 'pages', allowlist: ['nested/*'] } }).initServer()
+
+    assert.ok(readPage('nested/wanted.html'))
+    assert.strictEqual(readPage('other.html'), null)
   })
 
   it('should skip pages carrying a roosevelt-blocklist comment', async () => {

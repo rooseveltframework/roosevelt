@@ -18,6 +18,7 @@
   - `notFound` *[String]*: Your [404 Not Found](https://en.wikipedia.org/wiki/HTTP_404) error page. Default: `"404.js"`.
   - `internalServerError` *[String]*: Your [5xx Internal Server Error](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page. Default: `"5xx.js"`.
   - `serviceUnavailable` *[String]*: Your [503 Service Unavailable](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes#5xx_Server_errors) error page. Default: `"503.js"`.
+  - In development mode, Roosevelt sets `res.locals.debugMarkup` before showing any of these pages: HTML you can add to your own error pages that prints the error if there is one, lists the routes, and adds some inline JavaScript that serializes the request's `err`, `req`, and `res` objects so you can examine them in the browser's developer tools. It is made for that request only, and only when an error page is about to be shown. A template rendered with `res.render` gets it as `debugMarkup` along with the rest of `res.locals`.
 
 - `modelsPath` *[String]*: Relative path on filesystem to where your model files are located. Default: `"mvc/models"`.
 

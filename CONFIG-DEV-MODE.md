@@ -14,7 +14,9 @@ These features are only available in development mode.
 
   Controllers and models are not watched. Changing those means restarting the process, which is what a process watcher such as [nodemon](https://nodemon.io) is for, and Roosevelt cannot reload code it has already loaded. If you use one alongside this feature, it is worth narrowing it to your server-side files so that editing a stylesheet no longer restarts your whole app.
 
-  Only the static files whose sources actually changed are rebuilt, unless `incrementalBuilds` is disabled.
+  Only the static files whose sources actually changed are rebuilt, unless `incrementalBuilds` is disabled. When the edited file is a page, only that page is rendered again. Editing a stylesheet, script, or image renders no pages, while editing anything in your views or in `additionalPaths`, such as a layout or a content file, renders every page, since Roosevelt cannot tell which pages use it.
+
+  If watching a directory fails after it has started, for instance because the directory was deleted, Roosevelt logs a warning and keeps the app running; restart the app to watch it again.
 
 Default: *[Object]*
 
@@ -29,7 +31,7 @@ Default: *[Object]*
 - `frontendReload` *[Object]*: Settings to use for the browser reload feature which automatically reloads your browser when your frontend code changes.
   - Options:
     - `enable` *[Boolean]*: Whether or not to enable this feature.
-    - `exceptionRoutes` *[Array of Strings]*: List of routes to exclude from this feature.
+    - `exceptionRoutes` *[Array of Strings]*: List of routes to exclude from this feature. Each one is matched against the path the page was requested at, including the `routePrefix` if there is one and without the query string, and can use wildcards, e.g. `/admin/*`.
     - `expressBrowserReloadParams` *[Object]*: Params to pass to [express-browser-reload](https://rooseveltframework.org/docs/express-browser-reload). This feature will only be active on pages with a `<body>` tag.
 
 Default: *[Object]*
@@ -70,7 +72,7 @@ Default: *[Object]*
 {
   enable: true,
   exceptions: {
-    requestHeader: 'Partial',
+    header: 'Partial',
     modelValue: '_disableValidator'
   },
   validatorConfig: {}

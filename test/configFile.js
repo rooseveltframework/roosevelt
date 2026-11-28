@@ -244,7 +244,60 @@ describe('config file', () => {
       fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 1 } })
       fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = {}')
 
-      assert.throws(() => execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { stdio: 'pipe' }))
+      // any non-zero exit would satisfy a bare throws, including a crash that wrote nothing, so the refusal is pinned down by its reason and by the file it was protecting
+      assert.throws(() => execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { stdio: 'pipe', encoding: 'utf8' }), err => {
+        assert.strictEqual(err.status, 1)
+        assert.match(err.stderr, /roosevelt\.config\.js already exists/, `stderr should say why it refused, got: ${err.stderr}`)
+        return true
+      })
+      assert.strictEqual(fs.readFileSync(path.join(dir, 'roosevelt.config.js'), 'utf8'), 'module.exports = {}', 'the existing config should be left exactly as it was')
+    })
+
+    it('should refuse when a rooseveltConfig.js already exists, since the new file would be read in its place', () => {
+      const dir = freshDir()
+      fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { http: { port: 1 } })
+      fs.outputFileSync(path.join(dir, 'rooseveltConfig.js'), 'module.exports = {}')
+
+      assert.throws(() => execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { stdio: 'pipe', encoding: 'utf8' }), err => {
+        assert.strictEqual(err.status, 1)
+        assert.match(err.stderr, /rooseveltConfig\.js already exists/, `stderr should say why it refused, got: ${err.stderr}`)
+        return true
+      })
+      assert.strictEqual(fs.existsSync(path.join(dir, 'roosevelt.config.js')), false, 'nothing should have been written to shadow the existing config')
+    })
+
+    // runs the migration and loads what it wrote, pointing its require of roosevelt/config at this checkout since the test app has no node_modules
+    function migrateAndLoad (dir) {
+      execFileSync(process.execPath, [path.join(__dirname, '../lib/scripts/migrateConfig.js'), dir], { encoding: 'utf8' })
+      const file = path.join(dir, 'roosevelt.config.js')
+      const written = fs.readFileSync(file, 'utf8').replace("require('roosevelt/config')", `require(${JSON.stringify(path.join(__dirname, '../config'))})`)
+      const loadable = path.join(dir, 'loadable.config.js')
+      fs.writeFileSync(loadable, written)
+      return require(loadable)
+    }
+
+    it('should write strings with newlines and other special characters as valid javascript', () => {
+      const dir = freshDir()
+      const values = { multiLine: 'line one\nline two', tab: 'a\tb', quote: "it's", backslash: 'C:\\dir', unicode: 'caf\u00e9', carriage: 'a\r\nb' }
+      fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), { html: { models: values } })
+
+      assert.deepStrictEqual(migrateAndLoad(dir).html.models, values)
+    })
+
+    it('should keep backticks, backslashes and stray dollar braces in a templated value as literal text', () => {
+      const dir = freshDir()
+      fs.outputJsonSync(path.join(dir, 'rooseveltConfig.json'), {
+        a: '${staticsRoot}/`quoted`\\path\nnext', // eslint-disable-line no-template-curly-in-string
+        b: '${publicFolder}/${unclosed', // eslint-disable-line no-template-curly-in-string
+        c: '\\${staticsRoot}\r' // eslint-disable-line no-template-curly-in-string
+      })
+
+      const config = migrateAndLoad(dir)
+      const params = { staticsRoot: '/app/statics', publicFolder: '/app/public' }
+
+      assert.strictEqual(rooseveltConfig.ref.resolve(config.a, params), '/app/statics/`quoted`\\path\nnext')
+      assert.strictEqual(rooseveltConfig.ref.resolve(config.b, params), '/app/public/${unclosed') // eslint-disable-line no-template-curly-in-string
+      assert.strictEqual(rooseveltConfig.ref.resolve(config.c, params), '\\/app/statics\r')
     })
   })
 })

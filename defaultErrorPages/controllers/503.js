@@ -1,7 +1,8 @@
+const escapeHtml = require('../../lib/tools/escapeHtml')
 module.exports = (app, req, res) => {
-  const url = req.url
-  const mainDomain = req.headers['x-forwarded-host'] || req.headers.host
-  const appVersion = req.app.get('appVersion') ? ` ${req.app.get('appVersion')}` : ''
+  const url = escapeHtml(req.url)
+  const mainDomain = escapeHtml(req.headers['x-forwarded-host'] || req.headers.host)
+  const appVersion = req.app.get('appVersion') ? ` ${escapeHtml(req.app.get('appVersion'))}` : ''
   let errorTemplate = `<!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -22,7 +23,7 @@ module.exports = (app, req, res) => {
   </main>
 </body>
 </html>`
-  if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${req.app.get('debugMarkup') || ''}</footer>`)
+  if (req.app.get('env') === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', () => `${res.locals.debugMarkup || ''}</footer>`)
   res.setHeader('Connection', 'close')
   res.status(503)
   res.send(errorTemplate)

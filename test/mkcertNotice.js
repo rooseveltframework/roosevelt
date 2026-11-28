@@ -95,17 +95,13 @@ describe('mkcert startup notice', () => {
     assert.ok(second.includes('mkcert'), 'expected the second start to mention it too, since nothing has been trusted yet')
   })
 
-  it('should stay quiet when autoCertWarning is off', async () => {
+  it('should stay quiet when autoCertWarning is off, without quieterStartup being set', async () => {
+    // the two suppressions are independent: this one silences the notice outright, rather than holding it back to once a day
+    //
+    // quieterStartup is left off on purpose, since turning it on would have hidden the notice anyway on any start after the first and so proved nothing about this param
     const logs = await startAndCapture({ autoCertWarning: false })
 
     assert.ok(!logs.includes('mkcert'), `expected nothing about mkcert, got: ${logs}`)
-  })
-
-  it('should stay quiet when autoCertWarning is off even though quieterStartup is not set', async () => {
-    // the two suppressions are independent: this one silences the notice outright, rather than holding it back to once a day
-    const logs = await startAndCapture({ autoCertWarning: false })
-
-    assert.ok(!logs.includes('mkcert'), 'expected the param to work on its own')
     assert.ok(!/restart your browser/i.test(logs), 'expected no leftover advice')
   })
 

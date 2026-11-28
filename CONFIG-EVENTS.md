@@ -38,7 +38,7 @@ These are sorted in order of when they are executed during the lifecycle of a Ro
 - `onServerStart(app)`: Fired when the server starts.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 
-- `onAppExit(app)`: Fired when the app recieves a kill signal.
+- `onAppExit(app)`: Fired when the app receives a kill signal or `stopServer` is called. It can be async: Roosevelt waits for it to finish, for up to `shutdownTimeout`, before the process exits or `stopServer` resolves. An error it throws or rejects with is logged rather than stopping the shutdown.
   - `app`: The [Express app](http://expressjs.com/api.html#express) created by Roosevelt.
 
 ## Express variables exposed by Roosevelt
@@ -53,7 +53,6 @@ Roosevelt supplies several variables to Express that you may find handy. Access 
 - `clientViewsBundledOutput`: Full path on the file system to where your app's client-exposed views folder is located.
 - `cssCompiledOutput`: Full path on the file system to where your app's minified CSS files are located.
 - `cssPath`: Full path on the file system to where your app's CSS source files are located.
-- `debugMarkup`: HTML you can add to your custom error pages if you define any that will print server errors if any exist, display the route list, and add some inline JavaScript that will serialize the request's `err`, `req`, and `res` objects so you can interactively examine them in the browser's developer tools. Only available in development mode.
 - `env`: Either `development` or `production`.
 - `express`: The Express module.
 - `expressSession`: The [express-session](https://github.com/expressjs/session) module Roosevelt uses internally. Session middleware.

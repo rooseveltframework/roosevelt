@@ -1,10 +1,11 @@
+const escapeHtml = require('../../lib/tools/escapeHtml')
 const expressVersion = require('../../lib/tools/expressVersion')
 
 module.exports = (router, app) => {
   router.route(expressVersion(app.get('appDir')) >= 5 ? '*all' : '*').all(function (req, res) {
-    const url = req.url
-    const mainDomain = req.headers['x-forwarded-host'] || req.headers.host
-    const appVersion = req.app.get('appVersion') ? ` ${req.app.get('appVersion')}` : ''
+    const url = escapeHtml(req.url)
+    const mainDomain = escapeHtml(req.headers['x-forwarded-host'] || req.headers.host)
+    const appVersion = req.app.get('appVersion') ? ` ${escapeHtml(req.app.get('appVersion'))}` : ''
     let errorTemplate = `<!DOCTYPE html>
 <html lang='en'>
 <head>
@@ -25,7 +26,7 @@ module.exports = (router, app) => {
   </main>
 </body>
 </html>`
-    if (process.env.NODE_ENV === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', `${req.app.get('debugMarkup') || ''}</footer>`)
+    if (req.app.get('env') === 'development' && req.app.get('routes').length) errorTemplate = errorTemplate.replace('</footer>', () => `${res.locals.debugMarkup || ''}</footer>`)
     res.status(404)
     res.send(errorTemplate)
   })

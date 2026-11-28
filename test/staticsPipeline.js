@@ -122,23 +122,25 @@ describe('statics pipeline', () => {
   describe('the onBeforeStatics event', () => {
     it('should fire before anything has been written', async () => {
       fs.outputFileSync(path.join(appDir, 'statics/images/teddy.txt'), 'an image stands in')
-      let publicFolderExisted = null
-      let copyExisted = null
+      fs.outputFileSync(path.join(appDir, 'statics/css/main.scss'), 'p { color: red; }')
+      const publicDir = path.join(appDir, 'public')
+      const publicFiles = () => fs.pathExistsSync(publicDir) ? fs.readdirSync(publicDir, { recursive: true }) : []
+      let writtenWhenFired = null
 
       await roosevelt({
         ...appConfig,
+        css: { compiler: { enable: true, module: 'sass' } },
         copy: [{ source: 'statics/images/teddy.txt', dest: 'public/teddy.txt' }],
         onBeforeStatics: () => {
-          publicFolderExisted = fs.pathExistsSync(path.join(appDir, 'public/css'))
-          copyExisted = fs.pathExistsSync(path.join(appDir, 'public/teddy.txt'))
+          writtenWhenFired = publicFiles()
         }
       }).initServer()
 
-      assert.strictEqual(copyExisted, false, 'the copy step must not have run yet when the event fires')
-      assert.strictEqual(publicFolderExisted, false, 'nothing must have been written into the public folder yet when the event fires')
+      assert.deepStrictEqual(writtenWhenFired, [], 'nothing must have been written into the public folder yet when the event fires')
 
-      // and the build still happened afterwards
-      assert.ok(fs.pathExistsSync(path.join(appDir, 'public/teddy.txt')))
+      // and the build still happened afterwards, writing what the event would have seen had it fired late, which is what makes the check above able to fail
+      assert.ok(fs.pathExistsSync(path.join(publicDir, 'teddy.txt')), 'the copy should have been made')
+      assert.ok(fs.pathExistsSync(path.join(publicDir, 'css/main.css')), 'the stylesheet should have been compiled')
     })
 
     it('should be able to add a copy that then gets made', async () => {
@@ -531,24 +533,29 @@ describe('statics pipeline', () => {
       })
       await app.startServer()
 
-      const res = await fetch('http://localhost:30144/')
-      assert.strictEqual(res.status, 200)
-      assert.ok((await res.text()).includes('a static site'))
-
-      await app.stopServer({ persistProcess: true })
+      // the server is stopped however this ends, or a failed assertion would leave the port taken for the rest of the run
+      try {
+        const res = await fetch('http://localhost:30144/')
+        assert.strictEqual(res.status, 200)
+        assert.ok((await res.text()).includes('a static site'))
+      } finally {
+        await app.stopServer({ persistProcess: true })
+      }
     })
 
     it('should build an app that is not a static site without starting a server either', async () => {
-      fs.outputFileSync(path.join(appDir, 'statics/css/main.css'), 'p { color: red; }')
+      fs.outputFileSync(path.join(appDir, 'statics/css/main.scss'), 'p { color: red; }')
 
       const app = roosevelt({
         ...appConfig,
         viewEngine: 'html: teddy',
+        css: { compiler: { enable: true, module: 'sass' } },
         http: { enable: true, port: 30142 }
       })
       await app.init()
 
-      assert.ok(fs.pathExistsSync(path.join(appDir, 'public')), 'the build should have run')
+      // the stylesheet rather than the public folder, which something other than the build could have made
+      assert.ok(fs.readFileSync(path.join(appDir, 'public/css/main.css'), 'utf8').match(/color: ?red/), 'the build should have run')
       await assert.rejects(fetch('http://localhost:30142/'), 'nothing should be listening on the port it would have used')
 
       assert.strictEqual(app.expressApp.get('httpServer').listening, false)

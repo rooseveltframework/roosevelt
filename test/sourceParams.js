@@ -1,4 +1,4 @@
-const { describe, it, before, afterEach } = require('node:test')
+const { describe, it, before, after, afterEach } = require('node:test')
 const rooseveltConfig = require('../config')
 /* eslint no-template-curly-in-string: 0 */
 
@@ -6,7 +6,12 @@ const assert = require('assert')
 const fs = require('fs-extra')
 const path = require('path')
 const sampleConfig = require('./util/sampleConfig.json')
+
+// every app here is given a directory of its own under test/app, since an app given none defaults to the directory of whatever first required roosevelt, which is test/ itself
+const appDir = path.join(__dirname, 'app/sourceParams')
+
 const config = {
+  appDir,
   logging: {
     methods: {
       http: false,
@@ -19,7 +24,23 @@ const config = {
   expressSession: false
 }
 
+// the sample config predates the https.caPath param and the rename of htmlValidator.exceptions.requestHeader to header, so the expected values are brought up to date here
+//
+// requestHeader is left in the sample on purpose, which also covers an old config still being honored under the new name
+function expectedFromSample () {
+  const expected = structuredClone(sampleConfig)
+  expected.https.caPath = null
+  expected.logging.methods.error = true // the sample leaves this one out, and roosevelt fills in the default of anything an object param leaves out
+  const { requestHeader, ...exceptions } = expected.htmlValidator.exceptions
+  expected.htmlValidator.exceptions = { header: requestHeader, ...exceptions }
+  return expected
+}
+
 describe('sourceParams', () => {
+  after(() => {
+    fs.rmSync(appDir, { recursive: true, force: true })
+  })
+
   describe('config objects', () => {
     // blocklist certain params from auto checking
     const blocklist = [
@@ -108,8 +129,8 @@ describe('sourceParams', () => {
     it('should set params from constructor', () => {
       // build roosevelt config from sample
       const config = {
-        ...sampleConfig,
-        appDir: 'value'
+        ...expectedFromSample(),
+        appDir
       }
 
       // initialize roosevelt
@@ -146,18 +167,20 @@ describe('sourceParams', () => {
 
     it('should set params from rooseveltConfig.js', () => {
       // set app directory
-      const appDir = path.join(__dirname, 'app/sourceParams')
+      //
+      // a folder of its own, since the config stays in the module cache after the folder is deleted, and the other tests here would otherwise find it there
+      const appDir = path.join(__dirname, 'app/sourceParams/fromConfigFile')
 
       // build roosevelt config from sample
       const configJson = {
-        ...sampleConfig
+        ...expectedFromSample()
       }
 
       // create app directory
       fs.ensureDirSync(path.join(appDir))
 
       // generate rooseveltConfig.js with sample config
-      fs.outputFileSync(path.join(appDir, 'rooseveltConfig.js'), 'module.exports = ' + JSON.stringify(configJson))
+      fs.outputFileSync(path.join(appDir, 'rooseveltConfig.js'), 'module.exports = ' + JSON.stringify(sampleConfig))
 
       // initialize roosevelt
       const app = require('../roosevelt')({
@@ -196,6 +219,7 @@ describe('sourceParams', () => {
     it('should resolve refs against the finished params', () => {
       // build roosevelt config with lots of variables
       const config = {
+        appDir,
         logging: {
           methods: {
             http: false,
@@ -540,49 +564,64 @@ describe('sourceParams', () => {
       assert.deepStrictEqual(appConfig.htmlValidator.enable, false)
     })
 
-    it('should set js bundler verbose error handler to false when running in development mode without argument ', () => {
-      // add the cli flag
-      process.argv.push('--development')
+    it('should leave a js bundler verbose setting from the config alone when switching to development mode via --development-mode', () => {
+      // a mode flag only changes the mode, so a verbose bundler the app asked for in its config has to survive it
+      process.argv.push('--development-mode')
 
-      // initialize roosevelt with inverse configs
       const app = require('../roosevelt')({
         mode: 'production',
-        ...config
+        ...config,
+        js: { verbose: true }
       })
 
       const appConfig = app.expressApp.get('params')
 
-      assert.deepStrictEqual(appConfig.js.verbose, false)
+      assert.strictEqual(appConfig.mode, 'development', 'the flag should still have changed the mode')
+      assert.strictEqual(appConfig.js.verbose, true)
     })
 
-    it('should set js bundler verbose error handler to false when running --dev mode without argument ', () => {
-      // add the cli flag
+    it('should leave a js bundler verbose setting from the config alone when switching to development mode via --dev', () => {
+      // a mode flag only changes the mode, so a verbose bundler the app asked for in its config has to survive it
       process.argv.push('--dev')
 
-      // initialize roosevelt with inverse configs
       const app = require('../roosevelt')({
         mode: 'production',
-        ...config
+        ...config,
+        js: { verbose: true }
       })
 
       const appConfig = app.expressApp.get('params')
 
-      assert.deepStrictEqual(appConfig.js.verbose, false)
+      assert.strictEqual(appConfig.mode, 'development', 'the flag should still have changed the mode')
+      assert.strictEqual(appConfig.js.verbose, true)
     })
 
-    it('should set js bundler verbose error handler to false when running -d mode without argument ', () => {
-      // add the cli flag
+    it('should leave a js bundler verbose setting from the config alone when switching to development mode via -d', () => {
+      // a mode flag only changes the mode, so a verbose bundler the app asked for in its config has to survive it
       process.argv.push('-d')
 
-      // initialize roosevelt with inverse configs
       const app = require('../roosevelt')({
         mode: 'production',
-        ...config
+        ...config,
+        js: { verbose: true }
       })
 
       const appConfig = app.expressApp.get('params')
 
-      assert.deepStrictEqual(appConfig.js.verbose, false)
+      assert.strictEqual(appConfig.mode, 'development', 'the flag should still have changed the mode')
+      assert.strictEqual(appConfig.js.verbose, true)
+    })
+
+    it('should leave js bundler verbose off when --jsbundler is given no value', () => {
+      // only verbose and verbose-file mean anything, so the bare flag should not switch it on by accident
+      process.argv.push('--jsbundler')
+
+      const app = require('../roosevelt')({
+        mode: 'development',
+        ...config
+      })
+
+      assert.strictEqual(app.expressApp.get('params').js.verbose, false)
     })
 
     it('should enable js bundler verbose error handler via -- --jsbundler=verbose', () => {
@@ -675,7 +714,7 @@ describe('sourceParams', () => {
 
   describe('environment variables', () => {
     const appConfig = {
-      appDir: path.join(__dirname, '../app/envParams'),
+      appDir,
       csrfProtection: false,
       logging: {
         methods: {
@@ -690,83 +729,131 @@ describe('sourceParams', () => {
     }
     let app
 
-    it('should take the http port from PORT, which is what hosts and local proxies set', function (t, done) {
+    // every env var these tests set is put back the way it was, so a test that fails partway through cannot hand its environment to the next one
+    const envVars = ['PORT', 'NODE_PORT', 'HTTP_PORT', 'HTTPS_PORT', 'DISABLE_HTTPS', 'SWAP_HTTPS_TO_HTTP', 'QUIETER_STARTUP']
+    let savedEnv
+    let processArgv
+
+    before(() => {
+      savedEnv = Object.fromEntries(envVars.map(name => [name, process.env[name]]))
+      processArgv = process.argv.slice()
+    })
+
+    afterEach(() => {
+      for (const name of envVars) {
+        if (savedEnv[name] === undefined) delete process.env[name]
+        else process.env[name] = savedEnv[name]
+      }
+      process.argv = processArgv.slice()
+    })
+
+    it('should take the http port from PORT, which is what hosts and local proxies set', () => {
       process.env.PORT = 20679
       const app = require('../roosevelt')({ ...config, https: { enable: false } })
 
       assert.strictEqual(Number(app.expressApp.get('params').http.port), 20679)
-      delete process.env.PORT
-      done()
     })
 
-    it('should let NODE_PORT outrank PORT, since PORT is a name that may belong to something else', function (t, done) {
+    it('should let NODE_PORT outrank PORT, since PORT is a name that may belong to something else', () => {
       process.env.NODE_PORT = 20680
       process.env.PORT = 20679
       const app = require('../roosevelt')({ ...config, https: { enable: false } })
 
       assert.strictEqual(Number(app.expressApp.get('params').http.port), 20680)
-      delete process.env.NODE_PORT
-      delete process.env.PORT
-      done()
     })
 
-    it('should let HTTP_PORT outrank both of them', function (t, done) {
+    it('should let HTTP_PORT outrank both of them', () => {
       process.env.HTTP_PORT = 20681
       process.env.NODE_PORT = 20680
       process.env.PORT = 20679
       const app = require('../roosevelt')({ ...config, https: { enable: false } })
 
       assert.strictEqual(Number(app.expressApp.get('params').http.port), 20681)
-      delete process.env.HTTP_PORT
-      delete process.env.NODE_PORT
-      delete process.env.PORT
-      done()
     })
 
-    it('should change the https.port param to 20678', function (t, done) {
+    it('should give PORT to https alone when both servers are on, rather than starting both on it', () => {
+      // PORT used to be read for both ports, so an app with both servers on tried to listen twice on the same port and failed to start
+      process.env.PORT = 20682
+      const params = require('../roosevelt')({ ...config, http: { enable: true, port: 20683 }, https: { enable: true, port: 20684 } }).expressApp.get('params')
+
+      assert.strictEqual(Number(params.https.port), 20682, 'https should take PORT')
+      assert.strictEqual(Number(params.http.port), 20683, 'http should keep its own port')
+    })
+
+    it('should give NODE_PORT to http when SWAP_HTTPS_TO_HTTP switches https off', () => {
+      // the swap decides which server the generic port belongs to, so it has to be honored before the port is handed out
+      process.env.SWAP_HTTPS_TO_HTTP = 'true'
+      process.env.NODE_PORT = 20685
+      const params = require('../roosevelt')({ ...config, http: { enable: false, port: 20686 }, https: { enable: true, port: 20687 } }).expressApp.get('params')
+
+      assert.strictEqual(params.https.enable, false)
+      assert.strictEqual(params.http.enable, true)
+      assert.strictEqual(Number(params.http.port), 20685)
+    })
+
+    it('should give PORT to http when DISABLE_HTTPS switches https off', () => {
+      process.env.DISABLE_HTTPS = 'true'
+      process.env.PORT = 20688
+      const params = require('../roosevelt')({ ...config, http: { enable: true, port: 20689 }, https: { enable: true, port: 20690 } }).expressApp.get('params')
+
+      assert.strictEqual(params.https.enable, false)
+      assert.strictEqual(Number(params.http.port), 20688)
+    })
+
+    it('should change the https.port param to 20678', () => {
       process.env.HTTPS_PORT = 20678
 
       app = require('../roosevelt')(appConfig)
       assert.strictEqual(app.expressApp.get('params').https.port, 20678)
-      delete process.env.HTTPS_PORT
-      done()
     })
 
-    it('should ignore an env var that is present but empty and use the supplied param instead', function (t, done) {
+    it('should ignore an env var that is present but empty and use the supplied param instead', () => {
       process.env.HTTPS_PORT = ''
 
       app = require('../roosevelt')(appConfig)
       assert.strictEqual(app.expressApp.get('params').https.port, 12345)
-      delete process.env.HTTPS_PORT
-      done()
     })
 
-    it('should restore an env var that is present but empty after sourcing params', function (t, done) {
+    it('should restore an env var that is present but empty after sourcing params', () => {
       process.env.HTTPS_PORT = ''
 
       app = require('../roosevelt')(appConfig)
       assert.strictEqual(process.env.HTTPS_PORT, '')
-      delete process.env.HTTPS_PORT
-      done()
     })
 
-    it('should prefer the mode the app gave the constructor over NODE_ENV, which is inherited from wherever the app runs', function (t, done) {
+    it('should take quieterStartup from QUIETER_STARTUP', () => {
+      process.env.QUIETER_STARTUP = 'true'
+
+      assert.strictEqual(require('../roosevelt')({ ...config }).expressApp.get('params').logging.quieterStartup, true)
+    })
+
+    it('should let the --quieter-startup flag outrank QUIETER_STARTUP, as a flag outranks an env var everywhere else', () => {
+      process.env.QUIETER_STARTUP = 'false'
+      process.argv.push('--quieter-startup')
+
+      assert.strictEqual(require('../roosevelt')({ ...config }).expressApp.get('params').logging.quieterStartup, true)
+    })
+
+    it('should let the -q flag outrank QUIETER_STARTUP too', () => {
+      process.env.QUIETER_STARTUP = 'false'
+      process.argv.push('-q')
+
+      assert.strictEqual(require('../roosevelt')({ ...config }).expressApp.get('params').logging.quieterStartup, true)
+    })
+
+    it('should prefer the mode the app gave the constructor over NODE_ENV, which is inherited from wherever the app runs', () => {
       process.env.NODE_ENV = 'production'
       app = require('../roosevelt')({ ...appConfig, mode: 'development' })
       assert.strictEqual(app.expressApp.get('params').mode, 'development')
-      delete process.env.NODE_ENV
-      done()
     })
 
-    it('should take the mode from NODE_ENV when the app gives the constructor none', function (t, done) {
+    it('should take the mode from NODE_ENV when the app gives the constructor none', () => {
       process.env.NODE_ENV = 'development'
       app = require('../roosevelt')({ ...appConfig })
       assert.strictEqual(app.expressApp.get('params').mode, 'development')
-      delete process.env.NODE_ENV
-      done()
     })
 
-    it('should prefer NODE_ENV over a mode in the config file', function (t, done) {
+    it('should prefer NODE_ENV over a mode in the config file', () => {
       const appDir = path.join(__dirname, 'app/nodeEnvOverConfigFile')
       fs.outputFileSync(path.join(appDir, 'roosevelt.config.js'), 'module.exports = { mode: \'production\' }')
       process.env.NODE_ENV = 'development'
@@ -774,36 +861,29 @@ describe('sourceParams', () => {
         app = require('../roosevelt')({ ...appConfig, appDir })
         assert.strictEqual(app.expressApp.get('params').mode, 'development')
       } finally {
-        delete process.env.NODE_ENV
         fs.rmSync(appDir, { recursive: true, force: true })
       }
-      done()
     })
 
-    it('should give each app the mode it was given, rather than one another app set NODE_ENV to earlier in the same process', function (t, done) {
+    it('should give each app the mode it was given, rather than one another app set NODE_ENV to earlier in the same process', () => {
       require('../roosevelt')({ ...appConfig, mode: 'production' }) // which sets NODE_ENV to production
       assert.strictEqual(process.env.NODE_ENV, 'production')
       app = require('../roosevelt')({ ...appConfig, mode: 'development' })
       assert.strictEqual(app.expressApp.get('params').mode, 'development')
-      delete process.env.NODE_ENV
-      done()
     })
 
-    it('should ignore an empty NODE_ENV and use the supplied mode param instead', function (t, done) {
+    it('should ignore an empty NODE_ENV and use the supplied mode param instead', () => {
       process.env.NODE_ENV = ''
 
       app = require('../roosevelt')({ ...appConfig, mode: 'development' })
       assert.strictEqual(app.expressApp.get('params').mode, 'development')
-      done()
     })
 
-    it('should ignore an empty NODE_PORT and leave the supplied http.port param intact', function (t, done) {
+    it('should ignore an empty NODE_PORT and leave the supplied http.port param intact', () => {
       process.env.NODE_PORT = ''
 
       app = require('../roosevelt')({ ...appConfig, https: { enable: false }, http: { enable: true, port: 3000 } })
       assert.strictEqual(app.expressApp.get('params').http.port, 3000)
-      delete process.env.NODE_PORT
-      done()
     })
   })
 
@@ -854,6 +934,106 @@ describe('sourceParams', () => {
       const prefix = app.expressApp.get('params').routePrefix
 
       assert.deepStrictEqual(prefix, '')
+    })
+  })
+
+  describe('where params are read from', () => {
+    // each test gets a folder of its own, because a config file is loaded with require and would otherwise come back out of the module cache
+    let run = 0
+    function freshDir () {
+      const dir = path.join(appDir, 'readFrom', String(++run))
+      fs.ensureDirSync(dir)
+      return dir
+    }
+
+    // console.error is what reports a config file that fails to load, and it is collected here rather than left to land on stderr, where the suite would rightly call it unexpected
+    function collectConsoleErrors (fn) {
+      const realError = console.error
+      const errors = []
+      console.error = (...args) => errors.push(args.map(arg => arg instanceof Error ? arg.message : String(arg)).join(' '))
+      try {
+        return { result: fn(), errors }
+      } finally {
+        console.error = realError
+      }
+    }
+
+    it('should show the error from a config file that requires a package that is not installed', () => {
+      // node names the config itself in the message as the file that asked for the missing package, which is how this used to be mistaken for the config simply being absent
+      const dir = freshDir()
+      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'require(\'a-package-nobody-installed\')\nmodule.exports = {}\n')
+
+      const { errors } = collectConsoleErrors(() => require('../roosevelt')({ ...config, appDir: dir }))
+
+      assert.ok(errors.some(error => error.includes('a-package-nobody-installed')), `expected the missing package to be reported, got: ${JSON.stringify(errors)}`)
+    })
+
+    it('should say nothing when there is no config file at all', () => {
+      const dir = freshDir()
+
+      const { errors } = collectConsoleErrors(() => require('../roosevelt')({ ...config, appDir: dir }))
+
+      assert.deepStrictEqual(errors, [])
+    })
+
+    it('should read the package.json and config file of an app given a relative appDir', () => {
+      // a relative path made require look for a package named after it in node_modules, which failed quietly and left the app running on defaults
+      const dir = freshDir()
+      fs.outputJsonSync(path.join(dir, 'package.json'), { name: 'relativeAppDir', version: '1.2.3' })
+      fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { http: { port: 20691 } }')
+
+      const params = require('../roosevelt')({ ...config, appDir: path.relative(process.cwd(), dir) }).expressApp.get('params')
+
+      assert.strictEqual(params.pkg.name, 'relativeAppDir', 'package.json should have been read')
+      assert.strictEqual(params.http.port, 20691, 'the config file should have been read')
+      assert.strictEqual(params.appDir, dir, 'and the app directory should be handed on resolved')
+      assert.strictEqual(params.secretsPath, path.join(dir, 'secrets'), 'so that the paths built from it are absolute too')
+    })
+
+    describe('the html validator\'s header exception', () => {
+      it('should be called header, which is the name the validator reads', () => {
+        const exceptions = require('../roosevelt')({ ...config }).expressApp.get('params').htmlValidator.exceptions
+
+        assert.strictEqual(exceptions.header, 'Partial')
+        assert.strictEqual('requestHeader' in exceptions, false)
+      })
+
+      it('should still honor the old requestHeader name', () => {
+        const exceptions = require('../roosevelt')({ ...config, htmlValidator: { exceptions: { requestHeader: 'X-Old-Name' } } }).expressApp.get('params').htmlValidator.exceptions
+
+        assert.strictEqual(exceptions.header, 'X-Old-Name')
+      })
+
+      it('should honor the old name from the config file too', () => {
+        const dir = freshDir()
+        fs.outputFileSync(path.join(dir, 'roosevelt.config.js'), 'module.exports = { htmlValidator: { exceptions: { requestHeader: \'X-From-Config\' } } }')
+
+        const exceptions = require('../roosevelt')({ ...config, appDir: dir }).expressApp.get('params').htmlValidator.exceptions
+
+        assert.strictEqual(exceptions.header, 'X-From-Config')
+      })
+
+      it('should let header win when both names are set', () => {
+        const exceptions = require('../roosevelt')({ ...config, htmlValidator: { exceptions: { header: 'X-New-Name', requestHeader: 'X-Old-Name' } } }).expressApp.get('params').htmlValidator.exceptions
+
+        assert.strictEqual(exceptions.header, 'X-New-Name')
+      })
+    })
+
+    describe('https.caPath', () => {
+      it('should default to null, which keeps the authority in secretsPath', () => {
+        assert.strictEqual(require('../roosevelt')({ ...config }).expressApp.get('params').https.caPath, null)
+      })
+
+      it('should resolve a relative path against the app directory', () => {
+        assert.strictEqual(require('../roosevelt')({ ...config, https: { caPath: 'sharedCA' } }).expressApp.get('params').https.caPath, path.join(appDir, 'sharedCA'))
+      })
+
+      it('should leave an absolute path where it points, so an authority can be shared between apps', () => {
+        const shared = path.join(__dirname, 'app/sourceParams/elsewhere/ca')
+
+        assert.strictEqual(require('../roosevelt')({ ...config, https: { caPath: shared } }).expressApp.get('params').https.caPath, shared)
+      })
     })
   })
 
@@ -963,7 +1143,7 @@ describe('sourceParams', () => {
 
   describe('overriding environment variables', () => {
     const appConfig = {
-      appDir: path.join(__dirname, '../app/envParams'),
+      appDir,
       csrfProtection: false,
       logging: {
         methods: {
@@ -988,22 +1168,33 @@ describe('sourceParams', () => {
       }
     }
 
-    it('should not set param value from default env var', (t, done) => {
+    // put back as they were, so a test that fails partway through cannot hand its environment to the next one
+    const envVars = ['HTTP_PORT', 'HTTP_PORT_NEW']
+    let savedEnv
+
+    before(() => {
+      savedEnv = Object.fromEntries(envVars.map(name => [name, process.env[name]]))
+    })
+
+    afterEach(() => {
+      for (const name of envVars) {
+        if (savedEnv[name] === undefined) delete process.env[name]
+        else process.env[name] = savedEnv[name]
+      }
+    })
+
+    it('should not set param value from default env var', () => {
       process.env.HTTP_PORT = 20678
 
       const app = require('../roosevelt')(appConfig, schema)
       assert.strictEqual(app.expressApp.get('params').http.port, 12345)
-      delete process.env.HTTP_PORT
-      done()
     })
 
-    it('should get param value from specified env var', (t, done) => {
+    it('should get param value from specified env var', () => {
       process.env.HTTP_PORT_NEW = 20678
 
       const app = require('../roosevelt')(appConfig, schema)
       assert.strictEqual(app.expressApp.get('params').http.port, 20678)
-      delete process.env.HTTP_PORT_NEW
-      done()
     })
   })
 })

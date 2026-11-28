@@ -16,6 +16,7 @@ The following is a list of [environment variables](https://en.wikipedia.org/wiki
 - `DISABLE_HTTPS`: When set to `true`, the HTTPS server will be disabled regardless of what is set in the `rooseveltConfig`.
 - `SWAP_HTTPS_TO_HTTP`: When set to `true`, the server will switch from using HTTPS to HTTP if `rooseveltConfig` is currently configured to use HTTPS.
 - `MAKE_BUILD_ARTIFACTS`: Lets you set Roosevelt's `makeBuildArtifacts` param via environment variable.
+- `QUIETER_STARTUP`: Set to `true` or `false` to set Roosevelt's `logging.quieterStartup` param via environment variable. The `--quieter-startup` and `-q` command line flags take precedence over it.
 
 Environment variable precedence:
 
@@ -51,13 +52,16 @@ Roosevelt also ships a few commands of its own. They are available in any app th
 
 - `npx roosevelt-generate-certs`: Generates self-signed HTTPS certs for your app.
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
-  - Writes the cert and key named by your `https.options` params, so it does nothing if you have not set those.
+  - Supports the command line flag `--caPath somewhere` to choose where the development authority that signs the cert lives, overriding your `https.caPath` param. Set `https.caPath` to the same place, or your app will replace the cert with one signed by an authority in your `secretsPath` the next time it starts in development mode.
+  - A relative `--appDir` is resolved against the directory you run the command from. A relative `--secretsPath` or `--caPath` is resolved against the app directory.
+  - Writes the cert and key named by your `https.options` params, so it does nothing but create the development authority if you have not set those.
+  - Prints what it did when it finishes.
 
 - `npx roosevelt-generate-session-secret`: Generates a secret key for the `express-session` module.
   - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
 
 - `npx roosevelt-generate-secrets`: Runs both of the above.
-  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` to override those default locations.
+  - Supports command line flags `--appDir somewhere` `--secretsPath somewhere` `--caPath somewhere` to override those default locations.
 
 - `npx roosevelt-migrate-config`: Converts an old JSON config into a `roosevelt.config.js` file.
   - Takes the app directory as an argument, and uses the current directory if you do not supply one.

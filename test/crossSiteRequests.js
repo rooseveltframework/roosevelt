@@ -32,11 +32,20 @@ describe('cross-site request blocking', () => {
         router.post('/change', (req, res) => res.send('changed'))
         router.post('/webhook', (req, res) => res.send('hooked'))
         router.get('/read', (req, res) => res.send('read'))
+        router.get('/token', (req, res) => res.json({ csrfToken: req.csrfToken() }))
       }
     })
     await app.initServer()
     startedApps.push(app.expressApp)
     return app.expressApp
+  }
+
+  // a token and the session cookie it belongs to, since supertest does not keep cookies across requests
+  async function getTokenAndCookie (expressApp) {
+    const response = await request(expressApp).get('/token').set('Sec-Fetch-Site', 'same-origin')
+    assert.strictEqual(response.status, 200)
+    assert.strictEqual(typeof response.body.csrfToken, 'string')
+    return { csrfToken: response.body.csrfToken, cookie: response.headers['set-cookie'] }
   }
 
   after(() => {
@@ -97,12 +106,31 @@ describe('cross-site request blocking', () => {
   })
 
   describe('alongside the token layer', () => {
-    it('should block cross-site POSTs when both layers are on', async () => {
+    // when tokens are always required, the cross-site layer leaves the decision to the token layer, so a cross-site POST is refused for having no token
+    it('should refuse a cross-site POST without a token when tokens are always required', async () => {
       const expressApp = await startApp({ requireTokens: true })
 
       const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'cross-site')
 
       assert.strictEqual(response.status, 403)
+    })
+
+    it('should leave a cross-site POST to the token layer when tokens are always required', async () => {
+      const expressApp = await startApp({ requireTokens: true })
+      const { csrfToken, cookie } = await getTokenAndCookie(expressApp)
+
+      const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'cross-site').set('X-CSRF-TOKEN', csrfToken).set('Cookie', cookie)
+
+      assert.strictEqual(response.text, 'changed', 'a valid token is what decides when tokens are always required')
+    })
+
+    it('should block a cross-site POST in the cross-site layer even with a valid token when tokens are only a fallback', async () => {
+      const expressApp = await startApp({ requireTokens: 'whenHeaderMissing' })
+      const { csrfToken, cookie } = await getTokenAndCookie(expressApp)
+
+      const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'cross-site').set('X-CSRF-TOKEN', csrfToken).set('Cookie', cookie)
+
+      assert.strictEqual(response.status, 403, 'the cross-site layer should refuse it before the token is looked at')
     })
 
     it('should still require a token for a same-origin POST', async () => {
@@ -113,10 +141,35 @@ describe('cross-site request blocking', () => {
       assert.strictEqual(response.status, 403, 'the token layer should still apply')
     })
 
+    it('should allow a same-origin POST that carries a valid token', async () => {
+      const expressApp = await startApp({ requireTokens: true })
+      const { csrfToken, cookie } = await getTokenAndCookie(expressApp)
+
+      const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'same-origin').set('X-CSRF-TOKEN', csrfToken).set('Cookie', cookie)
+
+      assert.strictEqual(response.text, 'changed')
+    })
+
     it('should honor the exemptions list, which cross-site callbacks depend on', async () => {
       const expressApp = await startApp({ exemptions: ['/webhook'] })
 
       const response = await request(expressApp).post('/webhook').set('Sec-Fetch-Site', 'cross-site')
+
+      assert.strictEqual(response.text, 'hooked')
+    })
+
+    it('should honor the exemptions list when the request has a query string', async () => {
+      const expressApp = await startApp({ exemptions: ['/webhook'] })
+
+      const response = await request(expressApp).post('/webhook?sig=1').set('Sec-Fetch-Site', 'cross-site')
+
+      assert.strictEqual(response.text, 'hooked')
+    })
+
+    it('should honor the exemptions list in the token layer when the request has a query string', async () => {
+      const expressApp = await startApp({ requireTokens: true, exemptions: ['/webhook'] })
+
+      const response = await request(expressApp).post('/webhook?sig=1')
 
       assert.strictEqual(response.text, 'hooked')
     })
@@ -162,13 +215,13 @@ describe('cross-site request blocking', () => {
     it('should not warn when a supplied session config sets sameSite to strict', async () => {
       const captured = await captureStartup({ resave: false, saveUninitialized: false, cookie: { sameSite: 'strict' } })
 
-      assert.strictEqual(captured.includes('does not set `cookie.sameSite`'), false)
+      assert.doesNotMatch(captured, /sameSite/)
     })
 
     it('should not warn when a supplied session config sets sameSite to lax', async () => {
       const captured = await captureStartup({ resave: false, saveUninitialized: false, cookie: { sameSite: 'lax' } })
 
-      assert.strictEqual(captured.includes('does not set `cookie.sameSite`'), false)
+      assert.doesNotMatch(captured, /sameSite/)
     })
 
     it('should warn when a supplied session config sets sameSite to none', async () => {
@@ -223,12 +276,59 @@ describe('cross-site request blocking', () => {
       assert.strictEqual(response.status, 403, 'no header and no token is refused')
     })
 
+    it('should allow a POST without the header that carries a valid token', async () => {
+      const expressApp = await startApp(config)
+      const { csrfToken, cookie } = await getTokenAndCookie(expressApp)
+
+      const response = await request(expressApp).post('/change').set('X-CSRF-TOKEN', csrfToken).set('Cookie', cookie)
+
+      assert.strictEqual(response.text, 'changed', 'an older browser with a token should get through')
+    })
+
+    it('should make req.csrfToken() available to a page requested by a browser that sends the header', async () => {
+      const expressApp = await startApp(config)
+
+      const response = await request(expressApp).get('/token').set('Sec-Fetch-Site', 'same-origin')
+
+      assert.strictEqual(response.status, 200)
+      assert.strictEqual(typeof response.body.csrfToken, 'string')
+    })
+
     it('should still block a cross-site POST even though tokens are only a fallback', async () => {
       const expressApp = await startApp(config)
 
       const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'cross-site')
 
       assert.strictEqual(response.status, 403)
+    })
+
+    describe('with blockCrossSiteRequests off', () => {
+      const config = { requireTokens: 'whenHeaderMissing', blockCrossSiteRequests: false }
+
+      it('should require a token from a cross-site POST, since nothing else would stop it', async () => {
+        const expressApp = await startApp(config)
+
+        const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'cross-site')
+
+        assert.strictEqual(response.status, 403)
+      })
+
+      it('should allow a cross-site POST that carries a valid token', async () => {
+        const expressApp = await startApp(config)
+        const { csrfToken, cookie } = await getTokenAndCookie(expressApp)
+
+        const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'cross-site').set('X-CSRF-TOKEN', csrfToken).set('Cookie', cookie)
+
+        assert.strictEqual(response.text, 'changed')
+      })
+
+      it('should still trust the header for a same-origin POST', async () => {
+        const expressApp = await startApp(config)
+
+        const response = await request(expressApp).post('/change').set('Sec-Fetch-Site', 'same-origin')
+
+        assert.strictEqual(response.text, 'changed')
+      })
     })
   })
 })

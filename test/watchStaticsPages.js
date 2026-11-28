@@ -82,7 +82,7 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
     return fs.readFileSync(path.join(appDir, 'public', page), 'utf8')
   }
 
-  async function startWithStamp (initial) {
+  async function startWithStamp (initial, config = {}) {
     stamp = initial
     rebuilds = 0
     reported = []
@@ -108,7 +108,8 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
       onStaticsRebuilt: (app, files) => {
         rebuilds++
         reported.push(files)
-      }
+      },
+      ...config
     })
     await app.initServer()
     startedApps.push(app)
@@ -166,7 +167,8 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
 
   it('should render no pages when the change was to something no page is built from', async () => {
     writeSite()
-    await startWithStamp('first')
+    // without the build cache, so that nothing but the narrowing could be what leaves the pages alone: with it, an unchanged set of page sources is skipped anyway
+    await startWithStamp('first', { incrementalBuilds: false })
 
     stamp = 'second'
     // the rebuild still runs, which is what makes this worth asserting: the pages are skipped, not the rebuild
@@ -174,6 +176,27 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
     assert.ok(rebuilt, `expected the edit to trigger a rebuild; ${saw()}`)
     assert.ok(built('a.html').includes('first'), `expected the pages to be left as they were, got: ${built('a.html')}; ${saw()}`)
     assert.ok(built('b.html').includes('first'))
+  })
+
+  // the views and the additional paths are watched because pages are built from them, so an edit there is not one no page depends on
+  it('should render every page when a layout in the views changes', async () => {
+    writeSite()
+    fs.outputFileSync(path.join(appDir, 'mvc/views/layout.html'), '<p>layout</p>')
+    await startWithStamp('first', { incrementalBuilds: false })
+
+    stamp = 'second'
+    const rebuilt = await editUntilNoticed(path.join(appDir, 'mvc/views/layout.html'), '<p>layout, edited</p>', () => built('a.html').includes('second') && built('b.html').includes('second'))
+    assert.ok(rebuilt, `expected both pages to be rendered again, got: ${built('a.html')} and ${built('b.html')}; ${saw()}`)
+  })
+
+  it('should render every page when a file in an additional watched path changes', async () => {
+    writeSite()
+    fs.outputFileSync(path.join(appDir, 'content/post.md'), 'one')
+    await startWithStamp('first', { incrementalBuilds: false, watchStatics: { additionalPaths: ['content'] } })
+
+    stamp = 'second'
+    const rebuilt = await editUntilNoticed(path.join(appDir, 'content/post.md'), 'two', () => built('a.html').includes('second') && built('b.html').includes('second'))
+    assert.ok(rebuilt, `expected both pages to be rendered again, got: ${built('a.html')} and ${built('b.html')}; ${saw()}`)
   })
 
   it('should render the page a changed model belongs to', async () => {
@@ -201,7 +224,7 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
   // the decision on its own, without the watcher in the way
   //
   // these separate "roosevelt attributed the edit to the wrong page" from "the platform never reported the edit at all", which look identical from the outside: either way the page does not get rendered
-  async function appForDecisions () {
+  async function appForDecisions (config = {}) {
     writeSite()
     fs.outputFileSync(path.join(appDir, 'statics/pages/a.js'), "module.exports = () => ({ label: 'one' })\n")
     const app = roosevelt({
@@ -215,43 +238,70 @@ describe('narrowing a statics rebuild to the pages that changed', () => {
       viewEngine: 'html: teddy',
       http: { enable: false },
       https: { enable: false },
-      mode: 'development'
+      mode: 'development',
+      ...config
     })
     await app.initServer()
     startedApps.push(app)
     return app.expressApp
   }
 
-  const statics = () => [path.join(appDir, 'statics')]
   const inStatics = file => path.join(appDir, 'statics', file)
 
   it('should attribute an edited page to itself', async () => {
     const app = await appForDecisions()
 
-    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('pages/a.html')], statics()), ['a.html'])
+    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('pages/a.html')]), ['a.html'])
   })
 
   it('should attribute an edited model to the page beside it', async () => {
     const app = await appForDecisions()
 
-    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('pages/a.js')], statics()), ['a.html'])
+    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('pages/a.js')]), ['a.html'])
   })
 
   it('should attribute an edited template that is not a page to every page', async () => {
     const app = await appForDecisions()
 
-    assert.strictEqual(pagesAffectedBy(app, [inStatics('pages/shared.html')], statics()), undefined)
+    assert.strictEqual(pagesAffectedBy(app, [inStatics('pages/shared.html')]), undefined)
   })
 
   it('should attribute an edited stylesheet to no page', async () => {
     const app = await appForDecisions()
 
-    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('css/main.css')], statics()), [])
+    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('css/main.css')]), [])
+  })
+
+  it('should attribute an edited view to every page', async () => {
+    const app = await appForDecisions()
+
+    assert.strictEqual(pagesAffectedBy(app, [path.join(appDir, 'mvc/views/layout.html')]), undefined)
+  })
+
+  it('should attribute an edit in an additional watched path to every page', async () => {
+    const app = await appForDecisions({ watchStatics: { additionalPaths: ['content'] } })
+
+    assert.strictEqual(pagesAffectedBy(app, [path.join(appDir, 'content/post.md')]), undefined)
+  })
+
+  it('should attribute an edit in an additional watched path inside the statics to every page', async () => {
+    const app = await appForDecisions({ watchStatics: { additionalPaths: ['statics/content'] } })
+
+    // the deeper folder decides, so being inside the statics does not make this a file no page is built from
+    assert.strictEqual(pagesAffectedBy(app, [inStatics('content/post.md')]), undefined)
+    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('css/main.css')]), [])
+  })
+
+  it('should name a nested page with forward slashes, which is how the allowlist names it', async () => {
+    const app = await appForDecisions({ html: { allowlist: ['nested/*'] } })
+    fs.outputFileSync(inStatics('pages/nested/c.html'), '<p>c</p>')
+
+    assert.deepStrictEqual(pagesAffectedBy(app, [inStatics('pages/nested/c.html')]), ['nested/c.html'])
   })
 
   it('should render every page for a path it cannot place under anything it watches', async () => {
     const app = await appForDecisions()
 
-    assert.strictEqual(pagesAffectedBy(app, [path.join(appDir, 'somewhere/else.html')], statics()), undefined)
+    assert.strictEqual(pagesAffectedBy(app, [path.join(appDir, 'somewhere/else.html')]), undefined)
   })
 })
